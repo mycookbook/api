@@ -52,3 +52,4 @@ You can contribute in a number of ways.
 ### Contributors
 - [Elisha Chijioke](https://github.com/andela-celisha-wigwe)
 - [George James](https://github.com/sslgeorge)
+- [Suraj Kanade](#)
