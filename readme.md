@@ -1,4 +1,4 @@
-# Cookbook - api
+# cookbook - api
 
 API backend for cookbook. This forms the core of cookbook.
 
@@ -52,4 +52,4 @@ You can contribute in a number of ways.
 ### Contributors
 - [Elisha Chijioke](https://github.com/andela-celisha-wigwe)
 - [George James](https://github.com/sslgeorge)
-- [Suraj Kanade](#)
+- [Suraj Akande](#)
