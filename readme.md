@@ -15,7 +15,6 @@ mkdir cookbook && cd cookbook
 git clone https://github.com/mycookbook/api.git
 cd cookbook && cd api
 composer install
-npm install
 ```
 
 Create a .env file and copy the contents of .env.example into that 
