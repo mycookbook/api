@@ -1,6 +1,6 @@
 <?php
 
-namespace Cookbook;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
