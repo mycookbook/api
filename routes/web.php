@@ -17,7 +17,7 @@ use App\User;
  * Landing page for API documentation
  */
 $app->get(
-    '/', function () use ($app) {
+    '/api', function () use ($app) {
         return 'Cookbook API v1.0';
     }
 );
@@ -25,11 +25,11 @@ $app->get(
 /**
  * Get all users in the database
  */
-$app->get('/users', 'UserController@getAllUsers');
+$app->get('/api/users', 'UserController@getAllUsers');
 
 /**
  * Get one user from the database
  */
 $app->get(
-    '/user/{id}', 'UserController@getUser'
+    '/api/user/{id}', 'UserController@getUser'
 );
