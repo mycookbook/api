@@ -34,7 +34,9 @@ class UserController extends Controller
             return response()->json(
                 [
                     'response' => [
+                        'status' => 'success',
                         'data' => $users,
+                        'message' => 'success',
                         'code' => 200,
                     ]
                 ], 200
@@ -42,7 +44,9 @@ class UserController extends Controller
         } else {
             return response()->json(
                 [
-                    'errors' => [
+                    'response' => [
+                        'status' => 'error',
+                        'data' => null,
                         'message' => 'No data!',
                         'code' => 404,
                     ]
@@ -66,7 +70,9 @@ class UserController extends Controller
             return response()->json(
                 [
                     'response' => [
+                        'status' => 'success',
                         'data' => $user,
+                        'message' => 'success',
                         'code' => 200,
                     ]
                 ], 200
@@ -74,7 +80,9 @@ class UserController extends Controller
         } else {
             return response()->json(
                 [
-                    'errors' => [
+                    'response' => [
+                        'status' => 'error',
+                        'data' => null,
                         'message' => 'User does not exist!',
                         'code' => 404,
                     ]
