@@ -6,6 +6,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+
 /**
  * Class UserController
  * @package App\Http\Controllers
@@ -27,23 +28,25 @@ class UserController extends Controller
      */
     public function getAllUsers()
     {
-        $users = User::all();
+        $users = User::with('Recipes', 'Cookbooks')->get();
 
         if (count($users) > 0) {
             return response()->json(
                 [
-                    'data' => $users,
-                    'message' => 'success',
-                    'status' => '200',
-                ]
+                    'response' => [
+                        'data' => $users,
+                        'code' => 200,
+                    ]
+                ], 200
             );
         } else {
             return response()->json(
                 [
-                    'data' => [],
-                    'message' => 'No Data',
-                    'status' => '404'
-                ]
+                    'errors' => [
+                        'message' => 'No data!',
+                        'code' => 404,
+                    ]
+                ], 404
             );
         }
     }
@@ -57,23 +60,25 @@ class UserController extends Controller
      */
     public function getUser($id)
     {
-        $user = User::with('Recipes', 'Cookbooks')->get();
+        $user = User::with('Recipes', 'Cookbooks')->find($id);
 
         if ($user) {
             return response()->json(
                 [
-                    'data' => $user,
-                    'message' => 'success',
-                    'status' => '200',
-                ]
+                    'response' => [
+                        'data' => $user,
+                        'code' => 200,
+                    ]
+                ], 200
             );
         } else {
             return response()->json(
                 [
-                    'data' => [],
-                    'message' => 'User not found',
-                    'status' => '404'
-                ]
+                    'errors' => [
+                        'message' => 'User does not exist!',
+                        'code' => 404,
+                    ]
+                ], 404
             );
         }
     }
