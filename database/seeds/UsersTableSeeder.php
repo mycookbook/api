@@ -35,7 +35,7 @@ class UsersTableSeeder extends Seeder
                     'description' => str_random(500),
                     'ingredients' => str_random(8),
                     'imgUrl' => 'http://via.placeholder.com/350x150',
-                    'user_id' => 1,
+                    'user_id' => 2,
                     'created_at' => date("Y-m-d H:i:s"),
                     'updated_at' => date("Y-m-d H:i:s")
                 ]
@@ -46,8 +46,8 @@ class UsersTableSeeder extends Seeder
                 [
                     'name' => str_random(10),
                     'description' => str_random(500),
-                    'user_id' => 1,
-                    'recipe_id' => 1,
+                    'user_id' => 2,
+                    'recipe_id' => 2,
                     'created_at' => date("Y-m-d H:i:s"),
                     'updated_at' => date("Y-m-d H:i:s")
                 ]
