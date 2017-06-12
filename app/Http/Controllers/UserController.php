@@ -30,18 +30,9 @@ class UserController extends Controller
     {
         $users = User::with('Recipes', 'Cookbooks')->get();
 
-        if (count($users) > 0) {
-            return response()->json(
-                [
-                    'response' => [
-                        'status' => 'success',
-                        'data' => $users,
-                        'message' => 'success',
-                        'code' => 200,
-                    ]
-                ], 200
-            );
-        } else {
+        //dd(count($users));
+
+        if (count($users) < 1) {
             return response()->json(
                 [
                     'response' => [
@@ -53,6 +44,17 @@ class UserController extends Controller
                 ], 404
             );
         }
+
+        return response()->json(
+            [
+                'response' => [
+                    'status' => 'success',
+                    'data' => $users->toArray(),
+                    'message' => 'success',
+                    'code' => 200,
+                ]
+            ], 200
+        );
     }
 
     /**
@@ -66,28 +68,28 @@ class UserController extends Controller
     {
         $user = User::with('Recipes', 'Cookbooks')->find($id);
 
-        if ($user) {
-            return response()->json(
-                [
-                    'response' => [
-                        'status' => 'success',
-                        'data' => $user,
-                        'message' => 'success',
-                        'code' => 200,
-                    ]
-                ], 200
-            );
-        } else {
+        if (! $user) {
             return response()->json(
                 [
                     'response' => [
                         'status' => 'error',
                         'data' => null,
-                        'message' => 'User does not exist!',
+                        'message' => 'User not found!',
                         'code' => 404,
                     ]
                 ], 404
             );
         }
+
+        return response()->json(
+            [
+                'response' => [
+                    'status' => 'success',
+                    'data' => $user,
+                    'message' => 'user found.',
+                    'code' => 200,
+                ]
+            ], 200
+        );
     }
 }
