@@ -40,7 +40,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function recipes()
     {
-        return $this->hasMany('Cookbook\recipe');
+        return $this->hasMany('App\Recipe');
     }
 
     /**
@@ -48,8 +48,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function cookbook()
+    public function cookbooks()
     {
-        return $this->belongsToMany('Cookbook\Cookbook');
+        return $this->hasMany('App\Cookbook');
     }
 }
