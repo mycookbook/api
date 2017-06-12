@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/mycookbook/core.svg?branch=master)](https://travis-ci.org/mycookbook/core)   [![Coverage Status](https://coveralls.io/repos/github/mycookbook/core/badge.svg?branch=roy%2Ffix-issue-with-coverage)](https://coveralls.io/github/mycookbook/core?branch=roy%2Ffix-issue-with-coverage)
-
 # Cookbook - api
 
 API backend for cookbook. This forms the core of cookbook.
