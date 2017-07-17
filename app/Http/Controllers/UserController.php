@@ -85,7 +85,7 @@ class UserController extends Controller
             [
                 'response' => [
                     'status' => 'success',
-                    'data' => $user,
+                    'data' => $user->toArray(),
                     'message' => 'user found.',
                     'code' => 200,
                 ]
