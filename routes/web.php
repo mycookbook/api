@@ -11,10 +11,8 @@
 |
 */
 
-use App\User;
-
 /**
- * Landing page for API documentation
+ * Welcome and API documentation page
  */
 $app->get(
     '/api', function () use ($app) {
@@ -22,14 +20,14 @@ $app->get(
     }
 );
 
-/**
- * Get all users in the database
- */
-$app->get('/api/users', 'UserController@getAllUsers');
+$app->group(
+    ['middleware' => 'throttle'], function () use ($app) {
+        $app->get(
+            '/api/users/', 'UserController@getAllUsers'
+        );
 
-/**
- * Get one user from the database
- */
-$app->get(
-    '/api/user/{id}', 'UserController@getUser'
+        $app->get(
+            '/api/users/{id}', 'UserController@getUser'
+        );
+    }
 );

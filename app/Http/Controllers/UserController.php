@@ -30,16 +30,12 @@ class UserController extends Controller
     {
         $users = User::with('Recipes', 'Cookbooks')->get();
 
-        //dd(count($users));
-
         if (count($users) < 1) {
             return response()->json(
                 [
                     'response' => [
-                        'status' => 'error',
-                        'data' => null,
-                        'message' => 'No data!',
-                        'code' => 404,
+                        'success' => false,
+                        'data' => null
                     ]
                 ], 404
             );
@@ -48,10 +44,8 @@ class UserController extends Controller
         return response()->json(
             [
                 'response' => [
-                    'status' => 'success',
-                    'data' => $users->toArray(),
-                    'message' => 'success',
-                    'code' => 200,
+                    'success' => true,
+                    'data' => $users->toArray()
                 ]
             ], 200
         );
@@ -60,7 +54,7 @@ class UserController extends Controller
     /**
      * Get one user
      *
-     * @param $id
+     * @param int $id id
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -72,10 +66,8 @@ class UserController extends Controller
             return response()->json(
                 [
                     'response' => [
-                        'status' => 'error',
-                        'data' => null,
-                        'message' => 'User not found!',
-                        'code' => 404,
+                        'success' => false,
+                        'data' => null
                     ]
                 ], 404
             );
@@ -84,10 +76,8 @@ class UserController extends Controller
         return response()->json(
             [
                 'response' => [
-                    'status' => 'success',
-                    'data' => $user->toArray(),
-                    'message' => 'user found.',
-                    'code' => 200,
+                    'success' => false,
+                    'data' => $user->toArray()
                 ]
             ], 200
         );
