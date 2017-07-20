@@ -1,11 +1,31 @@
 <?php
 
+use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Lumen\Testing\DatabaseTransactions;
 
 /**
  * Class UserTest
  */
 class UserTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->artisan('migrate');
+        $this->artisan('db:seed');
+    }
+
+    /**
+     *
+     */
+    public function testApplication()
+    {
+        $response = $this->call('GET', '/api');
+
+        $this->assertEquals(200, $response->status());
+    }
+
     /**
      * A basic functional test example.
      *
@@ -16,7 +36,7 @@ class UserTest extends TestCase
         $this->json(
             'POST', '/api/signup', [
                 'name' => 'Sally',
-                'email' => 'sallyleleh@omosunuu.com',
+                'email' => 'sallyleleh@omosfdffunuu.com',
                 'password' => 'salitu'
             ]
         )->seeJson(
@@ -26,5 +46,10 @@ class UserTest extends TestCase
                 ],
             ]
         );
+    }
+
+    public function tearDown()
+    {
+        $this->artisan('migrate:reset');
     }
 }
