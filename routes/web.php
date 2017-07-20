@@ -29,11 +29,11 @@ $app->post(
 );
 
 $app->put(
-    '/api/user/{id}', 'UserController@update'
+    '/api/users/{id}', 'UserController@update'
 );
 
 $app->patch(
-    '/api/user/{id}', 'UserController@update'
+    '/api/users/{id}', 'UserController@update'
 );
 
 $app->group(
