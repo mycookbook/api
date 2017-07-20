@@ -53,9 +53,7 @@ class UserController extends Controller
 
             return response()->json(
                 [
-                    'response' => [
-                        'created' => true
-                    ]
+                    'response' => ['created' => true]
                 ], 200
             );
         } else {
