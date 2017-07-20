@@ -22,7 +22,7 @@
     "autoload-dev": {
         "classmap": [
             "tests/",
-            "database/"
+            "database/seeds/UserTableSeeder.php"
         ]
     },
     "scripts": {
