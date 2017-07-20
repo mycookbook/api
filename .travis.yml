@@ -12,10 +12,9 @@ before_script:
 script:
   - mkdir -p build/logs
   - php vendor/bin/phpunit -c phpunit.xml.dist
-  - vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
+#  - vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
 
 #after_success:
 #  - travis_retry php vendor/bin/coveralls
 #  - travis_retry php vendor/bin/coveralls -v
 #  - bash <(curl -s https://codecov.io/bash)
-  
