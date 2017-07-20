@@ -54,8 +54,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     'response' => [
-                        'success' => true,
-                        'data' => [$name, $email]
+                        'created' => true
                     ]
                 ], 200
             );
