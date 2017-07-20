@@ -6,6 +6,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Illuminate\Http\Request;
 
 /**
  * Class UserController
@@ -19,6 +20,51 @@ class UserController extends Controller
     public function __construct()
     {
         //
+    }
+
+    /**
+     * Create new user
+     *
+     * @param Request $request form inputs
+     *
+     * @return array|string
+     */
+    public function create(Request $request)
+    {
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        return response()->json(
+            [
+                'response' => [
+                    'success' => true,
+                    'data' => [$name, $email, $password]
+                ]
+            ], 200
+        );
+    }
+
+    /**
+     * Signin
+     *
+     * @param Request $request form inputs
+     *
+     * @return array|string
+     */
+    public function signin(Request $request)
+    {
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        return response()->json(
+            [
+                'response' => [
+                    'success' => true,
+                    'data' => [$email, $password]
+                ]
+            ], 200
+        );
     }
 
     /**

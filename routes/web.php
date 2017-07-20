@@ -20,6 +20,14 @@ $app->get(
     }
 );
 
+$app->post(
+    '/api/signup', 'UserController@create'
+);
+
+$app->post(
+    '/api/signin', 'UserController@signin'
+);
+
 $app->group(
     ['middleware' => 'throttle'], function () use ($app) {
         $app->get(
