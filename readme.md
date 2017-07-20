@@ -1,5 +1,7 @@
 # cookbook - api
 
+[![Build Status](https://travis-ci.org/mycookbook/api.svg?branch=master)](https://travis-ci.org/mycookbook/api)
+
 API backend for cookbook. This forms the core of cookbook.
 
 ## Developers Guide

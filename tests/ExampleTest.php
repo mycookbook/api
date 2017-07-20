@@ -3,6 +3,9 @@
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
+/**
+ * Class ExampleTest
+ */
 class ExampleTest extends TestCase
 {
     /**
@@ -12,10 +15,10 @@ class ExampleTest extends TestCase
      */
     public function testExample()
     {
-        $this->get('/');
+        $this->get('/api');
 
         $this->assertEquals(
-            $this->app->version(), $this->response->getContent()
+            'Cookbook API v1.0', $this->response->getContent()
         );
     }
 }
