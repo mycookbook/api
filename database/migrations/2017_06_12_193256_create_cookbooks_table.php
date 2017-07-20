@@ -22,7 +22,6 @@ class CreateCookbooksTable extends Migration
                 $table->string('name');
                 $table->string('description');
                 $table->integer('user_id')->unsigned();
-                $table->integer('recipe_id')->unsigned();
                 $table->timestamps();
             }
         );
@@ -33,16 +32,6 @@ class CreateCookbooksTable extends Migration
                     ->foreign('user_id')
                     ->references('id')
                     ->on('users')
-                    ->onDelete('cascade');
-            }
-        );
-
-        Schema::table(
-            'cookbooks', function ($table) {
-                $table
-                    ->foreign('recipe_id')
-                    ->references('id')
-                    ->on('recipes')
                     ->onDelete('cascade');
             }
         );

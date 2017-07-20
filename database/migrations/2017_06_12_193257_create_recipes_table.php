@@ -24,6 +24,7 @@ class CreateRecipesTable extends Migration
                 $table->string('imgUrl');
                 $table->string('description');
                 $table->integer('user_id')->unsigned();
+                $table->integer('cookbook_id')->unsigned();
                 $table->timestamps();
             }
         );
@@ -34,6 +35,16 @@ class CreateRecipesTable extends Migration
                     ->foreign('user_id')
                     ->references('id')
                     ->on('users')
+                    ->onDelete('cascade');
+            }
+        );
+
+        Schema::table(
+            'recipes', function ($table) {
+                $table
+                    ->foreign('cookbook_id')
+                    ->references('id')
+                    ->on('cookbooks')
                     ->onDelete('cascade');
             }
         );

@@ -1,13 +1,16 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
-
 /**
  * Class UserTest
  */
 class UserTest extends TestCase
 {
+    /**
+     * Run migrations
+     * Seed DB
+     *
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
@@ -17,7 +20,9 @@ class UserTest extends TestCase
     }
 
     /**
+     * Test Application
      *
+     * @return void
      */
     public function testApplication()
     {
@@ -31,13 +36,13 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testBasicExample()
+    public function testAUserCanBeCreated()
     {
         $this->json(
             'POST', '/api/signup', [
                 'name' => 'Sally',
-                'email' => 'sallyleleh@omosfdffunuu.com',
-                'password' => 'salitu'
+                'email' => 'sally@foo.com',
+                'password' => 'sali'
             ]
         )->seeJson(
             [
@@ -45,9 +50,43 @@ class UserTest extends TestCase
                     'created' => true
                 ],
             ]
+        )->seeStatusCode(200)->seeInDatabase(
+            'users', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com'
+            ]
         );
     }
 
+    /**
+     * Test /api/users route
+     *
+     * @return void
+     */
+    public function testCanGetAllUsers()
+    {
+        $response = $this->call('GET', '/api/users');
+
+        $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * Test /api/users/{1} route
+     *
+     * @return void
+     */
+    public function testCanGetOneUser()
+    {
+        $response = $this->call('GET', '/api/users/1');
+
+        $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * Reset Migrations
+     *
+     * @return void
+     */
     public function tearDown()
     {
         $this->artisan('migrate:reset');
