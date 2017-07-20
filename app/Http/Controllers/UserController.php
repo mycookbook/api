@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Hashing\BcryptHasher;
 
 /**
  * Class UserController
@@ -14,14 +15,12 @@ use Illuminate\Http\Request;
  */
 class UserController extends Controller
 {
-    protected $user;
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->user = new User();
+        //
     }
 
     /**
@@ -37,14 +36,37 @@ class UserController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
-        return response()->json(
-            [
-                'response' => [
-                    'success' => true,
-                    'data' => [$name, $email, $password]
-                ]
-            ], 200
-        );
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            $user = new User();
+
+            $user->name = $name;
+            $user->email = $email;
+            $hashedPassword = (new BcryptHasher)->make($password);
+
+            $user->password = $hashedPassword;
+
+            $user->save();
+
+            return response()->json(
+                [
+                    'response' => [
+                        'success' => true,
+                        'data' => [$name, $email]
+                    ]
+                ], 200
+            );
+        } else {
+            return response()->json(
+                [
+                    'response' => [
+                        'success' => false,
+                        'data' => 'Email exists already'
+                    ]
+                ], 401
+            );
+        }
     }
 
     /**
