@@ -128,7 +128,6 @@ class UserController extends Controller
         return response()->json(
             [
                 'response' => [
-                    'success' => true,
                     'data' => $users->toArray()
                 ]
             ], 200
