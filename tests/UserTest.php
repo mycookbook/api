@@ -36,7 +36,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testCreateUser()
+    public function testAUserCanBeCreated()
     {
         $this->json(
             'POST', '/api/signup', [
@@ -63,9 +63,21 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testGetAllUsers()
+    public function testCanGetAllUsers()
     {
         $response = $this->call('GET', '/api/users');
+
+        $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * Test /api/users/{1} route
+     *
+     * @return void
+     */
+    public function testCanGetOneUser()
+    {
+        $response = $this->call('GET', '/api/users/1');
 
         $this->assertEquals(200, $response->status());
     }

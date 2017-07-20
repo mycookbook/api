@@ -28,6 +28,17 @@ class UsersTableSeeder extends Seeder
                 ]
             );
 
+        DB::table('cookbooks')
+            ->insert(
+                [
+                    'name' => str_random(10),
+                    'description' => str_random(50),
+                    'user_id' => 1,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s")
+                ]
+            );
+
         DB::table('recipes')
             ->insert(
                 [
@@ -36,18 +47,7 @@ class UsersTableSeeder extends Seeder
                     'ingredients' => str_random(8),
                     'imgUrl' => 'http://via.placeholder.com/350x150',
                     'user_id' => 1,
-                    'created_at' => date("Y-m-d H:i:s"),
-                    'updated_at' => date("Y-m-d H:i:s")
-                ]
-            );
-
-        DB::table('cookbooks')
-            ->insert(
-                [
-                    'name' => str_random(10),
-                    'description' => str_random(50),
-                    'user_id' => 1,
-                    'recipe_id' => 1,
+                    'cookbook_id' => 1,
                     'created_at' => date("Y-m-d H:i:s"),
                     'updated_at' => date("Y-m-d H:i:s")
                 ]

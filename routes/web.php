@@ -47,3 +47,9 @@ $app->group(
         );
     }
 );
+
+$app->post('/api/users/{id}/cookbook', 'UserController@createCookbook');
+
+$app->post(
+    '/api/users/{userId}/cookbook/{cookbookId}/recipe', 'UserController@createRecipe'
+);
