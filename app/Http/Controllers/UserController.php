@@ -6,6 +6,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Illuminate\Http\Request;
 
 /**
  * Class UserController
@@ -13,12 +14,74 @@ use App\User;
  */
 class UserController extends Controller
 {
+    protected $user;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        //
+        $this->user = new User();
+    }
+
+    /**
+     * Create new user
+     *
+     * @param Request $request form inputs
+     *
+     * @return array|string
+     */
+    public function create(Request $request)
+    {
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        return response()->json(
+            [
+                'response' => [
+                    'success' => true,
+                    'data' => [$name, $email, $password]
+                ]
+            ], 200
+        );
+    }
+
+    /**
+     * Signin
+     *
+     * @param Request $request form inputs
+     *
+     * @return array|string
+     */
+    public function signin(Request $request)
+    {
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        return response()->json(
+            [
+                'response' => [
+                    'success' => true,
+                    'data' => [$email, $password]
+                ]
+            ], 200
+        );
+    }
+
+    /**
+     * Update user
+     *
+     * @param int $id unique identification
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update($id)
+    {
+        $user = $this->getUser($id);
+
+        return $user;
+
     }
 
     /**
@@ -67,7 +130,7 @@ class UserController extends Controller
                 [
                     'response' => [
                         'success' => false,
-                        'data' => null
+                        'data' => 'Not found!'
                     ]
                 ], 404
             );
