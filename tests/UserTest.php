@@ -16,13 +16,13 @@ class UserTest extends TestCase
         $this->json(
             'POST', '/api/signup', [
                 'name' => 'Sally',
-                'email' => 'sallyleleh@joe.com',
+                'email' => 'sallyleleh@omosun.com',
                 'password' => 'salitu'
             ]
         )->seeJson(
             [
                 'response' => [
-                    'created' => true,
+                    'created' => true
                 ],
             ]
         );
