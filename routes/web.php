@@ -28,6 +28,14 @@ $app->post(
     '/api/signin', 'UserController@signin'
 );
 
+$app->put(
+    '/api/user/{id}', 'UserController@update'
+);
+
+$app->patch(
+    '/api/user/{id}', 'UserController@update'
+);
+
 $app->group(
     ['middleware' => 'throttle'], function () use ($app) {
         $app->get(
