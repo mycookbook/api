@@ -14,12 +14,14 @@ use Illuminate\Http\Request;
  */
 class UserController extends Controller
 {
+    protected $user;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        //
+        $this->user = new User();
     }
 
     /**
@@ -68,6 +70,21 @@ class UserController extends Controller
     }
 
     /**
+     * Update user
+     *
+     * @param int $id unique identification
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update($id)
+    {
+        $user = $this->getUser($id);
+
+        return $user;
+
+    }
+
+    /**
      * Get all users fromt he database
      *
      * @return int
@@ -113,7 +130,7 @@ class UserController extends Controller
                 [
                     'response' => [
                         'success' => false,
-                        'data' => null
+                        'data' => 'Not found!'
                     ]
                 ], 404
             );
