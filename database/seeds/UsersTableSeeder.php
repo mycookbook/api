@@ -15,18 +15,18 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-//        DB::table('users')
-//            ->insert(
-//                [
-//                    'name' => str_random(10),
-//                    'email' => str_random(10).'@gmail.com',
-//                    'password' => app('hash')->make('secret'),
-//                    'following' => 1,
-//                    'followers' => 1,
-//                    'created_at' => date("Y-m-d H:i:s"),
-//                    'updated_at' => date("Y-m-d H:i:s")
-//                ]
-//            );
+        DB::table('users')
+            ->insert(
+                [
+                    'name' => str_random(10),
+                    'email' => str_random(10).'@gmail.com',
+                    'password' => app('hash')->make('secret'),
+                    'following' => 1,
+                    'followers' => 1,
+                    'created_at' => date("Y-m-d H:i:s"),
+                    'updated_at' => date("Y-m-d H:i:s")
+                ]
+            );
 
         DB::table('recipes')
             ->insert(
