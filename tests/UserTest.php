@@ -16,7 +16,7 @@ class UserTest extends TestCase
         $this->json(
             'POST', '/api/signup', [
                 'name' => 'Sally',
-                'email' => 'sallyleleh@omosun.com',
+                'email' => 'sallyleleh@omosunuu.com',
                 'password' => 'salitu'
             ]
         )->seeJson(
