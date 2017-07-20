@@ -32,7 +32,7 @@ class UsersTableSeeder extends Seeder
             ->insert(
                 [
                     'name' => str_random(10),
-                    'description' => str_random(500),
+                    'description' => str_random(50),
                     'ingredients' => str_random(8),
                     'imgUrl' => 'http://via.placeholder.com/350x150',
                     'user_id' => 2,
@@ -45,7 +45,7 @@ class UsersTableSeeder extends Seeder
             ->insert(
                 [
                     'name' => str_random(10),
-                    'description' => str_random(500),
+                    'description' => str_random(50),
                     'user_id' => 2,
                     'recipe_id' => 2,
                     'created_at' => date("Y-m-d H:i:s"),
