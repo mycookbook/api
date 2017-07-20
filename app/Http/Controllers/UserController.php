@@ -44,6 +44,8 @@ class UserController extends Controller
             $user->name = $name;
             $user->email = $email;
             $hashedPassword = (new BcryptHasher)->make($password);
+            $user->following = 0;
+            $user->followers = 0;
 
             $user->password = $hashedPassword;
 
