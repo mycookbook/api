@@ -36,13 +36,41 @@ class UserTest extends TestCase
      *
      * @return void
      */
+    public function testThatInputIsValid()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => '',
+                'email' => 'invalidemailaddress',
+                'password' => 'sali'
+            ]
+        )->seeJson(
+            [
+                'email' => [
+                    'The email must be a valid email address.'
+                ],
+                'password' => [
+                    'The password must be at least 5 characters.'
+                ],
+                'name' => [
+                    'The name field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * A basic functional test example.
+     *
+     * @return void
+     */
     public function testAUserCanBeCreated()
     {
         $this->json(
             'POST', '/api/v1/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
-                'password' => 'sali'
+                'password' => 'salis'
             ]
         )->seeJson(
             [
@@ -56,8 +84,6 @@ class UserTest extends TestCase
                 'email' => 'sally@foo.com'
             ]
         );
-
-        // test validation
     }
 
     /**
