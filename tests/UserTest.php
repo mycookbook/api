@@ -26,7 +26,7 @@ class UserTest extends TestCase
      */
     public function testApplication()
     {
-        $response = $this->call('GET', '/api');
+        $response = $this->call('GET', '/api/v1');
 
         $this->assertEquals(200, $response->status());
     }
@@ -39,7 +39,7 @@ class UserTest extends TestCase
     public function testAUserCanBeCreated()
     {
         $this->json(
-            'POST', '/api/signup', [
+            'POST', '/api/v1/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'sali'
@@ -50,7 +50,7 @@ class UserTest extends TestCase
                     'created' => true
                 ],
             ]
-        )->seeStatusCode(200)->seeInDatabase(
+        )->seeStatusCode(201)->seeInDatabase(
             'users', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com'
@@ -65,7 +65,7 @@ class UserTest extends TestCase
      */
     public function testCanGetAllUsers()
     {
-        $response = $this->call('GET', '/api/users');
+        $response = $this->call('GET', '/api/v1/users');
 
         $this->assertEquals(200, $response->status());
     }
@@ -77,7 +77,7 @@ class UserTest extends TestCase
      */
     public function testCanGetOneUser()
     {
-        $response = $this->call('GET', '/api/users/1');
+        $response = $this->call('GET', '/api/v1/users/1');
 
         $this->assertEquals(200, $response->status());
     }

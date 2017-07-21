@@ -15,41 +15,41 @@
  * Welcome and API documentation page
  */
 $app->get(
-    '/api', function () use ($app) {
+    '/api/v1', function () use ($app) {
         return 'Cookbook API v1.0';
     }
 );
 
 $app->post(
-    '/api/signup', 'UserController@create'
+    '/api/v1/signup', 'AuthController@create'
 );
 
 $app->post(
-    '/api/signin', 'UserController@signin'
+    '/api/v1/signin', 'AuthController@signin'
 );
 
 $app->put(
-    '/api/users/{id}', 'UserController@update'
+    '/api/v1/users/{id}', 'UserController@update'
 );
 
 $app->patch(
-    '/api/users/{id}', 'UserController@update'
+    '/api/v1/users/{id}', 'UserController@update'
 );
 
 $app->group(
     ['middleware' => 'throttle'], function () use ($app) {
         $app->get(
-            '/api/users/', 'UserController@getAllUsers'
+            '/api/v1/users/', 'UserController@getAllUsers'
         );
 
         $app->get(
-            '/api/users/{id}', 'UserController@getUser'
+            '/api/v1/users/{id}', 'UserController@getUser'
         );
     }
 );
 
-$app->post('/api/users/{id}/cookbook', 'UserController@createCookbook');
+$app->post('/api/v1/users/{id}/cookbook', 'UserController@createCookbook');
 
 $app->post(
-    '/api/users/{userId}/cookbook/{cookbookId}/recipe', 'UserController@createRecipe'
+    '/api/v1/users/{userId}/cookbook/{cookbookId}/recipe', 'UserController@createRecipe'
 );
