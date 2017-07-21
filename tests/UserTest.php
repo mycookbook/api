@@ -98,6 +98,37 @@ class UserTest extends TestCase
     }
 
     /**
+     * Test that the email exists already
+     *
+     * @return void
+     */
+    public function testThatEmailExists()
+    {
+        $this->post(
+            '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        )->seeJson(
+            [
+                'response' => [
+                    'success' => false,
+                    'data' => 'Email exists already'
+                ]
+            ]
+        )->seeStatusCode(401);
+    }
+
+    /**
      * Test that the password field is required
      *
      * @return void
