@@ -3,7 +3,7 @@
 /**
  * Class UserTest
  */
-class UserTest extends TestCase
+class ApplicationTest extends TestCase
 {
     /**
      * Run migrations
