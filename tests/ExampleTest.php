@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
      */
     public function testExample()
     {
-        $this->get('/api');
+        $this->get('/api/v1');
 
         $this->assertEquals(
             'Cookbook API v1.0', $this->response->getContent()
