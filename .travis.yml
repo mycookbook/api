@@ -3,18 +3,15 @@ language: php
 php:
   - 7.0
 
-sudo: false
-
-before_script:
-  - composer self-update
-  - composer install --prefer-source --no-interaction --dev
+install:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --no-interaction
 
 script:
   - mkdir -p build/logs
   - php vendor/bin/phpunit -c phpunit.xml.dist
-#  - vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
 
-#after_success:
-#  - travis_retry php vendor/bin/coveralls
-#  - travis_retry php vendor/bin/coveralls -v
-#  - bash <(curl -s https://codecov.io/bash)
+after_success:
+  - travis_retry php vendor/bin/coveralls
+  - travis_retry php vendor/bin/coveralls -v
+
