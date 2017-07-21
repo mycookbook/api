@@ -56,6 +56,8 @@ class UserTest extends TestCase
                 'email' => 'sally@foo.com'
             ]
         );
+
+        // test validation
     }
 
     /**
