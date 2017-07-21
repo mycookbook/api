@@ -32,28 +32,110 @@ class UserTest extends TestCase
     }
 
     /**
-     * A basic functional test example.
+     * Test that the name field is required
      *
      * @return void
      */
-    public function testThatInputIsValid()
+    public function testThatNameFieldIsRequired()
     {
         $this->json(
             'POST', '/api/v1/signup', [
                 'name' => '',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        )->seeJson(
+            [
+                'name' => [
+                    'The name field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * Test that the email field is required
+     *
+     * @return void
+     */
+    public function testThatEmailFieldIsRequired()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => '',
+                'password' => 'salis'
+            ]
+        )->seeJson(
+            [
+                'email' => [
+                    'The email field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * Test that the email field is valid email
+     *
+     * @return void
+     */
+    public function testThatEmailFieldIsValidEmail()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
                 'email' => 'invalidemailaddress',
-                'password' => 'sali'
+                'password' => 'salis'
             ]
         )->seeJson(
             [
                 'email' => [
                     'The email must be a valid email address.'
-                ],
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * Test that the password field is required
+     *
+     * @return void
+     */
+    public function testThatPasswordFieldIsRequired()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => ''
+            ]
+        )->seeJson(
+            [
+                'password' => [
+                    'The password field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * Test that the password field is a minimum of 5 characters
+     *
+     * @return void
+     */
+    public function testThatPasswordFieldIsAMinimumOf5Characters()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'sali'
+            ]
+        )->seeJson(
+            [
                 'password' => [
                     'The password must be at least 5 characters.'
-                ],
-                'name' => [
-                    'The name field is required.'
                 ]
             ]
         )->seeStatusCode(422);
