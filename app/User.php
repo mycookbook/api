@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'following', 'followers'
     ];
 
     /**
@@ -38,7 +38,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function recipe()
+    public function recipes()
     {
         return $this->hasMany('App\Recipe');
     }
@@ -48,8 +48,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function cookbook()
+    public function cookbooks()
     {
-        return $this->hasMany('App\Cookbook');
+        return $this->belongsToMany('App\Cookbook');
     }
 }
