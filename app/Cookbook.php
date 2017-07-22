@@ -30,4 +30,14 @@ class Cookbook extends Model
     {
         return $this->hasMany('Cookbook\User');
     }
+
+    /**
+     * A cook has many recipes
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function recipe()
+    {
+        return $this->hasMany('Cookbook\Recipe');
+    }
 }

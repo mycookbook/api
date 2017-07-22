@@ -29,4 +29,14 @@ class Recipe extends Model
     {
         return $this->belongsTo('Cookbook\User');
     }
+
+    /**
+     * A recipe belongs to a cookbook
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cookbook()
+    {
+        return $this->belongsTo('Cookbook\Cookbook');
+    }
 }

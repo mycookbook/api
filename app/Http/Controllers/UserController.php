@@ -78,7 +78,7 @@ class UserController extends Controller
      */
     public function getUser($id)
     {
-        $user = User::with('Recipes', 'Cookbooks')->find($id);
+        $user = User::with('Recipe', 'Cookbook')->find($id);
 
         if (! $user) {
             return response()->json(
