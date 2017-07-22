@@ -21,7 +21,7 @@ class CookbookUser extends Migration
                 $table->increments('id');
                 $table->timestamps();
                 $table->integer('user_id');
-                $table->integer('meeting_id');
+                $table->integer('cookbook_id');
             }
         );
     }
