@@ -25,8 +25,18 @@ class Recipe extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function users()
     {
         return $this->belongsTo('Cookbook\User');
+    }
+
+    /**
+     * A recipe belongs to a cookbook
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cookbooks()
+    {
+        return $this->belongsTo('Cookbook\Cookbook');
     }
 }

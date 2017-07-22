@@ -18,7 +18,7 @@ class Cookbook extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description'
+        'name', 'description', 'user_id'
     ];
 
     /**
@@ -26,8 +26,18 @@ class Cookbook extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function users()
     {
-        return $this->hasMany('Cookbook\User');
+        return $this->belongsToMany('Cookbook\User');
+    }
+
+    /**
+     * A cook has many recipes
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function recipes()
+    {
+        return $this->hasMany('Cookbook\Recipe');
     }
 }

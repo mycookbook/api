@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'following', 'followers'
     ];
 
     /**
@@ -50,6 +50,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function cookbooks()
     {
-        return $this->hasMany('App\Cookbook');
+        return $this->belongsToMany('App\Cookbook');
     }
 }
