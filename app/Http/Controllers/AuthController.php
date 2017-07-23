@@ -29,6 +29,8 @@ class AuthController extends Controller
      */
     public function create(Request $request)
     {
+        $response = [];
+
         $this->validate(
             $request, [
                 'name' => 'required',
@@ -53,12 +55,14 @@ class AuthController extends Controller
         );
 
         if ($user->save()) {
-            return response()->json(
+            $response = response()->json(
                 [
                     'response' => ['created' => true]
                 ], 201
             );
         }
+
+        return $response;
     }
 
     /**
@@ -70,6 +74,13 @@ class AuthController extends Controller
      */
     public function signin(Request $request)
     {
+        $this->validate(
+            $request, [
+                'email' => 'required',
+                'password' => 'required'
+            ]
+        );
+
         $email = $request->input('email');
         $password = $request->input('password');
 
