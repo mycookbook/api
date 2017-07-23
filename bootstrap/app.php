@@ -71,6 +71,8 @@ $app->configure('cors');
      'auth' => App\Http\Middleware\Authenticate::class,
      'throttle' => App\Http\Middleware\ThrottleRequests::class,
      'cors' => \Barryvdh\Cors\HandleCors::class,
+     'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+     'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
  ]);
 
 /*
@@ -88,6 +90,7 @@ $app->configure('cors');
  $app->register(App\Providers\AuthServiceProvider::class);
  $app->register(App\Providers\EventServiceProvider::class);
  $app->register(Barryvdh\Cors\ServiceProvider::class);
+ $app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
 
 /*
 |--------------------------------------------------------------------------
