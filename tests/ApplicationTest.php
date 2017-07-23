@@ -29,6 +29,10 @@ class ApplicationTest extends TestCase
         $response = $this->call('GET', '/api/v1');
 
         $this->assertEquals(200, $response->status());
+
+        $this->assertEquals(
+            'Cookbook API v1.0', $this->response->getContent()
+        );
     }
 
     /**
@@ -255,5 +259,66 @@ class ApplicationTest extends TestCase
     public function tearDown()
     {
         $this->artisan('migrate:reset');
+    }
+
+    /**
+     * Test that a registered users email is required to signin
+     *
+     * @return void
+     */
+    public function testThatARegisteredUsersEmailIsRequiredToSignin()
+    {
+        $this->json(
+            'POST', '/api/v1/signin', [
+                'password' => 'mypassword'
+            ]
+        )->seeJson(
+            [
+                'email' => [
+                    'The email field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * Test that a registered users password is required to signin
+     *
+     * @return void
+     */
+    public function testThatARegisteredUsersPasswordIsRequiredToSignin()
+    {
+        $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com'
+            ]
+        )->seeJson(
+            [
+                'password' => [
+                    'The password field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
+     * Test that a registered users email and password are required to signin
+     *
+     * @return void
+     */
+    public function testThatARegisteredUsersEmailAndPasswordAreRequiredToSignin()
+    {
+        $this->json(
+            'POST', '/api/v1/signin', []
+        )->seeJson(
+            [
+                'password' => [
+                    'The password field is required.'
+                ],
+                'email' => [
+                    'The email field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
     }
 }
