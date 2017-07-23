@@ -122,7 +122,7 @@ class ApplicationTest extends TestCase
             [
                 'response' => [
                     'success' => false,
-                    'data' => 'Email exists already'
+                    'data' => 'The email has already been taken.'
                 ]
             ]
         )->seeStatusCode(401);
