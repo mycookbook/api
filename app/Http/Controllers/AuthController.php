@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Hashing\BcryptHasher;
 
 /**
  * Class AuthController
@@ -28,6 +29,8 @@ class AuthController extends Controller
      */
     public function create(Request $request)
     {
+        $response = [];
+
         $this->validate(
             $request, [
                 'name' => 'required',
@@ -39,31 +42,27 @@ class AuthController extends Controller
         $name = $request->input('name');
         $email = $request->input('email');
         $password = $request->input('password');
+        $hashedPassword = (new BcryptHasher)->make($password);
 
         $user = new User(
             [
                 'name' => $name,
                 'email' => $email,
-                'password' => $password
+                'password' => $hashedPassword,
+                'following' => 0,
+                'followers' => 0
             ]
         );
 
         if ($user->save()) {
-            return response()->json(
+            $response = response()->json(
                 [
                     'response' => ['created' => true]
                 ], 201
             );
-        } else {
-            return response()->json(
-                [
-                    'response' => [
-                        'success' => false,
-                        'data' => 'Email exists already'
-                    ]
-                ], 401
-            );
         }
+
+        return $response;
     }
 
     /**
@@ -75,6 +74,13 @@ class AuthController extends Controller
      */
     public function signin(Request $request)
     {
+        $this->validate(
+            $request, [
+                'email' => 'required',
+                'password' => 'required'
+            ]
+        );
+
         $email = $request->input('email');
         $password = $request->input('password');
 
