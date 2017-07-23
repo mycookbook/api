@@ -120,12 +120,12 @@ class ApplicationTest extends TestCase
             ]
         )->seeJson(
             [
-                'response' => [
-                    'success' => false,
-                    'data' => 'Email exists already'
+                "email" => [
+                    "The email has already been taken."
+
                 ]
             ]
-        )->seeStatusCode(401);
+        )->seeStatusCode(422);
     }
 
     /**
@@ -173,6 +173,30 @@ class ApplicationTest extends TestCase
     }
 
     /**
+     * Test that name, email and password params are required
+     *
+     * @return void
+     */
+    public function testThatNameEmailAndPasswordParamsareRequired()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', []
+        )->seeJson(
+            [
+                'name' => [
+                    'The name field is required.'
+                ],
+                'email' => [
+                    'The email field is required.'
+                ],
+                'password' => [
+                    'The password field is required.'
+                ]
+            ]
+        )->seeStatusCode(422);
+    }
+
+    /**
      * A basic functional test example.
      *
      * @return void
@@ -189,7 +213,7 @@ class ApplicationTest extends TestCase
             [
                 'response' => [
                     'created' => true
-                ],
+                ]
             ]
         )->seeStatusCode(201)->seeInDatabase(
             'users', [

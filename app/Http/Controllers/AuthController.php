@@ -32,42 +32,31 @@ class AuthController extends Controller
         $this->validate(
             $request, [
                 'name' => 'required',
-                'email' => 'required|email',
+                'email' => 'required|unique:users|email',
                 'password' => 'required|min:5'
             ]
         );
+
         $name = $request->input('name');
         $email = $request->input('email');
         $password = $request->input('password');
+        $hashedPassword = (new BcryptHasher)->make($password);
 
-        $user = User::where('email', $email)->first();
+        $user = new User(
+            [
+                'name' => $name,
+                'email' => $email,
+                'password' => $hashedPassword,
+                'following' => 0,
+                'followers' => 0
+            ]
+        );
 
-        if (!$user) {
-            $user = new User();
-
-            $user->name = $name;
-            $user->email = $email;
-            $hashedPassword = (new BcryptHasher)->make($password);
-            $user->following = 0;
-            $user->followers = 0;
-
-            $user->password = $hashedPassword;
-
-            $user->save();
-
+        if ($user->save()) {
             return response()->json(
                 [
                     'response' => ['created' => true]
                 ], 201
-            );
-        } else {
-            return response()->json(
-                [
-                    'response' => [
-                        'success' => false,
-                        'data' => 'Email exists already'
-                    ]
-                ], 401
             );
         }
     }
