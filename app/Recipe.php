@@ -27,7 +27,7 @@ class Recipe extends Model
      */
     public function users()
     {
-        return $this->belongsTo('Cookbook\User');
+        return $this->belongsTo('App\User');
     }
 
     /**
@@ -37,6 +37,6 @@ class Recipe extends Model
      */
     public function cookbooks()
     {
-        return $this->belongsTo('Cookbook\Cookbook');
+        return $this->belongsTo('App\Cookbook');
     }
 }
