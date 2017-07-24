@@ -239,18 +239,6 @@ class ApplicationTest extends TestCase
     }
 
     /**
-     * Test /api/users/{1} route
-     *
-     * @return void
-     */
-    public function testCanGetOneUser()
-    {
-        $response = $this->call('GET', '/api/v1/users/1');
-
-        $this->assertEquals(200, $response->status());
-    }
-
-    /**
      * Reset Migrations
      *
      * @return void
@@ -346,5 +334,59 @@ class ApplicationTest extends TestCase
                 'error' => 'Invalid Credentials.'
             ]
         )->seeStatusCode(401);
+    }
+
+    /**
+     * Test get all users
+     *
+     * @return void
+     */
+    public function testGetAllUsers()
+    {
+        $response = $this->call('GET', '/api/v1/users');
+
+        $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * Test /api/users/{1} route
+     *
+     * @return void
+     */
+    public function testCanGetOneUser()
+    {
+        $response = $this->call('GET', '/api/v1/users/1');
+
+        $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * Test that user cannot be found
+     *
+     * @return void
+     */
+    public function testUserNotFound()
+    {
+        $response = $this->call('GET', '/api/v1/users/0');
+
+        $this->assertEquals(404, $response->status());
+
+        $this->seeJson(
+            [
+                'error' => 'Record not found.'
+            ]
+        );
+    }
+
+    /**
+     * Test can get all recipes
+     *
+     * @return void
+     */
+    public function testCanGetAllRecipes()
+    {
+        $response = $this->call('GET', '/api/v1/users/1/recipes');
+
+        $this->assertEquals(200, $response->status());
     }
 }
