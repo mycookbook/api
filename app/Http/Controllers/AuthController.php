@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Hashing\BcryptHasher;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\JWTAuth;
 
 /**
  * Class AuthController
@@ -15,9 +17,9 @@ class AuthController extends Controller
     /**
      * Initialise class
      */
-    public function __construct()
+    public function __construct(JWTAuth $jwt)
     {
-        //
+        $this->jwt = $jwt;
     }
 
     /**
@@ -81,16 +83,29 @@ class AuthController extends Controller
             ]
         );
 
-        $email = $request->input('email');
-        $password = $request->input('password');
+        $credentials = $request->only('email', 'password');
 
-        return response()->json(
-            [
-                'response' => [
-                    'success' => true,
-                    'data' => [$email, $password]
-                ]
-            ], 200
-        );
+        try {
+            if (! $token = $this->jwt->attempt($credentials) ) {
+                return response()->json(
+                    [
+                        'error' => 'Invalid Credentials'
+                    ], 401
+                );
+            } else {
+                return response()->json(
+                    [
+                        'success' => true,
+                        'token' => $token
+                    ], 200
+                );
+            }
+        } catch(JWTException $e) {
+            return response()->json(
+                [
+                    'error' => $e->getMessage()
+                ], 422
+            );
+        }
     }
 }
