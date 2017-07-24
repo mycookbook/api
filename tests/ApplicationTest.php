@@ -320,4 +320,31 @@ class ApplicationTest extends TestCase
             ]
         )->seeStatusCode(422);
     }
+
+    /**
+     * Test that a user is signing in with Invalid credentials
+     *
+     * @return void
+     */
+    public function testInvalidCredentialsWhenSigningIn()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'invalidpassword'
+            ]
+        )->seeJson(
+            [
+                'error' => 'Invalid Credentials.'
+            ]
+        )->seeStatusCode(401);
+    }
 }

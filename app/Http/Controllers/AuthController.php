@@ -89,23 +89,23 @@ class AuthController extends Controller
             if (! $token = $this->jwt->attempt($credentials) ) {
                 return response()->json(
                     [
-                        'error' => 'Invalid Credentials'
+                        'error' => 'Invalid Credentials.'
                     ], 401
-                );
-            } else {
-                return response()->json(
-                    [
-                        'success' => true,
-                        'token' => $token
-                    ], 200
                 );
             }
         } catch(JWTException $e) {
             return response()->json(
                 [
-                    'error' => $e->getMessage()
-                ], 422
+                    'msg' => $e->getMessage()
+                ], 500
             );
         }
+
+        return response()->json(
+            [
+                'success' => true,
+                'token' => $token
+            ], 200
+        );
     }
 }
