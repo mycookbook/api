@@ -23,9 +23,9 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
- $app->withFacades();
+$app->withFacades();
 
- $app->withEloquent();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -62,18 +62,20 @@ $app->configure('cors');
 |
 */
 
- $app->middleware([
-     App\Http\Middleware\ExampleMiddleware::class,
-     \Barryvdh\Cors\HandleCors::class
- ]);
+$app->middleware(
+    [
+        App\Http\Middleware\ExampleMiddleware::class,
+        \Barryvdh\Cors\HandleCors::class
+    ]
+);
 
- $app->routeMiddleware([
-     'auth' => App\Http\Middleware\Authenticate::class,
-     'throttle' => App\Http\Middleware\ThrottleRequests::class,
-     'cors' => \Barryvdh\Cors\HandleCors::class,
-     'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
-     'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
- ]);
+$app->routeMiddleware(
+    [
+        'auth' => App\Http\Middleware\Authenticate::class,
+        'throttle' => App\Http\Middleware\ThrottleRequests::class,
+        'cors' => \Barryvdh\Cors\HandleCors::class,
+    ]
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -86,11 +88,10 @@ $app->configure('cors');
 |
 */
 
- $app->register(App\Providers\AppServiceProvider::class);
- $app->register(App\Providers\AuthServiceProvider::class);
- $app->register(App\Providers\EventServiceProvider::class);
- $app->register(Barryvdh\Cors\ServiceProvider::class);
- $app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
+$app->register(Barryvdh\Cors\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -103,11 +104,14 @@ $app->configure('cors');
 |
 */
 
-    $app->group(
-        [
-            'namespace' => 'App\Http\Controllers'], function ($app) {
-                require __DIR__.'/../routes/web.php';
-            }
-    );
+$app->group(
+    [
+        'namespace' => 'App\Http\Controllers'], function ($app) {
+            require __DIR__.'/../routes/web.php';
+        }
+);
 
- return $app;
+$app->alias('cache', 'Illuminate\Cache\CacheManager');
+$app->alias('auth', 'Illuminate\Auth\AuthManager');
+
+return $app;
