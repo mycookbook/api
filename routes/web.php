@@ -51,5 +51,6 @@ $app->group(
 $app->post('/api/v1/users/{id}/cookbook', 'UserController@createCookbook');
 
 $app->post(
-    '/api/v1/users/{userId}/cookbook/{cookbookId}/recipe', 'UserController@createRecipe'
+    '/api/v1/users/{userId}/cookbook/{cookbookId}/recipe',
+    'UserController@createRecipe'
 );
