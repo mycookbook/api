@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function update($id)
     {
-        $user = $this->getUser($id);
+        $user = $this->find($id);
 
         return $user;
 
@@ -45,20 +45,9 @@ class UserController extends Controller
      *
      * @return int
      */
-    public function getAllUsers()
+    public function index()
     {
         $users = User::with('Recipes', 'Cookbooks')->get();
-
-        if (count($users) < 1) {
-            return response()->json(
-                [
-                    'response' => [
-                        'success' => false,
-                        'data' => null
-                    ]
-                ], 404
-            );
-        }
 
         return response()->json(
             [
@@ -76,17 +65,14 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getUser($id)
+    public function find($id)
     {
         $user = User::with('Recipes', 'Cookbooks')->find($id);
 
         if (! $user) {
             return response()->json(
                 [
-                    'response' => [
-                        'success' => false,
-                        'data' => 'Not found!'
-                    ]
+                    'error' => 'Record not found.'
                 ], 404
             );
         }
@@ -99,79 +85,5 @@ class UserController extends Controller
                 ]
             ], 200
         );
-    }
-
-    /**
-     * Create recipe for user
-     *
-     * @param Request $request    Form input
-     * @param int     $userId     user
-     * @param int     $cookbookId cookbook
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function createRecipe(Request $request, $userId, $cookbookId)
-    {
-        $recipe = new Recipe();
-
-        $recipe->name = $request->input('name');
-        $recipe->ingredients = $request->input('ingredients');
-        $recipe->imgUrl = $request->input('url');
-        $recipe->description = $request->input('description');
-        $recipe->user_id = $userId;
-        $recipe->cookbook_id = $cookbookId;
-
-        if ($recipe->save()) {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => true
-                    ]
-                ], 200
-            );
-        } else {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => false
-                    ]
-                ], 401
-            );
-        }
-    }
-
-    /**
-     * Create cookbook for user
-     *
-     * @param Request $request Form input
-     * @param int     $userId  unique identofocation
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function createCookbook(Request $request, $userId)
-    {
-        $cookbook = new Cookbook();
-
-        $cookbook->name = $request->input('name');
-        $cookbook->description = $request->input('description');
-        $cookbook->user_id = $userId;
-
-        if ($cookbook->save()) {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => true
-                    ]
-                ], 200
-            );
-        } else {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => false
-                    ]
-                ], 401
-            );
-        }
     }
 }
