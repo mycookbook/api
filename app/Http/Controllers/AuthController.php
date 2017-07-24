@@ -93,7 +93,7 @@ class AuthController extends Controller
                     ], 401
                 );
             }
-        } catch(JWTException $e) {
+        } catch (JWTException $e) {
             return response()->json(
                 [
                     'msg' => $e->getMessage()

@@ -28,7 +28,7 @@ class Cookbook extends Model
      */
     public function users()
     {
-        return $this->belongsToMany('Cookbook\User');
+        return $this->belongsToMany('App\User');
     }
 
     /**
@@ -38,6 +38,6 @@ class Cookbook extends Model
      */
     public function recipes()
     {
-        return $this->hasMany('Cookbook\Recipe');
+        return $this->hasMany('App\Recipe');
     }
 }

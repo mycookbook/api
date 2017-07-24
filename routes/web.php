@@ -39,18 +39,20 @@ $app->patch(
 $app->group(
     ['middleware' => 'throttle'], function () use ($app) {
         $app->get(
-            '/api/v1/users/', 'UserController@getAllUsers'
+            '/api/v1/users/', 'UserController@index'
         );
 
         $app->get(
-            '/api/v1/users/{id}', 'UserController@getUser'
+            '/api/v1/users/{id}', 'UserController@find'
         );
     }
 );
 
-$app->post('/api/v1/users/{id}/cookbook', 'UserController@createCookbook');
+$app->post('/api/v1/users/{id}/cookbook', 'UserController@store');
 
 $app->post(
     '/api/v1/users/{userId}/cookbook/{cookbookId}/recipe',
-    'UserController@createRecipe'
+    'UserController@store'
 );
+
+$app->get('api/v1/users/{id}/recipes', 'RecipeController@index');
