@@ -73,7 +73,7 @@ $app->routeMiddleware(
     [
         'auth' => App\Http\Middleware\Authenticate::class,
         'throttle' => App\Http\Middleware\ThrottleRequests::class,
-        'cors' => \Barryvdh\Cors\HandleCors::class,
+        'cors' => \Barryvdh\Cors\HandleCors::class
     ]
 );
 
