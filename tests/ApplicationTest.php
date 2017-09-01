@@ -1,5 +1,7 @@
 <?php
 
+use Tymon\JWTAuth\JWT;
+
 /**
  * Class UserTest
  */
@@ -388,5 +390,228 @@ class ApplicationTest extends TestCase
         $response = $this->call('GET', '/api/v1/users/1/recipes');
 
         $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * Test Recipe can be created
+     *
+     * @return void
+     */
+    public function testRecipeCanBeCreated()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+            'email' => 'sally@foo.com',
+            'password' => 'salis'
+            ]
+        );
+
+        //        TODO: get Authorization token
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->post(
+            '/api/v1/users/1/cookbook/1/recipes',
+            [
+                'name' => 'sample recipe',
+                'ingredients' => 'sample1, sample2, sample3',
+                'url' => 'http://imagurl.com',
+                'description' => 'sample description',
+                'user_id' => 1,
+                'cookbook_id' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'created' => true,
+            ]
+        );
+
+        $this->assertResponseStatus(201);
+    }
+
+    /**
+     * Test that recipe name is given
+     *
+     * @return void
+     */
+    public function testThatRecipeNameIsGiven()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        //        TODO: get Authorization token
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->post(
+            '/api/v1/users/1/cookbook/1/recipes',
+            [
+                'name' => ' ',
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'name' => [
+                    'The name field is required.'
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * Test that Recipe ingredients is gievn
+     *
+     * #return void
+     */
+    public function testThatRecipeIngredientsGiven()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        //        TODO: get Authorization token
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->post(
+            '/api/v1/users/1/cookbook/1/recipes',
+            [
+                'ingredients' => ' ',
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'ingredients' => [
+                    'The ingredients field is required.'
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * Test that the Image url is given
+     *
+     * @return void
+     */
+    public function testThatRecipeImageUrlIsGiven()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        //        TODO: get Authorization token
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->post(
+            '/api/v1/users/1/cookbook/1/recipes',
+            [
+                'url' => ' ',
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'url' => [
+                    'The url field is required.'
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * Test that the recipe description is given
+     *
+     * @return void
+     */
+    public function testThatRecipeDescriptionIsGiven()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        //        TODO: get Authorization token
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->post(
+            '/api/v1/users/1/cookbook/1/recipes',
+            [
+                'description' => ' ',
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'description' => [
+                    'The description field is required.'
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(422);
     }
 }
