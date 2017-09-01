@@ -6,6 +6,7 @@
 namespace App\Http\Controllers;
 
 use App\Recipe;
+use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 
 /**
@@ -15,6 +16,15 @@ use Illuminate\Http\Request;
  */
 class RecipeController extends Controller
 {
+
+    /**
+     * Constructor
+     */
+    public function __construct(JWTAuth $jwt)
+    {
+        $this->middleware('jwt.auth', ['only' => ['update', 'store', 'destroy']]);
+        $this->jwt = $jwt;
+    }
     /**
      * Get all recipes belonging to a user
      *
@@ -47,31 +57,44 @@ class RecipeController extends Controller
      */
     public function store(Request $request, $userId, $cookbookId)
     {
+        $response = [];
+
+        $this->validate(
+            $request, [
+                'name' => 'required',
+                'ingredients' => 'required',
+                'url' => 'required',
+                'description' => 'required'
+            ]
+        );
+
         $recipe = new Recipe();
+
+        if (! $user = $this->jwt->parseToken()->authenticate() ) {
+            return response()->json(
+                [
+                    'msg' => 'user not authenticated'
+                ]
+            );
+        }
 
         $recipe->name = $request->input('name');
         $recipe->ingredients = $request->input('ingredients');
         $recipe->imgUrl = $request->input('url');
         $recipe->description = $request->input('description');
-        $recipe->user_id = $userId;
+        $recipe->user_id = $user->id;
         $recipe->cookbook_id = $cookbookId;
 
         if ($recipe->save()) {
-            return response()->json(
+            $response =  response()->json(
                 [
                     'response' => [
                         'created' => true
                     ]
-                ], 200
-            );
-        } else {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => false
-                    ]
-                ], 401
+                ], 201
             );
         }
+
+        return $response;
     }
 }

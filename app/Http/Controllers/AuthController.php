@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use Illuminate\Hashing\BcryptHasher;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\JWTAuth;
 
 /**
  * Class AuthController
