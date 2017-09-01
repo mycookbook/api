@@ -51,8 +51,8 @@ $app->group(
 $app->post('/api/v1/users/{id}/cookbook', 'UserController@store');
 
 $app->post(
-    '/api/v1/users/{userId}/cookbook/{cookbookId}/recipe',
-    'UserController@store'
+    '/api/v1/users/{userId}/cookbook/{cookbookId}/recipes',
+    'RecipeController@store'
 );
 
 $app->get('api/v1/users/{id}/recipes', 'RecipeController@index');
