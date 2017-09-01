@@ -418,9 +418,8 @@ class ApplicationTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $this->post(
-            '/api/v1/users/1/cookbook/1/recipes',
-            [
+        $this->json(
+            'POST', '/api/v1/users/1/cookbook/1/recipes', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
@@ -430,13 +429,7 @@ class ApplicationTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
-            [
-                'created' => true,
-            ]
-        );
-
-        $this->assertResponseStatus(201);
+        )->seeStatusCode(201);
     }
 
     /**
