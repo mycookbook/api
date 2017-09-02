@@ -6,6 +6,7 @@
 namespace App\Http\Controllers;
 
 use App\Recipe;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 
@@ -16,9 +17,10 @@ use Illuminate\Http\Request;
  */
 class RecipeController extends Controller
 {
-
     /**
      * Constructor
+     *
+     * @param JWTAuth $jwt auth-jwt
      */
     public function __construct(JWTAuth $jwt)
     {
@@ -32,15 +34,14 @@ class RecipeController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($user_id)
+    public function index()
     {
-        $recipes = Recipe::with('Users')->get();
+        $recipes = Recipe::where('user_id', $this->jwt->toUser()->id)->get();
 
         return response()->json(
             [
                 'response' => [
-                    'user_id' => $user_id,
-                    'data' => $recipes->toArray()
+                    'recipes' => $recipes->toArray()
                 ]
             ], 200
         );
@@ -50,12 +51,11 @@ class RecipeController extends Controller
      * Create recipe for user
      *
      * @param Request $request    Form input
-     * @param int     $userId     user
      * @param int     $cookbookId cookbook
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, $userId, $cookbookId)
+    public function store(Request $request, $cookbookId)
     {
         $response = [];
 
@@ -89,7 +89,8 @@ class RecipeController extends Controller
             $response =  response()->json(
                 [
                     'response' => [
-                        'created' => true
+                        'created' => true,
+                        'recipeId' => $recipe->id
                     ]
                 ], 201
             );
