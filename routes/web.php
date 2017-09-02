@@ -14,45 +14,51 @@
 /**
  * Welcome and API documentation page
  */
-$app->get(
-    '/api/v1', function () use ($app) {
-        return 'Cookbook API v1.0';
-    }
-);
-
-$app->post(
-    '/api/v1/signup', 'AuthController@create'
-);
-
-$app->post(
-    '/api/v1/signin', 'AuthController@signin'
-);
-
-$app->put(
-    '/api/v1/users/{id}', 'UserController@update'
-);
-
-$app->patch(
-    '/api/v1/users/{id}', 'UserController@update'
-);
 
 $app->group(
-    ['middleware' => 'throttle'], function () use ($app) {
+    ['prefix' => 'api/v1'], function () use ($app) {
         $app->get(
-            '/api/v1/users/', 'UserController@index'
+            '/', function () {
+                return 'Cookbook API v1.0';
+            }
         );
 
-        $app->get(
-            '/api/v1/users/{id}', 'UserController@find'
+        $app->post(
+            '/api/v1/signup', 'AuthController@create'
         );
+
+        $app->post(
+            '/api/v1/signin', 'AuthController@signin'
+        );
+
+        $app->put(
+            '/api/v1/users/{id}', 'UserController@update'
+        );
+
+        $app->patch(
+            '/api/v1/users/{id}', 'UserController@update'
+        );
+
+        $app->group(
+            ['middleware' => 'throttle'], function () use ($app) {
+                $app->get(
+                    '/api/v1/users/', 'UserController@index'
+                );
+
+                $app->get(
+                    '/api/v1/users/{id}', 'UserController@find'
+                );
+            }
+        );
+
+        $app->post('/api/v1/users/{id}/cookbook', 'UserController@store');
+
+        $app->post(
+            '/api/v1/users/{userId}/cookbook/{cookbookId}/recipes',
+            'RecipeController@store'
+        );
+
+        $app->get('api/v1/user/{id}/recipes', 'RecipeController@index');
     }
 );
 
-$app->post('/api/v1/users/{id}/cookbook', 'UserController@store');
-
-$app->post(
-    '/api/v1/users/{userId}/cookbook/{cookbookId}/recipes',
-    'RecipeController@store'
-);
-
-$app->get('api/v1/users/{id}/recipes', 'RecipeController@index');
