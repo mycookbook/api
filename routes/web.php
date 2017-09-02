@@ -24,41 +24,45 @@ $app->group(
         );
 
         $app->post(
-            '/api/v1/signup', 'AuthController@create'
+            '/signup', 'AuthController@create'
         );
 
         $app->post(
-            '/api/v1/signin', 'AuthController@signin'
+            '/signin', 'AuthController@signin'
         );
 
         $app->put(
-            '/api/v1/users/{id}', 'UserController@update'
+            '/users/{id}', 'UserController@update'
         );
 
         $app->patch(
-            '/api/v1/users/{id}', 'UserController@update'
+            '/users/{id}', 'UserController@update'
         );
 
         $app->group(
             ['middleware' => 'throttle'], function () use ($app) {
                 $app->get(
-                    '/api/v1/users/', 'UserController@index'
+                    '/users/', 'UserController@index'
                 );
 
                 $app->get(
-                    '/api/v1/users/{id}', 'UserController@find'
+                    '/users/{id}', 'UserController@find'
                 );
             }
         );
 
-        $app->post('/api/v1/users/{id}/cookbook', 'UserController@store');
+        $app->post('//users/{id}/cookbook', 'UserController@store');
 
         $app->post(
-            '/api/v1/users/{userId}/cookbook/{cookbookId}/recipes',
+            '/user/cookbook/{cookbookId}/recipe',
             'RecipeController@store'
         );
 
-        $app->get('api/v1/user/{id}/recipes', 'RecipeController@index');
+        $app->group(
+            ['middleware' => 'jwt.auth'], function () use ($app) {
+                $app->get('/user/recipes', 'RecipeController@index');
+            }
+        );
     }
 );
 
