@@ -6,7 +6,6 @@
 namespace App\Http\Controllers;
 
 use App\Recipe;
-use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 
@@ -30,13 +29,13 @@ class RecipeController extends Controller
     /**
      * Get all recipes belonging to a user
      *
-     * @param int $user_id userid
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $recipes = Recipe::with('Cookbook')->where('user_id', $this->jwt->toUser()->id)->get();
+        $recipes = Recipe::with('Cookbook')
+            ->where('user_id', $this->jwt->toUser()->id)
+            ->get();
 
         return response()->json(
             [
