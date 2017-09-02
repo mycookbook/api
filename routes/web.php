@@ -51,7 +51,7 @@ $app->group(
             }
         );
 
-        $app->post('//users/{id}/cookbook', 'UserController@store');
+        $app->post('/users/{id}/cookbook', 'UserController@store');
 
         $app->post(
             '/user/cookbook/{cookbookId}/recipe',

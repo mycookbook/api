@@ -35,7 +35,7 @@ class Recipe extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function cookbooks()
+    public function cookbook()
     {
         return $this->belongsTo('App\Cookbook');
     }

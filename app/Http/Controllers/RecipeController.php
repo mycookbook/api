@@ -36,7 +36,7 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::where('user_id', $this->jwt->toUser()->id)->get();
+        $recipes = Recipe::with('Cookbook')->where('user_id', $this->jwt->toUser()->id)->get();
 
         return response()->json(
             [

@@ -20,6 +20,9 @@ class Cookbook extends Model
     protected $fillable = [
         'name', 'description', 'user_id'
     ];
+    protected $hidden = [
+        'user_id'
+    ];
 
     /**
      * A user can subscribe to many cookbooks
