@@ -51,16 +51,17 @@ $app->group(
             }
         );
 
-        $app->post('/users/{id}/cookbook', 'UserController@store');
-
-        $app->post(
-            '/user/cookbook/{cookbookId}/recipe',
-            'RecipeController@store'
-        );
-
         $app->group(
             ['middleware' => 'jwt.auth'], function () use ($app) {
+                // Recipes
                 $app->get('/user/recipes', 'RecipeController@index');
+                $app->post(
+                    '/user/cookbook/{cookbookId}/recipe',
+                    'RecipeController@store'
+                );
+
+                // Cookbooks
+                $app->post('/users/{id}/cookbook', 'CookbookController@store');
             }
         );
     }
