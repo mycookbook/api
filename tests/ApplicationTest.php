@@ -381,18 +381,6 @@ class ApplicationTest extends TestCase
     }
 
     /**
-     * Test can get all recipes
-     *
-     * @return void
-     */
-//    public function testCanGetAllRecipes()
-//    {
-//        $response = $this->call('GET', '/api/v1/users/1/recipes');
-//
-//        $this->assertEquals(200, $response->status());
-//    }
-
-    /**
      * Test Recipe can be created
      *
      * @return void
@@ -533,5 +521,48 @@ class ApplicationTest extends TestCase
         );
 
         $this->assertResponseStatus(200);
+    }
+
+    /**
+     * Test Recipe cannot be created when token is invalid
+     *
+     * @return void
+     */
+    public function testRecipecannotBeCreatedWhentokenIsInvalid()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // invalid token
+        $token = 'invalidToken';
+
+        $this->post(
+            '/api/v1/cookbook/1/recipe',
+            [
+                'name' => ' ',
+                'ingredients' => ' ',
+                'url' => ' ',
+                'description' => ' '
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'status' => 'error',
+                'message' => 'Token is invalid'
+            ]
+        );
     }
 }
