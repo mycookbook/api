@@ -32,13 +32,14 @@ $app->group(
         );
 
         $app->put(
-            '/users/{id}', 'UserController@update'
+            '/user/{id}', 'UserController@update'
         );
 
         $app->patch(
-            '/users/{id}', 'UserController@update'
+            '/user/{id}', 'UserController@update'
         );
 
+        // Developers
         $app->group(
             ['middleware' => 'throttle'], function () use ($app) {
                 $app->get(
@@ -46,7 +47,7 @@ $app->group(
                 );
 
                 $app->get(
-                    '/users/{id}', 'UserController@find'
+                    '/user/{id}', 'UserController@find'
                 );
             }
         );
@@ -54,9 +55,9 @@ $app->group(
         $app->group(
             ['middleware' => 'jwt.auth'], function () use ($app) {
                 // Recipes
-                $app->get('/user/recipes', 'RecipeController@index');
+                $app->get('/recipes', 'RecipeController@index');
                 $app->post(
-                    '/user/cookbook/{cookbookId}/recipe',
+                    '/cookbook/{cookbookId}/recipe',
                     'RecipeController@store'
                 );
 

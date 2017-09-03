@@ -357,7 +357,7 @@ class ApplicationTest extends TestCase
      */
     public function testCanGetOneUser()
     {
-        $response = $this->call('GET', '/api/v1/users/1');
+        $response = $this->call('GET', '/api/v1/user/1');
 
         $this->assertEquals(200, $response->status());
     }
@@ -369,7 +369,7 @@ class ApplicationTest extends TestCase
      */
     public function testUserNotFound()
     {
-        $response = $this->call('GET', '/api/v1/users/0');
+        $response = $this->call('GET', '/api/v1/user/0');
 
         $this->assertEquals(404, $response->status());
 
@@ -421,7 +421,7 @@ class ApplicationTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/user/cookbook/1/recipe', [
+            'POST', '/api/v1/cookbook/1/recipe', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
@@ -468,7 +468,7 @@ class ApplicationTest extends TestCase
         $token = $obj->{'token'};
 
         $this->post(
-            '/api/v1/user/cookbook/1/recipe',
+            '/api/v1/cookbook/1/recipe',
             [
                 'name' => ' ',
                 'ingredients' => ' ',
@@ -502,35 +502,36 @@ class ApplicationTest extends TestCase
      *
      * @return void
      */
-//    public function testCanGetAllRecipesForOneUser()
-//    {
-//        $this->json(
-//            'POST', '/api/v1/signup', [
-//                'name' => 'Sally',
-//                'email' => 'sally@foo.com',
-//                'password' => 'salis'
-//            ]
-//        );
-//
-//        $res = $this->json(
-//            'POST', '/api/v1/signin', [
-//                'email' => 'sally@foo.com',
-//                'password' => 'salis'
-//            ]
-//        );
-//
-//        // TODO: test for UnauthorizedHttpException
-//        // when Authorization token is not set
-//
-//        $obj = json_decode($res->response->getContent());
-//        $token = $obj->{'token'};
-//
-//        $response = $this->call(
-//            'GET', 'api/v1/user/1/recipes', [
-//                'HTTP_Authorization' => 'Bearer' . $token
-//            ]
-//        );
-//
-//        dd($response->getContent());
-//    }
+    public function testCanGetAllRecipesForOneUser()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // TODO: test for UnauthorizedHttpException
+        // when Authorization token is not set
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->get(
+            '/api/v1/recipes',
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $this->assertResponseStatus(200);
+    }
 }

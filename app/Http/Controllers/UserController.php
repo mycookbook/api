@@ -26,22 +26,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update user
-     *
-     * @param int $id unique identification
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update($id)
-    {
-        $user = $this->find($id);
-
-        return $user;
-
-    }
-
-    /**
-     * Get all users fromt he database
+     * Get all users from the database
      *
      * @return int
      */
@@ -85,5 +70,19 @@ class UserController extends Controller
                 ]
             ], 200
         );
+    }
+
+    /**
+     * Update user
+     *
+     * @param int $id unique identification
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update($id)
+    {
+        $user = $this->find($id);
+
+        return $user;
     }
 }
