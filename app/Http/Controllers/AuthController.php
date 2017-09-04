@@ -16,6 +16,8 @@ class AuthController extends Controller
 {
     /**
      * Initialise class
+     *
+     * @param JWTAuth $jwt jwt
      */
     public function __construct(JWTAuth $jwt)
     {

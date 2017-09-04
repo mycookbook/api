@@ -1,6 +1,5 @@
 <?php
 
-use Tymon\JWTAuth\JWT;
 
 /**
  * Class UserTest
@@ -238,16 +237,6 @@ class ApplicationTest extends TestCase
         $response = $this->call('GET', '/api/v1/users');
 
         $this->assertEquals(200, $response->status());
-    }
-
-    /**
-     * Reset Migrations
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        $this->artisan('migrate:reset');
     }
 
     /**
@@ -528,7 +517,7 @@ class ApplicationTest extends TestCase
      *
      * @return void
      */
-    public function testRecipecannotBeCreatedWhentokenIsInvalid()
+    public function testRecipeCannotBeCreatedWhenTokenIsInvalid()
     {
         $this->json(
             'POST', '/api/v1/signup', [
@@ -564,5 +553,15 @@ class ApplicationTest extends TestCase
                 'message' => 'Token is invalid'
             ]
         );
+    }
+
+    /**
+     * Reset Migrations
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->artisan('migrate:reset');
     }
 }
