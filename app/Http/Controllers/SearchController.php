@@ -1,15 +1,51 @@
 <?php
-/**
- * SearchController
- *
- * @author Florence Okosun <florence.okosun@getitllc.com>
- * @copyright Copyright(c) 2017 Get It, LLC(http://www.getit.me)
- */
 
 namespace App\Http\Controllers;
 
 
-class SearchController
+/**
+ * Class SearchController
+ */
+class SearchController extends Controller
 {
+    /**
+     * Return items based on query
+     *
+     * @param string $query search_query
+     *
+     * @return void
+     */
+    public function find($query)
+    {
+        // find cookbook that matches query
+        // find recipe that matches query
+        // merge into one array
+    }
 
+    /**
+     * Return cookbooks for specific key
+     *
+     * @param string $query query
+     *
+     * @return array
+     */
+    public function getRecipes($query)
+    {
+        return [];
+    }
+
+
+    /**
+     * Return re
+     * @param $key
+     */
+    public function getCookbooks($key)
+    {
+
+    }
+
+    protected function queryResults()
+    {
+
+    }
 }

@@ -21,6 +21,10 @@ $app->group(
             '/', function () {
                 return 'Cookbook API v1.0';
             }
+        )->post(
+            '/', function () {
+                return 'tryna to post';
+            }
         );
 
         $app->post(
@@ -41,7 +45,7 @@ $app->group(
 
         // Developers
         $app->group(
-            ['middleware' => 'throttle'], function () use ($app) {
+            ['middleware' => 'throttle:30'], function () use ($app) {
                 $app->get(
                     '/users/', 'UserController@index'
                 );
