@@ -41,11 +41,11 @@ class SearchController extends Controller
      */
     public function getCookbooks($key)
     {
-
+        return $key;
     }
 
     protected function queryResults()
     {
-
+        return 'queryResults';
     }
 }
