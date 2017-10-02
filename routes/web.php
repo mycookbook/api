@@ -70,7 +70,12 @@ $app->group(
                 );
 
                 // Cookbooks
-                $app->post('/users/{id}/cookbook', 'CookbookController@store');
+                $app->post('/user/{id}/cookbook', 'CookbookController@store')
+                    ->get('/user/{id}/cookbook', 'CookbookController@index');
+                $app->put(
+                    '/cookbook/{cookbookId}',
+                    'CookbookController@update'
+                );
             }
         );
     }
