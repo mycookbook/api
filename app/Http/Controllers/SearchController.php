@@ -31,7 +31,7 @@ class SearchController extends Controller
      */
     public function getRecipes($query)
     {
-        return [];
+        return $query;
     }
 
 
