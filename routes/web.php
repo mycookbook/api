@@ -53,6 +53,10 @@ $app->group(
                 $app->get(
                     '/user/{id}', 'UserController@find'
                 );
+
+                $app->get(
+                    '/stats/', 'StatsController@index'
+                );
             }
         );
 
