@@ -7,6 +7,8 @@ use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use Illuminate\Hashing\BcryptHasher;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 /**
  * Class AuthController
@@ -61,7 +63,10 @@ class AuthController extends Controller
         if ($user->save()) {
             $response = response()->json(
                 [
-                    'response' => ['created' => true]
+                    'response' => [
+                        'created' => true,
+                        'signin_uri' => '/api/v1/signin'
+                    ]
                 ], 201
             );
         }
@@ -91,14 +96,26 @@ class AuthController extends Controller
             if (! $token = $this->jwt->attempt($credentials) ) {
                 return response()->json(
                     [
-                        'error' => 'Invalid Credentials.'
-                    ], 401
+                        'Not found or Invalid Credentials.'
+                    ], 404
                 );
             }
+        } catch (TokenExpiredException $e) {
+            return response()->json(
+                [
+                    'token_expired'
+                ], 500
+            );
+        } catch (TokenInvalidException $e) {
+            return response()->json(
+                [
+                    'token_invalid'
+                ], 500
+            );
         } catch (JWTException $e) {
             return response()->json(
                 [
-                    'msg' => $e->getMessage()
+                    'token_absent' => $e->getMessage()
                 ], 500
             );
         }

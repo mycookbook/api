@@ -21,6 +21,10 @@ $app->group(
             '/', function () {
                 return 'Cookbook API v1.0';
             }
+        )->post(
+            '/', function () {
+                return 'tryna to post';
+            }
         );
 
         $app->post(
@@ -41,13 +45,17 @@ $app->group(
 
         // Developers
         $app->group(
-            ['middleware' => 'throttle'], function () use ($app) {
+            ['middleware' => 'throttle:30'], function () use ($app) {
                 $app->get(
                     '/users/', 'UserController@index'
                 );
 
                 $app->get(
                     '/user/{id}', 'UserController@find'
+                );
+
+                $app->get(
+                    '/stats/', 'StatsController@index'
                 );
             }
         );
@@ -62,7 +70,12 @@ $app->group(
                 );
 
                 // Cookbooks
-                $app->post('/users/{id}/cookbook', 'CookbookController@store');
+                $app->post('/user/{id}/cookbook', 'CookbookController@store')
+                    ->get('/user/{id}/cookbook', 'CookbookController@index');
+                $app->put(
+                    '/cookbook/{cookbookId}',
+                    'CookbookController@update'
+                );
             }
         );
     }
