@@ -557,6 +557,49 @@ class ApplicationTest extends TestCase
     }
 
     /**
+     * Test that Cookbook can be created
+     *
+     * @return void
+     */
+    public function testCookbookCanBeCreated()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // TODO: test for UnauthorizedHttpException
+        // when Authorization token is not set
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->json(
+            'POST', '/api/v1/user/1/cookbook', [
+                'name' => 'sample cookbook',
+                'description' => 'sample description'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'created' => true,
+                'link' => 'api/v1/cookbook/' . 2
+            ]
+        )->seeStatusCode(200);
+    }
+
+    /**
      * Reset Migrations
      *
      * @return void

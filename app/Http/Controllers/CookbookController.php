@@ -121,7 +121,8 @@ class CookbookController extends Controller
             return response()->json(
                 [
                     'response' => [
-                        'created' => true
+                        'created' => true,
+                        'link' => 'api/v1/cookbook/' . $cookbook->id
                     ]
                 ], 200
             );
