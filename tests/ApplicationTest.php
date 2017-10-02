@@ -216,7 +216,8 @@ class ApplicationTest extends TestCase
         )->seeJson(
             [
                 'response' => [
-                    'created' => true
+                    'created' => true,
+                    'signin_uri' => '/api/v1/signin'
                 ]
             ]
         )->seeStatusCode(201)->seeInDatabase(
@@ -322,9 +323,9 @@ class ApplicationTest extends TestCase
             ]
         )->seeJson(
             [
-                'error' => 'Invalid Credentials.'
+                'Not found or Invalid Credentials.'
             ]
-        )->seeStatusCode(401);
+        )->seeStatusCode(404);
     }
 
     /**
