@@ -1,7 +1,4 @@
 <?php
-/**
- * RecipeController
- */
 
 namespace App\Http\Controllers;
 
