@@ -22,6 +22,15 @@ class RecipeController extends Controller
     {
         $this->middleware('jwt.auth', ['only' => ['update', 'store', 'destroy']]);
         $this->jwt = $jwt;
+        $this->user = $this->jwt->parseToken()->authenticate();
+
+        if (! $this->user ) {
+            return response()->json(
+                [
+                    'msg' => 'user not authenticated'
+                ]
+            );
+        }
     }
     /**
      * Get all recipes belonging to a user
@@ -66,19 +75,11 @@ class RecipeController extends Controller
 
         $recipe = new Recipe();
 
-        if (! $user = $this->jwt->parseToken()->authenticate() ) {
-            return response()->json(
-                [
-                    'msg' => 'user not authenticated'
-                ]
-            );
-        }
-
         $recipe->name = $request->input('name');
         $recipe->ingredients = $request->input('ingredients');
         $recipe->imgUrl = $request->input('url');
         $recipe->description = $request->input('description');
-        $recipe->user_id = $user->id;
+        $recipe->user_id = $this->user->id;
         $recipe->cookbook_id = $cookbookId;
 
         if ($recipe->save()) {
