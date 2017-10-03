@@ -1,7 +1,4 @@
 <?php
-/**
- * CookbookController
- */
 
 namespace App\Http\Controllers;
 
@@ -73,18 +70,50 @@ class CookbookController extends Controller
     /**
      * Update cookbook
      *
-     * @param int $cookbookId paramname
+     * @param Request $request    request input
+     * @param int     $cookbookId paramname
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update($cookbookId)
+    public function update(Request $request, $cookbookId)
     {
+        $response = [];
+
         $cookbook = Cookbook::find($cookbookId);
 
-        return $cookbook;
+        if (! $cookbook || $cookbook === null) {
+            $response["error"] = 'Record does not exist.';
+            $response["status"] = 404;
+        } else {
+            $fields = $request->only('name', 'description');
+
+            foreach ($fields as $key => $val) {
+                if ($val !== null || !is_null($val)) {
+                    $cookbook->$key = $val;
+                }
+            }
+
+            try {
+                if ($cookbook->save()) {
+                    $response["updated"] = true;
+                    $response["status"] = 200;
+                }
+            } catch (Exception $e) {
+                $response["error"] = $e->getMessage();
+                $response["status"] = 422;
+            }
+        }
+
+        return response()->json(
+            [
+                'response' => $response
+            ], $response["status"]
+        );
     }
 
     /**
+     * Find one cookbook belonging to the author
+     *
      * @param int $id identifier
      *
      * @return int
@@ -135,5 +164,42 @@ class CookbookController extends Controller
                 ], 401
             );
         }
+    }
+
+    /**
+     * Delete a cookbook
+     *
+     * @param int $cookbookId cookbookId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete($cookbookId)
+    {
+        $cookbook = Cookbook::find($cookbookId);
+        $response = [];
+
+        if (! $cookbook || $cookbook === null) {
+            return response()->json(
+                [
+                    'response' => 'Record does not exist'
+                ], 404
+            );
+        } else {
+            try {
+                if ($cookbook->delete()) {
+                    $response["deleted"] = true;
+                    $response["status"] = 200;
+                }
+            } catch (Exception $e) {
+                $response["error"] = $e->getMessage();
+                $response["status"] = 422;
+            }
+        }
+
+        return response()->json(
+            [
+                'response' => $response["response"]
+            ], $response["status"]
+        );
     }
 }
