@@ -68,50 +68,6 @@ class CookbookController extends Controller
     }
 
     /**
-     * Update cookbook
-     *
-     * @param Request $request    request input
-     * @param int     $cookbookId paramname
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, $cookbookId)
-    {
-        $response = [];
-
-        $cookbook = Cookbook::find($cookbookId);
-
-        if (! $cookbook || $cookbook === null) {
-            $response["error"] = 'Record does not exist.';
-            $response["status"] = 404;
-        } else {
-            $fields = $request->only('name', 'description');
-
-            foreach ($fields as $key => $val) {
-                if ($val !== null || !is_null($val)) {
-                    $cookbook->$key = $val;
-                }
-            }
-
-            try {
-                if ($cookbook->save()) {
-                    $response["updated"] = true;
-                    $response["status"] = 200;
-                }
-            } catch (Exception $e) {
-                $response["error"] = $e->getMessage();
-                $response["status"] = 422;
-            }
-        }
-
-        return response()->json(
-            [
-                'response' => $response
-            ], $response["status"]
-        );
-    }
-    
-    /**
      * Create cookbook for user
      *
      * @param Request $request Form input
@@ -155,6 +111,50 @@ class CookbookController extends Controller
     }
 
     /**
+     * Update cookbook
+     *
+     * @param Request $request    request input
+     * @param int     $cookbookId paramname
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $cookbookId)
+    {
+        $response = [];
+
+        $cookbook = self::cookbookExist($cookbookId);
+
+        if (! $cookbook || $cookbook === null) {
+            $response["error"] = 'Record does not exist.';
+            $response["status"] = 404;
+        } else {
+            $fields = $request->only('name', 'description');
+
+            foreach ($fields as $key => $val) {
+                if ($val !== null || !is_null($val)) {
+                    $cookbook->$key = $val;
+                }
+            }
+
+            try {
+                if ($cookbook->save()) {
+                    $response["updated"] = true;
+                    $response["status"] = 200;
+                }
+            } catch (Exception $e) {
+                $response["error"] = $e->getMessage();
+                $response["status"] = 422;
+            }
+        }
+
+        return response()->json(
+            [
+                'response' => $response
+            ], $response["status"]
+        );
+    }
+
+    /**
      * Delete a cookbook
      *
      * @param int $cookbookId cookbookId
@@ -163,8 +163,9 @@ class CookbookController extends Controller
      */
     public function delete($cookbookId)
     {
-        $cookbook = Cookbook::find($cookbookId);
         $response = [];
+
+        $cookbook = self::cookbookExist($cookbookId);
 
         if (! $cookbook || $cookbook === null) {
             return response()->json(
@@ -189,5 +190,17 @@ class CookbookController extends Controller
                 'response' => $response["response"]
             ], $response["status"]
         );
+    }
+
+    /**
+     * Find the cookbook
+     *
+     * @param int $cookbookId cookbokId
+     *
+     * @return mixed
+     */
+    protected static function cookbookExist($cookbookId)
+    {
+        return Cookbook::find($cookbookId) ?? false;
     }
 }
