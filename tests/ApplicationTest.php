@@ -600,6 +600,227 @@ class ApplicationTest extends TestCase
     }
 
     /**
+     * Test that cookbook name is given
+     *
+     * @return void
+     */
+    public function testThatCookbookFieldsAreGiven()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        //        TODO: get Authorization token
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->post(
+            '/api/v1/user/1/cookbook',
+            [
+                'name' => ' ',
+                'description' => ' '
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'name' => [
+                    'The name field is required.'
+                ],
+                'description' => [
+                    'The description field is required.'
+                ],
+            ]
+        );
+
+        $this->assertResponseStatus(422);
+    }
+
+    /**
+     * Test can get all the cookbooks for one user
+     *
+     * @return void
+     */
+    public function testCanGetAllCookbooksForOneUser()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // TODO: test for UnauthorizedHttpException
+        // when Authorization token is not set
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->get(
+            '/api/v1/user/1/cookbook',
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $this->assertResponseStatus(200);
+    }
+
+    /**
+     * Test Cookbook cannot be created when token is invalid
+     *
+     * @return void
+     */
+    public function testCookbookCannotBeCreatedWhenTokenIsInvalid()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // invalid token
+        $token = 'invalidToken';
+
+        $this->post(
+            '/api/v1/user/1/cookbook',
+            [
+                'name' => ' ',
+                'description' => ' '
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'status' => 'error',
+                'message' => 'Token is invalid'
+            ]
+        );
+    }
+
+    /**
+     * Test that cookbook can be updated if found
+     *
+     * @return void
+     */
+    public function testThatCookbookCanBeUpdated()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $cookbookId = 1;
+
+        $this->put(
+            '/api/v1/cookbook/' . $cookbookId,
+            [
+                'name' => 'test',
+                'description' => 'sample'
+            ], [
+            'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'response' => [
+                    'updated' => true,
+                    'status' => 200
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(200);
+    }
+
+    /**
+     * Test that cookbook can be updated if not found
+     *
+     * @return void
+     */
+    public function testThatCookbookCannotBeUpdatedIfNotFound()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $cookbookId = 2;
+
+        $this->put(
+            '/api/v1/cookbook/' . $cookbookId,
+            [
+                'name' => 'test',
+                'description' => 'sample update'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'response' => [
+                    'error' => 'Record does not exist.',
+                    'status' => 404
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
      * Reset Migrations
      *
      * @return void
