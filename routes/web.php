@@ -76,6 +76,10 @@ $app->group(
                     '/cookbook/{cookbookId}',
                     'CookbookController@update'
                 );
+                $app->delete(
+                    '/cookbook/{cookbookId}',
+                    'CookbookController@delete'
+                );
             }
         );
     }
