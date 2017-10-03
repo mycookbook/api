@@ -110,19 +110,7 @@ class CookbookController extends Controller
             ], $response["status"]
         );
     }
-
-    /**
-     * Find one cookbook belonging to the author
-     *
-     * @param int $id identifier
-     *
-     * @return int
-     */
-    public function find($id)
-    {
-        return $id;
-    }
-
+    
     /**
      * Create cookbook for user
      *
