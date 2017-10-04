@@ -23,7 +23,9 @@ class CookbookController extends Controller
         $this->middleware('jwt.auth', ['only' => ['update', 'store', 'destroy']]);
         $this->jwt = $jwt;
 
-        if (! $user = $this->jwt->parseToken()->authenticate() ) {
+        $this->user = $this->jwt->parseToken()->authenticate();
+
+        if (! $this->user ) {
             return response()->json(
                 [
                     'msg' => 'user not authenticated'
@@ -71,12 +73,13 @@ class CookbookController extends Controller
      * Create cookbook for user
      *
      * @param Request $request Form input
-     * @param int     $userId  unique identofocation
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, $userId)
+    public function store(Request $request)
     {
+        $response = [];
+
         $this->validate(
             $request, [
                 'name' => 'required',
@@ -88,26 +91,30 @@ class CookbookController extends Controller
 
         $cookbook->name = $request->input('name');
         $cookbook->description = $request->input('description');
-        $cookbook->user_id = $userId;
+        $cookbook->user_id = $this->user->id;
 
-        if ($cookbook->save()) {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => true,
-                        'link' => 'api/v1/cookbook/' . $cookbook->id
-                    ]
-                ], 200
-            );
-        } else {
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => false
-                    ]
-                ], 401
-            );
+        try {
+            if ($cookbook->save()) {
+                $response['created'] = true;
+                $response['status'] = 200;
+                $response['links'] = [
+                    'get' => 'api/v1/cookbook/' . $cookbook->id,
+                    'put' => 'api/v1/cookbook/' . $cookbook->id,
+                    'patch' => 'api/v1/cookbook/' . $cookbook->id,
+                    'delete' => 'api/v1/cookbook/' . $cookbook->id
+                ];
+            }
+        } catch (Exception $e) {
+            $response["error"] = $e->getMessage();
+            $response["status"] = 422;
         }
+
+
+        return response()->json(
+            [
+                'response' => $response
+            ], $response["status"]
+        );
     }
 
     /**
@@ -125,7 +132,7 @@ class CookbookController extends Controller
         $cookbook = self::cookbookExist($cookbookId);
 
         if (! $cookbook || $cookbook === null) {
-            $response["error"] = 'Record does not exist.';
+            $response["error"] = 'Cookbook does not exist.';
             $response["status"] = 404;
         } else {
             $fields = $request->only('name', 'description');
@@ -168,16 +175,13 @@ class CookbookController extends Controller
         $cookbook = self::cookbookExist($cookbookId);
 
         if (! $cookbook || $cookbook === null) {
-            return response()->json(
-                [
-                    'response' => 'Record does not exist'
-                ], 404
-            );
+            $response["error"] = 'Record does not exist.';
+            $response["status"] = 404;
         } else {
             try {
                 if ($cookbook->delete()) {
                     $response["deleted"] = true;
-                    $response["status"] = 200;
+                    $response["status"] = 202;
                 }
             } catch (Exception $e) {
                 $response["error"] = $e->getMessage();
@@ -187,7 +191,7 @@ class CookbookController extends Controller
 
         return response()->json(
             [
-                'response' => $response["response"]
+                'response' => $response
             ], $response["status"]
         );
     }
@@ -199,7 +203,7 @@ class CookbookController extends Controller
      *
      * @return mixed
      */
-    protected static function cookbookExist($cookbookId)
+    public static function cookbookExist($cookbookId)
     {
         return Cookbook::find($cookbookId) ?? false;
     }

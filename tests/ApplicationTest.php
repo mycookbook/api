@@ -399,22 +399,20 @@ class ApplicationTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/cookbook/1/recipe', [
+            'POST', '/api/v1/recipe', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
                 'description' => 'sample description',
                 'user_id' => 1,
-                'cookbook_id' => 1
+                'cookbookId' => 1
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
         )->seeJson(
             [
                 'created' => true,
-                'recipeId' => json_decode(
-                    $this->response->getContent()
-                )->{'response'}->{'recipeId'}
+                'recipeId' => 2
             ]
         )->seeStatusCode(201);
     }
@@ -446,7 +444,7 @@ class ApplicationTest extends TestCase
         $token = $obj->{'token'};
 
         $this->post(
-            '/api/v1/cookbook/1/recipe',
+            '/api/v1/recipe',
             [
                 'name' => ' ',
                 'ingredients' => ' ',
@@ -539,7 +537,7 @@ class ApplicationTest extends TestCase
         $token = 'invalidToken';
 
         $this->post(
-            '/api/v1/cookbook/1/recipe',
+            '/api/v1/recipe',
             [
                 'name' => ' ',
                 'ingredients' => ' ',
@@ -578,14 +576,11 @@ class ApplicationTest extends TestCase
             ]
         );
 
-        // TODO: test for UnauthorizedHttpException
-        // when Authorization token is not set
-
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/user/1/cookbook', [
+            'POST', '/api/v1/cookbook', [
                 'name' => 'sample cookbook',
                 'description' => 'sample description'
             ], [
@@ -594,7 +589,12 @@ class ApplicationTest extends TestCase
         )->seeJson(
             [
                 'created' => true,
-                'link' => 'api/v1/cookbook/' . 2
+                'links' => [
+                    'get' => 'api/v1/cookbook/' . 2,
+                    'put' => 'api/v1/cookbook/' . 2,
+                    'patch' => 'api/v1/cookbook/' . 2,
+                    'delete' => 'api/v1/cookbook/' . 2
+                ]
             ]
         )->seeStatusCode(200);
     }
@@ -626,7 +626,7 @@ class ApplicationTest extends TestCase
         $token = $obj->{'token'};
 
         $this->post(
-            '/api/v1/user/1/cookbook',
+            '/api/v1/cookbook',
             [
                 'name' => ' ',
                 'description' => ' '
@@ -676,7 +676,7 @@ class ApplicationTest extends TestCase
         $token = $obj->{'token'};
 
         $this->get(
-            '/api/v1/user/1/cookbook',
+            '/api/v1/cookbook',
             [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -711,7 +711,7 @@ class ApplicationTest extends TestCase
         $token = 'invalidToken';
 
         $this->post(
-            '/api/v1/user/1/cookbook',
+            '/api/v1/cookbook',
             [
                 'name' => ' ',
                 'description' => ' '
@@ -811,7 +811,7 @@ class ApplicationTest extends TestCase
         )->seeJson(
             [
                 'response' => [
-                    'error' => 'Record does not exist.',
+                    'error' => 'Cookbook does not exist.',
                     'status' => 404
                 ]
             ]

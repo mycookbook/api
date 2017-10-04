@@ -56,11 +56,10 @@ class RecipeController extends Controller
      * Create recipe for user
      *
      * @param Request $request    Form input
-     * @param int     $cookbookId cookbook
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, $cookbookId)
+    public function store(Request $request, CookbookController $cookbook)
     {
         $response = [];
 
@@ -69,7 +68,8 @@ class RecipeController extends Controller
                 'name' => 'required',
                 'ingredients' => 'required',
                 'url' => 'required',
-                'description' => 'required'
+                'description' => 'required',
+                'cookbookId' => 'required'
             ]
         );
 
@@ -80,19 +80,87 @@ class RecipeController extends Controller
         $recipe->imgUrl = $request->input('url');
         $recipe->description = $request->input('description');
         $recipe->user_id = $this->user->id;
-        $recipe->cookbook_id = $cookbookId;
 
-        if ($recipe->save()) {
-            $response =  response()->json(
-                [
-                    'response' => [
-                        'created' => true,
-                        'recipeId' => $recipe->id
-                    ]
-                ], 201
-            );
+        $cookbookExist = $cookbook::cookbookExist($request->input('cookbookId'));
+
+        if (! $cookbookExist) {
+            $response['error'] = 'Cookbook not found';
+            $response['status'] = 404;
+        } else {
+            $recipe->cookbook_id = $request->input('cookbookId');
+
+            if ($recipe->save()) {
+                $response['created'] = true;
+                $response['recipeId'] = $recipe->id;
+                $response['status'] = 201;
+            }
         }
 
-        return $response;
+        return response()->json(
+            [
+                'response' => $response
+            ], $response["status"]
+        );
+    }
+
+    /**
+     * Update Recipe
+     *
+     * @param Request $request  request
+     * @param int     $recipeId recipeId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $recipeId)
+    {
+        $response = [];
+
+        $recipe = self::recipeExist($recipeId);
+
+        if (! $recipe || $recipe === null) {
+            $response["error"] = 'Recipe does not exist.';
+            $response["status"] = 404;
+        } else {
+            $fields = $request->only(
+                'name',
+                'ingredients',
+                'url',
+                'description'
+            );
+
+            foreach ($fields as $key => $val) {
+                if ($val !== null || !is_null($val)) {
+                    $recipe->$key = $val;
+                }
+            }
+
+            try {
+                if ($recipe->save()) {
+                    $response["updated"] = true;
+                    $response["status"] = 200;
+                }
+            } catch (Exception $e) {
+                $response["error"] = $e->getMessage();
+                $response["status"] = 422;
+            }
+        }
+
+        return response()->json(
+            [
+                'response' => $response
+            ], $response["status"]
+        );
+    }
+
+    /**
+     * Find the cookbook
+     *
+     * @param int $recipeId $recipeId
+     *
+     * @return mixed
+     */
+    protected static function recipeExist($recipeId)
+    {
+        return Recipe::find($recipeId) ?? false;
     }
 }
