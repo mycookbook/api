@@ -418,6 +418,151 @@ class ApplicationTest extends TestCase
     }
 
     /**
+     * Test cannot process when cookbookId does not exist
+     *
+     * @return void
+     */
+    public function testRecipeCannotBeCreatedWhenCookbookIdDoesNotExist()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->json(
+            'POST', '/api/v1/recipe', [
+                'name' => 'sample recipe',
+                'ingredients' => 'sample1, sample2, sample3',
+                'url' => 'http://imagurl.com',
+                'description' => 'sample description',
+                'user_id' => 1,
+                'cookbookId' => 100
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'error' => 'Cookbook not found'
+            ]
+        )->seeStatusCode(404);
+    }
+
+    /**
+     * Test that Recipe can be updated if found
+     *
+     * @return void
+     */
+    public function testRecipeCanBeUpdatedIfExist()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->json(
+            'POST', '/api/v1/recipe', [
+                'name' => 'sample recipe',
+                'ingredients' => 'sample1, sample2, sample3',
+                'url' => 'http://imagurl.com',
+                'description' => 'sample description',
+                'user_id' => 1,
+                'cookbookId' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $this->json(
+            'PUT', '/api/v1/recipe/2', [
+                'name' => 'update recipe'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'updated' => true
+            ]
+        )->seeStatusCode(204);
+    }
+
+    /**
+     * Test that Recipe can be updated if not found
+     *
+     * @return void
+     */
+    public function testRecipeCanBeUpdatedIfNotExist()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->json(
+            'POST', '/api/v1/recipe', [
+                'name' => 'sample recipe',
+                'ingredients' => 'sample1, sample2, sample3',
+                'url' => 'http://imagurl.com',
+                'description' => 'sample description',
+                'user_id' => 1,
+                'cookbookId' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $this->json(
+            'PUT', '/api/v1/recipe/200', [
+                'name' => 'update recipe'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'error' => 'Recipe does not exist.'
+            ]
+        )->seeStatusCode(404);
+    }
+
+    /**
      * Test that recipe name is given
      *
      * @return void

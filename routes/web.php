@@ -63,8 +63,9 @@ $app->group(
         $app->group(
             ['middleware' => 'jwt.auth'], function () use ($app) {
                 // Recipes
-                $app->get('/recipes', 'RecipeController@index');
-                $app->post('/recipe', 'RecipeController@store');
+                $app->get('/recipes', 'RecipeController@index')
+                    ->post('/recipe', 'RecipeController@store');
+                $app->put('/recipe/{recipeId}', 'RecipeController@update');
 
                 // Cookbooks
                 $app->post('/cookbook', 'CookbookController@store')
