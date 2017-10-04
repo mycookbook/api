@@ -24,24 +24,4 @@ class Cookbook extends Model
     protected $hidden = [
         'user_id'
     ];
-
-    /**
-     * A user can subscribe to many cookbooks
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function users()
-    {
-        return $this->belongsToMany('App\User');
-    }
-
-    /**
-     * A cook has many recipes
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function recipes()
-    {
-        return $this->hasMany('App\Recipe');
-    }
 }
