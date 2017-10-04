@@ -137,7 +137,7 @@ class RecipeController extends Controller
             try {
                 if ($recipe->save()) {
                     $response["updated"] = true;
-                    $response["status"] = 200;
+                    $response["status"] = 204;
                 }
             } catch (Exception $e) {
                 $response["error"] = $e->getMessage();
