@@ -55,7 +55,8 @@ class RecipeController extends Controller
     /**
      * Create recipe for user
      *
-     * @param Request $request    Form input
+     * @param Request $request Form input
+     * @param CookbookController $cookbook
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -138,6 +139,41 @@ class RecipeController extends Controller
                 if ($recipe->save()) {
                     $response["updated"] = true;
                     $response["status"] = 204;
+                }
+            } catch (Exception $e) {
+                $response["error"] = $e->getMessage();
+                $response["status"] = 422;
+            }
+        }
+
+        return response()->json(
+            [
+                'response' => $response
+            ], $response["status"]
+        );
+    }
+
+    /**
+     * Delete recipe
+     *
+     * @param int $recipeId recipe
+     *
+     * @return string
+     */
+    public function delete($recipeId)
+    {
+        $response = [];
+
+        $recipe = self::recipeExist($recipeId);
+
+        if (! $recipe || $recipe === null) {
+            $response["error"] = 'Recipe does not exist.';
+            $response["status"] = 404;
+        } else {
+            try {
+                if ($recipe->delete()) {
+                    $response["deleted"] = true;
+                    $response["status"] = 202;
                 }
             } catch (Exception $e) {
                 $response["error"] = $e->getMessage();

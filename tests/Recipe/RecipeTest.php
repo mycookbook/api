@@ -372,6 +372,100 @@ class RecipeTest extends TestCase
     }
 
     /**
+     * Test that recipe can be dleted if exist
+     *
+     * @return void
+     */
+    public function testThatRecipeCanBeDeleted()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $recipeId = 1;
+
+        $this->delete(
+            '/api/v1/recipe/' . $recipeId,
+            [
+                'name' => 'test',
+                'description' => 'sample'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'response' => [
+                    'deleted' => true,
+                    'status' => 202
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(202);
+    }
+
+    /**
+     * Test that recipe cannot be dleted if not exist
+     *
+     * @return void
+     */
+    public function testThatRecipeCannotBeDeletedIfNotExist()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $recipeId = 2;
+
+        $this->delete(
+            '/api/v1/recipe/' . $recipeId,
+            [
+                'name' => 'test',
+                'description' => 'sample'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'response' => [
+                    'error' => 'Recipe does not exist.',
+                    'status' => 404
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
      * Reset Migrations
      *
      * @return void

@@ -66,6 +66,7 @@ $app->group(
                 $app->get('/recipes', 'RecipeController@index')
                     ->post('/recipe', 'RecipeController@store');
                 $app->put('/recipe/{recipeId}', 'RecipeController@update');
+                $app->delete('/recipe/{recipeId}', 'RecipeController@delete');
 
                 // Cookbooks
                 $app->post('/cookbook', 'CookbookController@store')
@@ -74,10 +75,10 @@ $app->group(
                         '/cookbook/{cookbookId}/users',
                         'CookbookController@getUsers'
                     );
-                    $app->get(
-                        '/cookbook/{cookbookId}/recipes',
-                        'CookbookController@getRecipes'
-                    );
+                $app->get(
+                    '/cookbook/{cookbookId}/recipes',
+                    'CookbookController@getRecipes'
+                );
 
                 $app->put('/cookbook/{cookbookId}', 'CookbookController@update');
 
