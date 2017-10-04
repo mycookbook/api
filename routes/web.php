@@ -64,22 +64,15 @@ $app->group(
             ['middleware' => 'jwt.auth'], function () use ($app) {
                 // Recipes
                 $app->get('/recipes', 'RecipeController@index');
-                $app->post(
-                    '/cookbook/{cookbookId}/recipe',
-                    'RecipeController@store'
-                );
+                $app->post('/recipe', 'RecipeController@store');
 
                 // Cookbooks
-                $app->post('/user/{id}/cookbook', 'CookbookController@store')
-                    ->get('/user/{id}/cookbook', 'CookbookController@index');
-                $app->put(
-                    '/cookbook/{cookbookId}',
-                    'CookbookController@update'
-                );
-                $app->delete(
-                    '/cookbook/{cookbookId}',
-                    'CookbookController@delete'
-                );
+                $app->post('/cookbook', 'CookbookController@store')
+                    ->get('/cookbook', 'CookbookController@index');
+
+                $app->put('/cookbook/{cookbookId}', 'CookbookController@update');
+
+                $app->delete('/cookbook/{cookbookId}', 'CookbookController@delete');
             }
         );
     }
