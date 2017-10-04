@@ -146,7 +146,7 @@ class CookbookController extends Controller
             try {
                 if ($cookbook->save()) {
                     $response["updated"] = true;
-                    $response["status"] = 200;
+                    $response["status"] = 204;
                 }
             } catch (Exception $e) {
                 $response["error"] = $e->getMessage();
