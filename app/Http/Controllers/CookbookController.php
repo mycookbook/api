@@ -70,67 +70,6 @@ class CookbookController extends Controller
     }
 
     /**
-     * Return all the users for a cookbook
-     *
-     * @param int $cookbookId cookbookid
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getUsers($cookbookId)
-    {
-        $response = [];
-
-        $cookbook = self::cookbookExist($cookbookId);
-
-        if (! $cookbook || $cookbook === null) {
-            $response["error"] = 'Cookbook does not exist.';
-            $response["status"] = 404;
-        } else {
-            $response["response"] = $cookbook->users();
-            $response["status"] = 200;
-        }
-
-        return response()->json(
-            [
-                'response' => $response
-            ], $response["status"]
-        );
-    }
-
-    /**
-     * Return all the recipes for a cookbook
-     *
-     * @param int $cookbookId cookbookid
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getRecipes($cookbookId)
-    {
-        $response = [];
-
-        $cookbook = self::cookbookExist($cookbookId);
-        return response()->json(
-            [
-                'response' => $cookbook->recipes()
-            ]
-        );
-
-        if (! $cookbook || $cookbook === null) {
-            $response["error"] = 'Cookbook does not exist.';
-            $response["status"] = 404;
-        } else {
-            $response["response"] = $cookbook->recipes();
-            $response["status"] = 200;
-        }
-
-        return response()->json(
-            [
-                'response' => $response
-            ], $response["status"]
-        );
-    }
-
-    /**
      * Create cookbook for user
      *
      * @param Request $request Form input
