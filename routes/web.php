@@ -69,7 +69,15 @@ $app->group(
 
                 // Cookbooks
                 $app->post('/cookbook', 'CookbookController@store')
-                    ->get('/cookbook', 'CookbookController@index');
+                    ->get('/cookbook', 'CookbookController@index')
+                    ->get(
+                        '/cookbook/{cookbookId}/users',
+                        'CookbookController@getUsers'
+                    );
+                    $app->get(
+                        '/cookbook/{cookbookId}/recipes',
+                        'CookbookController@getRecipes'
+                    );
 
                 $app->put('/cookbook/{cookbookId}', 'CookbookController@update');
 

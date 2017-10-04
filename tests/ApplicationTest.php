@@ -640,9 +640,6 @@ class ApplicationTest extends TestCase
             ]
         );
 
-        // TODO: test for UnauthorizedHttpException
-        // when Authorization token is not set
-
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
@@ -697,6 +694,34 @@ class ApplicationTest extends TestCase
                 'message' => 'Token is invalid'
             ]
         );
+    }
+
+    /**
+     * Test Recipe cannot be created when user is not authenticated
+     *
+     * @return void
+     */
+    public function testRecipeCannotBeCretaedWhenUserIsNotAuthenticated()
+    {
+        $this->json(
+            'POST', '/api/v1/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $this->post(
+            '/api/v1/recipe',
+            [
+                'name' => 'sample',
+                'ingredients' => 'sample',
+                'url' => 'sample',
+                'description' => 'sample'
+            ]
+        );
+
+        $this->assertResponseStatus(401);
     }
 
     /**

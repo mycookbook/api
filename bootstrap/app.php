@@ -70,7 +70,7 @@ $app->middleware(
 
 $app->routeMiddleware(
     [
-        'auth' => App\Http\Middleware\Authenticate::class,
+//        'auth' => App\Http\Middleware\Authenticate::class,
         'throttle' => App\Http\Middleware\ThrottleRequests::class,
         'cors' => \Barryvdh\Cors\HandleCors::class
     ]
@@ -112,6 +112,6 @@ $app->group(
 );
 
 $app->alias('cache', 'Illuminate\Cache\CacheManager');
-$app->alias('auth', 'Illuminate\Auth\AuthManager');
+//$app->alias('auth', 'Illuminate\Auth\AuthManager');
 
 return $app;

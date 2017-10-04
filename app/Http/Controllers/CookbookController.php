@@ -41,7 +41,7 @@ class CookbookController extends Controller
      */
     public function index()
     {
-        $cookbooks = Cookbook::with('Recipes')
+        $cookbooks = Cookbook::with('Recipes', 'Users')
             ->where('user_id', $this->jwt->toUser()->id)
             ->get();
 
@@ -175,7 +175,7 @@ class CookbookController extends Controller
         $cookbook = self::cookbookExist($cookbookId);
 
         if (! $cookbook || $cookbook === null) {
-            $response["error"] = 'Record does not exist.';
+            $response["error"] = 'Cookbook does not exist.';
             $response["status"] = 404;
         } else {
             try {
