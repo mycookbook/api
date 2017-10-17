@@ -28,7 +28,7 @@ class CookbookTest extends TestCase
     public function testCookbookCanBeCreated()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -36,7 +36,7 @@ class CookbookTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -46,7 +46,7 @@ class CookbookTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/cookbook', [
+            'POST', '/api/v1/cookbooks', [
                 'name' => 'sample cookbook',
                 'description' => 'sample description'
             ], [
@@ -56,10 +56,10 @@ class CookbookTest extends TestCase
             [
                 'created' => true,
                 'links' => [
-                    'get' => 'api/v1/cookbook/' . 2,
-                    'put' => 'api/v1/cookbook/' . 2,
-                    'patch' => 'api/v1/cookbook/' . 2,
-                    'delete' => 'api/v1/cookbook/' . 2
+                    'get' => 'api/v1/cookbooks/' . 2,
+                    'put' => 'api/v1/cookbooks/' . 2,
+                    'patch' => 'api/v1/cookbooks/' . 2,
+                    'delete' => 'api/v1/cookbooks/' . 2
                 ]
             ]
         )->seeStatusCode(200);
@@ -73,7 +73,7 @@ class CookbookTest extends TestCase
     public function testThatCookbookFieldsAreGiven()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -81,7 +81,7 @@ class CookbookTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -92,7 +92,7 @@ class CookbookTest extends TestCase
         $token = $obj->{'token'};
 
         $this->post(
-            '/api/v1/cookbook',
+            '/api/v1/cookbooks',
             [
                 'name' => ' ',
                 'description' => ' '
@@ -121,7 +121,7 @@ class CookbookTest extends TestCase
     public function testCanGetAllCookbooksForOneUser()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -129,7 +129,7 @@ class CookbookTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -142,7 +142,7 @@ class CookbookTest extends TestCase
         $token = $obj->{'token'};
 
         $this->get(
-            '/api/v1/cookbook',
+            '/api/v1/cookbooks',
             [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -159,7 +159,7 @@ class CookbookTest extends TestCase
     public function testCookbookCannotBeCreatedWhenTokenIsInvalid()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -167,7 +167,7 @@ class CookbookTest extends TestCase
         );
 
         $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -177,7 +177,7 @@ class CookbookTest extends TestCase
         $token = 'invalidToken';
 
         $this->post(
-            '/api/v1/cookbook',
+            '/api/v1/cookbooks',
             [
                 'name' => ' ',
                 'description' => ' '
@@ -200,7 +200,7 @@ class CookbookTest extends TestCase
     public function testThatCookbookCanBeUpdated()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -208,7 +208,7 @@ class CookbookTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -220,7 +220,7 @@ class CookbookTest extends TestCase
         $cookbookId = 1;
 
         $this->put(
-            '/api/v1/cookbook/' . $cookbookId,
+            '/api/v1/cookbooks/' . $cookbookId,
             [
                 'name' => 'test',
                 'description' => 'sample'
@@ -247,7 +247,7 @@ class CookbookTest extends TestCase
     public function testThatCookbookCannotBeUpdatedIfNotFound()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -255,7 +255,7 @@ class CookbookTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -267,7 +267,7 @@ class CookbookTest extends TestCase
         $cookbookId = 2;
 
         $this->put(
-            '/api/v1/cookbook/' . $cookbookId,
+            '/api/v1/cookbooks/' . $cookbookId,
             [
                 'name' => 'test',
                 'description' => 'sample update'
@@ -294,7 +294,7 @@ class CookbookTest extends TestCase
     public function testThatCookbookCanBeDeleted()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -302,7 +302,7 @@ class CookbookTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -314,7 +314,7 @@ class CookbookTest extends TestCase
         $cookbookId = 1;
 
         $this->delete(
-            '/api/v1/cookbook/' . $cookbookId,
+            '/api/v1/cookbooks/' . $cookbookId,
             [
                 'name' => 'test',
                 'description' => 'sample'

@@ -28,7 +28,7 @@ class RecipeTest extends TestCase
     public function testRecipeCanBeCreated()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -36,7 +36,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -46,7 +46,7 @@ class RecipeTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/recipe', [
+            'POST', '/api/v1/recipes', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
@@ -72,7 +72,7 @@ class RecipeTest extends TestCase
     public function testRecipeCannotBeCreatedWhenCookbookIdDoesNotExist()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -80,7 +80,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -90,7 +90,7 @@ class RecipeTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/recipe', [
+            'POST', '/api/v1/recipes', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
@@ -115,7 +115,7 @@ class RecipeTest extends TestCase
     public function testRecipeCanBeUpdatedIfExist()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -123,7 +123,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -133,7 +133,7 @@ class RecipeTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/recipe', [
+            'POST', '/api/v1/recipes', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
@@ -146,7 +146,7 @@ class RecipeTest extends TestCase
         );
 
         $this->json(
-            'PUT', '/api/v1/recipe/2', [
+            'PUT', '/api/v1/recipes/2', [
                 'name' => 'update recipe'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
@@ -166,7 +166,7 @@ class RecipeTest extends TestCase
     public function testRecipeCanBeUpdatedIfNotExist()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -174,7 +174,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -184,7 +184,7 @@ class RecipeTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/recipe', [
+            'POST', '/api/v1/recipes', [
                 'name' => 'sample recipe',
                 'ingredients' => 'sample1, sample2, sample3',
                 'url' => 'http://imagurl.com',
@@ -197,7 +197,7 @@ class RecipeTest extends TestCase
         );
 
         $this->json(
-            'PUT', '/api/v1/recipe/200', [
+            'PUT', '/api/v1/recipes/200', [
                 'name' => 'update recipe'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
@@ -217,7 +217,7 @@ class RecipeTest extends TestCase
     public function testThatRecipeFieldsAreGiven()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -225,7 +225,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -236,7 +236,7 @@ class RecipeTest extends TestCase
         $token = $obj->{'token'};
 
         $this->post(
-            '/api/v1/recipe',
+            '/api/v1/recipes',
             [
                 'name' => ' ',
                 'ingredients' => ' ',
@@ -273,7 +273,7 @@ class RecipeTest extends TestCase
     public function testCanGetAllRecipesForOneUser()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -281,7 +281,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -308,7 +308,7 @@ class RecipeTest extends TestCase
     public function testRecipeCannotBeCreatedWhenTokenIsInvalid()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -316,7 +316,7 @@ class RecipeTest extends TestCase
         );
 
         $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -326,7 +326,7 @@ class RecipeTest extends TestCase
         $token = 'invalidToken';
 
         $this->post(
-            '/api/v1/recipe',
+            '/api/v1/recipes',
             [
                 'name' => ' ',
                 'ingredients' => ' ',
@@ -351,7 +351,7 @@ class RecipeTest extends TestCase
     public function testRecipeCannotBeCretaedWhenUserIsNotAuthenticated()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -359,7 +359,7 @@ class RecipeTest extends TestCase
         );
 
         $this->post(
-            '/api/v1/recipe',
+            '/api/v1/recipes',
             [
                 'name' => 'sample',
                 'ingredients' => 'sample',
@@ -379,7 +379,7 @@ class RecipeTest extends TestCase
     public function testThatRecipeCanBeDeleted()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -387,7 +387,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -399,7 +399,7 @@ class RecipeTest extends TestCase
         $recipeId = 1;
 
         $this->delete(
-            '/api/v1/recipe/' . $recipeId,
+            '/api/v1/recipes/' . $recipeId,
             [
                 'name' => 'test',
                 'description' => 'sample'
@@ -426,7 +426,7 @@ class RecipeTest extends TestCase
     public function testThatRecipeCannotBeDeletedIfNotExist()
     {
         $this->json(
-            'POST', '/api/v1/signup', [
+            'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -434,7 +434,7 @@ class RecipeTest extends TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/signin', [
+            'POST', '/api/v1/auth/signin', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -446,7 +446,7 @@ class RecipeTest extends TestCase
         $recipeId = 2;
 
         $this->delete(
-            '/api/v1/recipe/' . $recipeId,
+            '/api/v1/recipes/' . $recipeId,
             [
                 'name' => 'test',
                 'description' => 'sample'
