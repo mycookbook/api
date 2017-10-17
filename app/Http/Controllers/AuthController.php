@@ -65,7 +65,7 @@ class AuthController extends Controller
                 [
                     'response' => [
                         'created' => true,
-                        'signin_uri' => '/api/v1/signin'
+                        'signin_uri' => '/api/v1/auth/signin'
                     ]
                 ], 201
             );

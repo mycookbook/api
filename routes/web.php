@@ -28,19 +28,19 @@ $app->group(
         );
 
         $app->post(
-            '/signup', 'AuthController@create'
+            '/auth/signup', 'AuthController@create'
         );
 
         $app->post(
-            '/signin', 'AuthController@signin'
+            '/auth/signin', 'AuthController@signin'
         );
 
         $app->put(
-            '/user/{id}', 'UserController@update'
+            '/users/{id}', 'UserController@update'
         );
 
         $app->patch(
-            '/user/{id}', 'UserController@update'
+            '/users/{id}', 'UserController@update'
         );
 
         // Developers
@@ -51,7 +51,7 @@ $app->group(
                 );
 
                 $app->get(
-                    '/user/{id}', 'UserController@find'
+                    '/users/{id}', 'UserController@find'
                 );
 
                 $app->get(
@@ -64,25 +64,27 @@ $app->group(
             ['middleware' => 'jwt.auth'], function () use ($app) {
                 // Recipes
                 $app->get('/recipes', 'RecipeController@index')
-                    ->post('/recipe', 'RecipeController@store');
-                $app->put('/recipe/{recipeId}', 'RecipeController@update');
-                $app->delete('/recipe/{recipeId}', 'RecipeController@delete');
+                    ->post('/recipes', 'RecipeController@store');
+                $app->put('/recipes/{recipeId}', 'RecipeController@update');
+                $app->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
                 // Cookbooks
-                $app->post('/cookbook', 'CookbookController@store')
-                    ->get('/cookbook', 'CookbookController@index')
-                    ->get(
-                        '/cookbook/{cookbookId}/users',
-                        'CookbookController@getUsers'
-                    );
+                $app->post('/cookbooks', 'CookbookController@store')
+                    ->get('/cookbooks', 'CookbookController@index');
+
                 $app->get(
-                    '/cookbook/{cookbookId}/recipes',
+                    '/cookbooks/{cookbookId}/users',
+                    'CookbookController@getUsers'
+                );
+
+                $app->get(
+                    '/cookbooks/{cookbookId}/recipes',
                     'CookbookController@getRecipes'
                 );
 
-                $app->put('/cookbook/{cookbookId}', 'CookbookController@update');
+                $app->put('/cookbooks/{cookbookId}', 'CookbookController@update');
 
-                $app->delete('/cookbook/{cookbookId}', 'CookbookController@delete');
+                $app->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
             }
         );
     }

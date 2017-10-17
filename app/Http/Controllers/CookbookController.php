@@ -98,10 +98,10 @@ class CookbookController extends Controller
                 $response['created'] = true;
                 $response['status'] = 200;
                 $response['links'] = [
-                    'get' => 'api/v1/cookbook/' . $cookbook->id,
-                    'put' => 'api/v1/cookbook/' . $cookbook->id,
-                    'patch' => 'api/v1/cookbook/' . $cookbook->id,
-                    'delete' => 'api/v1/cookbook/' . $cookbook->id
+                    'get' => 'api/v1/cookbooks/' . $cookbook->id,
+                    'put' => 'api/v1/cookbooks/' . $cookbook->id,
+                    'patch' => 'api/v1/cookbooks/' . $cookbook->id,
+                    'delete' => 'api/v1/cookbooks/' . $cookbook->id
                 ];
             }
         } catch (Exception $e) {
