@@ -471,10 +471,10 @@ class UserTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'created' => true,
-                'recipeId' => 2
+                'data',
+                'status'
             ]
         )->seeStatusCode(201);
     }
