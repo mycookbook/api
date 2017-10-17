@@ -28,7 +28,7 @@ $app->group(
         );
 
         $app->post(
-            '/auth/signup', 'AuthController@create'
+            '/auth/signup', 'UserController@create'
         );
 
         $app->post(

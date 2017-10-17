@@ -1,30 +1,16 @@
 <?php
-/**
- * UserController
- */
 
 namespace App\Http\Controllers;
 
 use App\User;
-use App\Recipe;
-use App\Cookbook;
 use Illuminate\Http\Request;
 use Illuminate\Hashing\BcryptHasher;
 
 /**
  * Class UserController
- * @package App\Http\Controllers
  */
 class UserController extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Get all users from the database
      *
@@ -41,6 +27,54 @@ class UserController extends Controller
                 ]
             ], 200
         );
+    }
+
+    /**
+     * Create new user resource
+     *
+     * @param Request $request form inputs
+     *
+     * @return array|string
+     */
+    public function create(Request $request)
+    {
+        $response = [];
+
+        $this->validate(
+            $request, [
+                'name' => 'required',
+                'email' => 'required|unique:users|email',
+                'password' => 'required|min:5'
+            ]
+        );
+
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $hashedPassword = (new BcryptHasher)->make($password);
+
+        $user = new User(
+            [
+                'name' => $name,
+                'email' => $email,
+                'password' => $hashedPassword,
+                'following' => 0,
+                'followers' => 0
+            ]
+        );
+
+        if ($user->save()) {
+            $response = response()->json(
+                [
+                    'response' => [
+                        'created' => true,
+                        'signin_uri' => '/api/v1/auth/signin'
+                    ]
+                ], 201
+            );
+        }
+
+        return $response;
     }
 
     /**
