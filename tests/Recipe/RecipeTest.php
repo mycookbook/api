@@ -15,6 +15,7 @@ class RecipeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+//        $this->disableExceptionHandling();
 
         $this->artisan('migrate');
         $this->artisan('db:seed');
@@ -56,12 +57,67 @@ class RecipeTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'created' => true,
-                'recipeId' => 2
+                'status',
+                'data' => [
+                    'name',
+                    'description',
+                    'imgUrl',
+                    'ingredients',
+                    'user_id',
+                    'cookbook_id',
+                    'updated_at',
+                    'created_at',
+                    'id',
+
+                ],
+
             ]
         )->seeStatusCode(201);
+    }
+
+    /**
+     * Test that Recipe cannot be created with invalid token
+     *
+     * @return void
+     */
+    public function testRecipeCannotBeCreatedWithInvalidToken()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $token = 'invalidToken';
+
+        $this->json(
+            'POST', '/api/v1/recipes', [
+                'name' => 'sample recipe',
+                'ingredients' => 'sample1, sample2, sample3',
+                'url' => 'http://imagurl.com',
+                'description' => 'sample description',
+                'user_id' => 1,
+                'cookbookId' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'message' => 'Token is invalid',
+                'status' => 'error'
+            ]
+        )->seeStatusCode(401);
     }
 
     /**
@@ -102,7 +158,7 @@ class RecipeTest extends TestCase
             ]
         )->seeJson(
             [
-                'error' => 'Cookbook not found'
+                'status' => 'error or unknown cookbook.'
             ]
         )->seeStatusCode(404);
     }
@@ -159,11 +215,11 @@ class RecipeTest extends TestCase
     }
 
     /**
-     * Test that Recipe can be updated if not found
+     * Test that Recipe can not be updated if not found
      *
      * @return void
      */
-    public function testRecipeCanBeUpdatedIfNotExist()
+    public function testRecipeCannotBeUpdatedIfNotExist()
     {
         $this->json(
             'POST', '/api/v1/auth/signup', [
@@ -198,13 +254,14 @@ class RecipeTest extends TestCase
 
         $this->json(
             'PUT', '/api/v1/recipes/200', [
-                'name' => 'update recipe'
+                'name' => 'updated recipe name'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
         )->seeJson(
             [
-                'error' => 'Recipe does not exist.'
+                'data' => null,
+                'updated' => 'error'
             ]
         )->seeStatusCode(404);
     }
@@ -408,10 +465,8 @@ class RecipeTest extends TestCase
             ]
         )->seeJson(
             [
-                'response' => [
-                    'deleted' => true,
-                    'status' => 202
-                ]
+                'deleted' => true,
+                'status' => 'success'
             ]
         );
 
@@ -455,10 +510,8 @@ class RecipeTest extends TestCase
             ]
         )->seeJson(
             [
-                'response' => [
-                    'error' => 'Recipe does not exist.',
-                    'status' => 404
-                ]
+                'deleted' => false,
+                'status' => 'error'
             ]
         );
 

@@ -108,6 +108,7 @@ class UserController extends Controller
             $user = null;
             $statusCode = 404;
         }
+
         return response(
             [
                 "data" => $user,

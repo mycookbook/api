@@ -63,7 +63,8 @@ $app->group(
                 // Recipes
                 $app->get('/recipes', 'RecipeController@index')
                     ->post('/recipes', 'RecipeController@store');
-                $app->put('/recipes/{recipeId}', 'RecipeController@update');
+                $app->put('/recipes/{recipeId}', 'RecipeController@update')
+                    ->patch('/recipes/{recipeId}', 'RecipeController@update');
                 $app->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
                 // Cookbooks

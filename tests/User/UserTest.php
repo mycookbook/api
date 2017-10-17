@@ -369,7 +369,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidCredentialsWhenSigningIn()
+    public function testAUserCannotSignInWithInvalidCredentials()
     {
         $this->json(
             'POST', '/api/v1/auth/signup', [
@@ -471,10 +471,10 @@ class UserTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'created' => true,
-                'recipeId' => 2
+                'data',
+                'status'
             ]
         )->seeStatusCode(201);
     }

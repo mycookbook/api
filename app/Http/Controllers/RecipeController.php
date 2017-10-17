@@ -51,8 +51,6 @@ class RecipeController extends Controller
      */
     public function store(Request $request, CookbookController $cookbook)
     {
-        $response = [];
-
         $this->validate(
             $request, [
                 'name' => 'required',
@@ -63,33 +61,34 @@ class RecipeController extends Controller
             ]
         );
 
-        $recipe = new Recipe();
+        $recipe = new Recipe(
+            [
+                'name' => $request->name,
+                'description' => $request->description,
+                'imgUrl' => $request->url,
+                'ingredients' => $request->ingredients,
+                'user_id' => $this->user->id
+            ]
+        );
 
-        $recipe->name = $request->input('name');
-        $recipe->ingredients = $request->input('ingredients');
-        $recipe->imgUrl = $request->input('url');
-        $recipe->description = $request->input('description');
-        $recipe->user_id = $this->user->id;
+        try {
+            if ($cookbook::cookbookExist($request->cookbookId)) {
+                $recipe->cookbook_id = $request->cookbookId;
+                $recipe->save();
 
-        $cookbookExist = $cookbook::cookbookExist($request->input('cookbookId'));
-
-        if (! $cookbookExist) {
-            $response['error'] = 'Cookbook not found';
-            $response['status'] = 404;
-        } else {
-            $recipe->cookbook_id = $request->input('cookbookId');
-
-            if ($recipe->save()) {
-                $response['created'] = true;
-                $response['recipeId'] = $recipe->id;
-                $response['status'] = 201;
+                $data = $recipe;
+                $statusCode = 201;
             }
+        } catch(\Exception $e){
+            $data = null;
+            $statusCode = 404;
         }
 
-        return response()->json(
+        return response(
             [
-                'response' => $response
-            ], $response["status"]
+                "data" => $data,
+                'status' => $data ? 'success' : 'error or unknown cookbook.'
+            ], $statusCode ?? 200
         );
     }
 
@@ -103,42 +102,19 @@ class RecipeController extends Controller
      */
     public function update(Request $request, $recipeId)
     {
-        $response = [];
-
-        $recipe = self::recipeExist($recipeId);
-
-        if (! $recipe || $recipe === null) {
-            $response["error"] = 'Recipe does not exist.';
-            $response["status"] = 404;
-        } else {
-            $fields = $request->only(
-                'name',
-                'ingredients',
-                'url',
-                'description'
-            );
-
-            foreach ($fields as $key => $val) {
-                if ($val !== null || !is_null($val)) {
-                    $recipe->$key = $val;
-                }
-            }
-
-            try {
-                if ($recipe->save()) {
-                    $response["updated"] = true;
-                    $response["status"] = 204;
-                }
-            } catch (Exception $e) {
-                $response["error"] = $e->getMessage();
-                $response["status"] = 422;
-            }
+        try {
+            $recipe = self::recipeExist($recipeId);
+            $recipe->update($request->all());
+        } catch(\Exception $e) {
+            $recipe = null;
+            $statusCode = 404;
         }
 
-        return response()->json(
+        return response(
             [
-                'response' => $response
-            ], $response["status"]
+                "data" => $recipe,
+                "updated" => $recipe ? true : "error",
+            ], $statusCode ?? 204
         );
     }
 
@@ -151,29 +127,20 @@ class RecipeController extends Controller
      */
     public function delete($recipeId)
     {
-        $response = [];
-
-        $recipe = self::recipeExist($recipeId);
-
-        if (! $recipe || $recipe === null) {
-            $response["error"] = 'Recipe does not exist.';
-            $response["status"] = 404;
-        } else {
-            try {
-                if ($recipe->delete()) {
-                    $response["deleted"] = true;
-                    $response["status"] = 202;
-                }
-            } catch (Exception $e) {
-                $response["error"] = $e->getMessage();
-                $response["status"] = 422;
-            }
+        try {
+            $recipe = self::recipeExist($recipeId);
+            $deleted = $recipe->delete();
+            $statusCode = $deleted ? 202 : 422;
+        } catch (\Exception $e) {
+            $deleted = false;
+            $statusCode = 404;
         }
 
-        return response()->json(
+        return response(
             [
-                'response' => $response
-            ], $response["status"]
+                'deleted' => $deleted,
+                'status' => $deleted ? "success" : "error",
+            ], $statusCode
         );
     }
 
@@ -186,6 +153,6 @@ class RecipeController extends Controller
      */
     protected static function recipeExist($recipeId)
     {
-        return Recipe::find($recipeId) ?? false;
+        return Recipe::findorFail($recipeId);
     }
 }
