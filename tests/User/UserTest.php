@@ -15,6 +15,7 @@ class UserTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+//        $this->disableExceptionHandling();
 
         $this->artisan('migrate');
         $this->artisan('db:seed');
@@ -103,36 +104,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Test that the email exists already
-     *
-     * @return void
-     */
-    public function testThatEmailExists()
-    {
-        $this->post(
-            '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $this->json(
-            'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        )->seeJson(
-            [
-                "email" => [
-                    "The email has already been taken."
-                ]
-            ]
-        )->seeStatusCode(422);
-    }
-
-    /**
      * Test that the password field is required
      *
      * @return void
@@ -209,23 +180,127 @@ class UserTest extends TestCase
     {
         $this->json(
             'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
+                'name' => 'Joromi',
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
                 'response' => [
-                    'created' => true,
-                    'signin_uri' => '/api/v1/auth/signin'
+                    'created',
+                    'data' => [
+                        '_links' => [
+                            'self'
+                        ],
+                        'created_at',
+                        'updated_at',
+                        'email',
+                        'followers',
+                        'following',
+                        'id',
+                        'name',
+                    ],
+                    'status'
                 ]
             ]
         )->seeStatusCode(201)->seeInDatabase(
             'users', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com'
+                'name' => 'Joromi',
+                'email' => 'joromi@foo.com'
             ]
         );
+    }
+
+    /**
+     * Test that user can be uodated
+     * This test is for PUT and PATCH operations
+     *
+     * @return void
+     */
+    public function testUserCanBeUpdatedIfSignedIn()
+    {
+        // create the user and sign them in
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Joromi',
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->put(
+            '/api/v1/users/2',
+            [
+                'name' => 'Joromi2',
+                'follower' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $this->assertResponseStatus(200);
+    }
+
+    /**
+     * Test that a malicious user cannot be forced to updaye
+     * This test is for PUT and PATCH operations
+     * use case: a signed in user is trying to perform a funny operation
+     * By passing in a user id of another user not signed in
+     * Or a user that does not exist in the database
+     * This test is not exactly comprehensive
+     * It only tests for a user that does not exist
+     * It currently does not test for a user that actually exist
+     * But does not have a token
+     * The test will be reviewed
+     *
+     * @return void
+     */
+    public function testMaliciousUserCannotBeUpdated()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Joromi',
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->put(
+            '/api/v1/users/20',
+            [
+                'name' => 'Joromi2',
+                'follower' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJson(
+            [
+                'data' => null,
+                'status' => 'ILLEGAL OPERATION.'
+            ]
+        );
+
+        $this->assertResponseStatus(404);
     }
 
     /**
@@ -353,7 +428,8 @@ class UserTest extends TestCase
 
         $this->seeJson(
             [
-                'error' => 'Record not found.'
+                'data' => null,
+                'status' => 'Not found.'
             ]
         );
     }
@@ -363,7 +439,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testRecipeCanBeCreated()
+    public function testUserCanCreateRecipe()
     {
         $this->json(
             'POST', '/api/v1/auth/signup', [
@@ -381,6 +457,7 @@ class UserTest extends TestCase
         );
 
         $obj = json_decode($res->response->getContent());
+
         $token = $obj->{'token'};
 
         $this->json(
