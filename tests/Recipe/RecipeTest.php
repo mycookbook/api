@@ -78,45 +78,6 @@ class RecipeTest extends TestCase
     }
 
     /**
-     * Recipe cannot be created if token is not provided
-     *
-     * @return void
-     */
-    public function testRecipeCannotBECreatedIfTokenIsNotProvided()
-    {
-        $this->json(
-            'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $this->json(
-            'POST', '/api/v1/auth/signin', [
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $this->json(
-            'POST', '/api/v1/recipes', [
-                'name' => 'sample recipe',
-                'ingredients' => 'sample1, sample2, sample3',
-                'url' => 'http://imagurl.com',
-                'description' => 'sample description',
-                'user_id' => 1,
-                'cookbookId' => 1
-            ]
-        )->seeJson(
-            [
-                'message' => 'Token is invalid',
-                'status' => 'error'
-            ]
-        )->seeStatusCode(401);
-    }
-
-    /**
      * Test that Recipe cannot be created with invalid token
      *
      * @return void
