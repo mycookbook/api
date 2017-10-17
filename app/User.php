@@ -58,6 +58,8 @@ class User extends Model implements
     }
 
     /**
+     * JWT Identofier
+     *
      * @return mixed
      */
     public function getJWTIdentifier()
@@ -66,10 +68,33 @@ class User extends Model implements
     }
 
     /**
+     * Custom claims
+     *
      * @return array
      */
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * Append links attribute.
+     *
+     * @var array
+     */
+    protected $appends = ['_links'];
+
+    /**
+     * Set attributes links
+     *
+     * @return array
+     */
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => app()
+                ->make('url')
+                ->to("api/v1/users/{$this->attributes['id']}")
+        ];
     }
 }
