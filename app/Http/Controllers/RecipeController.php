@@ -20,18 +20,10 @@ class RecipeController extends Controller
      */
     public function __construct(JWTAuth $jwt)
     {
-        $this->middleware('jwt.auth', ['only' => ['update', 'store', 'destroy']]);
         $this->jwt = $jwt;
         $this->user = $this->jwt->parseToken()->authenticate();
-
-        if (! $this->user ) {
-            return response()->json(
-                [
-                    'msg' => 'user not authenticated'
-                ]
-            );
-        }
     }
+
     /**
      * Get all recipes belonging to a user
      *
@@ -39,24 +31,21 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::with('Cookbook')
-            ->where('user_id', $this->jwt->toUser()->id)
-            ->get();
-
-        return response()->json(
+        return response(
             [
-                'response' => [
-                    'recipes' => $recipes->toArray()
-                ]
-            ], 200
+                'data' =>  Recipe::with('Cookbook')
+                    ->where('user_id', $this->jwt->toUser()->id)
+                    ->get()
+                    ->toArray()
+            ]
         );
     }
 
     /**
      * Create recipe for user
      *
-     * @param Request $request Form input
-     * @param CookbookController $cookbook
+     * @param Request            $request  Form input
+     * @param CookbookController $cookbook cookbook
      *
      * @return \Illuminate\Http\JsonResponse
      */
