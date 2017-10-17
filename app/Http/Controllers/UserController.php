@@ -1,29 +1,19 @@
 <?php
-/**
- * UserController
- */
 
 namespace App\Http\Controllers;
 
 use App\User;
-use App\Recipe;
-use App\Cookbook;
 use Illuminate\Http\Request;
 use Illuminate\Hashing\BcryptHasher;
 
 /**
  * Class UserController
- * @package App\Http\Controllers
  */
 class UserController extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        //
-    }
+    // TO DO: Implement soft delete
+    // Applicable to users who want to delete theor account
+    // Or freeze their account
 
     /**
      * Get all users from the database
@@ -32,14 +22,52 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('Recipes', 'Cookbooks')->get();
+        return response(
+            [
+                'data' =>  User::with('Recipes', 'Cookbooks')->get()->toArray()
+            ]
+        );
+    }
+
+    /**
+     * Create new user resource
+     *
+     * @param Request $request form inputs
+     *
+     * @return array|string
+     */
+    public function store(Request $request)
+    {
+        $this->validate(
+            $request, [
+                'name' => 'required',
+                'email' => 'required|unique:users|email',
+                'password' => 'required|min:5'
+            ]
+        );
+
+        $user = new User(
+            [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => (new BcryptHasher)->make($request->password),
+                'following' => 0,
+                'followers' => 0
+            ]
+        );
+
+        $data = $user->save();
+
+        $statusCode = $user ? 201 : 422;
 
         return response()->json(
             [
                 'response' => [
-                    'data' => $users->toArray()
+                    'created' => true,
+                    'data' => self::userExist($user->id),
+                    'status' => $data ? "success" : "error",
                 ]
-            ], 200
+            ], $statusCode
         );
     }
 
@@ -50,39 +78,57 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function find($id)
+    public function show($id)
     {
-        $user = User::with('Recipes', 'Cookbooks')->find($id);
-
-        if (! $user) {
-            return response()->json(
-                [
-                    'error' => 'Record not found.'
-                ], 404
-            );
+        try {
+            $user = self::userExist($id);
+        } catch (\Exception $e) {
+            $user = null;
+            $statusCode = 404;
         }
 
-        return response()->json(
+        return response(
             [
-                'response' => [
-                    'success' => false,
-                    'data' => $user->toArray()
-                ]
-            ], 200
+                'data' => User::with('Recipes', 'Cookbooks')->find($id),
+                'status' => $user ? "success" : "Not found.",
+            ], $statusCode ?? 200
         );
     }
 
     /**
-     * Update user
+     * Implement a full/partial update
      *
-     * @param int $id unique identification
+     * @param Request $request request
+     * @param int     $userId  userId
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id)
+    public function update(Request $request, $userId)
     {
-        $user = $this->find($id);
+        try {
+            $user = self::userExist($userId);
+            $user->update($request->all());
+        } catch(\Exception $e) {
+            $user = null;
+            $statusCode = 404;
+        }
+        return response(
+            [
+                "data" => $user,
+                "status" => $user ? "success" : "ILLEGAL OPERATION."
+            ], $statusCode ?? 200
+        );
+    }
 
-        return $user;
+    /**
+     * Check if user exist by id
+     *
+     * @param int $id id
+     *
+     * @return bool|mixed|static
+     */
+    protected static function userExist($id)
+    {
+        return User::findOrFail($id);
     }
 }
