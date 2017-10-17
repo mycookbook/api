@@ -1,20 +1,15 @@
 <?php
+/**
+ * ExampleMiddleware
+ *
+ * @author Florence Okosun <florence.okosun@getitllc.com>
+ * @copyright Copyright(c) 2017 Get It, LLC(http://www.getit.me)
+ */
 
 namespace App\Http\Middleware;
 
-use Closure;
 
 class ExampleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next)
-    {
-        return $next($request);
-    }
+
 }
