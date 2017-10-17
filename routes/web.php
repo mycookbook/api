@@ -28,30 +28,30 @@ $app->group(
         );
 
         $app->post(
-            '/auth/signup', 'UserController@create'
+            '/auth/signup', 'UserController@store'
         );
 
         $app->post(
             '/auth/signin', 'AuthController@signin'
         );
 
-        $app->put(
-            '/users/{id}', 'UserController@update'
-        );
-
-        $app->patch(
-            '/users/{id}', 'UserController@update'
-        );
-
         // Developers
         $app->group(
             ['middleware' => 'throttle:30'], function () use ($app) {
+                $app->put(
+                    '/users/{id}', 'UserController@update'
+                );
+
+                $app->patch(
+                    '/users/{id}', 'UserController@update'
+                );
+
                 $app->get(
                     '/users/', 'UserController@index'
                 );
 
                 $app->get(
-                    '/users/{id}', 'UserController@find'
+                    '/users/{id}', 'UserController@show'
                 );
 
                 $app->get(
