@@ -369,7 +369,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidCredentialsWhenSigningIn()
+    public function testAUserCannotSignInWithInvalidCredentials()
     {
         $this->json(
             'POST', '/api/v1/auth/signup', [
