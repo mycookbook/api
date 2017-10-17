@@ -32,31 +32,11 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        try {
-            if (! $token = $jwt->attempt($credentials) ) {
-                return response()->json(
-                    [
-                        'Not found or Invalid Credentials.'
-                    ], 404
-                );
-            }
-        } catch (TokenExpiredException $e) {
+        if (! $token = $jwt->attempt($credentials) ) {
             return response()->json(
                 [
-                    'token_expired'
-                ], 500
-            );
-        } catch (TokenInvalidException $e) {
-            return response()->json(
-                [
-                    'token_invalid'
-                ], 500
-            );
-        } catch (JWTException $e) {
-            return response()->json(
-                [
-                    'token_absent' => $e->getMessage()
-                ], 500
+                    'Not found or Invalid Credentials.'
+                ], 404
             );
         }
 

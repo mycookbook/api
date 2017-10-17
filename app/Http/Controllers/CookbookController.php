@@ -205,6 +205,6 @@ class CookbookController extends Controller
      */
     public static function cookbookExist($cookbookId)
     {
-        return Cookbook::find($cookbookId) ?? false;
+        return Cookbook::findOrFail($cookbookId);
     }
 }
