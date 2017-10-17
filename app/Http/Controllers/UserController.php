@@ -11,10 +11,6 @@ use Illuminate\Hashing\BcryptHasher;
  */
 class UserController extends Controller
 {
-    // TO DO: Implement soft delete
-    // Applicable to users who want to delete theor account
-    // Or freeze their account
-
     /**
      * Get all users from the database
      *

@@ -21,10 +21,6 @@ $app->group(
             '/', function () {
                 return 'Cookbook API v1.0';
             }
-        )->post(
-            '/', function () {
-                return 'tryna to post';
-            }
         );
 
         $app->post(
@@ -35,9 +31,21 @@ $app->group(
             '/auth/signin', 'AuthController@signin'
         );
 
+        $app->get(
+            '/users/', 'UserController@index'
+        );
+
+        $app->get(
+            '/users/{id}', 'UserController@show'
+        );
+
+        $app->get(
+            '/stats/', 'StatsController@index'
+        );
+
         // Developers
         $app->group(
-            ['middleware' => 'throttle:30'], function () use ($app) {
+            ['middleware' => 'jwt.auth'], function () use ($app) {
                 $app->put(
                     '/users/{id}', 'UserController@update'
                 );
@@ -45,23 +53,13 @@ $app->group(
                 $app->patch(
                     '/users/{id}', 'UserController@update'
                 );
-
-                $app->get(
-                    '/users/', 'UserController@index'
-                );
-
-                $app->get(
-                    '/users/{id}', 'UserController@show'
-                );
-
-                $app->get(
-                    '/stats/', 'StatsController@index'
-                );
             }
         );
 
         $app->group(
-            ['middleware' => 'jwt.auth'], function () use ($app) {
+            [
+                'middleware' => 'jwt.auth'
+            ], function () use ($app) {
                 // Recipes
                 $app->get('/recipes', 'RecipeController@index')
                     ->post('/recipes', 'RecipeController@store');
