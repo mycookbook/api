@@ -60,28 +60,22 @@ $app->group(
             [
                 'middleware' => 'jwt.auth'
             ], function () use ($app) {
+
                 // Recipes
                 $app->get('/recipes', 'RecipeController@index')
                     ->post('/recipes', 'RecipeController@store');
+
                 $app->put('/recipes/{recipeId}', 'RecipeController@update')
                     ->patch('/recipes/{recipeId}', 'RecipeController@update');
+
                 $app->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
                 // Cookbooks
-                $app->post('/cookbooks', 'CookbookController@store')
-                    ->get('/cookbooks', 'CookbookController@index');
+                $app->get('/cookbooks', 'CookbookController@index')
+                    ->post('/cookbooks', 'CookbookController@store');
 
-                $app->get(
-                    '/cookbooks/{cookbookId}/users',
-                    'CookbookController@getUsers'
-                );
-
-                $app->get(
-                    '/cookbooks/{cookbookId}/recipes',
-                    'CookbookController@getRecipes'
-                );
-
-                $app->put('/cookbooks/{cookbookId}', 'CookbookController@update');
+                $app->put('/cookbooks/{cookbookId}', 'CookbookController@update')
+                    ->patch('/cookbooks/{cookbookId}', 'CookbookController@update');
 
                 $app->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
             }
