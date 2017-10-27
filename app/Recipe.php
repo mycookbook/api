@@ -39,4 +39,15 @@ class Recipe extends Model
     {
         return $this->belongsTo('App\Cookbook');
     }
+
+    /**
+     * Get all recipes
+     *
+     * @return mixed
+     */
+    public static function getRecipes()
+    {
+        $recipes = Recipe::get();
+        return $recipes;
+    }
 }
