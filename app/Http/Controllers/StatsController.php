@@ -36,7 +36,7 @@ class StatsController extends Controller
             'cookbooks' => $cookbooks
         ];
 
-        return $data;
+        return response(["data" => $data]);
     }
 
     /**

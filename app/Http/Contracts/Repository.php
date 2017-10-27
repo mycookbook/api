@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Contracts;
+
 /**
  * Interface iResource
  */
@@ -17,11 +19,12 @@ interface Repository
     /**
      * Update method
      *
-     * @param int $id identofoer
+     * @param Request $request request
+     * @param int     $id      identofoer
      *
      * @return mixed
      */
-    public function update($id);
+    public function update($request, $id);
 
     /**
      * Delete method

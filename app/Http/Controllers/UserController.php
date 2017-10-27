@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Hashing\BcryptHasher;
+use App\Http\Repositories\UserRepository;
 
 /**
  * Class UserController
  */
 class UserController extends Controller
 {
+    protected $user;
+
+    /**
+     * @param UserRepository $user Userrepository
+     */
+    public function __construct(UserRepository $user)
+    {
+        $this->user = $user;
+    }
     /**
      * Get all users from the database
      *
@@ -18,11 +26,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response(
-            [
-                'data' =>  User::with('Recipes', 'Cookbooks')->get()->toArray()
-            ]
-        );
+        return $this->user->index();
     }
 
     /**
@@ -42,29 +46,7 @@ class UserController extends Controller
             ]
         );
 
-        $user = new User(
-            [
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => (new BcryptHasher)->make($request->password),
-                'following' => 0,
-                'followers' => 0
-            ]
-        );
-
-        $data = $user->save();
-
-        $statusCode = $user ? 201 : 422;
-
-        return response()->json(
-            [
-                'response' => [
-                    'created' => true,
-                    'data' => self::userExist($user->id),
-                    'status' => $data ? "success" : "error",
-                ]
-            ], $statusCode
-        );
+        return $this->user->store($request);
     }
 
     /**
@@ -76,19 +58,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        try {
-            $user = self::userExist($id);
-        } catch (\Exception $e) {
-            $user = null;
-            $statusCode = 404;
-        }
-
-        return response(
-            [
-                'data' => User::with('Recipes', 'Cookbooks')->find($id),
-                'status' => $user ? "success" : "Not found.",
-            ], $statusCode ?? 200
-        );
+        return $this->user->show($id);
     }
 
     /**
@@ -101,31 +71,6 @@ class UserController extends Controller
      */
     public function update(Request $request, $userId)
     {
-        try {
-            $user = self::userExist($userId);
-            $user->update($request->all());
-        } catch(\Exception $e) {
-            $user = null;
-            $statusCode = 404;
-        }
-
-        return response(
-            [
-                "data" => $user,
-                "status" => $user ? "success" : "ILLEGAL OPERATION."
-            ], $statusCode ?? 200
-        );
-    }
-
-    /**
-     * Check if user exist by id
-     *
-     * @param int $id id
-     *
-     * @return bool|mixed|static
-     */
-    protected static function userExist($id)
-    {
-        return User::findOrFail($id);
+        return $this->user->update($request, $userId);
     }
 }
