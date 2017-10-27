@@ -27,7 +27,7 @@ class Recipe extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User')->getEager();
     }
 
     /**
@@ -38,16 +38,5 @@ class Recipe extends Model
     public function cookbook()
     {
         return $this->belongsTo('App\Cookbook');
-    }
-
-    /**
-     * Get all recipes
-     *
-     * @return mixed
-     */
-    public static function getRecipes()
-    {
-        $recipes = Recipe::get();
-        return $recipes;
     }
 }
