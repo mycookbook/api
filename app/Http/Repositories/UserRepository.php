@@ -20,7 +20,7 @@ class UserRepository
     {
         return response(
             [
-                'data' =>  User::with('Recipes', 'Cookbooks')->get()->toArray()
+                'data' =>  User::with('Recipes')->paginate(100)
             ]
         );
     }
@@ -107,6 +107,18 @@ class UserRepository
                 "status" => $user ? "success" : "ILLEGAL OPERATION."
             ], $statusCode ?? 200
         );
+    }
+
+    /**
+     * Delete
+     *
+     * @param int $id id
+     *
+     * @return int
+     */
+    public function delete($id)
+    {
+        return $id;
     }
 
     /**
