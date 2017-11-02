@@ -68,57 +68,36 @@ class UserRepository
      */
     public function show($id)
     {
-        try {
-            $user = self::userExist($id);
-        } catch (\Exception $e) {
-            $user = null;
-            $statusCode = 404;
-        }
-
-        return response(
-            [
-                'data' => User::with('Recipes', 'Cookbooks')->find($id),
-                'status' => $user ? "success" : "Not found.",
-            ], $statusCode ?? 200
-        );
+        return self::userExist($id);
     }
 
     /**
      * Implement a full/partial update
      *
      * @param Request $request request
-     * @param int     $userId  userId
+     * @param int     $id      userId
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $userId)
+    public function update(Request $request, $id)
     {
         try {
-            $user = self::userExist($userId);
-            $user->update($request->all());
+            $user = User::findorFail($id);
+            $updated = $user->update($request->except(['email']));
+            $statusCode = $updated ? 202 : 422;
+            $status = "success";
         } catch(\Exception $e) {
-            $user = null;
+            $updated = false;
             $statusCode = 404;
+            $status = ['error' => $e->getMessage()];
         }
 
         return response(
             [
-                "data" => $user,
-                "status" => $user ? "success" : "ILLEGAL OPERATION."
-            ], $statusCode ?? 200
+                "updated" => $updated,
+                "status" => $status,
+            ], $statusCode
         );
-    }
-
-    /**
-     * Delete
-     *
-     * @param int $id id
-     *
-     * @return int
-     */
-    public function delete($id)
-    {
-        return $id;
     }
 
     /**
@@ -130,6 +109,16 @@ class UserRepository
      */
     protected static function userExist($id)
     {
-        return User::findOrFail($id);
+        try {
+            $response = User::findOrFail($id);
+        } catch(\Exception $e) {
+            $response = response(
+                [
+                    'error' => $e->getMessage(),
+                ], 404
+            );
+        }
+
+        return $response;
     }
 }

@@ -22,6 +22,97 @@ class RecipeTest extends TestCase
     }
 
     /**
+     * Test to find cookbook by id
+     *
+     * @return void
+     */
+    public function testCanFindRecipe()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $id = 1;
+
+        $this->get(
+            '/api/v1/recipes/' . $id,
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJsonStructure(
+            [
+                'id',
+                'name',
+                'ingredients',
+                'imgUrl',
+                'description',
+                'user_id',
+                'cookbook_id',
+                'created_at',
+                'updated_at',
+                '_links' => [
+                    'self'
+                ],
+                'user',
+                'cookbook'
+            ]
+        )->assertResponseStatus(200);
+    }
+
+    /**
+     * Test to find cookbook by id
+     *
+     * @return void
+     */
+    public function testCannotFindRecipeIfNotExist()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $id = 10000000000;
+
+        $this->get(
+            '/api/v1/recipes/' . $id,
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJsonStructure(
+            [
+                'error'
+            ]
+        )->assertResponseStatus(404);
+    }
+
+    /**
      * Test Recipe can be created
      *
      * @return void

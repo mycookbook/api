@@ -98,7 +98,11 @@ class CookbookController extends Controller
         try {
             $response = Cookbook::with('Users')->findOrFail($id);
         } catch(\Exception $e) {
-            $response = $e->getMessage();
+            $response = response(
+                [
+                    'error' => $e->getMessage(),
+                ], 404
+            );
         }
 
         return $response;
