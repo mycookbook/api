@@ -27,7 +27,7 @@ class Recipe extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User')->getEager();
+        return $this->belongsTo('App\User');
     }
 
     /**
@@ -38,5 +38,26 @@ class Recipe extends Model
     public function cookbook()
     {
         return $this->belongsTo('App\Cookbook');
+    }
+
+    /**
+     * Append links attribute.
+     *
+     * @var array
+     */
+    protected $appends = ['_links'];
+
+    /**
+     * Set attributes links
+     *
+     * @return array
+     */
+    public function getLinksAttribute()
+    {
+        return [
+            'self' => app()
+                ->make('url')
+                ->to("api/v1/recipes/{$this->attributes['id']}")
+        ];
     }
 }
