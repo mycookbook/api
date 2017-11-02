@@ -2,6 +2,8 @@
 
 namespace App\Http\Contracts;
 
+use Illuminate\Http\Request;
+
 /**
  * Interface iResource
  */
@@ -10,11 +12,9 @@ interface Repository
     /**
      * Index method
      *
-     * @param JWTAuth $jwt jwt
-     *
      * @return mixed
      */
-    public function index($jwt);
+    public function index();
 
     /**
      * Update method
