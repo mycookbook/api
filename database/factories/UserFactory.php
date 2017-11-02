@@ -1,12 +1,13 @@
 <?php
 
-/**
- * UserFactory
- *
- * @author Florence Okosun <florence.okosun@getitllc.com>
- * @copyright Copyright(c) 2017 Get It, LLC(http://www.getit.me)
- */
-class UserFactory
-{
-
-}
+$factory->define(
+    App\User::class, function (Faker\Generator $faker) {
+        return [
+            'name' => $faker->name,
+            'email' => $faker->email,
+            'password' => app('hash')->make('secret'),
+            'following' => rand(1, 100),
+            'followers' => rand(1, 100),
+        ];
+    }
+);
