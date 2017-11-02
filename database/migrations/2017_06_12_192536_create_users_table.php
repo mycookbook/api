@@ -25,7 +25,6 @@ class CreateUsersTable extends Migration
                 $table->integer('following');
                 $table->integer('followers');
 
-                $table->rememberToken();
                 $table->timestamps();
             }
         );

@@ -41,13 +41,23 @@ class Recipe extends Model
     }
 
     /**
-     * Get all recipes
+     * Append links attribute.
      *
-     * @return mixed
+     * @var array
      */
-    public static function getRecipes()
+    protected $appends = ['_links'];
+
+    /**
+     * Set attributes links
+     *
+     * @return array
+     */
+    public function getLinksAttribute()
     {
-        $recipes = Recipe::get();
-        return $recipes;
+        return [
+            'self' => app()
+                ->make('url')
+                ->to("api/v1/recipes/{$this->attributes['id']}")
+        ];
     }
 }

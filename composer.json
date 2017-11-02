@@ -32,7 +32,7 @@
       ],
       "classmap": [
         "tests/",
-        "database/"
+        "database/seeds"
       ]
     },
     "autoload-dev": {

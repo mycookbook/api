@@ -23,8 +23,10 @@ class CreateRecipesTable extends Migration
                 $table->string('ingredients');
                 $table->string('imgUrl');
                 $table->string('description');
+
                 $table->integer('user_id')->unsigned();
                 $table->integer('cookbook_id')->unsigned();
+
                 $table->timestamps();
             }
         );

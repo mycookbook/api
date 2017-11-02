@@ -5,7 +5,6 @@ namespace App\Http\Repositories;
 use App\User;
 use App\Recipe;
 use App\Cookbook;
-use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Contracts\Repository;
 
@@ -17,18 +16,14 @@ class RecipeRepository implements Repository
     /**
      * Get all recipes belonging to a user
      *
-     * @param JWTAuth $jwt auth-jwt
-     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($jwt)
+    public function index()
     {
         return response(
             [
-                'data' =>  Recipe::with('Cookbook')
-                    ->where('user_id', $jwt->toUser()->id)
-                    ->get()
-                    ->toArray()
+                'data' =>  Recipe::with('Cookbook', 'User')
+                    ->paginate(100)
             ]
         );
     }
@@ -77,8 +72,8 @@ class RecipeRepository implements Repository
     /**
      * Update recipe
      *
-     * @param Request $request  request
-     * @param int     $recipeId recipeid
+     * @param Request $request request
+     * @param int     $id      recipeid
      *
      * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
@@ -86,24 +81,27 @@ class RecipeRepository implements Repository
     {
         try {
             $recipe = Recipe::findorFail($id);
-            $recipe->update($request->all());
+            $updated = $recipe->update($request->all());
+            $statusCode = $updated ? 202 : 422;
+            $status = "success";
         } catch(\Exception $e) {
-            $recipe = null;
+            $updated = false;
             $statusCode = 404;
+            $status = ['error' => $e->getMessage()];
         }
 
         return response(
             [
-                "data" => $recipe,
-                "updated" => $recipe ? true : "error",
-            ], $statusCode ?? 204
+                "updated" => $updated,
+                "status" => $status,
+            ], $statusCode
         );
     }
 
     /**
      * Delete recipe
      *
-     * @param int $recipeId recipeId
+     * @param int $id recipeId
      *
      * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
@@ -113,15 +111,17 @@ class RecipeRepository implements Repository
             $recipe = Recipe::findorFail($id);
             $deleted = $recipe->delete();
             $statusCode = $deleted ? 202 : 422;
-        } catch (\Exception $e) {
+            $status = "success";
+        } catch(\Exception $e) {
             $deleted = false;
             $statusCode = 404;
+            $status = ['error' => $e->getMessage()];
         }
 
         return response(
             [
                 'deleted' => $deleted,
-                'status' => $deleted ? "success" : "error",
+                'status' => $status,
             ], $statusCode
         );
     }

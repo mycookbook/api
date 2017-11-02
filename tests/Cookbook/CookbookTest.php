@@ -22,6 +22,60 @@ class CookbookTest extends TestCase
     }
 
     /**
+     * Test to find cookbook by id
+     *
+     * @return void
+     */
+    public function testCanFindCookbook()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->json(
+            'POST', '/api/v1/cookbooks', [
+                'name' => 'sample cookbook',
+                'description' => 'sample description'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $cookbookId = 2;
+
+        $this->get(
+            '/api/v1/cookbooks/' . $cookbookId,
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJsonStructure(
+            [
+                'id',
+                'name',
+                'description',
+                'user_id',
+                'created_at',
+                'updated_at',
+                '_links',
+            ]
+        )->assertResponseStatus(200);
+    }
+
+    /**
      * Test that Cookbook can be created
      *
      * @return void
@@ -228,21 +282,16 @@ class CookbookTest extends TestCase
             ]
         )->seeJsonStructure(
             [
-                'data' => [
-                    '_links' => [
-                        'self'
-                    ],
-                    'created_at',
-                    'description',
-                    'id',
-                    'name',
-                    'updated_at',
-                ],
-                'status'
+               'updated', 'status'
+            ]
+        )->seejson(
+            [
+                'updated' => true,
+                'status' => 'success'
             ]
         );
 
-        $this->assertResponseStatus(204);
+        $this->assertResponseStatus(202);
     }
 
     /**
@@ -270,7 +319,7 @@ class CookbookTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $cookbookId = 2;
+        $cookbookId = 2000;
 
         $this->put(
             '/api/v1/cookbooks/' . $cookbookId,
@@ -280,10 +329,12 @@ class CookbookTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'data' => null,
-                'status' => 'Not Found.'
+                'updated',
+                'status' => [
+                    'error'
+                ]
             ]
         );
 
@@ -334,6 +385,53 @@ class CookbookTest extends TestCase
         );
 
         $this->assertResponseStatus(202);
+    }
+
+    /**
+     * Test that cookbook can be dleted if not exist
+     *
+     * @return void
+     */
+    public function testThatCookbookCannotBeDeletedIfNotFound()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $cookbookId = 100000;
+
+        $this->delete(
+            '/api/v1/cookbooks/' . $cookbookId,
+            [
+                'name' => 'test',
+                'description' => 'sample'
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJsonStructure(
+            [
+                'deleted',
+                'status' => [
+                    'error'
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(404);
     }
 
     /**

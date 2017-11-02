@@ -207,11 +207,18 @@ class RecipeTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'updated' => true
+                'updated', 'status'
             ]
-        )->seeStatusCode(204);
+        )->seejson(
+            [
+                'updated' => true,
+                'status' => 'success'
+            ]
+        );
+
+        $this->assertResponseStatus(202);
     }
 
     /**
@@ -253,17 +260,21 @@ class RecipeTest extends TestCase
         );
 
         $this->json(
-            'PUT', '/api/v1/recipes/200', [
+            'PUT', '/api/v1/recipes/200000', [
                 'name' => 'updated recipe name'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'data' => null,
-                'updated' => 'error'
+                'updated',
+                'status' => [
+                    'error'
+                ]
             ]
-        )->seeStatusCode(404);
+        );
+
+        $this->assertResponseStatus(404);
     }
 
     /**
@@ -467,6 +478,7 @@ class RecipeTest extends TestCase
             [
                 'deleted' => true,
                 'status' => 'success'
+
             ]
         );
 
@@ -498,7 +510,7 @@ class RecipeTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $recipeId = 2;
+        $recipeId = 100000000;
 
         $this->delete(
             '/api/v1/recipes/' . $recipeId,
@@ -508,10 +520,12 @@ class RecipeTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'deleted' => false,
-                'status' => 'error'
+                'deleted',
+                'status' => [
+                    'error'
+                ]
             ]
         );
 

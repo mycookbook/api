@@ -3,28 +3,25 @@
 namespace App\Http\Repositories;
 
 use App\Cookbook;
-use Tymon\JWTAuth\JWTAuth;
 use App\Http\Contracts\Repository;
+
 /**
  * Class CookbookRepository
  */
 class CookbookRepository implements Repository
 {
+
     /**
-     * Return cookbooks
-     *
-     * @param JWTAuth $jwt auth-jwt
+     * Return all cookbooks
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($jwt)
+    public function index()
     {
         return response(
             [
-                'data' =>  Cookbook::with('Recipes', 'User')
-                    ->where('user_id', $jwt->toUser()->id)
-                    ->get()
-                    ->toArray()
+                'data' =>  Cookbook::with('Recipes', 'Users')
+                    ->paginate(100)
             ]
         );
     }
@@ -48,6 +45,8 @@ class CookbookRepository implements Repository
         );
 
         $data = $cookbook->save();
+
+        $cookbook->users()->attach($user->id);
 
         $statusCode = $cookbook ? 201 : 422;
 
@@ -74,17 +73,20 @@ class CookbookRepository implements Repository
     {
         try {
             $cookbook = Cookbook::findOrFail($id);
-            $cookbook->update($request->all());
+            $updated = $cookbook->update($request->all());
+            $statusCode =  $updated ? 202 : 422;
+            $status = "success";
         } catch(\Exception $e) {
-            $cookbook = null;
+            $updated = false;
             $statusCode = 404;
+            $status = ['error' => $e->getMessage()];
         }
 
         return response(
             [
-                "data" => $cookbook,
-                "status" => $cookbook ? "success" : "Not Found."
-            ], $statusCode ?? 204
+                'updated' => $updated,
+                'status' => $status
+            ], $statusCode
         );
     }
 
@@ -101,15 +103,17 @@ class CookbookRepository implements Repository
             $cookbook = Cookbook::findOrFail($id);
             $deleted = $cookbook->delete();
             $statusCode = $deleted ? 202 : 422;
+            $status = "success";
         } catch (\Exception $e) {
             $deleted = false;
             $statusCode = 404;
+            $status = ['error' => $e->getMessage()];
         }
 
         return response(
             [
                 'deleted' => $deleted,
-                'status' => $deleted ? "success" : "error",
+                'status' => $status,
             ], $statusCode
         );
     }
