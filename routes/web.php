@@ -1,18 +1,15 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-
 /**
  * Welcome and API documentation page
+ *
+ * PHP version  7.0.12
+ *
+ * @category CookbookAPI
+ * @package  CookbookAPi_V1
+ * @author   Florence Okosun <okosununzflorence@gmail.com>
+ * @license  MIT <http://somelink.com>
+ * @link     Somelink <http://somelink.com>
  */
 
 $app->group(
@@ -56,29 +53,39 @@ $app->group(
             }
         );
 
-        $app->group(
-            [
-                'middleware' => 'jwt.auth'
-            ], function () use ($app) {
+        /*
+        |--------------------------------------------------------------------------
+        | Recipes Routes
+        |--------------------------------------------------------------------------
+        */
 
-                // Recipes
-                $app->get('/recipes', 'RecipeController@index')
-                    ->post('/recipes', 'RecipeController@store');
+        $app->get('/recipes', 'RecipeController@index')
+            ->post('/recipes', 'RecipeController@store');
 
-                $app->put('/recipes/{recipeId}', 'RecipeController@update')
-                    ->patch('/recipes/{recipeId}', 'RecipeController@update');
+        $app->put('/recipes/{recipeId}', 'RecipeController@update')
+            ->patch('/recipes/{recipeId}', 'RecipeController@update')
+            ->get('/recipes/{recipeId}', 'RecipeController@find');
 
-                $app->delete('/recipes/{recipeId}', 'RecipeController@delete');
+        $app->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
-                // Cookbooks
-                $app->get('/cookbooks', 'CookbookController@index')
-                    ->post('/cookbooks', 'CookbookController@store');
+        /*
+        |--------------------------------------------------------------------------
+        | Cookbooks Routes
+        |--------------------------------------------------------------------------
+        */
 
-                $app->put('/cookbooks/{cookbookId}', 'CookbookController@update')
-                    ->patch('/cookbooks/{cookbookId}', 'CookbookController@update');
+        $app->get('/cookbooks', 'CookbookController@index'); //get all cookbooks
 
-                $app->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
-            }
-        );
+        $app->post('/cookbooks', 'CookbookController@store'); //create new cookbook
+
+        $app->get(
+            '/cookbooks/{cookbookId}', 'CookbookController@find'
+        )  //get one cookbook
+            ->put(
+                '/cookbooks/{cookbookId}', 'CookbookController@update'
+            ); //update one cookbook
+
+        $app->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
+
     }
 );
