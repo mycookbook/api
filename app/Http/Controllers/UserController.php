@@ -19,6 +19,7 @@ class UserController extends Controller
     {
         $this->user = $user;
     }
+
     /**
      * Get all users from the database
      *
