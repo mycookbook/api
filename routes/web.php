@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Welcome and API documentation page
+ * API documentation page
  *
  * PHP version  7.0.12
  *
