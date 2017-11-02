@@ -19,7 +19,6 @@ class CookbookUser extends Migration
         Schema::create(
             'cookbook_user', function (Blueprint $table) {
                 $table->increments('id');
-                $table->timestamps();
                 $table->integer('user_id');
                 $table->integer('cookbook_id');
             }
