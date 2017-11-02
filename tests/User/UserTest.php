@@ -1,6 +1,6 @@
 <?php
 
-
+use Laravel\Lumen\Testing\DatabaseMigrations;
 /**
  * Class UserTest
  */
@@ -286,7 +286,7 @@ class UserTest extends TestCase
         $token = $obj->{'token'};
 
         $this->put(
-            '/api/v1/users/20',
+            '/api/v1/users/0',
             [
                 'name' => 'Joromi2',
                 'follower' => 1
