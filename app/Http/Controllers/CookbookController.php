@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Cookbook;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Repositories\CookbookRepository;
@@ -17,16 +18,14 @@ class CookbookController extends Controller
 
     /**
      * Constructor
-     *
-     * @param JWTAuth            $jwt      jwt
+
      * @param CookbookRepository $cookbook cookbookRepository
      *
      * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function __construct(JWTAuth $jwt, CookbookRepository $cookbook)
+    public function __construct(CookbookRepository $cookbook)
     {
-        $this->jwt = $jwt;
-        $this->user = $this->jwt->parseToken()->authenticate();
+        $this->middleware('jwt.auth', ['except' => ['index']]);
         $this->cookbook = $cookbook;
     }
 
@@ -37,17 +36,18 @@ class CookbookController extends Controller
      */
     public function index()
     {
-        return $this->cookbook->index($this->jwt);
+        return $this->cookbook->index();
     }
 
     /**
      * Create cookbook for user
      *
      * @param Request $request Form input
+     * @param JWTAuth $jwt     jwt-auth
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request, JWTAuth $jwt)
     {
         $this->validate(
             $request, [
@@ -56,7 +56,9 @@ class CookbookController extends Controller
             ]
         );
 
-        return $this->cookbook->store($request, $this->user);
+        $user = $jwt->parseToken()->authenticate();
+
+        return $this->cookbook->store($request, $user);
     }
 
     /**
@@ -82,5 +84,23 @@ class CookbookController extends Controller
     public function delete($cookbookId)
     {
         return $this->cookbook->delete($cookbookId);
+    }
+
+    /**
+     * Find resource
+     *
+     * @param int $id identifier
+     *
+     * @return mixed
+     */
+    public function find($id)
+    {
+        try {
+            $response = Cookbook::with('Users')->findOrFail($id);
+        } catch(\Exception $e) {
+            $response = $e->getMessage();
+        }
+
+        return $response;
     }
 }
