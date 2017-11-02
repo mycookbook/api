@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Recipe;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Repositories\RecipeRepository;
@@ -18,15 +19,13 @@ class RecipeController extends Controller
     /**
      * Constructor
      *
-     * @param JWTAuth          $jwt    auth-jwt
      * @param RecipeRepository $recipe recipeRepository
      *
      * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function __construct(JWTAuth $jwt, RecipeRepository $recipe)
+    public function __construct(RecipeRepository $recipe)
     {
-        $this->jwt = $jwt;
-        $this->user = $this->jwt->parseToken()->authenticate();
+        $this->middleware('jwt.auth');
         $this->recipe = $recipe;
     }
 
@@ -37,17 +36,18 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        return $this->recipe->index($this->jwt);
+        return $this->recipe->index();
     }
 
     /**
      * Create recipe for user
      *
      * @param Request $request Form input
+     * @param JWTAuth $jwt     jwt-auth
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request, JWTAuth $jwt)
     {
         $this->validate(
             $request, [
@@ -59,7 +59,9 @@ class RecipeController extends Controller
             ]
         );
 
-        return $this->recipe->store($request, $this->user);
+        $user = $jwt->parseToken()->authenticate();
+
+        return $this->recipe->store($request, $user);
     }
 
     /**
@@ -85,5 +87,23 @@ class RecipeController extends Controller
     public function delete($recipeId)
     {
         return $this->recipe->delete($recipeId);
+    }
+
+    /**
+     * Find resource
+     *
+     * @param int $id identifier
+     *
+     * @return mixed
+     */
+    public function find($id)
+    {
+        try {
+            $response = Recipe::with('User', 'Cookbook')->findOrFail($id);
+        } catch(\Exception $e) {
+            $response = $e->getMessage();
+        }
+
+        return $response;
     }
 }
