@@ -245,9 +245,69 @@ class UserTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
+        )->seeJsonStructure(
+            [
+                'updated', 'status'
+            ]
+        )->seejson(
+            [
+                'updated' => true,
+                'status' => 'success'
+            ]
         );
 
-        $this->assertResponseStatus(200);
+        $this->assertResponseStatus(202);
+    }
+
+    /**
+     * Test that user can be uodated
+     * This test is for PUT and PATCH operations
+     *
+     * @return void
+     */
+    public function testUserCannotBeUpdatedIfNotFound()
+    {
+        // create the user and sign them in
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Joromi',
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'joromi@foo.com',
+                'password' => 'joromo1236'
+            ]
+        );
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $this->put(
+            '/api/v1/users/0',
+            [
+                'name' => 'Joromi2',
+                'follower' => 1
+            ], [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJsonStructure(
+            [
+                'updated', 'status'
+            ]
+        )->seeJsonStructure(
+            [
+                'updated',
+                'status' => [
+                    'error'
+                ]
+            ]
+        );
+
+        $this->assertResponseStatus(404);
     }
 
     /**
@@ -292,10 +352,10 @@ class UserTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'data' => null,
-                'status' => 'ILLEGAL OPERATION.'
+                'updated',
+                'status' => ['error']
             ]
         );
 
@@ -425,10 +485,9 @@ class UserTest extends TestCase
 
         $this->assertEquals(404, $response->status());
 
-        $this->seeJson(
+        $this->seeJsonStructure(
             [
-                'data' => null,
-                'status' => 'Not found.'
+                'error'
             ]
         );
     }

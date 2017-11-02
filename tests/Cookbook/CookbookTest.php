@@ -46,16 +46,7 @@ class CookbookTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $this->json(
-            'POST', '/api/v1/cookbooks', [
-                'name' => 'sample cookbook',
-                'description' => 'sample description'
-            ], [
-                'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        );
-
-        $cookbookId = 2;
+        $cookbookId = 1;
 
         $this->get(
             '/api/v1/cookbooks/' . $cookbookId,
@@ -203,6 +194,91 @@ class CookbookTest extends TestCase
 
         $this->assertResponseStatus(200);
     }
+
+    /**
+     * Test can get aone cookbook that exist
+     *
+     * @return void
+     */
+    public function testCanGetOneCookbookIfExist()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // TODO: test for UnauthorizedHttpException
+        // when Authorization token is not set
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $id = 1;
+
+        $this->get(
+            '/api/v1/cookbooks/' . $id,
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        );
+
+        $this->assertResponseStatus(200);
+    }
+
+    /**
+     * Test cannot get aone cookbook that not exist
+     *
+     * @return void
+     */
+    public function testCannotGetOneCookbookIfNotExist()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'Sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $res = $this->json(
+            'POST', '/api/v1/auth/signin', [
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        // TODO: test for UnauthorizedHttpException
+        // when Authorization token is not set
+
+        $obj = json_decode($res->response->getContent());
+        $token = $obj->{'token'};
+
+        $id = 100000000;
+
+        $this->get(
+            '/api/v1/cookbooks/' . $id,
+            [
+                'HTTP_Authorization' => 'Bearer' . $token
+            ]
+        )->seeJsonStructure(
+            [
+                'error',
+            ]
+        );
+
+        $this->assertResponseStatus(404);
+    }
+
 
     /**
      * Test Cookbook cannot be created when token is invalid

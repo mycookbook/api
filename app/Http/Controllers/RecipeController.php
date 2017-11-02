@@ -101,7 +101,11 @@ class RecipeController extends Controller
         try {
             $response = Recipe::with('User', 'Cookbook')->findOrFail($id);
         } catch(\Exception $e) {
-            $response = $e->getMessage();
+            $response = response(
+                [
+                    'error' => $e->getMessage(),
+                ], 404
+            );
         }
 
         return $response;
