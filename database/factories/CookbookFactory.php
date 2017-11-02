@@ -1,7 +1,11 @@
 <?php
-/**
- * ${NAME}
- *
- * @author Florence Okosun <florence.okosun@getitllc.com>
- * @copyright Copyright(c) 2017 Get It, LLC(http://www.getit.me)
- */
+
+$factory->define(
+    App\Cookbook::class, function (Faker\Generator $faker) {
+        return [
+            'name' => $faker->jobTitle,
+            'description' => $faker->sentence,
+            'user_id' => rand(2, 49)
+        ];
+    }
+);
