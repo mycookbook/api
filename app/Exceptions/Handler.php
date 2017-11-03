@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
@@ -12,7 +13,11 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
+/**
+ * Class Handler
+ */
 class Handler extends ExceptionHandler
 {
     /**
@@ -32,7 +37,7 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param \Exception $e exception
      *
      * @return void
      */
@@ -72,6 +77,19 @@ class Handler extends ExceptionHandler
             default:
                 break;
             }
+        }
+
+        if ($e instanceof MethodNotAllowedHttpException
+            || $e instanceof NotFoundHttpException
+        ) {
+            $docs = include __DIR__.'/../../config/docs.php';
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Method Not Allowed or Not Found. Check API Docs',
+                    'docs' => $docs['api']
+                ], $e->getStatusCode()
+            );
         }
 
         return  parent::render($request, $e);
