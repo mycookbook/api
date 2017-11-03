@@ -460,6 +460,18 @@ class UserTest extends TestCase
         $response = $this->call('GET', '/api/v1/users');
 
         $this->assertEquals(200, $response->status());
+        $this->seeJsonStructure(
+            [
+                'data' => [
+                    'data' => [
+                        [
+                            'cookbooks',
+                            'recipes',
+                        ]
+                    ]
+                ]
+            ]
+        );
     }
 
     /**
