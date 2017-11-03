@@ -20,7 +20,7 @@ class UserRepository
     {
         return response(
             [
-                'data' =>  User::with('Recipes')->paginate(100)
+                'data' =>  User::with('Recipes', 'Cookbooks')->paginate(100)
             ]
         );
     }
