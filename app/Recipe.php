@@ -60,4 +60,16 @@ class Recipe extends Model
                 ->to("api/v1/recipes/{$this->attributes['id']}")
         ];
     }
+
+    /**
+     * Unserialize Ingredients
+     *
+     * @param [] $recipe recipe
+     *
+     * @return mixed
+     */
+    public function getIngredientsAttribute($recipe)
+    {
+        return explode(", ", $recipe);
+    }
 }
