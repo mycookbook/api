@@ -20,7 +20,7 @@ class CreateCookbooksTable extends Migration
             'cookbooks', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
-                $table->string('description');
+                $table->longText('description');
                 $table->integer('user_id')->unsigned();
                 $table->timestamps();
             }
