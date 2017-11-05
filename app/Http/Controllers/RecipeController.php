@@ -51,10 +51,10 @@ class RecipeController extends Controller
     {
         $this->validate(
             $request, [
-                'name' => 'required',
+                'name' => 'required|string',
                 'ingredients' => 'required',
-                'url' => 'required',
-                'description' => 'required',
+                'url' => 'required|url',
+                'description' => 'required|string',
                 'cookbookId' => 'required'
             ]
         );
