@@ -51,7 +51,7 @@ class RecipeRepository implements Repository
         try {
             if (Cookbook::findOrFail($request->cookbookId)) {
                 $recipe->cookbook_id = $request->cookbookId;
-                $recipe->save();
+                $recipe->saveOrFail();
 
                 $data = $recipe;
                 $statusCode = 201;
@@ -59,12 +59,13 @@ class RecipeRepository implements Repository
         } catch(\Exception $e){
             $data = null;
             $statusCode = 404;
+            $msg = $e->getMessage();
         }
 
         return response(
             [
                 "data" => $data,
-                'status' => $data ? 'success' : 'error or unknown cookbook.'
+                'status' => $data ? 'success' : $msg
             ], $statusCode ?? 200
         );
     }
