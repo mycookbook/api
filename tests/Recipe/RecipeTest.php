@@ -247,9 +247,10 @@ class RecipeTest extends TestCase
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
-        )->seeJson(
+        )->seeJsonStructure(
             [
-                'status' => 'error or unknown cookbook.'
+                'data',
+                'status',
             ]
         )->seeStatusCode(404);
     }
