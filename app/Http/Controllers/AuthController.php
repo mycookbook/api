@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class AuthController
@@ -43,7 +41,8 @@ class AuthController extends Controller
         return response()->json(
             [
                 'success' => true,
-                'token' => $token
+                'token' => $token,
+                'user' => Auth::user()->name
             ], 200
         );
     }
