@@ -16,7 +16,8 @@
         "laravelista/lumen-vendor-publish": "^2.0",
         "tymon/jwt-auth": "^1.0@dev",
         "league/fractal": "^0.17.0",
-        "appzcoder/lumen-routes-list": "^1.0"
+        "appzcoder/lumen-routes-list": "^1.0",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
