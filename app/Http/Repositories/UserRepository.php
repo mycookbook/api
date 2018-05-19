@@ -83,8 +83,10 @@ class UserRepository
      */
     public function update(Request $request, $id)
     {
+        $user = $user = new User();
+
         try {
-            $user = User::findorFail($id);
+            $user = $user->findorFail($id);
             $updated = $user->update($request->except(['email']));
             $statusCode = $updated ? 202 : 422;
             $status = "success";
@@ -111,8 +113,10 @@ class UserRepository
      */
     protected static function userExist($id)
     {
+        $user = new User();
+
         try {
-            $response = User::findOrFail($id);
+            $response = $user->findorFail($id);
         } catch(\Exception $e) {
             $response = response(
                 [
