@@ -463,11 +463,9 @@ class UserTest extends TestCase
         $this->seeJsonStructure(
             [
                 'data' => [
-                    'data' => [
-                        [
-                            'cookbooks',
-                            'recipes',
-                        ]
+                    [
+                        'cookbooks',
+                        'recipes',
                     ]
                 ]
             ]
