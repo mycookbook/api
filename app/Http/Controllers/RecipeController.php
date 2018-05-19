@@ -25,7 +25,7 @@ class RecipeController extends Controller
      */
     public function __construct(RecipeRepository $recipe)
     {
-        $this->middleware('jwt.auth');
+//        $this->middleware('jwt.auth');
         $this->recipe = $recipe;
     }
 
