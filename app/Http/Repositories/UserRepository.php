@@ -18,7 +18,7 @@ class UserRepository
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('cookbooks', 'recipes')->get();
 
         return response(
             [
