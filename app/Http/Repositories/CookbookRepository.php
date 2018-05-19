@@ -3,12 +3,11 @@
 namespace App\Http\Repositories;
 
 use App\Cookbook;
-use App\Http\Contracts\Repository;
 
 /**
  * Class CookbookRepository
  */
-class CookbookRepository implements Repository
+class CookbookRepository
 {
 
     /**
@@ -54,7 +53,7 @@ class CookbookRepository implements Repository
             [
                 'response' => [
                     'created' => true,
-                    'data' => Cookbook::findOrfail($cookbook),
+                    'data' => self::findOrFail($cookbook),
                     'status' => $data ? "success" : "error",
                 ]
             ], $statusCode
@@ -72,7 +71,7 @@ class CookbookRepository implements Repository
     public function update($request, $id)
     {
         try {
-            $cookbook = Cookbook::findOrFail($id);
+            $cookbook = self::findOrFail($id);
             $updated = $cookbook->update($request->all());
             $statusCode =  $updated ? 202 : 422;
             $status = "success";
@@ -91,6 +90,19 @@ class CookbookRepository implements Repository
     }
 
     /**
+     * Find cookbook
+     *
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    public static function findOrFail($id)
+    {
+        $cookbook = new Cookbook();
+
+        return $cookbook->findOrfail($id);
+    }
+
+    /**
      * Delete Cookbook resource
      *
      * @param int $id identofier
@@ -100,7 +112,7 @@ class CookbookRepository implements Repository
     public function delete($id)
     {
         try {
-            $cookbook = Cookbook::findOrFail($id);
+            $cookbook = self::findOrFail($id);
             $deleted = $cookbook->delete();
             $statusCode = $deleted ? 202 : 422;
             $status = "success";

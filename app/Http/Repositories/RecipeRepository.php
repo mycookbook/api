@@ -6,12 +6,11 @@ use App\User;
 use App\Recipe;
 use App\Cookbook;
 use Illuminate\Http\Request;
-use App\Http\Contracts\Repository;
 
 /**
  * Class RecipeRepository
  */
-class RecipeRepository implements Repository
+class RecipeRepository
 {
     /**
      * Get all recipes belonging to a user
@@ -82,8 +81,9 @@ class RecipeRepository implements Repository
      */
     public function update($request, $id)
     {
+        $recipe = new Recipe();
         try {
-            $recipe = Recipe::findorFail($id);
+            $recipe = $recipe->findorFail($id);
             $updated = $recipe->update($request->all());
             $statusCode = $updated ? 202 : 422;
             $status = "success";
