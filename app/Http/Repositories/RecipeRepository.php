@@ -38,6 +38,8 @@ class RecipeRepository implements Repository
      */
     public function store($request, $user)
     {
+        $cookbook = new Cookbook();
+
         $recipe = new Recipe(
             [
                 'name' => $request->name,
@@ -49,7 +51,7 @@ class RecipeRepository implements Repository
         );
 
         try {
-            if (Cookbook::findOrFail($request->cookbookId)) {
+            if ($cookbook->findOrFail($request->cookbookId)) {
                 $recipe->cookbook_id = $request->cookbookId;
                 $recipe->saveOrFail();
 

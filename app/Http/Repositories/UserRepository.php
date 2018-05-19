@@ -18,9 +18,11 @@ class UserRepository
      */
     public function index()
     {
+        $users = User::with('cookbooks', 'recipes')->get();
+
         return response(
             [
-                'data' =>  User::with('Recipes', 'Cookbooks')->paginate(100)
+                'data' => $users
             ]
         );
     }

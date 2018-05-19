@@ -57,6 +57,16 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $e)
     {
         if ($e instanceof UnauthorizedHttpException) {
+
+            if(is_null($e->getPrevious())) {
+                return response()->json(
+                    [
+                        'status' => 'Unauthorized',
+                        'message' => 'Token is required'
+                    ], $e->getStatusCode()
+                );
+            }
+
             switch (get_class($e->getPrevious())) {
             case TokenExpiredException::class:
                 return response()->json(

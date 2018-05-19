@@ -508,7 +508,7 @@ class RecipeTest extends TestCase
      *
      * @return void
      */
-    public function testRecipeCannotBeCretaedWhenUserIsNotAuthenticated()
+    public function testRecipeCannotBeCreatedWhenUserIsNotAuthenticated()
     {
         $this->json(
             'POST', '/api/v1/auth/signup', [
