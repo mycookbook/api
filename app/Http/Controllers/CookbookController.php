@@ -36,7 +36,7 @@ class CookbookController extends Controller
      */
     public function index()
     {
-        return $this->cookbook->index();
+//        return $this->cookbook->index();
     }
 
     /**
