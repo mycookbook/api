@@ -21,6 +21,7 @@ class CreateCookbooksTable extends Migration
                 $table->increments('id');
                 $table->string('name');
                 $table->longText('description');
+                $table->string('bookCoverImg');
                 $table->integer('user_id')->unsigned();
                 $table->timestamps();
             }

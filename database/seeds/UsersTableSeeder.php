@@ -15,7 +15,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         factory(App\User::class, 4)->create();
-        factory(App\Cookbook::class, 2)->create();
-        factory(App\Recipe::class, 1)->create();
+        factory(App\Cookbook::class, 4)->create();
+        factory(App\Recipe::class, 4)->create();
     }
 }

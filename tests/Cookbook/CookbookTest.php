@@ -15,7 +15,7 @@ class CookbookTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-//        $this->disableExceptionHandling();
+       // $this->disableExceptionHandling();
 
         $this->artisan('migrate');
         $this->artisan('db:seed');
@@ -46,7 +46,7 @@ class CookbookTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $cookbookId = 198907687;
+        $cookbookId = 1;
 
         $this->get(
             '/api/v1/cookbooks/' . $cookbookId,
@@ -58,6 +58,7 @@ class CookbookTest extends TestCase
                 'id',
                 'name',
                 'description',
+                'bookCoverImg',
                 'user_id',
                 'created_at',
                 'updated_at',
@@ -94,7 +95,8 @@ class CookbookTest extends TestCase
         $this->json(
             'POST', '/api/v1/cookbooks', [
                 'name' => 'sample cookbook',
-                'description' => 'sample description'
+                'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+                'bookCoverImg' => 'https://cover-image-url',
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -139,7 +141,8 @@ class CookbookTest extends TestCase
             '/api/v1/cookbooks',
             [
                 'name' => ' ',
-                'description' => ' '
+                'description' => ' ',
+                'bookCoverImg' => ' '
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -151,6 +154,9 @@ class CookbookTest extends TestCase
                 'description' => [
                     'The description field is required.'
                 ],
+                'bookCoverImg' => [
+                  'The book cover img field is required.'
+                ]
             ]
         );
 
@@ -309,7 +315,8 @@ class CookbookTest extends TestCase
             '/api/v1/cookbooks',
             [
                 'name' => ' ',
-                'description' => ' '
+                'description' => ' ',
+                'bookCoverImg' => ' '
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
