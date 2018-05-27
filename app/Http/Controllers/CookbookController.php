@@ -52,7 +52,8 @@ class CookbookController extends Controller
         $this->validate(
             $request, [
                 'name' => 'required',
-                'description' => 'required'
+                'description' => 'required|min:126',
+                'bookCoverImg' => 'required|url',
             ]
         );
 
