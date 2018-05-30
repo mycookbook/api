@@ -46,7 +46,7 @@ class CookbookTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $cookbookId = 1;
+        $cookbookId = 1000000000000000;
 
         $this->get(
             '/api/v1/cookbooks/' . $cookbookId,
