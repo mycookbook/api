@@ -20,7 +20,7 @@ class CookbookRepository
         return response(
             [
                 'data' =>  Cookbook::with('Recipes', 'Users')
-                    ->paginate(100)
+                    ->take(10)->orderByDesc('created_at')->get()
             ]
         );
     }
@@ -37,9 +37,11 @@ class CookbookRepository
     {
         $cookbook = new Cookbook(
             [
-                'name' => $request->name,
-                'description' => $request->description,
-                'user_id' =>  $user->id
+                'name'          => $request->name,
+                'description'   => $request->description,
+                'bookCoverImg'  => $request->bookCoverImg,
+                'user_id'       =>  $user->id,
+                'flag'          => $request->flag
             ]
         );
 
@@ -63,8 +65,8 @@ class CookbookRepository
     /**
      * Update cookbook resource
      *
-     * @param \App\Http\Contracts\Request $request request
-     * @param int                         $id      identifier
+     * @param $request
+     * @param int $id identifier
      *
      * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */

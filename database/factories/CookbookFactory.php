@@ -5,7 +5,8 @@ $factory->define(
         return [
             'name' => $faker->jobTitle,
             'description' => $faker->sentence,
-            'user_id' => rand(2, 49)
+            'bookCoverImg' => 'http://localhost:5001/static/ketogenic-lifestyle.jpg',
+            'user_id' => rand(1, 4)
         ];
     }
 );
