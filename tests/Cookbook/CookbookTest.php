@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Class UserTest
  */
@@ -46,7 +45,7 @@ class CookbookTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $cookbookId = 1000000000000000;
+        $cookbookId = 1;
 
         $this->get(
             '/api/v1/cookbooks/' . $cookbookId,
@@ -62,6 +61,7 @@ class CookbookTest extends TestCase
                 'user_id',
                 'created_at',
                 'updated_at',
+                'flag',
                 '_links',
             ]
         )->assertResponseStatus(200);
@@ -97,6 +97,7 @@ class CookbookTest extends TestCase
                 'name' => 'sample cookbook',
                 'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
                 'bookCoverImg' => 'https://cover-image-url',
+                'flag' => 'BS',
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -156,6 +157,9 @@ class CookbookTest extends TestCase
                 ],
                 'bookCoverImg' => [
                   'The book cover img field is required.'
+                ],
+                'flag' => [
+                    'The flag field is required.'
                 ]
             ]
         );
@@ -316,7 +320,8 @@ class CookbookTest extends TestCase
             [
                 'name' => ' ',
                 'description' => ' ',
-                'bookCoverImg' => ' '
+                'bookCoverImg' => ' ',
+                'flag' => ' '
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
