@@ -37,10 +37,11 @@ class CookbookRepository
     {
         $cookbook = new Cookbook(
             [
-                'name' => $request->name,
-                'description' => $request->description,
-                'bookCoverImg' => $request->bookCoverImg,
-                'user_id' =>  $user->id
+                'name'          => $request->name,
+                'description'   => $request->description,
+                'bookCoverImg'  => $request->bookCoverImg,
+                'user_id'       =>  $user->id,
+                'flag'          => $request->flag
             ]
         );
 
