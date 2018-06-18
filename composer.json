@@ -17,7 +17,8 @@
         "appzcoder/lumen-routes-list": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
         "php-coveralls/php-coveralls": "^2.1",
-        "symfony/console": "3.4.x-dev"
+        "symfony/console": "3.4.x-dev",
+        "doctrine/dbal": "^2.7"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
