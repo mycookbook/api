@@ -54,6 +54,7 @@ class CookbookController extends Controller
                 'name' => 'required',
                 'description' => 'required|min:126',
                 'bookCoverImg' => 'required|url',
+                'flag' => 'required'
             ]
         );
 
