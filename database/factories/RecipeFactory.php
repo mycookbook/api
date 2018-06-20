@@ -12,6 +12,7 @@ $factory->define(
             'summary' => 'Cook pasta per package directions. Reserve 3/4 cup cooking liquid, then drain. Meanwhile,
             heat oil in a large, deep skillet on medium. Cook shallot,',
             'nutritional_detail' => 'low carbs'
+
         ];
     }
 );
