@@ -45,7 +45,9 @@ class RecipeRepository
                 'description' => $request->description,
                 'imgUrl' => $request->url,
                 'ingredients' => $request->ingredients,
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'summary' => $request->summary,
+                'nutritional_detail' => $request->nutritional_detail
             ]
         );
 

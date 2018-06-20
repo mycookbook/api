@@ -144,7 +144,10 @@ class RecipeTest extends TestCase
                 'url' => 'http://imagurl.com',
                 'description' => 'sample description',
                 'user_id' => 1,
-                'cookbookId' => 1
+                'cookbookId' => 1,
+                'summary' => 'Cook pasta per package directions. Reserve 3/4 cup cooking liquid, then drain.
+                Meanwhile, heat oil in a large, deep skillet on medium. Cook shallot,',
+                'nutritional_detail' => 'low carbs'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -243,7 +246,10 @@ class RecipeTest extends TestCase
                 'url' => 'http://imagurl.com',
                 'description' => 'sample description',
                 'user_id' => 1,
-                'cookbookId' => 100
+                'cookbookId' => 100,
+                'summary' => 'Cook pasta per package directions. Reserve 3/4 cup cooking liquid, then drain.
+                Meanwhile, heat oil in a large, deep skillet on medium. Cook shallot, ',
+                'nutritional_detail' => 'low carbs'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -401,7 +407,8 @@ class RecipeTest extends TestCase
                 'name' => ' ',
                 'ingredients' => ' ',
                 'url' => ' ',
-                'description' => ' '
+                'description' => ' ',
+                'summary' => 'This is not up to 100 characters.'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -419,6 +426,12 @@ class RecipeTest extends TestCase
                 'description' => [
                     'The description field is required.'
                 ],
+                'summary' => [
+                    'The summary must be at least 100 characters.'
+                ],
+                'nutritional_detail' => [
+                    'The nutritional detail field is required.'
+                ]
             ]
         );
 

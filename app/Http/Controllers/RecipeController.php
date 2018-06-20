@@ -55,7 +55,9 @@ class RecipeController extends Controller
                 'ingredients' => 'required',
                 'url' => 'required|url',
                 'description' => 'required|string',
-                'cookbookId' => 'required'
+                'cookbookId' => 'required',
+                'summary' => 'required|min:100',
+                'nutritional_detail' => 'required'
             ]
         );
 

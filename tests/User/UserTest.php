@@ -535,7 +535,10 @@ class UserTest extends TestCase
                 'url' => 'http://imagurl.com',
                 'description' => 'sample description',
                 'user_id' => 1,
-                'cookbookId' => 1
+                'cookbookId' => 1,
+                'summary' => 'Cook pasta per package directions. Reserve 3/4 cup cooking liquid, then drain.
+                Meanwhile, heat oil in a large, deep skillet on medium. Cook shallot, ',
+                'nutritional_detail' => 'low carbs'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
