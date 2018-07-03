@@ -46,6 +46,8 @@ class UserRepository
             ]
         );
 
+        $user->name_slug = slugify($request->name);
+
         $data = $user->save();
 
         $statusCode = $user ? 201 : 422;
