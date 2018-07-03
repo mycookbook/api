@@ -51,6 +51,8 @@ class RecipeRepository
             ]
         );
 
+        $recipe->slug = slugify($request->name);
+
         try {
             if ($cookbook->findOrFail($request->cookbookId)) {
                 $recipe->cookbook_id = $request->cookbookId;
