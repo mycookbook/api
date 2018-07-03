@@ -32,6 +32,9 @@
       "classmap": [
         "tests/",
         "database/seeds"
+      ],
+      "files": [
+        "app/Http/helpers.php"
       ]
     },
     "autoload-dev": {
