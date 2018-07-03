@@ -198,6 +198,7 @@ class UserTest extends TestCase
                         'following',
                         'id',
                         'name',
+                        'name_slug'
                     ],
                     'status'
                 ]

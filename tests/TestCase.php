@@ -3,6 +3,9 @@
 use App\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 
+/**
+ * Class TestCase
+ */
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {
     /**

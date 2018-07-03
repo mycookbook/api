@@ -63,6 +63,7 @@ class CookbookTest extends TestCase
                 'updated_at',
                 'flag',
                 '_links',
+                'slug',
             ]
         )->assertResponseStatus(200);
     }

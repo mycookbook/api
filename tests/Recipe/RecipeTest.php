@@ -68,7 +68,8 @@ class RecipeTest extends TestCase
                     'self'
                 ],
                 'user',
-                'cookbook'
+                'cookbook',
+                'slug',
             ]
         )->assertResponseStatus(200);
     }
@@ -164,6 +165,7 @@ class RecipeTest extends TestCase
                     'updated_at',
                     'created_at',
                     'id',
+                    'slug',
 
                 ],
 
