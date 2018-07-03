@@ -40,10 +40,12 @@ class CookbookRepository
                 'name'          => $request->name,
                 'description'   => $request->description,
                 'bookCoverImg'  => $request->bookCoverImg,
-                'user_id'       =>  $user->id,
+                'user_id'       => $user->id,
                 'flag'          => $request->flag
             ]
         );
+
+        $cookbook->slug = slugify($request->name);
 
         $data = $cookbook->save();
 
