@@ -42,7 +42,7 @@ class AuthController extends Controller
             [
                 'success' => true,
                 'token' => $token,
-                'user' => Auth::user()->name
+                'username' => Auth::user()->name_slug
             ], 200
         );
     }
