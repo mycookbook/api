@@ -196,9 +196,7 @@ class UserTest extends TestCase
                         'email',
                         'followers',
                         'following',
-                        'id',
                         'name',
-                        'name_slug'
                     ],
                     'status'
                 ]
@@ -222,7 +220,7 @@ class UserTest extends TestCase
         // create the user and sign them in
         $this->json(
             'POST', '/api/v1/auth/signup', [
-                'name' => 'Joromi',
+                'name' => 'joromi',
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
             ]
@@ -235,20 +233,18 @@ class UserTest extends TestCase
             ]
         );
 
+
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
+        $username = $obj->{'username'};
 
         $this->put(
-            '/api/v1/users/2',
+            '/api/v1/users/' . $username,
             [
-                'name' => 'Joromi2',
+                'name' => 'Joromi 2',
                 'follower' => 1
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        )->seeJsonStructure(
-            [
-                'updated', 'status'
             ]
         )->seejson(
             [
@@ -297,14 +293,7 @@ class UserTest extends TestCase
             ]
         )->seeJsonStructure(
             [
-                'updated', 'status'
-            ]
-        )->seeJsonStructure(
-            [
-                'updated',
-                'status' => [
-                    'error'
-                ]
+                'error'
             ]
         );
 
@@ -355,8 +344,7 @@ class UserTest extends TestCase
             ]
         )->seeJsonStructure(
             [
-                'updated',
-                'status' => ['error']
+                'error'
             ]
         );
 
@@ -480,7 +468,15 @@ class UserTest extends TestCase
      */
     public function testCanGetOneUser()
     {
-        $response = $this->call('GET', '/api/v1/users/1');
+        $this->json(
+            'POST', '/api/v1/auth/signup', [
+                'name' => 'sally',
+                'email' => 'sally@foo.com',
+                'password' => 'salis'
+            ]
+        );
+
+        $response = $this->call('GET', '/api/v1/users/sally');
 
         $this->assertEquals(200, $response->status());
     }
