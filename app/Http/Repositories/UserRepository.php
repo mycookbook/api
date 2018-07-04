@@ -66,30 +66,60 @@ class UserRepository
     /**
      * Get one user
      *
-     * @param int $id id
-     *
+     * @param $username
      * @return \Illuminate\Http\JsonResponse
+     *
      */
-    public function show($id)
+    public function show($username)
     {
-        return self::userExist($id);
+        $user = self::findWhere('name_slug', $username);
+
+        if (!$user) {
+            return $response = response(
+                [
+                    'error' => 'Resource must have been renamed or removed.',
+                ], 404
+            );
+        }
+
+        $user = new User();
+
+        return response(
+            [
+                "data" => $user->where('name_slug', $username)->firstOrFail(),
+            ], 200
+        );
     }
 
     /**
      * Implement a full/partial update
      *
      * @param Request $request request
-     * @param int     $id      userId
+     * @param $username
      *
      * @return \Illuminate\Http\JsonResponse
+     *
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $username)
     {
-        $user = $user = new User();
+        $user = self::findWhere('name_slug', $username);
+
+        if (!$user) {
+            return $response = response(
+                [
+                    'error' => 'Resource must have been renamed or removed.',
+                ], 404
+            );
+        }
+
+
+        $user = new User();
+        $record = $user->where('name_slug', $username)->firstOrFail();
+
+        $record->name_slug = slugify($request->name);
 
         try {
-            $user = $user->findorFail($id);
-            $updated = $user->update($request->except(['email']));
+            $updated = $record->update($request->except(['email']));
             $statusCode = $updated ? 202 : 422;
             $status = "success";
         } catch(\Exception $e) {
@@ -119,6 +149,28 @@ class UserRepository
 
         try {
             $response = $user->findorFail($id);
+        } catch(\Exception $e) {
+            $response = response(
+                [
+                    'error' => $e->getMessage(),
+                ], 404
+            );
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param $column
+     * @param $key
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Support\Collection|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public static function findWhere($column, $key)
+    {
+        try {
+            $user = new User();
+            $response = $user->where($column, $key)->exists();
         } catch(\Exception $e) {
             $response = response(
                 [
