@@ -33,7 +33,7 @@ $app->group(
         );
 
         $app->get(
-            '/users/{id}', 'UserController@show'
+            '/users/{username}', 'UserController@show'
         );
 
         $app->get(
@@ -44,11 +44,11 @@ $app->group(
         $app->group(
             ['middleware' => 'jwt.auth'], function () use ($app) {
                 $app->put(
-                    '/users/{id}', 'UserController@update'
+                    '/users/{username}', 'UserController@update'
                 );
 
                 $app->patch(
-                    '/users/{id}', 'UserController@update'
+                    '/users/{username}', 'UserController@update'
                 );
             }
         );
