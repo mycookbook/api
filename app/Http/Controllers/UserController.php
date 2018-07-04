@@ -53,13 +53,13 @@ class UserController extends Controller
     /**
      * Get one user
      *
-     * @param int $id id
+     * @param int $username username
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show($username)
     {
-        return $this->user->show($id);
+        return $this->user->show($username);
     }
 
     /**
