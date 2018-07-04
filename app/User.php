@@ -34,7 +34,7 @@ class User extends Model implements
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'name_slug'
     ];
 
     /**
@@ -94,7 +94,7 @@ class User extends Model implements
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/users/{$this->attributes['id']}")
+                ->to("api/v1/users/{$this->attributes['name_slug']}")
         ];
     }
 }
