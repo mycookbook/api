@@ -61,4 +61,21 @@ class Cookbook extends Model
     {
         return $this->belongsToMany('App\User');
     }
+
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->belongsTo('App\Category');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function flag()
+    {
+        return $this->belongsTo('App\Flag');
+    }
 }

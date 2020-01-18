@@ -5,9 +5,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 /**
- * Class AddFlagToCookbooksTable
+ * Class AddCalorieCountToRecipesTable
  */
-class AddFlagToCookbooksTable extends Migration
+class AddCalorieCountToRecipesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,8 +16,8 @@ class AddFlagToCookbooksTable extends Migration
      */
     public function up()
     {
-        Schema::table('cookbooks', function (Blueprint $table) {
-            $table->string('flag')->nullable();
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->integer('calorie_count')->default(0);
         });
     }
 
@@ -28,8 +28,8 @@ class AddFlagToCookbooksTable extends Migration
      */
     public function down()
     {
-        Schema::table('cookbooks', function (Blueprint $table) {
-            $table->dropColumn('flag');
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->dropColumn('calorie_count');
         });
     }
 }

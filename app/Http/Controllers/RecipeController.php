@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Recipe;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Repositories\RecipeRepository;
@@ -57,7 +59,8 @@ class RecipeController extends Controller
                 'description' => 'required|string',
                 'cookbookId' => 'required',
                 'summary' => 'required|min:100',
-                'nutritional_detail' => 'required'
+                'nutritional_detail' => 'required',
+                'calorie_count' => 'integer'
             ]
         );
 
@@ -101,8 +104,14 @@ class RecipeController extends Controller
     public function find($id)
     {
         try {
-            $response = Recipe::with('User', 'Cookbook')->findOrFail($id);
-        } catch(\Exception $e) {
+            $response = Recipe::with('User', 'Cookbook')
+                ->where('id', $id)
+                ->orWhere('slug', $id)
+                ->first();
+
+            if (is_null($response))
+                throw new NotFoundHttpException('Resource not found.');
+        } catch (\Exception $e) {
             $response = response(
                 [
                     'error' => $e->getMessage(),

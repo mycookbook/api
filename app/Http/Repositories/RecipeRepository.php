@@ -69,8 +69,8 @@ class RecipeRepository
 
         return response(
             [
-                "data" => $data,
-                'status' => $data ? 'success' : $msg
+                "data"      => $data,
+                'status'    => $data ? 'success' : $msg
             ], $statusCode ?? 200
         );
     }

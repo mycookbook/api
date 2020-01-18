@@ -8,7 +8,8 @@ $factory->define(
             'description' => $faker->sentence,
             'bookCoverImg' => 'http://localhost:5001/static/ketogenic-lifestyle.jpg',
             'user_id' => rand(1, 4),
-            'flag' => $i[array_rand($i)]
+            'category_id' => 1,
+            'flag_id' => 1
         ];
     }
 );

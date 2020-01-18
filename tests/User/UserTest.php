@@ -1,23 +1,18 @@
 <?php
 
+use Laravel\Lumen\Testing\DatabaseMigrations as DatabaseMigrations;
 /**
  * Class UserTest
  */
 class UserTest extends TestCase
 {
-    /**
-     * Run migrations
-     * Seed DB
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-//        $this->disableExceptionHandling();
+    use DatabaseMigrations;
 
-        $this->artisan('migrate');
-        $this->artisan('db:seed');
+    public function seedTable()
+    {
+        factory('App\Flag')->create();
+        factory('App\Category')->create();
+        factory('App\Cookbook')->create();
     }
 
     /**
@@ -446,6 +441,7 @@ class UserTest extends TestCase
      */
     public function testGetAllUsers()
     {
+        factory('App\User')->create();
         $response = $this->call('GET', '/api/v1/users');
 
         $this->assertEquals(200, $response->status());
@@ -506,6 +502,7 @@ class UserTest extends TestCase
      */
     public function testUserCanCreateRecipe()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',

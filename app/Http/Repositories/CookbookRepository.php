@@ -19,7 +19,7 @@ class CookbookRepository
     {
         return response(
             [
-                'data' =>  Cookbook::with('Recipes', 'Users')
+                'data' =>  Cookbook::with('Recipes', 'Users', 'Category', 'Flag')
                     ->take(10)->orderByDesc('created_at')->get()
             ]
         );
@@ -41,9 +41,10 @@ class CookbookRepository
                 'description'   => $request->description,
                 'bookCoverImg'  => $request->bookCoverImg,
                 'user_id'       => $user->id,
-                'flag'          => $request->flag
             ]
         );
+        $cookbook->category_id = $request->category_id;
+        $cookbook->flag_id = $request->flag_id;
 
         $cookbook->slug = slugify($request->name);
 

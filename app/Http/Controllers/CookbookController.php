@@ -6,6 +6,7 @@ use App\Cookbook;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Repositories\CookbookRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class UserController
@@ -25,7 +26,10 @@ class CookbookController extends Controller
      */
     public function __construct(CookbookRepository $cookbook)
     {
-        $this->middleware('jwt.auth', ['except' => ['index']]);
+        $this->middleware('jwt.auth', ['except' => [
+            'index',
+            'find'
+        ]]);
         $this->cookbook = $cookbook;
     }
 
@@ -53,8 +57,7 @@ class CookbookController extends Controller
             $request, [
                 'name' => 'required',
                 'description' => 'required|min:126',
-                'bookCoverImg' => 'required|url',
-                'flag' => 'required'
+                'bookCoverImg' => 'required|url'
             ]
         );
 
@@ -93,12 +96,20 @@ class CookbookController extends Controller
      *
      * @param int $id identifier
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory|null|static
+     *
+     * @throws NotFoundHttpException
      */
     public function find($id)
     {
         try {
-            $response = Cookbook::with('Users')->findOrFail($id);
+            $response = Cookbook::with('Users') //eagerload users with cookbook
+                ->where('id', $id)
+                ->orWhere('slug', $id)
+                ->first();
+
+            if (is_null($response))
+                throw new NotFoundHttpException('Resource not found.');
         } catch(\Exception $e) {
             $response = response(
                 [

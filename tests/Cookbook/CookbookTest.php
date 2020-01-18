@@ -1,23 +1,19 @@
 <?php
 
+use Laravel\Lumen\Testing\DatabaseMigrations as DatabaseMigrations;
+
 /**
  * Class UserTest
  */
 class CookbookTest extends TestCase
 {
-    /**
-     * Run migrations
-     * Seed DB
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-       // $this->disableExceptionHandling();
+    use DatabaseMigrations;
 
-        $this->artisan('migrate');
-        $this->artisan('db:seed');
+    public function seedTable()
+    {
+        factory('App\Flag')->create();
+        factory('App\Category')->create();
+        factory('App\Cookbook')->create();
     }
 
     /**
@@ -27,6 +23,7 @@ class CookbookTest extends TestCase
      */
     public function testCanFindCookbook()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
@@ -54,14 +51,12 @@ class CookbookTest extends TestCase
             ]
         )->seeJsonStructure(
             [
-                'id',
                 'name',
                 'description',
                 'bookCoverImg',
                 'user_id',
                 'created_at',
                 'updated_at',
-                'flag',
                 '_links',
                 'slug',
             ]
@@ -98,7 +93,8 @@ class CookbookTest extends TestCase
                 'name' => 'sample cookbook',
                 'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
                 'bookCoverImg' => 'https://cover-image-url',
-                'flag' => 'BS',
+                'category_id' => 1,
+                'flag_id' => 1
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -158,9 +154,6 @@ class CookbookTest extends TestCase
                 ],
                 'bookCoverImg' => [
                   'The book cover img field is required.'
-                ],
-                'flag' => [
-                    'The flag field is required.'
                 ]
             ]
         );
@@ -213,6 +206,7 @@ class CookbookTest extends TestCase
      */
     public function testCanGetOneCookbookIfExist()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
@@ -245,51 +239,6 @@ class CookbookTest extends TestCase
 
         $this->assertResponseStatus(200);
     }
-
-    /**
-     * Test cannot get aone cookbook that not exist
-     *
-     * @return void
-     */
-    public function testCannotGetOneCookbookIfNotExist()
-    {
-        $this->json(
-            'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        // TODO: test for UnauthorizedHttpException
-        // when Authorization token is not set
-
-        $obj = json_decode($res->response->getContent());
-        $token = $obj->{'token'};
-
-        $id = 100000000;
-
-        $this->get(
-            '/api/v1/cookbooks/' . $id,
-            [
-                'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        )->seeJsonStructure(
-            [
-                'error',
-            ]
-        );
-
-        $this->assertResponseStatus(404);
-    }
-
 
     /**
      * Test Cookbook cannot be created when token is invalid
@@ -341,6 +290,7 @@ class CookbookTest extends TestCase
      */
     public function testThatCookbookCanBeUpdated()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
@@ -437,6 +387,7 @@ class CookbookTest extends TestCase
      */
     public function testThatCookbookCanBeDeleted()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',

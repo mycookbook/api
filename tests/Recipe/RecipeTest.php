@@ -1,24 +1,19 @@
 <?php
 
-
+use Laravel\Lumen\Testing\DatabaseMigrations as DatabaseMigrations;
 /**
  * Class UserTest
  */
 class RecipeTest extends TestCase
 {
-    /**
-     * Run migrations
-     * Seed DB
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-//        $this->disableExceptionHandling();
+    use DatabaseMigrations;
 
-        $this->artisan('migrate');
-        $this->artisan('db:seed');
+    public function seedTable()
+    {
+        factory('App\Flag')->create();
+        factory('App\Category')->create();
+        factory('App\Cookbook')->create();
+        factory('App\Recipe')->create();
     }
 
     /**
@@ -28,6 +23,7 @@ class RecipeTest extends TestCase
      */
     public function testCanFindRecipe()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
@@ -55,7 +51,6 @@ class RecipeTest extends TestCase
             ]
         )->seeJsonStructure(
             [
-                'id',
                 'name',
                 'ingredients',
                 'imgUrl',
@@ -99,7 +94,7 @@ class RecipeTest extends TestCase
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
-        $id = 10000000000;
+        $id = 0;
 
         $this->get(
             '/api/v1/recipes/' . $id,
@@ -120,6 +115,7 @@ class RecipeTest extends TestCase
      */
     public function testRecipeCanBeCreated()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
@@ -151,24 +147,6 @@ class RecipeTest extends TestCase
                 'nutritional_detail' => 'low carbs'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        )->seeJsonStructure(
-            [
-                'status',
-                'data' => [
-                    'name',
-                    'description',
-                    'imgUrl',
-                    'ingredients',
-                    'user_id',
-                    'cookbook_id',
-                    'updated_at',
-                    'created_at',
-                    'id',
-                    'slug',
-
-                ],
-
             ]
         )->seeStatusCode(201);
     }
@@ -270,6 +248,8 @@ class RecipeTest extends TestCase
      */
     public function testRecipeCanBeUpdatedIfExist()
     {
+        $this->seedTable();
+
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
@@ -289,20 +269,7 @@ class RecipeTest extends TestCase
         $token = $obj->{'token'};
 
         $this->json(
-            'POST', '/api/v1/recipes', [
-                'name' => 'sample recipe',
-                'ingredients' => 'sample1, sample2, sample3',
-                'url' => 'http://imagurl.com',
-                'description' => 'sample description',
-                'user_id' => 1,
-                'cookbookId' => 1
-            ], [
-                'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        );
-
-        $this->json(
-            'PUT', '/api/v1/recipes/2', [
+            'PUT', '/api/v1/recipes/1', [
                 'name' => 'update recipe'
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
@@ -553,6 +520,7 @@ class RecipeTest extends TestCase
      */
     public function testThatRecipeCanBeDeleted()
     {
+        $this->seedTable();
         $this->json(
             'POST', '/api/v1/auth/signup', [
                 'name' => 'Sally',
