@@ -12,42 +12,42 @@
  * @link     Somelink <http://somelink.com>
  */
 
-$app->group(
-    ['prefix' => 'api/v1'], function () use ($app) {
-        $app->get(
+$router->group(
+    ['prefix' => 'api/v1'], function () use ($router) {
+        $router->get(
             '/', function () {
                 return 'Cookbook API v1.0';
             }
         );
 
-        $app->post(
+        $router->post(
             '/auth/signup', 'UserController@store'
         );
 
-        $app->post(
+        $router->post(
             '/auth/signin', 'AuthController@signin'
         );
 
-        $app->get(
+        $router->get(
             '/users/', 'UserController@index'
         );
 
-        $app->get(
+        $router->get(
             '/users/{username}', 'UserController@show'
         );
 
-        $app->get(
+        $router->get(
             '/stats/', 'StatsController@index'
         );
 
         // Developers
-        $app->group(
-            ['middleware' => 'jwt.auth'], function () use ($app) {
-                $app->put(
+        $router->group(
+            ['middleware' => 'jwt.auth'], function () use ($router) {
+                $router->put(
                     '/users/{username}', 'UserController@update'
                 );
 
-                $app->patch(
+                $router->patch(
                     '/users/{username}', 'UserController@update'
                 );
             }
@@ -59,14 +59,14 @@ $app->group(
         |--------------------------------------------------------------------------
         */
 
-        $app->get('/recipes', 'RecipeController@index')
+        $router->get('/recipes', 'RecipeController@index')
             ->post('/recipes', 'RecipeController@store');
 
-        $app->put('/recipes/{recipeId}', 'RecipeController@update')
+        $router->put('/recipes/{recipeId}', 'RecipeController@update')
             ->patch('/recipes/{recipeId}', 'RecipeController@update')
             ->get('/recipes/{recipeId}', 'RecipeController@find');
 
-        $app->delete('/recipes/{recipeId}', 'RecipeController@delete');
+        $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
         /*
         |--------------------------------------------------------------------------
@@ -74,18 +74,19 @@ $app->group(
         |--------------------------------------------------------------------------
         */
 
-        $app->get('/cookbooks', 'CookbookController@index'); //get all cookbooks
+        $router->get('/cookbooks', 'CookbookController@index'); //get all cookbooks
 
-        $app->post('/cookbooks', 'CookbookController@store'); //create new cookbook
+        $router->post('/cookbooks', 'CookbookController@store'); //create new cookbook
 
-        $app->get(
+        $router->get(
             '/cookbooks/{cookbookId}', 'CookbookController@find'
         )  //get one cookbook
             ->put(
                 '/cookbooks/{cookbookId}', 'CookbookController@update'
             ); //update one cookbook
 
-        $app->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
+        $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
 
+		$router->post('subscribe', 'SubscriptionController#store');
     }
 );
