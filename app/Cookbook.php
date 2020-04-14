@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cookbook extends Model
 {
+
     /**
      * The attributes that are mass assignable.
      *
@@ -52,16 +53,15 @@ class Cookbook extends Model
         return $this->hasMany('App\Recipe');
     }
 
-    /**
-     * A cookbook belongs to one user
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	/**
+	 * A cookbook belongs to one user
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
     public function users()
     {
         return $this->belongsToMany('App\User');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
