@@ -1,35 +1,35 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations as DatabaseMigrations;
+use Illuminate\Http\Response;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 /**
- * Class UserTest
+ * Class UserControllerTest
  */
-class UserTest extends TestCase
+class UserControllerTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function seedTable()
-    {
-        factory('App\Flag')->create();
-        factory('App\Category')->create();
-        factory('App\Cookbook')->create();
-    }
-
-    /**
-     * Test Application
-     *
-     * @return void
-     */
-    public function testApplication()
-    {
-        $response = $this->call('GET', '/api/v1');
-
-        $this->assertEquals(200, $response->status());
-
-        $this->assertEquals(
-            'Cookbook API v1.0', $this->response->getContent()
-        );
-    }
+	/**
+	 * @test
+	 */
+	public function it_returns_422_if_the_request_is_empty()
+	{
+		$this->json(
+			'POST', '/api/v1/auth/signup', []
+		)->seeJson(
+			[
+				'name' => [
+					'The name field is required.'
+				],
+				'email' => [
+					'The email field is required.'
+				],
+				'password' => [
+					'The password field is required.'
+				],
+			]
+		)->seeStatusCode(422);
+	}
 
     /**
      * Test that the name field is required
@@ -248,7 +248,7 @@ class UserTest extends TestCase
             ]
         );
 
-        $this->assertResponseStatus(202);
+        $this->assertResponseStatus(Response::HTTP_OK);
     }
 
     /**
@@ -387,77 +387,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Test that a registered users email and password are required to signin
-     *
-     * @return void
-     */
-    public function testThatARegisteredUsersEmailAndPasswordAreRequiredToSignin()
-    {
-        $this->json(
-            'POST', '/api/v1/auth/signin', []
-        )->seeJson(
-            [
-                'password' => [
-                    'The password field is required.'
-                ],
-                'email' => [
-                    'The email field is required.'
-                ]
-            ]
-        )->seeStatusCode(422);
-    }
-
-    /**
-     * Test that a user is signing in with Invalid credentials
-     *
-     * @return void
-     */
-    public function testAUserCannotSignInWithInvalidCredentials()
-    {
-        $this->json(
-            'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $this->json(
-            'POST', '/api/v1/auth/signin', [
-                'email' => 'sally@foo.com',
-                'password' => 'invalidpassword'
-            ]
-        )->seeJson(
-            [
-                'Not found or Invalid Credentials.'
-            ]
-        )->seeStatusCode(404);
-    }
-
-    /**
-     * Test get all users
-     *
-     * @return void
-     */
-    public function testGetAllUsers()
-    {
-        factory('App\User')->create();
-        $response = $this->call('GET', '/api/v1/users');
-
-        $this->assertEquals(200, $response->status());
-        $this->seeJsonStructure(
-            [
-                'data' => [
-                    [
-                        'cookbooks',
-                        'recipes',
-                    ]
-                ]
-            ]
-        );
-    }
-
-    /**
      * Test /api/users/{1} route
      *
      * @return void
@@ -493,64 +422,5 @@ class UserTest extends TestCase
                 'error'
             ]
         );
-    }
-
-    /**
-     * Test Recipe can be created
-     *
-     * @return void
-     */
-    public function testUserCanCreateRecipe()
-    {
-        $this->seedTable();
-        $this->json(
-            'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $obj = json_decode($res->response->getContent());
-
-        $token = $obj->{'token'};
-
-        $this->json(
-            'POST', '/api/v1/recipes', [
-                'name' => 'sample recipe',
-                'ingredients' => 'sample1, sample2, sample3',
-                'url' => 'http://imagurl.com',
-                'description' => 'sample description',
-                'user_id' => 1,
-                'cookbookId' => 1,
-                'summary' => 'Cook pasta per package directions. Reserve 3/4 cup cooking liquid, then drain.
-                Meanwhile, heat oil in a large, deep skillet on medium. Cook shallot, ',
-                'nutritional_detail' => 'low carbs'
-            ], [
-                'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        )->seeJsonStructure(
-            [
-                'data',
-                'status'
-            ]
-        )->seeStatusCode(201);
-    }
-
-    /**
-     * Reset Migrations
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        $this->artisan('migrate:reset');
     }
 }

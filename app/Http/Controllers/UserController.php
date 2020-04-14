@@ -2,76 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Repositories\UserRepository;
+use App\Services\UserService;
+use App\Http\Controllers\Requests\User\StoreRequest;
+use App\Http\Controllers\Requests\User\UpdateRequest;
 
 /**
  * Class UserController
  */
 class UserController extends Controller
 {
-    protected $user;
+    protected $service;
 
     /**
-     * @param UserRepository $user Userrepository
+     * @param UserService $service
      */
-    public function __construct(UserRepository $user)
+    public function __construct(UserService $service)
     {
-        $this->user = $user;
+        $this->service = $service;
     }
 
     /**
      * Get all users from the database
-     *
-     * @return int
      */
     public function index()
     {
-        return $this->user->index();
+        return $this->service->index();
     }
 
-    /**
-     * Create new user resource
-     *
-     * @param Request $request form inputs
-     *
-     * @return array|string
-     */
-    public function store(Request $request)
+	/**
+	 * Create new user
+	 *
+	 * @param \App\Http\Controllers\Requests\User\StoreRequest $request
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+    public function store(StoreRequest $request)
     {
-        $this->validate(
-            $request, [
-                'name' => 'required',
-                'email' => 'required|unique:users|email',
-                'password' => 'required|min:5'
-            ]
-        );
-
-        return $this->user->store($request);
+        return $this->service->store($request->getParams());
     }
 
-    /**
-     * Get one user
-     *
-     * @param int $username username
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+	/**
+	 * Get one user
+	 *
+	 * @param int $username username
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
     public function show($username)
     {
-        return $this->user->show($username);
+        return $this->service->show($username);
     }
 
-    /**
-     * Implement a full/partial update
-     *
-     * @param Request $request request
-     * @param int     $userId  userId
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, $userId)
-    {
-        return $this->user->update($request, $userId);
-    }
+	/**
+	 * Implement a full/partial update
+	 *
+	 * @param \App\Http\Controllers\Requests\User\UpdateRequest $request
+	 * @param string $userId userName
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
+	public function update(UpdateRequest $request, $userId)
+	{
+		return $this->service->update($request->getParams(), $userId);
+	}
 }
