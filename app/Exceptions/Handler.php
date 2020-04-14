@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
@@ -87,6 +88,18 @@ class Handler extends ExceptionHandler
                 ], $e->getStatusCode()
             );
         }
+
+        if ($e instanceof ModelNotFoundException) {
+        	return response()->json([
+        		'error' => 'Record Not found.'
+			], 404);
+		}
+
+		if ($e instanceof UnprocessibleEntityException) {
+			return response()->json([
+				'error' => $e->getMessage()
+			], $e->getCode());
+		}
 
         return  parent::render($request, $e);
     }
