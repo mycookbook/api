@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Repositories;
+namespace App\Http\Services;
 
+use App\User;
 use App\Cookbook;
+use Illuminate\Http\Request;
 
 /**
- * Class CookbookRepository
+ * Class CookbookService
  */
-class CookbookRepository
+class CookbookService
 {
 
     /**
@@ -33,7 +35,7 @@ class CookbookRepository
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store($request, $user)
+    public function store(Request $request, User $user)
     {
         $cookbook = new Cookbook(
             [

@@ -1,9 +1,11 @@
 <?php
 
+namespace Tests\Integration\Controllers\Cookbook;
+
 /**
  * Class UserTest
  */
-class CookbookTest extends HttpTestCase
+class CookbookTest extends \TestCase
 {
 	/**
      * Test to find cookbook by id
@@ -12,44 +14,57 @@ class CookbookTest extends HttpTestCase
      */
     public function testCanFindCookbook()
     {
-        $newUser = $this->json(
-            'POST', '/api/v1/auth/signup', [
-                'name' => 'Sally',
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-        dd($newUser);
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
-                'email' => 'sally@foo.com',
-                'password' => 'salis'
-            ]
-        );
-
-        $obj = json_decode($res->response->getContent());
-        $token = $obj->{'token'};
-
-        $cookbookId = 1;
-
-        $this->get(
-            '/api/v1/cookbooks/' . $cookbookId,
-            [
-                'HTTP_Authorization' => 'Bearer' . $token
-            ]
-        )->seeJsonStructure(
-            [
-                'name',
-                'description',
-                'bookCoverImg',
-                'user_id',
-                'created_at',
-                'updated_at',
-                '_links',
-                'slug',
-            ]
-        )->assertResponseStatus(200);
+		$this->json(
+			'POST', '/api/v1/auth/signup', [
+				'name' => '',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		)->seeJson(
+			[
+				'name' => [
+					'The name field is required.'
+				]
+			]
+		)->seeStatusCode(422);
+//        $newUser = $this->json(
+//            'POST', '/api/v1/auth/signup', [
+//                'name' => 'Sally',
+//                'email' => 'sally@foo.com',
+//                'password' => 'salis'
+//            ]
+//        );
+//        dd($newUser->getActualOutput());
+//
+//        $res = $this->json(
+//            'POST', '/api/v1/auth/signin', [
+//                'email' => 'sally@foo.com',
+//                'password' => 'salis'
+//            ]
+//        );
+//
+//        $obj = json_decode($res->response->getContent());
+//        $token = $obj->{'token'};
+//
+//        $cookbookId = 1;
+//
+//        $this->get(
+//            '/api/v1/cookbooks/' . $cookbookId,
+//            [
+//                'HTTP_Authorization' => 'Bearer' . $token
+//            ]
+//        )->seeJsonStructure(
+//            [
+//                'name',
+//                'description',
+//                'bookCoverImg',
+//                'user_id',
+//                'created_at',
+//                'updated_at',
+//                '_links',
+//                'slug',
+//            ]
+//        )->assertResponseStatus(200);
     }
 
 //    /**

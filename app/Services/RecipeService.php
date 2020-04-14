@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Repositories;
+namespace App\Http\Services;
 
 use App\User;
 use App\Recipe;
@@ -8,9 +8,9 @@ use App\Cookbook;
 use Illuminate\Http\Request;
 
 /**
- * Class RecipeRepository
+ * Class RecipeService
  */
-class RecipeRepository
+class RecipeService
 {
     /**
      * Get all recipes belonging to a user
