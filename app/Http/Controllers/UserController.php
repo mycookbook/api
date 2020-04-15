@@ -11,8 +11,6 @@ use App\Http\Controllers\Requests\User\UpdateRequest;
  */
 class UserController extends Controller
 {
-    protected $service;
-
     /**
      * @param UserService $service
      */

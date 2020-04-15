@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Requests\User;
 
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\UnprocessibleEntityException;
