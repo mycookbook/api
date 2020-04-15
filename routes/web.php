@@ -25,7 +25,7 @@ $router->group(
         );
 
         $router->post(
-            '/auth/signin', 'AuthController@signin'
+            '/auth/signin', 'AuthController@signIn'
         );
 
         $router->get(

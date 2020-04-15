@@ -97,4 +97,14 @@ class User extends Model implements
                 ->to("api/v1/users/{$this->attributes['name_slug']}")
         ];
     }
+
+	/**
+	 * Get the User name_slug
+	 *
+	 * @return string
+	 */
+    public function getSlug()
+	{
+		return $this->name_slug;
+	}
 }
