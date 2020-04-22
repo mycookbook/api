@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Recipe;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
-use App\Http\Repositories\RecipeRepository;
+use App\Services\RecipeService;
+use App\Http\Controllers\Requests\Recipe\StoreRequest;
 
 /**
  * Class UserController
@@ -16,19 +14,17 @@ use App\Http\Repositories\RecipeRepository;
  */
 class RecipeController extends Controller
 {
-    protected $recipe;
-
     /**
      * Constructor
      *
-     * @param RecipeRepository $recipe recipeRepository
+     * @param RecipeService $service
      *
      * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function __construct(RecipeRepository $recipe)
+    public function __construct(RecipeService $service)
     {
-        $this->middleware('jwt.auth', ['except' => ['index']]);
-        $this->recipe = $recipe;
+        $this->middleware('jwt.auth', ['except' => ['index', 'show']]);
+        $this->service = $service;
     }
 
     /**
@@ -38,48 +34,35 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        return $this->recipe->index();
+        return $this->service->index();
     }
 
-    /**
-     * Create recipe for user
-     *
-     * @param Request $request Form input
-     * @param JWTAuth $jwt     jwt-auth
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request, JWTAuth $jwt)
+	/**
+	 * Create recipe for user
+	 *
+	 * @param \App\Http\Controllers\Requests\Recipe\StoreRequest $request
+	 * @param JWTAuth $jwt
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws \Tymon\JWTAuth\Exceptions\JWTException
+	 */
+    public function store(StoreRequest $request, JWTAuth $jwt)
     {
-        $this->validate(
-            $request, [
-                'name' => 'required|string',
-                'ingredients' => 'required',
-                'url' => 'required|url',
-                'description' => 'required|string',
-                'cookbookId' => 'required',
-                'summary' => 'required|min:100',
-                'nutritional_detail' => 'required',
-                'calorie_count' => 'integer'
-            ]
-        );
-
-        $user = $jwt->parseToken()->authenticate();
-
-        return $this->recipe->store($request, $user);
+		$jwt->parseToken()->authenticate();
+		return $this->service->store($request->getParams());
     }
 
-    /**
-     * Update Recipe
-     *
-     * @param Request $request  request
-     * @param int     $recipeId recipeId
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+	/**
+	 * Update Recipe
+	 *
+	 * @param Request $request
+	 * @param int $recipeId
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
     public function update(Request $request, $recipeId)
     {
-        return $this->recipe->update($request, $recipeId);
+        return $this->service->update($request, $recipeId);
     }
 
     /**
@@ -91,7 +74,7 @@ class RecipeController extends Controller
      */
     public function delete($recipeId)
     {
-        return $this->recipe->delete($recipeId);
+        return $this->service->delete($recipeId);
     }
 
     /**
@@ -101,24 +84,8 @@ class RecipeController extends Controller
      *
      * @return mixed
      */
-    public function find($id)
+    public function show($id)
     {
-        try {
-            $response = Recipe::with('User', 'Cookbook')
-                ->where('id', $id)
-                ->orWhere('slug', $id)
-                ->first();
-
-            if (is_null($response))
-                throw new NotFoundHttpException('Resource not found.');
-        } catch (\Exception $e) {
-            $response = response(
-                [
-                    'error' => $e->getMessage(),
-                ], 404
-            );
-        }
-
-        return $response;
+		return $this->service->show($id);
     }
 }

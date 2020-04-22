@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services;
 
-use App\User;
 use App\Recipe;
 use App\Cookbook;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Class RecipeService
@@ -13,66 +13,54 @@ use Illuminate\Http\Request;
 class RecipeService
 {
     /**
-     * Get all recipes belonging to a user
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Get all recipes
      */
     public function index()
     {
-        return response(
-            [
-                'data' =>  Recipe::with('Cookbook', 'User')
-                    ->paginate(100)
-            ]
-        );
+		return response()->json(
+			[
+				'data' =>  Recipe::with('Cookbook', 'User')
+					->paginate(100)
+			], Response::HTTP_OK
+		);
     }
 
-    /**
-     * Perform POST action to create new recipe resource
-     *
-     * @param Request $request request
-     * @param User    $user    user
-     *
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     */
-    public function store($request, $user)
+	/**
+	 * Retrieve one Recipe
+	 *
+	 * @param $id
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 */
+    public function show($id)
+	{
+		return Recipe::with('User', 'Cookbook')
+			->where('id', $id)
+			->orWhere('slug', $id)
+			->firstOrFail();
+	}
+
+	/**
+	 * Creates a new Recipe
+	 *
+	 * @param Request $request request
+	 *
+	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
+    public function store($request)
     {
-        $cookbook = new Cookbook();
+		$user = $request->user();
 
-        $recipe = new Recipe(
-            [
-                'name' => $request->name,
-                'description' => $request->description,
-                'imgUrl' => $request->url,
-                'ingredients' => $request->ingredients,
-                'user_id' => $user->id,
-                'summary' => $request->summary,
-                'nutritional_detail' => $request->nutritional_detail
-            ]
-        );
-
+		$recipe = new Recipe($request->all());
+		$recipe->name = $request->title;
         $recipe->slug = slugify($request->name);
+		$recipe->user_id = $user->id;
+		$cookbook = Cookbook::findOrfail($request->cookbookId);
+		$recipe->cookbook_id = $cookbook->id;
 
-        try {
-            if ($cookbook->findOrFail($request->cookbookId)) {
-                $recipe->cookbook_id = $request->cookbookId;
-                $recipe->saveOrFail();
-
-                $data = $recipe;
-                $statusCode = 201;
-            }
-        } catch(\Exception $e){
-            $data = null;
-            $statusCode = 404;
-            $msg = $e->getMessage();
-        }
-
-        return response(
-            [
-                "data"      => $data,
-                'status'    => $data ? 'success' : $msg
-            ], $statusCode ?? 200
-        );
+        return response([
+        	"created" => $recipe->save()
+		], Response::HTTP_CREATED);
     }
 
     /**
@@ -85,24 +73,13 @@ class RecipeService
      */
     public function update($request, $id)
     {
-        $recipe = new Recipe();
-        try {
-            $recipe = $recipe->findorFail($id);
-            $updated = $recipe->update($request->all());
-            $statusCode = $updated ? 202 : 422;
-            $status = "success";
-        } catch(\Exception $e) {
-            $updated = false;
-            $statusCode = 404;
-            $status = ['error' => $e->getMessage()];
-        }
+		$recipe = Recipe::findOrfail($id);
 
-        return response(
-            [
-                "updated" => $updated,
-                "status" => $status,
-            ], $statusCode
-        );
+		return response(
+			[
+				'updated' => $recipe->update($request->all()),
+			],Response::HTTP_OK
+		);
     }
 
     /**
@@ -114,22 +91,12 @@ class RecipeService
      */
     public function delete($id)
     {
-        try {
-            $recipe = Recipe::findorFail($id);
-            $deleted = $recipe->delete();
-            $statusCode = $deleted ? 202 : 422;
-            $status = "success";
-        } catch(\Exception $e) {
-            $deleted = false;
-            $statusCode = 404;
-            $status = ['error' => $e->getMessage()];
-        }
+		$recipe = Recipe::findOrfail($id);
 
-        return response(
-            [
-                'deleted' => $deleted,
-                'status' => $status,
-            ], $statusCode
-        );
+		return response(
+			[
+				'deleted' => $recipe->delete()
+			], Response::HTTP_ACCEPTED
+		);
     }
 }
