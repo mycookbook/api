@@ -3,13 +3,11 @@
 namespace Integration\Requests\User;
 
 use Illuminate\Http\Request;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\FormRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
 
 class UpdateRequestTest extends \TestCase
 {
-	use DatabaseMigrations;
 
 	/**
 	 * @test

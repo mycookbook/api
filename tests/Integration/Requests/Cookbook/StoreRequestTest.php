@@ -6,13 +6,11 @@ use App\Flag;
 use App\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\FormRequest;
 use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 
 class StoreRequestTest extends \TestCase
 {
-	use DatabaseMigrations;
 
 	/**
 	 * @test

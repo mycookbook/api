@@ -2,21 +2,15 @@
 
 namespace Integration\Services;
 
-use App\Flag;
-use App\User;
-use App\Category;
 use App\Cookbook;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\CookbookService;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 
 class CookbookServiceTest extends \TestCase
 {
-	use DatabaseMigrations;
-
 	/**
 	 * @test
 	 */
@@ -34,18 +28,8 @@ class CookbookServiceTest extends \TestCase
 	{
 		$this->expectException(\ErrorException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
+		$category = $this->createCategory();
+		$flag = $this->createFlag();
 
 		$request = new StoreRequest(new Request([
 			'name' => 'sample cookbook',
@@ -64,37 +48,16 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_responds_with_a_201_when_an_authenticated_user_attempts_to_create_a_cookbook()
 	{
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'category_id' => $category->id,
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'flag_id' => $this->createFlag()->id
 		]);
 
 		$request->setUserResolver(function () {
-			$user = new User([
-				'name' => 'test',
-				'email' => 'you@test.com',
-				'password' => '@X_I123^76',
-				'following' => 0,
-				'followers' => 0
-			]);
-			$user->save();
-			return $user;
+			return $this->createUser();
 		});
 
 		$cookbookStoreRequest = new StoreRequest($request);
@@ -109,37 +72,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_responds_with_a_cookbook_instance_when_retrieving_a_cookbook_that_exists()
 	{
-		$user = new User([
-			'name' => 'test mate 2',
-			'email' => 'test@mail.com',
-			'password' => '@X_I123^76',
-			'followers' => 13,
-			'following' => 1
-		]);
-		$user->save();
-
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
-		$cookbook = new Cookbook([
-			'name' => 'sample cookbook',
-			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'category_id' => $category->id,
-			'flag_id' => $flag->id,
-			'user_id' => $user->id
-		]);
-		$cookbook->save();
+		$cookbook = $this->createCookbook();
 
 		$service = new CookbookService();
 		$response = $service->show($cookbook->id);
@@ -179,37 +112,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_responds_with_a_200_when_trying_to_update_a_cookbook_that_exists()
 	{
-		$user = new User([
-			'name' => 'test mate 2',
-			'email' => 'test@mail.com',
-			'password' => '@X_I123^76',
-			'followers' => 13,
-			'following' => 1
-		]);
-		$user->save();
-
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
-		$cookbook = new Cookbook([
-			'name' => 'sample cookbook',
-			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'category_id' => $category->id,
-			'flag_id' => $flag->id,
-			'user_id' => $user->id
-		]);
-		$cookbook->save();
+		$cookbook = $this->createCookbook();
 
 		$service = new CookbookService();
 
@@ -243,37 +146,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_responds_with_a_202_when_trying_to_delete_a_cookbook_that_exists()
 	{
-		$user = new User([
-			'name' => 'test mate 2',
-			'email' => 'test@mail.com',
-			'password' => '@X_I123^76',
-			'followers' => 13,
-			'following' => 1
-		]);
-		$user->save();
-
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
-		$cookbook = new Cookbook([
-			'name' => 'sample cookbook',
-			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'category_id' => $category->id,
-			'flag_id' => $flag->id,
-			'user_id' => $user->id
-		]);
-		$cookbook->save();
+		$cookbook = $this->createCookbook();
 
 		$service = new CookbookService();
 

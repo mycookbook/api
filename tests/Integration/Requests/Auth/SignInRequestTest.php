@@ -3,14 +3,11 @@
 namespace Integration\Requests\Auth;
 
 use Illuminate\Http\Request;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\FormRequest;
 use App\Http\Controllers\Requests\Auth\SignInRequest;
 
 class SignInRequestTest extends \TestCase
 {
-	use DatabaseMigrations;
-
 	/**
 	 * @test
 	 */

@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\UserService;
 use App\Services\AuthService;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\Auth\SignInRequest;
 
 class AuthServiceTest extends \TestCase
 {
-	use DatabaseMigrations;
 
 	/**
 	 * @test

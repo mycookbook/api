@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\UserService;
 use App\Interfaces\serviceInterface;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
 
 class UserServiceTest extends \TestCase
 {
-	use DatabaseMigrations;
 
 	/**
 	 * @test

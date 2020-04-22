@@ -2,12 +2,8 @@
 
 namespace Tests\Integration\Controllers\Cookbook;
 
-use App\Category;
-use App\Cookbook;
-use App\Flag;
-use App\User;
-use Illuminate\Http\Response;
 use Illuminate\Support\Str;
+use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 /**
@@ -16,62 +12,6 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 class CookbookControllerTest extends \TestCase
 {
 	use DatabaseMigrations;
-
-	protected function createUser()
-	{
-		$user = new User([
-			'name' => 'test mate 2',
-			'email' => 'test@mail.com',
-			'password' => '@X_I123^76',
-			'followers' => 13,
-			'following' => 1
-		]);
-		$user->save();
-
-		return $user;
-	}
-
-	protected function createCategory()
-	{
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		return $category;
-	}
-
-	protected function createFlag()
-	{
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
-		return $flag;
-	}
-
-	protected function createCookbook()
-	{
-		$user = $this->createUser();
-		$category = $this->createCategory();
-		$flag = $this->createFlag();
-
-		$cookbook = new Cookbook([
-			'name' => 'sample cookbook',
-			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'category_id' => $category->id,
-			'flag_id' => $flag->id,
-			'user_id' => $user->id
-		]);
-		$cookbook->save();
-
-		return $cookbook;
-	}
 
 	/**
 	 * @test
@@ -993,14 +933,4 @@ class CookbookControllerTest extends \TestCase
 			'message' => "Token is invalid"
 		])->seeStatusCode(401);
 	}
-
-    /**
-     * Reset Migrations
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        $this->artisan('migrate:reset');
-    }
 }

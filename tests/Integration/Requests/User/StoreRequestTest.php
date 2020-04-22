@@ -4,13 +4,11 @@ namespace Integration\Requests\User;
 
 use App\User;
 use Illuminate\Http\Request;
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\Http\Controllers\Requests\FormRequest;
 use App\Http\Controllers\Requests\User\StoreRequest;
 
 class StoreRequestTest extends \TestCase
 {
-	use DatabaseMigrations;
 
 	/**
 	 * @test

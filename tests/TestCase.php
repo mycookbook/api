@@ -1,13 +1,16 @@
 <?php
 
-use App\Exceptions\Handler;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Traits\TestObjects;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 /**
  * Class TestCase
  */
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {
+	use TestObjects;
+	use DatabaseMigrations;
+
     /**
      * Creates the application.
      *
@@ -17,6 +20,16 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
     {
         return require __DIR__.'/../bootstrap/app.php';
     }
+
+	/**
+	 * Reset Migrations
+	 *
+	 * @return void
+	 */
+	public function tearDown(): void
+	{
+		$this->artisan('migrate:reset');
+	}
 
 //    protected function disableExceptionHandling()
 //    {

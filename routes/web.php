@@ -64,7 +64,7 @@ $router->group(
 
         $router->put('/recipes/{recipeId}', 'RecipeController@update')
             ->patch('/recipes/{recipeId}', 'RecipeController@update')
-            ->get('/recipes/{recipeId}', 'RecipeController@find');
+            ->get('/recipes/{recipeId}', 'RecipeController@show');
 
         $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
