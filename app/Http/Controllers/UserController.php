@@ -12,7 +12,7 @@ use App\Http\Controllers\Requests\User\UpdateRequest;
 class UserController extends Controller
 {
     /**
-     * @param UserService $service
+     * @param \App\Services\UserService $service
      */
     public function __construct(UserService $service)
     {

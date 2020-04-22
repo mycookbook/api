@@ -75,16 +75,9 @@ $router->group(
         */
 
         $router->get('/cookbooks', 'CookbookController@index'); //get all cookbooks
-
         $router->post('/cookbooks', 'CookbookController@store'); //create new cookbook
-
-        $router->get(
-            '/cookbooks/{cookbookId}', 'CookbookController@find'
-        )  //get one cookbook
-            ->put(
-                '/cookbooks/{cookbookId}', 'CookbookController@update'
-            ); //update one cookbook
-
+        $router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
+        $router->put('/cookbooks/{cookbookId}', 'CookbookController@update'); //update one cookbook
         $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
 
 		$router->post('subscribe', 'SubscriptionController#store');

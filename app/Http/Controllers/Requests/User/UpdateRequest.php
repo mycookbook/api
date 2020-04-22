@@ -24,6 +24,6 @@ class UpdateRequest extends Controller
 			}
 		}
 
-		$this->params = $request->all();
+		parent::__construct($request);
 	}
 }
