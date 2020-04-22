@@ -61,22 +61,9 @@ $app->configure('cors');
 |
 */
 
-$app->middleware(
-    [
-//        App\Http\Middleware\ExampleMiddleware::class,
-//        \Barryvdh\Cors\HandleCors::class,
-		\Fruitcake\Cors\HandleCors::class
-    ]
-);
-
-$app->routeMiddleware(
-    [
-//        'auth' => App\Http\Middleware\Authenticate::class,
-//        'throttle' => App\Http\Middleware\ThrottleRequests::class,
-//        'cors' => \Barryvdh\Cors\HandleCors::class,
-		'cors' => \Fruitcake\Cors\HandleCors::class
-    ]
-);
+$app->middleware([
+	Fruitcake\Cors\HandleCors::class
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -91,12 +78,8 @@ $app->routeMiddleware(
 
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-$app->register(\Fruitcake\Cors\CorsServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
-
-//$app->register(App\Providers\AuthServiceProvider::class);
-//$app->register(App\Providers\EventServiceProvider::class);
-//$app->register(Barryvdh\Cors\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
