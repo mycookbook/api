@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Cookbook;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
-use App\Http\Repositories\CookbookRepository;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Services\CookbookService;
+use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 
 /**
  * Class UserController
@@ -15,109 +14,78 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CookbookController extends Controller
 {
-    protected $cookbook;
-
     /**
-     * Constructor
-
-     * @param CookbookRepository $cookbook cookbookRepository
-     *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+	 * @param \App\Services\CookbookService $service
      */
-    public function __construct(CookbookRepository $cookbook)
+    public function __construct(CookbookService $service)
     {
         $this->middleware('jwt.auth', ['except' => [
             'index',
-            'find'
+            'show'
         ]]);
-        $this->cookbook = $cookbook;
+
+        $this->service = $service;
     }
 
     /**
-     * Return all the cookbooks and associated resipes
+     * Return all the cookbooks and associated recipes
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        return $this->cookbook->index();
+        return $this->service->index();
     }
 
-    /**
-     * Create cookbook for user
-     *
-     * @param Request $request Form input
-     * @param JWTAuth $jwt     jwt-auth
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request, JWTAuth $jwt)
+	/**
+	 * Create cookbook for user
+	 *
+	 * @param \App\Http\Controllers\Requests\Cookbook\StoreRequest $request
+	 * @param \Tymon\JWTAuth\JWTAuth $jwt
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 * @throws \Tymon\JWTAuth\Exceptions\JWTException
+	 */
+    public function store(StoreRequest $request, JWTAuth $jwt)
     {
-        $this->validate(
-            $request, [
-                'name' => 'required',
-                'description' => 'required|min:126',
-                'bookCoverImg' => 'required|url'
-            ]
-        );
-
-        $user = $jwt->parseToken()->authenticate();
-
-        return $this->cookbook->store($request, $user);
+		$jwt->parseToken()->authenticate();
+    	return $this->service->store($request->getParams());
     }
 
-    /**
-     * Update cookbook
-     *
-     * @param Request $request    req
-     * @param int     $cookbookId paramname
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+	/**
+	 * Update cookbook
+	 *
+	 * @param Request $request req
+	 * @param int $cookbookId
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
     public function update(Request $request, $cookbookId)
     {
-        return $this->cookbook->update($request, $cookbookId);
+        return $this->service->update($request, $cookbookId);
     }
 
-    /**
-     * Delete a cookbook
-     *
-     * @param int $cookbookId cookbookId
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+	/**
+	 * Delete a cookbook
+	 *
+	 * @param int $cookbookId cookbookId
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
     public function delete($cookbookId)
     {
-        return $this->cookbook->delete($cookbookId);
+        return $this->service->delete($cookbookId);
     }
 
-    /**
-     * Find resource
-     *
-     * @param int $id identifier
-     *
-     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory|null|static
-     *
-     * @throws NotFoundHttpException
-     */
-    public function find($id)
+	/**
+	 * Find resource
+	 *
+	 * @param int $id
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 */
+    public function show($id)
     {
-        try {
-            $response = Cookbook::with('Users') //eagerload users with cookbook
-                ->where('id', $id)
-                ->orWhere('slug', $id)
-                ->first();
-
-            if (is_null($response))
-                throw new NotFoundHttpException('Resource not found.');
-        } catch(\Exception $e) {
-            $response = response(
-                [
-                    'error' => $e->getMessage(),
-                ], 404
-            );
-        }
-
-        return $response;
+    	return $this->service->show($id);
     }
 }

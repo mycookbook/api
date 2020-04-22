@@ -2,7 +2,7 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations as DatabaseMigrations;
 /**
- * Class UserTest
+ * Class UserControllerTest
  */
 class RecipeTest extends TestCase
 {

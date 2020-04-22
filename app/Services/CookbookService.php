@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services;
 
-use App\User;
 use App\Cookbook;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Interfaces\serviceInterface;
 
 /**
  * Class CookbookService
  */
-class CookbookService
+class CookbookService implements serviceInterface
 {
-
     /**
      * Return all cookbooks
      *
@@ -19,51 +19,44 @@ class CookbookService
      */
     public function index()
     {
-        return response(
-            [
-                'data' =>  Cookbook::with('Recipes', 'Users', 'Category', 'Flag')
-                    ->take(10)->orderByDesc('created_at')->get()
-            ]
-        );
+		return response()->json(
+			[
+				'data' =>  Cookbook::with('Recipes', 'Users', 'Category', 'Flag')
+					->take(10)->orderByDesc('created_at')->get()
+			], Response::HTTP_OK
+		);
     }
 
     /**
      * Create cookbook resource
      *
-     * @param Request $request request
-     * @param User    $user    user
+     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, User $user)
+    public function store(Request $request)
     {
-        $cookbook = new Cookbook(
-            [
-                'name'          => $request->name,
-                'description'   => $request->description,
-                'bookCoverImg'  => $request->bookCoverImg,
-                'user_id'       => $user->id,
-            ]
-        );
-        $cookbook->category_id = $request->category_id;
-        $cookbook->flag_id = $request->flag_id;
+		$user = $request->user();
 
+        $cookbook = new Cookbook($request->all());
+
+		$cookbook->flag_id = $request->flag_id;
+		$cookbook->category_id = $request->category_id;
+		$cookbook->user_id = $user->id;
         $cookbook->slug = slugify($request->name);
 
         $data = $cookbook->save();
 
         $cookbook->users()->attach($user->id);
 
-        $statusCode = $cookbook ? 201 : 422;
-
         return response()->json(
             [
                 'response' => [
                     'created' => true,
-                    'data' => self::findOrFail($cookbook),
+                    'data' => $cookbook,
                     'status' => $data ? "success" : "error",
                 ]
-            ], $statusCode
+            ], Response::HTTP_CREATED
         );
     }
 
@@ -77,36 +70,13 @@ class CookbookService
      */
     public function update($request, $id)
     {
-        try {
-            $cookbook = self::findOrFail($id);
-            $updated = $cookbook->update($request->all());
-            $statusCode =  $updated ? 202 : 422;
-            $status = "success";
-        } catch(\Exception $e) {
-            $updated = false;
-            $statusCode = 404;
-            $status = ['error' => $e->getMessage()];
-        }
+    	$cookbook = Cookbook::findOrfail($id);
 
         return response(
             [
-                'updated' => $updated,
-                'status' => $status
-            ], $statusCode
+                'updated' => $cookbook->update($request->all()),
+            ],Response::HTTP_OK
         );
-    }
-
-    /**
-     * Find cookbook
-     *
-     * @param $id
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
-     */
-    public static function findOrFail($id)
-    {
-        $cookbook = new Cookbook();
-
-        return $cookbook->findOrfail($id);
     }
 
     /**
@@ -118,22 +88,25 @@ class CookbookService
      */
     public function delete($id)
     {
-        try {
-            $cookbook = self::findOrFail($id);
-            $deleted = $cookbook->delete();
-            $statusCode = $deleted ? 202 : 422;
-            $status = "success";
-        } catch (\Exception $e) {
-            $deleted = false;
-            $statusCode = 404;
-            $status = ['error' => $e->getMessage()];
-        }
+		$cookbook = Cookbook::findOrfail($id);
 
         return response(
             [
-                'deleted' => $deleted,
-                'status' => $status,
-            ], $statusCode
+                'deleted' => $cookbook->delete()
+            ], Response::HTTP_ACCEPTED
         );
     }
+
+	/**
+	 * @param $id
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 */
+	public function show($id)
+	{
+		return Cookbook::with('Users')
+			->where('id', $id)
+			->orWhere('slug', $id)
+			->firstOrFail();
+	}
 }
