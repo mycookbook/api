@@ -1,6 +1,6 @@
 <?php
 
-use Traits\TestObjects;
+use Traits\CreatesObjects;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 /**
@@ -8,7 +8,7 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
  */
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-	use TestObjects;
+	use CreatesObjects;
 	use DatabaseMigrations;
 
     /**

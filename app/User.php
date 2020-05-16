@@ -44,17 +44,17 @@ class User extends Model implements
      */
     public function recipes()
     {
-        return $this->hasMany('App\Recipe');
+        return $this->hasMany('App\Recipe', 'user_id');
     }
 
-    /**
-     * A user can be subscribed to multiple cookbooks
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	/**
+	 * A user can be subscribed to multiple cookbooks
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
     public function cookbooks()
     {
-        return $this->belongsToMany('App\Cookbook');
+        return $this->belongsToMany('App\Cookbook', 'cookbook_user');
     }
 
     /**

@@ -21,6 +21,10 @@ $router->group(
         );
 
         $router->post(
+        	'/search', 'SearchController@fetch'
+		);
+
+        $router->post(
             '/auth/signup', 'UserController@store'
         );
 

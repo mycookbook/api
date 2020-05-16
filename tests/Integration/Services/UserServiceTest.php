@@ -109,4 +109,24 @@ class UserServiceTest extends \TestCase
 		$this->assertSame((int)$user->followers, 13);
 		$this->assertSame((int)$user->following, 1);
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_a_204_if_there_is_nothing_to_update()
+	{
+		$storeRequest = new StoreRequest(new Request([
+			'name' => 'test mate',
+			'email' => 'you@test.com',
+			'password' => '@X_I123^76'
+		]));
+
+		$service = new UserService();
+		$service->store($storeRequest->getParams());
+
+		$updateRequest = new UpdateRequest(new Request([]));
+		$response = $service->update($updateRequest->getParams(), 'test-mate');
+
+		$this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+	}
 }

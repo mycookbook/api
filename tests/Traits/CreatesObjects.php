@@ -9,7 +9,7 @@ use App\Category;
 use App\Cookbook;
 use Illuminate\Support\Str;
 
-trait TestObjects
+trait CreatesObjects
 {
 	protected $user;
 	protected $cookbook;

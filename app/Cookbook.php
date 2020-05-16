@@ -22,6 +22,8 @@ class Cookbook extends Model
         'name', 'description', 'bookCoverImg', 'user_id', 'flag', 'slug',
     ];
 
+    protected $hidden = ['user_id', 'pivot'];
+
     /**
      * Append links attribute.
      *
