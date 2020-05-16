@@ -70,7 +70,10 @@ class UserService implements serviceInterface
 
         return response(
             [
-                "data" => $user->with('recipes'),
+                "data" => [
+                	'user' => $user,
+					'recipes' => $user->recipes()->get()
+				],
             ], Response::HTTP_OK
         );
     }
@@ -87,19 +90,23 @@ class UserService implements serviceInterface
     {
 		$record = User::where('name_slug', $username)->firstOrFail();
 
-		$updated = $record->update([
-			'name' => Str::ucfirst($request->name),
-			'name_slug' => slugify($request->name),
-			'password' => (new BcryptHasher)->make($request->password),
-			'followers' => $request->followers ? $request->followers : 0,
-			'following' => $request->following ? $request->following : 0
-		]);
+		if ($request->all()) {
+			$updated = $record->update([
+				'name' => Str::ucfirst($request->name),
+				'name_slug' => slugify($request->name),
+				'password' => (new BcryptHasher)->make($request->password),
+				'followers' => $request->followers ? $request->followers : 0,
+				'following' => $request->following ? $request->following : 0
+			]);
 
-        return response(
-            [
-                "updated" => $updated,
-                "status" => "success",
-            ], Response::HTTP_OK
-        );
+			return response(
+				[
+					"updated" => $updated,
+					"status" => "success",
+				], Response::HTTP_OK
+			);
+		} else {
+			return response([], Response::HTTP_NO_CONTENT);
+		}
     }
 }
