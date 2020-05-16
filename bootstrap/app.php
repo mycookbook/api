@@ -80,6 +80,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
+$app->register(Sentry\Laravel\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

@@ -16,7 +16,8 @@
         "guzzlehttp/guzzle": "6.5.2",
         "php-coveralls/php-coveralls": "2.2.0",
         "symfony/console": "4.4.7",
-        "doctrine/dbal": "^2.10"
+        "doctrine/dbal": "^2.10",
+        "sentry/sentry-laravel": "1.7.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
