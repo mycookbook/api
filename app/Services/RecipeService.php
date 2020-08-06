@@ -12,9 +12,11 @@ use Illuminate\Http\Response;
  */
 class RecipeService
 {
-    /**
-     * Get all recipes
-     */
+	/**
+	 * Get all recipes
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 */
     public function index()
     {
 		return response()->json(
@@ -43,7 +45,7 @@ class RecipeService
 	/**
 	 * Creates a new Recipe
 	 *
-	 * @param Request $request request
+	 * @param \Illuminate\Http\Request; $request
 	 *
 	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
 	 */
@@ -63,16 +65,18 @@ class RecipeService
 		], Response::HTTP_CREATED);
     }
 
-    /**
-     * Update recipe
-     *
-     * @param Request $request request
-     * @param int     $id      recipeid
-     *
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     */
-    public function update($request, $id)
+	/**
+	 * Update recipe
+	 *
+	 * @param \Illuminate\Http\Request; $request
+	 * @param int $id
+	 *
+	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
+    public function update(Request $request, $id)
     {
+    	//TODO: if user dont own recipe, can update it
+
 		$recipe = Recipe::findOrfail($id);
 
 		return response(
@@ -91,6 +95,8 @@ class RecipeService
      */
     public function delete($id)
     {
+    	//TODO: if user dont own recipe, cannot delete it
+
 		$recipe = Recipe::findOrfail($id);
 
 		return response(

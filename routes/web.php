@@ -85,5 +85,14 @@ $router->group(
         $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
 
 		$router->post('subscribe', 'SubscriptionController#store');
+
+
+		/*
+		|--------------------------------------------------------------------------
+		| Categories Routes
+		|--------------------------------------------------------------------------
+		*/
+
+		$router->get('/categories', 'CategoryController@index'); //get all categories
     }
 );

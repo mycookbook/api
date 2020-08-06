@@ -18,8 +18,6 @@ class RecipeController extends Controller
      * Constructor
      *
      * @param RecipeService $service
-     *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
     public function __construct(RecipeService $service)
     {

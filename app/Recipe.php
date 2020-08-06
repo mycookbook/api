@@ -41,6 +41,14 @@ class Recipe extends Model
         return $this->belongsTo('App\Cookbook');
     }
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+    public function variations()
+	{
+		return $this->hasMany('App\RecipeVariation');
+	}
+
     /**
      * Append links attribute.
      *

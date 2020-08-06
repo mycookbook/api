@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Controllers\Auth;
+namespace Tests\Functional\Controllers\Auth;
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 

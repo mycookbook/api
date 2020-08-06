@@ -1,11 +1,13 @@
 <?php
 
+namespace Tests\Functional\Controllers\User;
+
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 /**
  * Class UserControllerTest
  */
-class UserControllerTest extends TestCase
+class UserControllerTest extends \TestCase
 {
     use DatabaseMigrations;
 

@@ -1,5 +1,8 @@
 <?php
 
+namespace Tests\Functional\Controllers\Recipe;
+
+use App\Recipe;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
@@ -57,7 +60,7 @@ class RecipeControllerTest extends \TestCase
 
 		$this->json(
 			'POST', '/api/v1/recipes', [
-			'title' => 'sample cookbook',
+			'title' => 'sample recipe',
 			'ingredients' => 'ttt', 'xxx',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 			'bookCoverImg' => 'https://cover-image-url',
@@ -83,8 +86,8 @@ class RecipeControllerTest extends \TestCase
 	{
 		//refers to a request w/o a valid token
 		$this->json(
-			'POST', '/api/v1/cookbooks', [
-			'title' => 'sample cookbook',
+			'POST', '/api/v1/recipes', [
+			'title' => 'sample recipe',
 			'ingredients' => 'ttt', 'xxx',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 			'bookCoverImg' => 'https://cover-image-url',
@@ -103,4 +106,128 @@ class RecipeControllerTest extends \TestCase
 			'message' => "Token is invalid"
 		])->seeStatusCode(401);
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_can_update_a_recipe_for_an_authenticated_user()
+	{
+		$recipe = $this->createRecipe();
+
+		//refers to a request that contains a valid token
+		$this->json(
+			'POST', '/api/v1/auth/signup', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/signin', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$this->json(
+			'PUT', '/api/v1/recipes' . '/' . $recipe->id , [
+			'title' => 'new title'
+		], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJson([
+			'updated' => true
+		])->seeStatusCode(200);
+	}
+
+	/**
+	 * @test
+	 */
+	public function an_unauthenticated_user_cannot_update_a_recipe()
+	{
+		$recipe = $this->createRecipe();
+
+		//refers to a request w/o a valid token
+		$this->json(
+			'PUT', '/api/v1/recipes' . '/' . $recipe->id, [
+			'title' => 'new title'
+		], [
+				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
+			]
+		)->seeJson([
+			'status' => "error",
+			'message' => "Token is invalid"
+		])->seeStatusCode(401);
+	}
+
+	/**
+	 * @test
+	 */
+	public function an_authenticated_user_can_delete_a_recipe_they_own()
+	{
+		$recipe = $this->createRecipe();
+
+		//refers to a request that contains a valid token
+		$this->json(
+			'POST', '/api/v1/auth/signup', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/signin', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$this->json(
+			'DELETE', '/api/v1/recipes' . '/' . $recipe->id , [
+			'title' => 'new title'
+		], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJson([
+			'deleted' => true
+		])->seeStatusCode(202);
+	}
+
+	/**
+	 * @test
+	 */
+	public function an_unauthenticated_user_cannot_delete_a_recipe()
+	{
+		$recipe = $this->createRecipe();
+
+		//refers to a request w/o a valid token
+		$this->json(
+			'DELETE', '/api/v1/recipes' . '/' . $recipe->id, [
+			'title' => 'new title'
+		], [
+				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
+			]
+		)->seeJson([
+			'status' => "error",
+			'message' => "Token is invalid"
+		])->seeStatusCode(401);
+	}
+
+	/**
+	 * @test
+	 */
+	public function an_authenticated_user_can_update_a_recipe_they_dont_own() {}
+
+	/**
+	 * @test
+	 */
+	public function an_authenticated_user_cannot_delete_a_recipe_they_dont_own() {}
 }
