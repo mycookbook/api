@@ -331,8 +331,6 @@ class StoreRequestTest extends \TestCase
 	 */
 	public function it_throws_an_exception_if_given_categories_does_not_exist()
 	{
-		//TODO: also what does it do if the given categories are duplicates?
-
 		$this->expectException(\App\Exceptions\UnprocessibleEntityException::class);
 
 		$flag = new Flag([
@@ -415,6 +413,35 @@ class StoreRequestTest extends \TestCase
 			'bookCoverImg' => 'http://dummuy-image.jpg',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => 0
+		]));
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_a_422_if_any_of_the_categories_does_not_exist_in_the_categories_table()
+	{
+		$this->expectException(\App\Exceptions\UnprocessibleEntityException::class);
+
+		$category = new Category([
+			'name' => 'test_title',
+			'slug' => 'test_slug',
+			'color' => '000000'
+		]);
+		$category->save();
+
+		$flag = new Flag([
+			'flag' => 'ug',
+			'nationality' => 'Ugandan'
+		]);
+		$flag->save();
+
+		$request = new StoreRequest(new Request([
+			'name' => 'sample title',
+			'description' => Str::random(126),
+			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'categories' => json_encode([$category->id, 0]),
+			'flag_id' => $flag->id
 		]));
 	}
 

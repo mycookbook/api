@@ -2,6 +2,7 @@
 
 namespace Tests\Functional\Controllers\Cookbook;
 
+use App\Cookbook;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
@@ -61,17 +62,62 @@ class CookbookControllerTest extends \TestCase
                 'name' => 'sample cookbook',
                 'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
                 'bookCoverImg' => 'https://cover-image-url',
-                'category_id' => $this->createCategory()->id,
+                'categories' => json_encode([$this->createCategory()->id]),
                 'flag_id' => $this->createFlag()->id
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
         )->seeJsonStructure([
         	'response' => [
-        		'created', 'data', 'status'
+        		'created', 'data'
 			]
-		])->seeStatusCode(201);
+		])->seeStatusCode(Response::HTTP_CREATED);
     }
+
+	/**
+	 * @test
+	 */
+    public function it_strips_out_duplicate_categories_before_creating_a_cookbook_for_an_authenticated_user()
+	{
+		$this->json(
+			'POST', '/api/v1/auth/signup', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/signin', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$category1 = $this->createCategory()->id;
+		$category2 = $this->createCategory()->id;
+
+		$this->json(
+			'POST', '/api/v1/cookbooks', [
+			'name' => 'sample cookbook',
+			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+			'bookCoverImg' => 'https://cover-image-url',
+			'categories' => json_encode([$category1, $category2, $category2]),
+			'flag_id' => $this->createFlag()->id
+		], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJsonStructure([
+			'response' => [
+				'created', 'data'
+			]
+		])->seeStatusCode(Response::HTTP_CREATED);
+
+		$this->assertCount(2, Cookbook::all()->last()->categories()->get());
+	}
 
 	/**
 	 * @test
@@ -83,7 +129,7 @@ class CookbookControllerTest extends \TestCase
 			'name' => 'sample cookbook',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 			'bookCoverImg' => 'https://cover-image-url',
-			'category_id' => $this->createCategory()->id,
+			'categories' => json_encode([$this->createCategory()->id]),
 			'flag_id' => $this->createFlag()->id
 		], [
 				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
@@ -387,7 +433,7 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => '',
-				'category_id' => 1,
+				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => 1
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -432,7 +478,7 @@ class CookbookControllerTest extends \TestCase
 			[
 				'name' => 'sample title',
 				'description' => Str::random(126),
-				'category_id' => 1,
+				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => 1
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -478,7 +524,7 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'invalid-url',
-				'category_id' => 1,
+				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => 1
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -524,15 +570,15 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'http://sample-image',
-				'category_id' => '',
-				'flag_id' => 1
+				'categories' => '',
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
 		)->seeJson(
 			[
-				'category_id' => [
-					'The category id field is required.'
+				'categories' => [
+					'The categories field is required.'
 				]
 			]
 		);
@@ -569,14 +615,14 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'http://sample-image',
-				'flag_id' => 1
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
 		)->seeJson(
 			[
-				'category_id' => [
-					'The category id field is required.'
+				'categories' => [
+					'The categories field is required.'
 				]
 			]
 		);
@@ -613,16 +659,14 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'http://sample-image',
-				'category_id' => 0,
-				'flag_id' => 1
+				'categories' => json_encode([0]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
 		)->seeJson(
 			[
-				'category_id' => [
-					'The selected category id is invalid.'
-				]
+				'error' => 'Category does not exist'
 			]
 		);
 
@@ -659,7 +703,7 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'http://sample-image',
-				'category_id' => $this->createCategory()->id,
+				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => ''
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -704,7 +748,7 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'http://sample-image',
-				'category_id' => $this->createCategory()->id
+				'categories' => json_encode([$this->createCategory()->id]),
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -748,7 +792,7 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample title',
 				'description' => Str::random(126),
 				'bookCoverImg' => 'http://sample-image',
-				'category_id' => $this->createCategory()->id,
+				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => 0
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token

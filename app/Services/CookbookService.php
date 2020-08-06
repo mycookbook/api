@@ -43,7 +43,7 @@ class CookbookService implements serviceInterface
 
         if ($cookbook->save()) {
 			$cookbook->users()->attach($request->user()->id);
-			$cookbook->categories()->attach(json_decode($request->get('categories')));
+			$cookbook->categories()->attach($request->get('categories'));
 
 			return response()->json(
 				[

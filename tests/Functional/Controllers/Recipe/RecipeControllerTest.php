@@ -221,13 +221,6 @@ class RecipeControllerTest extends \TestCase
 		])->seeStatusCode(401);
 	}
 
-	/**
-	 * @test
-	 */
 	public function an_authenticated_user_can_update_a_recipe_they_dont_own() {}
-
-	/**
-	 * @test
-	 */
 	public function an_authenticated_user_cannot_delete_a_recipe_they_dont_own() {}
 }
