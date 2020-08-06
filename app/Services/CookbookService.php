@@ -21,7 +21,7 @@ class CookbookService implements serviceInterface
     {
 		return response()->json(
 			[
-				'data' =>  Cookbook::with('Recipes', 'Users', 'Category', 'Flag')
+				'data' =>  Cookbook::with('Recipes', 'Users', 'Categories', 'Flag')
 					->take(50)->orderByDesc('created_at')->get()
 			], Response::HTTP_OK
 		);
@@ -36,28 +36,24 @@ class CookbookService implements serviceInterface
      */
     public function store(Request $request)
     {
-		$user = $request->user();
-
         $cookbook = new Cookbook($request->all());
 
-		$cookbook->flag_id = $request->flag_id;
-		$cookbook->category_id = $request->category_id;
-		$cookbook->user_id = $user->id;
+		$cookbook->user_id = $request->user()->id;
         $cookbook->slug = slugify($request->name);
 
-        $data = $cookbook->save();
+        if ($cookbook->save()) {
+			$cookbook->users()->attach($request->user()->id);
+			$cookbook->categories()->attach(json_decode($request->get('categories')));
 
-        $cookbook->users()->attach($user->id);
-
-        return response()->json(
-            [
-                'response' => [
-                    'created' => true,
-                    'data' => $cookbook,
-                    'status' => $data ? "success" : "error",
-                ]
-            ], Response::HTTP_CREATED
-        );
+			return response()->json(
+				[
+					'response' => [
+						'created' => true,
+						'data' => $cookbook
+					]
+				], Response::HTTP_CREATED
+			);
+		}
     }
 
     /**

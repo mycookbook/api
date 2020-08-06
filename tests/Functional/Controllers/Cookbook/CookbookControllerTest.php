@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Controllers\Cookbook;
+namespace Tests\Functional\Controllers\Cookbook;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;

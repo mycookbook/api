@@ -43,10 +43,10 @@ class Category extends Model
     }
 
     /**
-     * A cookbook has many recipes
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function cookbook()
+    public function cookbooks()
     {
-        return $this->belongsToMany('App\Cookbook');
+        return $this->belongsToMany('App\Cookbook', 'category_cookbook');
     }
 }

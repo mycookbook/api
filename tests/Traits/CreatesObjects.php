@@ -20,13 +20,14 @@ trait CreatesObjects
 	/**
 	 * Returns a User instance
 	 *
+	 * @param array $args
 	 * @return User
 	 */
-	protected function createUser(): User
+	protected function createUser($args = []): User
 	{
 		$user = new User([
 			'name' => 'test mate 2',
-			'email' => 'test2@mail.com',
+			'email' => isset($args['email']) ? $args['email'] : 'test2@mail.com',
 			'password' => '@X_I123^76',
 			'followers' => 13,
 			'following' => 1
@@ -87,7 +88,7 @@ trait CreatesObjects
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'category_id' => $this->category->id,
+			'categories' => json_encode([$this->category->id]),
 			'flag_id' => $this->flag->id,
 			'user_id' => $this->user->id
 		]);
