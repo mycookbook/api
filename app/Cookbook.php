@@ -19,7 +19,7 @@ class Cookbook extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'bookCoverImg', 'user_id', 'flag', 'slug',
+        'name', 'description', 'bookCoverImg', 'user_id', 'flag_id', 'slug',
     ];
 
     protected $hidden = ['user_id', 'pivot'];
@@ -65,13 +65,13 @@ class Cookbook extends Model
         return $this->belongsToMany('App\User');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function category()
-    {
-        return $this->belongsTo('App\Category');
-    }
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function categories()
+	{
+		return $this->belongsToMany('App\Category', 'category_cookbook');
+	}
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
