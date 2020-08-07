@@ -84,7 +84,7 @@ $router->group(
         $router->put('/cookbooks/{cookbookId}', 'CookbookController@update'); //update one cookbook
         $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
 
-		$router->post('subscribe', 'SubscriptionController#store');
+		$router->post('subscriptions', 'SubscriptionController@store');
 
 
 		/*

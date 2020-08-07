@@ -3,33 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Subscriber;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SubscriptionController extends Controller
 {
 	/**
-	 * @param Request $request
+	 * @param \Illuminate\Http\Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 * @throws \Illuminate\Validation\ValidationException
 	 */
-	public function store(Request $request)
+	public function store(\Illuminate\Http\Request $request)
 	{
-		$this->validate(
-			$request, [
-				'email' => 'required'
-			]
-		);
+		$this->validate($request, ['email' => 'required|email|unique:subscribers,email']);
 
-		$subscriber = new Subscriber();
-		$subscriber->email = $request->email;
+		$subscriber = new Subscriber($request->all());
+		$subscriber->subscriptions = json_encode([3 => true]);
 		$subscriber->save();
+
+		//TODO: dispatch job to send thank you email notification
 
 		return response()->json(
 			[
 				'response' => [
 					'created' => true,
-					'data' => null,
-					'status' => "success",
+					'data' => $subscriber,
 				]
-			], 200
+			], Response::HTTP_CREATED
 		);
 	}
 }
