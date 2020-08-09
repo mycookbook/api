@@ -18,7 +18,8 @@ class StoreRequest extends Controller
 				'cookbookId' => 'required|exists:cookbooks,id',
 				'summary' => 'required|min:100',
 				'nutritional_detail' => 'required',
-				'calorie_count' => 'integer'
+				'calorie_count' => 'integer',
+				'cook_time' => 'required'
 			]
 		);
 
