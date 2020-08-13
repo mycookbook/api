@@ -23,7 +23,7 @@ class RecipeService
     {
 		return response()->json(
 			[
-				'data' =>  Recipe::with('Cookbook', 'User')
+				'data' =>  Recipe::with('Cookbook', 'User') //eagerload with cookbook and user relationships
 					->paginate(100)
 			], Response::HTTP_OK
 		);
@@ -57,7 +57,7 @@ class RecipeService
 
 		$recipe = new Recipe($request->all());
 		$recipe->name = $request->title;
-        $recipe->slug = slugify($request->name);
+        $recipe->slug = slugify($request->title);
 		$recipe->user_id = $user->id;
 		$cookbook = Cookbook::findOrfail($request->cookbookId);
 		$recipe->cookbook_id = $cookbook->id;
