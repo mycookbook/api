@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,6 +22,16 @@ class Recipe extends Model
         'name', 'imgUrl', 'ingredients', 'description', 'user_id', 'cookbook_id', 'summary', 'nutritional_detail',
         'slug', 'calorie_count', 'cook_time'
     ];
+
+    protected $casts = [
+    	'cook_time' => 'datetime:H:i:s',
+		'ingredients' => 'json',
+//		'nutritional_detail' => 'json'
+	];
+
+//	protected $attributes = [
+//		'nutritional_detail' => ["cal" => "0g", "fat" => "0g", "carbs" => "0g", "protein" => "0g"]
+//	];
 
     /**
      * A recipe belongs to a user
