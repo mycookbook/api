@@ -28,13 +28,14 @@ class StoreRequestTest extends \TestCase
 
 		$request = new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 
 		$this->assertInstanceOf(FormRequest::class, $request);
@@ -51,13 +52,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => '',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -77,8 +79,31 @@ class StoreRequestTest extends \TestCase
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
+		]));
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_throws_an_exception_if_ingredients_is_not_a_valid_json()
+	{
+		$this->expectException(\Illuminate\Validation\ValidationException::class);
+
+		$cookbook = $this->createCookbook();
+
+		new StoreRequest(new Request([
+			'title' => 'sample title',
+			'ingredients' => 'invalid-json',
+			'imgUrl' => 'http://sample-url',
+			'description' => 'sample description',
+			'cookbookId' => $cookbook->id,
+			'summary' => Str::random(100),
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -93,13 +118,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => '',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -114,13 +140,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'invalid-url',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -135,13 +162,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => '',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -154,13 +182,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => '',
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -173,13 +202,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => '',
 			'cookbookId' => 0,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -194,55 +224,14 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => '',
 			'cookbookId' => $cookbook->id,
 			'summary' => '',
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
-		]));
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_throws_an_exception_if_summary_field_is_less_than_100_characters()
-	{
-		$this->expectException(\Illuminate\Validation\ValidationException::class);
-
-		$cookbook = $this->createCookbook();
-
-		new StoreRequest(new Request([
-			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
-			'imgUrl' => 'http://sample-url',
-			'description' => 'short description',
-			'cookbookId' => $cookbook->id,
-			'summary' => 'short summary',
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
-		]));
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_throws_an_exception_if_the_nutritional_detail_field_is_empty()
-	{
-		$this->expectException(\Illuminate\Validation\ValidationException::class);
-
-		$cookbook = $this->createCookbook();
-
-		new StoreRequest(new Request([
-			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
-			'imgUrl' => 'http://sample-url',
-			'description' => 'short description',
-			'cookbookId' => $cookbook->id,
-			'summary' => Str::random(100),
-			'nutritional_detail' => '',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 	}
 
@@ -257,13 +246,56 @@ class StoreRequestTest extends \TestCase
 
 		new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => 'short description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 'a string'
+			'calorie_count' => 'a string',
+			'cook_time' => '2020-04-07 00:55:00'
+		]));
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_throws_an_exception_if_the_cook_time_is_not_given()
+	{
+		$this->expectException(\Illuminate\Validation\ValidationException::class);
+
+		$cookbook = $this->createCookbook();
+
+		new StoreRequest(new Request([
+			'title' => 'sample title',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
+			'imgUrl' => 'http://sample-url',
+			'description' => 'short description',
+			'cookbookId' => $cookbook->id,
+			'summary' => Str::random(100),
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 200
+		]));
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_throws_an_exception_if_cook_time_is_not_a_valid_datetime_format()
+	{
+		$this->expectException(\Illuminate\Validation\ValidationException::class);
+
+		$cookbook = $this->createCookbook();
+
+		new StoreRequest(new Request([
+			'title' => 'sample title',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
+			'imgUrl' => 'http://sample-url',
+			'description' => 'short description',
+			'cookbookId' => $cookbook->id,
+			'summary' => Str::random(100),
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 200,
+			'cook_time' => 'invalid datetime format'
 		]));
 	}
 
@@ -274,13 +306,14 @@ class StoreRequestTest extends \TestCase
 	{
 		$requestData = [
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		];
 
 		$storeRequest = new StoreRequest(new Request($requestData));

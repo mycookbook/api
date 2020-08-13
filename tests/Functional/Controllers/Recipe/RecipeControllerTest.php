@@ -2,7 +2,6 @@
 
 namespace Tests\Functional\Controllers\Recipe;
 
-use App\Recipe;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
@@ -61,7 +60,7 @@ class RecipeControllerTest extends \TestCase
 		$this->json(
 			'POST', '/api/v1/recipes', [
 			'title' => 'sample recipe',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 			'bookCoverImg' => 'https://cover-image-url',
 			'summary' => Str::random(100),
@@ -69,8 +68,9 @@ class RecipeControllerTest extends \TestCase
 			'cookbookId' => $this->createCookbook()->id,
 			'category_id' => $this->category->id,
 			'flag_id' => $this->flag->id,
-			'nutritional_detail' => 'sample details',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -88,7 +88,7 @@ class RecipeControllerTest extends \TestCase
 		$this->json(
 			'POST', '/api/v1/recipes', [
 			'title' => 'sample recipe',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 			'bookCoverImg' => 'https://cover-image-url',
 			'summary' => Str::random(100),
@@ -96,8 +96,9 @@ class RecipeControllerTest extends \TestCase
 			'cookbookId' => $this->createCookbook()->id,
 			'category_id' => $this->category->id,
 			'flag_id' => $this->flag->id,
-			'nutritional_detail' => 'sample details',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		], [
 				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
 			]

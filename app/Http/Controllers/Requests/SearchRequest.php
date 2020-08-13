@@ -9,12 +9,12 @@ class SearchRequest extends Controller
 {
 	public function __construct(Request $request)
 	{
-		$this->validate(
+		$valid_request_payload = $this->validate(
 			$request, [
 				'query' => 'required',
 			]
 		);
 
-		parent::__construct($request);
+		parent::__construct($request->merge($valid_request_payload));
 	}
 }

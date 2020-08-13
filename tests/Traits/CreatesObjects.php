@@ -109,14 +109,15 @@ trait CreatesObjects
 
 		$recipe = new Recipe([
 			'name' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbook_id' => $this->cookbook->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'user_id' => $this->user->id
+			'user_id' => $this->user->id,
+			'cook_time' => '2020-04-07 00:55:00'
 		]);
 
 		if ($recipe->save()) {

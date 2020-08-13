@@ -30,13 +30,14 @@ class RecipeServiceTest extends \TestCase
 
 		$request = new StoreRequest(new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]));
 
 		$service = new RecipeService();
@@ -50,13 +51,14 @@ class RecipeServiceTest extends \TestCase
 	{
 		$request = new Request([
 			'title' => 'sample title',
-			'ingredients' => 'ttt', 'xxx',
+			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
 			'summary' => Str::random(100),
-			'nutritional_detail' => 'sample detail',
-			'calorie_count' => 1200
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 1200,
+			'cook_time' => '2020-04-07 00:55:00'
 		]);
 
 		$request->setUserResolver(function () {
