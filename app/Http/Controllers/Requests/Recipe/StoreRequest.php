@@ -7,22 +7,26 @@ use App\Http\Controllers\Controller;
 
 class StoreRequest extends Controller
 {
+	protected $req_nutritional_detail = ["cal", "fat", "carbs", "protein"];
+
 	public function __construct(Request $request)
 	{
-		$this->validate(
+		$valid_request_payload = $this->validate(
 			$request, [
 				'title' => 'required|string',
-				'ingredients' => 'required',
+				'ingredients' => 'required|json',
 				'imgUrl' => 'required|url',
-				'description' => 'required|string',
+				'description' => 'required|string', //WSSYWIG EDITOR to include steps
 				'cookbookId' => 'required|exists:cookbooks,id',
-				'summary' => 'required|min:100',
-				'nutritional_detail' => 'required',
+				'summary' => 'required|string',
 				'calorie_count' => 'integer',
-				'cook_time' => 'required'
+				'cook_time' => 'required|date_format:Y-m-d H:i:s',
+				'nutritional_detail' => 'json|nutritional_detail_json_structure'
 			]
 		);
 
-		parent::__construct($request);
+		//TODO: define json structure for nutritional details
+
+		parent::__construct($request->merge($valid_request_payload));
 	}
 }

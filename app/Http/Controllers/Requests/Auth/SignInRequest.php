@@ -9,13 +9,13 @@ class SignInRequest extends Controller
 {
 	public function __construct(Request $request)
 	{
-		$this->validate(
+		$valid_request_payload = $this->validate(
 			$request, [
 				'email' => 'required',
 				'password' => 'required'
 			]
 		);
 
-		parent::__construct($request);
+		parent::__construct($request->merge($valid_request_payload));
 	}
 }

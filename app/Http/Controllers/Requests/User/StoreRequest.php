@@ -9,7 +9,7 @@ class StoreRequest extends Controller
 {
 	public function __construct(Request $request)
 	{
-		$this->validate(
+		$valid_request_payload = $this->validate(
 			$request, [
 				'name' => 'required',
 				'email' => 'required|email|unique:users',
@@ -17,6 +17,6 @@ class StoreRequest extends Controller
 			]
 		);
 
-		parent::__construct($request);
+		parent::__construct($request->merge($valid_request_payload));
 	}
 }
