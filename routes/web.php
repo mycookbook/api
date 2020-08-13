@@ -94,5 +94,6 @@ $router->group(
 		*/
 
 		$router->get('/categories', 'CategoryController@index'); //get all categories
+		$router->get('/definitions', 'DefinitionsController@index'); //get all definitions
     }
 );
