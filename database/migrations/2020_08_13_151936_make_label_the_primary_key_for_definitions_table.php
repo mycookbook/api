@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCookTimeToRecipesTable extends Migration
+class MakeLabelThePrimaryKeyForDefinitionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,13 @@ class AddCookTimeToRecipesTable extends Migration
      */
     public function up()
     {
-        Schema::table('recipes', function (Blueprint $table) {
-            $table->dateTime('cook_time')->nullable();
-        });
+		Schema::dropIfExists('definitions');
+
+		Schema::create('definitions', function (Blueprint $table) {
+			$table->string('label')->primary();
+			$table->json('contents');
+			$table->timestamps();
+		});
     }
 
     /**
@@ -25,8 +29,6 @@ class AddCookTimeToRecipesTable extends Migration
      */
     public function down()
     {
-        Schema::table('recipes', function (Blueprint $table) {
-			Schema::dropIfExists('cook_time');
-        });
+		Schema::dropIfExists('definitions');
     }
 }
