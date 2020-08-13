@@ -16,9 +16,9 @@ class CreateQaasTable extends Migration
         Schema::create('qaas', function (Blueprint $table) {
             $table->increments('id');
 			$table->string('phone');
-			$table->multiLineString('question');
+			$table->string('question');
 			$table->dateTime('question_asked');
-			$table->multiLineString('answer');
+			$table->string('answer');
 			$table->dateTime('answer_given');
 			$table->integer('author_id')->unsigned();
 			$table->integer('recipe_id')->unsigned();
