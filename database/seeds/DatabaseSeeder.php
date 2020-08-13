@@ -14,6 +14,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UsersTableSeeder::class);
+        $this->call(DefinitionsSeeder::class);
+        $this->call(FlagsSeeder::class);
+
+
+//		$cookbook = factory(App\Cookbook::class, 1)->create();
+//		$cookbook->users()->attach();
+//		$cookbook->users()->attach();
+//		factory(App\User::class, 4)->create();
+//		factory(App\Recipe::class, 4)->create();
     }
 }
