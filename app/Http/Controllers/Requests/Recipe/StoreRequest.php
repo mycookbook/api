@@ -19,9 +19,12 @@ class StoreRequest extends Controller
 				'summary' => 'required|string',
 				'calorie_count' => 'integer',
 				'cook_time' => 'required|date_format:Y-m-d H:i:s',
-				'nutritional_detail' => 'json|nutritional_detail_json_structure'
+				'nutritional_detail' => 'json|nutritional_detail_json_structure',
+				'servings' => 'integer'
 			]
 		);
+
+		$valid_request_payload['servings'] = abs($valid_request_payload['servings']);
 
 		parent::__construct($request->merge($valid_request_payload));
 	}

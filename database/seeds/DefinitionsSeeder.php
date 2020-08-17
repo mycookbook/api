@@ -59,7 +59,23 @@ class DefinitionsSeeder extends Seeder
 						"unit" => "g"
 					]
 				])
-			],
+			], [
+				'label' => 'pronouns',
+				'contents' => json_encode([
+					'He/Him', 'She/Her', 'They/Them'
+				])
+			], [
+				'label' => 'expertise',
+				'contents' => json_encode([
+					'hobbyist',
+					'foodie',
+					'professional chef',
+					'chef',
+					'student',
+					'bartender',
+					'experimentalist'
+				])
+			]
 		]);
     }
 }

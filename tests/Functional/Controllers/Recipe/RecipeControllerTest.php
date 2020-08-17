@@ -70,7 +70,8 @@ class RecipeControllerTest extends \TestCase
 			'flag_id' => $this->flag->id,
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -98,7 +99,8 @@ class RecipeControllerTest extends \TestCase
 			'flag_id' => $this->flag->id,
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		], [
 				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
 			]

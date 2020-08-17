@@ -117,7 +117,8 @@ trait CreatesObjects
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
 			'user_id' => $this->user->id,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]);
 
 		if ($recipe->save()) {

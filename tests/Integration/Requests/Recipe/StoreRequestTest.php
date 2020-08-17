@@ -35,7 +35,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 
 		$this->assertInstanceOf(FormRequest::class, $request);
@@ -59,7 +60,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -81,7 +83,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -103,7 +106,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -125,7 +129,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -147,7 +152,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -169,7 +175,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -189,7 +196,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -209,7 +217,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -231,7 +240,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => '',
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -252,7 +262,8 @@ class StoreRequestTest extends \TestCase
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
 			'calorie_count' => 'a string',
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 	}
 
@@ -273,7 +284,8 @@ class StoreRequestTest extends \TestCase
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
-			'calorie_count' => 200
+			'calorie_count' => 200,
+			'servings' => 2
 		]));
 	}
 
@@ -295,7 +307,31 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 200,
-			'cook_time' => 'invalid datetime format'
+			'cook_time' => 'invalid datetime format',
+			'servings' => 2
+		]));
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_throws_an_exception_if_servings_is_not_an_integer()
+	{
+		$this->expectException(\Illuminate\Validation\ValidationException::class);
+
+		$cookbook = $this->createCookbook();
+
+		new StoreRequest(new Request([
+			'title' => 'sample title',
+			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
+			'imgUrl' => 'http://sample-url',
+			'description' => 'short description',
+			'cookbookId' => $cookbook->id,
+			'summary' => Str::random(100),
+			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
+			'calorie_count' => 200,
+			'cook_time' => 'invalid datetime format',
+			'servings' => 'not an integer'
 		]));
 	}
 
@@ -313,7 +349,8 @@ class StoreRequestTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		];
 
 		$storeRequest = new StoreRequest(new Request($requestData));

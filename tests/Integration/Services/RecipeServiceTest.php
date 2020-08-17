@@ -37,7 +37,8 @@ class RecipeServiceTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]));
 
 		$service = new RecipeService();
@@ -58,7 +59,8 @@ class RecipeServiceTest extends \TestCase
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
-			'cook_time' => '2020-04-07 00:55:00'
+			'cook_time' => '2020-04-07 00:55:00',
+			'servings' => 2
 		]);
 
 		$request->setUserResolver(function () {
