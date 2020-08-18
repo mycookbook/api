@@ -70,7 +70,8 @@ class DefinitionsSeeder extends Seeder
 					'hobbyist',
 					'foodie',
 					'professional chef',
-					'chef',
+					'experienced chef',
+					'beginner chef',
 					'student',
 					'bartender',
 					'experimentalist'
