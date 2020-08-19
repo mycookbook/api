@@ -20,7 +20,7 @@ $router->group(
             }
         );
 
-        $router->post(
+        $router->get(
         	'/search', 'SearchController@fetch'
 		);
 
@@ -95,5 +95,11 @@ $router->group(
 
 		$router->get('/categories', 'CategoryController@index'); //get all categories
 		$router->get('/definitions', 'DefinitionsController@index'); //get all definitions
+
+		/*
+		* recipes claps
+		*/
+
+		$router->post('add-clap', 'RecipeController@addClap'); //increment recipe clap
     }
 );

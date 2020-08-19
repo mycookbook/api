@@ -21,7 +21,7 @@ class RecipeController extends Controller
      */
     public function __construct(RecipeService $service)
     {
-        $this->middleware('jwt.auth', ['except' => ['index', 'show']]);
+        $this->middleware('jwt.auth', ['except' => ['index', 'show', 'addClap']]);
         $this->service = $service;
     }
 
@@ -86,4 +86,23 @@ class RecipeController extends Controller
     {
 		return $this->service->show($id);
     }
+
+	/**
+	 * Increment Recipe count
+	 *
+	 * @param Request $request
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws \Illuminate\Validation\ValidationException
+	 */
+	public function addClap(Request $request)
+	{
+		$this->validate(
+			$request, [
+				'recipe_id' => 'required|exists:recipes,id'
+			]
+		);
+
+		return $this->service->addClap($request->get('recipe_id'));
+	}
 }

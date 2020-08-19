@@ -3,9 +3,7 @@
 namespace App\Services;
 
 use App\Recipe;
-use Carbon\Carbon;
 use App\Cookbook;
-use Carbon\CarbonInterval;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -107,4 +105,24 @@ class RecipeService
 			], Response::HTTP_ACCEPTED
 		);
     }
+
+	/**
+	 * Increment recipe claps count by 1 each time
+	 *
+	 * @param $recipeId
+	 *
+	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
+    public function addClap($recipeId)
+	{
+		$recipe = Recipe::findOrFail($recipeId);
+		$recipe->claps = $recipe->claps + 1;
+		$recipe->save();
+
+		return response(
+			[
+				'updated' => true,
+			],Response::HTTP_OK
+		);
+	}
 }
