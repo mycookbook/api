@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 
 /**

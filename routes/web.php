@@ -25,11 +25,11 @@ $router->group(
 		);
 
         $router->post(
-            '/auth/signup', 'UserController@store'
+            '/auth/register', 'UserController@store'
         );
 
         $router->post(
-            '/auth/signin', 'AuthController@signIn'
+            '/auth/login', 'AuthController@login'
         );
 
         $router->get(
