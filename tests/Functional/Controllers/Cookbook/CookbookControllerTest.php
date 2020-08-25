@@ -40,7 +40,7 @@ class CookbookControllerTest extends \TestCase
     public function it_can_create_a_cookbook_for_an_authenticated_user()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -48,7 +48,7 @@ class CookbookControllerTest extends \TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -80,7 +80,7 @@ class CookbookControllerTest extends \TestCase
     public function it_strips_out_duplicate_categories_before_creating_a_cookbook_for_an_authenticated_user()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -88,7 +88,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -146,7 +146,7 @@ class CookbookControllerTest extends \TestCase
     public function it_responds_with_a_422_if_the_request_is_empty()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -154,7 +154,7 @@ class CookbookControllerTest extends \TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
             ]
@@ -191,7 +191,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_name_field_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -199,7 +199,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -235,7 +235,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_name_field_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -243,7 +243,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -278,7 +278,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_description_field_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -286,7 +286,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -322,7 +322,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_description_field_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -330,7 +330,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -365,7 +365,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_description_field_is_less_than_126_characters()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -373,7 +373,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -409,7 +409,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_bookCoverImg_field_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -417,7 +417,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -455,7 +455,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_bookCoverImg_field_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -463,7 +463,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -500,7 +500,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_bookCoverImg_field_is_not_a_valid_url()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -508,7 +508,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -546,7 +546,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_category_id_field_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -554,7 +554,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -592,7 +592,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_category_id_field_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -600,7 +600,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -636,7 +636,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_category_id_does_not_exist_in_the_db()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -644,7 +644,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -679,7 +679,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_flag_id_field_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -687,7 +687,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -725,7 +725,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_flag_id_field_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -733,7 +733,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -769,7 +769,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_flag_id_does_not_exist_in_the_db()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -777,7 +777,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -814,7 +814,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_can_update_an_existing_cookbook_for_an_authenticated_user()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -822,7 +822,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -850,7 +850,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_404_when_an_authenticated_user_tries_to_update_a_cookbook_that_does_not_exist()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -858,7 +858,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -902,7 +902,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_can_delete_an_existing_cookbook_for_an_authenticated_user()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -910,7 +910,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -936,7 +936,7 @@ class CookbookControllerTest extends \TestCase
 	public function it_responds_with_a_404_when_an_authenticated_user_tries_to_delete_a_cookbook_that_does_not_exist()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -944,7 +944,7 @@ class CookbookControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]

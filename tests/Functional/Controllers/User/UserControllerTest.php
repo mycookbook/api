@@ -17,7 +17,7 @@ class UserControllerTest extends \TestCase
 	public function it_returns_422_if_the_request_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', []
+			'POST', '/api/v1/auth/register', []
 		)->seeJson(
 			[
 				'name' => [
@@ -41,7 +41,7 @@ class UserControllerTest extends \TestCase
     public function testThatNameFieldIsRequired()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => '',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'
@@ -63,7 +63,7 @@ class UserControllerTest extends \TestCase
     public function testThatEmailFieldIsRequired()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => '',
                 'password' => 'salis'
@@ -85,7 +85,7 @@ class UserControllerTest extends \TestCase
     public function testThatEmailFieldIsValidEmail()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'invalidemailaddress',
                 'password' => 'salis'
@@ -107,7 +107,7 @@ class UserControllerTest extends \TestCase
     public function testThatPasswordFieldIsRequired()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => ''
@@ -129,7 +129,7 @@ class UserControllerTest extends \TestCase
     public function testThatPasswordFieldIsAMinimumOf5Characters()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
                 'password' => 'sali'
@@ -151,7 +151,7 @@ class UserControllerTest extends \TestCase
     public function testThatNameEmailAndPasswordParamsareRequired()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', []
+            'POST', '/api/v1/auth/register', []
         )->seeJson(
             [
                 'name' => [
@@ -175,7 +175,7 @@ class UserControllerTest extends \TestCase
     public function testAUserCanBeCreated()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
@@ -216,7 +216,7 @@ class UserControllerTest extends \TestCase
     {
         // create the user and sign them in
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'joromi',
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
@@ -224,7 +224,7 @@ class UserControllerTest extends \TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
             ]
@@ -263,7 +263,7 @@ class UserControllerTest extends \TestCase
     {
         // create the user and sign them in
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
@@ -271,7 +271,7 @@ class UserControllerTest extends \TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
             ]
@@ -314,7 +314,7 @@ class UserControllerTest extends \TestCase
     public function testMaliciousUserCannotBeUpdated()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
@@ -322,7 +322,7 @@ class UserControllerTest extends \TestCase
         );
 
         $res = $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
             ]
@@ -356,7 +356,7 @@ class UserControllerTest extends \TestCase
     public function testThatARegisteredUsersEmailIsRequiredToSignin()
     {
         $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'password' => 'mypassword'
             ]
         )->seeJson(
@@ -376,7 +376,7 @@ class UserControllerTest extends \TestCase
     public function testThatARegisteredUsersPasswordIsRequiredToSignin()
     {
         $this->json(
-            'POST', '/api/v1/auth/signin', [
+            'POST', '/api/v1/auth/login', [
                 'email' => 'sally@foo.com'
             ]
         )->seeJson(
@@ -396,7 +396,7 @@ class UserControllerTest extends \TestCase
     public function testCanGetOneUser()
     {
         $this->json(
-            'POST', '/api/v1/auth/signup', [
+            'POST', '/api/v1/auth/register', [
                 'name' => 'sally',
                 'email' => 'sally@foo.com',
                 'password' => 'salis'

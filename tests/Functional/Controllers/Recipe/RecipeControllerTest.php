@@ -40,7 +40,7 @@ class RecipeControllerTest extends \TestCase
 	{
 		//refers to a request that contains a valid token
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -48,7 +48,7 @@ class RecipeControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -119,7 +119,7 @@ class RecipeControllerTest extends \TestCase
 
 		//refers to a request that contains a valid token
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -127,7 +127,7 @@ class RecipeControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]
@@ -176,7 +176,7 @@ class RecipeControllerTest extends \TestCase
 
 		//refers to a request that contains a valid token
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -184,7 +184,7 @@ class RecipeControllerTest extends \TestCase
 		);
 
 		$res = $this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
 			]

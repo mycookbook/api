@@ -17,7 +17,7 @@ class AuthControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_user_email_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => '',
 				'password' => 'mypassword'
 			]
@@ -36,7 +36,7 @@ class AuthControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_user_email_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'password' => 'mypassword'
 			]
 		)->seeJson(
@@ -54,7 +54,7 @@ class AuthControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_user_password_is_empty()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => ''
 			]
@@ -73,7 +73,7 @@ class AuthControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_user_password_is_null()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com'
 			]
 		)->seeJson(
@@ -91,7 +91,7 @@ class AuthControllerTest extends \TestCase
 	public function it_responds_with_a_422_if_the_request_does_not_contain_email_and_password_fields()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signin', []
+			'POST', '/api/v1/auth/login', []
 		)->seeJson(
 			[
 				'password' => [
@@ -110,7 +110,7 @@ class AuthControllerTest extends \TestCase
 	public function it_responds_with_a_404_when_attempting_to_signin_a_user_that_does_not_exist()
 	{
 		$this->json(
-			'POST', '/api/v1/auth/signup', [
+			'POST', '/api/v1/auth/register', [
 				'name' => 'Sally',
 				'email' => 'sally@foo.com',
 				'password' => 'salis'
@@ -118,7 +118,7 @@ class AuthControllerTest extends \TestCase
 		);
 
 		$this->json(
-			'POST', '/api/v1/auth/signin', [
+			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
 				'password' => 'invalidpassword'
 			]
