@@ -30,7 +30,7 @@ class UserControllerTest extends \TestCase
 					'The password field is required.'
 				],
 			]
-		)->seeStatusCode(422);
+		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
     /**
@@ -52,7 +52,7 @@ class UserControllerTest extends \TestCase
                     'The name field is required.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -74,7 +74,7 @@ class UserControllerTest extends \TestCase
                     'The email field is required.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -96,7 +96,7 @@ class UserControllerTest extends \TestCase
                     'The email must be a valid email address.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -118,7 +118,7 @@ class UserControllerTest extends \TestCase
                     'The password field is required.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -140,7 +140,7 @@ class UserControllerTest extends \TestCase
                     'The password must be at least 5 characters.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -164,7 +164,7 @@ class UserControllerTest extends \TestCase
                     'The password field is required.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -294,11 +294,11 @@ class UserControllerTest extends \TestCase
             ]
         );
 
-        $this->assertResponseStatus(404);
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
     }
 
     /**
-     * Test that a malicious user cannot be forced to updaye
+     * Test that a malicious user cannot be forced to update
      * This test is for PUT and PATCH operations
      * use case: a signed in user is trying to perform a funny operation
      * By passing in a user id of another user not signed in
@@ -345,7 +345,7 @@ class UserControllerTest extends \TestCase
             ]
         );
 
-        $this->assertResponseStatus(404);
+        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -365,7 +365,7 @@ class UserControllerTest extends \TestCase
                     'The email field is required.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -385,7 +385,7 @@ class UserControllerTest extends \TestCase
                     'The password field is required.'
                 ]
             ]
-        )->seeStatusCode(422);
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -405,7 +405,7 @@ class UserControllerTest extends \TestCase
 
         $response = $this->call('GET', '/api/v1/users/sally');
 
-        $this->assertEquals(200, $response->status());
+        $this->assertEquals(Response::HTTP_OK, $response->status());
     }
 
     /**
@@ -417,7 +417,9 @@ class UserControllerTest extends \TestCase
     {
         $response = $this->call('GET', '/api/v1/users/0');
 
-        $this->assertEquals(404, $response->status());
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->status());
+        $content = json_decode($response->getContent());
+        $this->assertSame('Record Not found.', $content->error);
 
         $this->seeJsonStructure(
             [

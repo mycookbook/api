@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Jobs\SendEmail;
 use App\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Interfaces\serviceInterface;
 use Illuminate\Hashing\BcryptHasher;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class UserService
@@ -63,13 +65,20 @@ class UserService implements serviceInterface
 	/**
 	 * Get one user
 	 *
-	 * @param string $attrVal
+	 * @param string $q
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 */
-    public function show($attrVal)
+    public function show($q)
     {
-		$user = User::where('name_slug', $attrVal)->orWhere('email', $attrVal)->orWhere('id', $attrVal)->first();
+		$user = User::where('id', $q)
+			->orWhere('email', $q)
+			->orWhere('name_slug', $q)
+			->first();
+
+		if (!$user) {
+			throw new ModelNotFoundException();
+		}
 
         return response(
             [
