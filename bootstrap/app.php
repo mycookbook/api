@@ -49,6 +49,12 @@ $app->singleton(
 );
 
 $app->configure('cors');
+$app->configure('queue');
+$app->configure('mail');
+
+$app->alias('mailer', Illuminate\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +87,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(Sentry\Laravel\ServiceProvider::class);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
