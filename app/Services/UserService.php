@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendEmail;
 use App\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -46,6 +47,8 @@ class UserService implements serviceInterface
 
         $created = $user->save();
 
+        dispatch(new SendEmail());
+
         return response()->json(
             [
                 'response' => [
@@ -60,13 +63,13 @@ class UserService implements serviceInterface
 	/**
 	 * Get one user
 	 *
-	 * @param string $username
+	 * @param string $attrVal
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 */
-    public function show($username)
+    public function show($attrVal)
     {
-    	$user = User::where('name_slug', $username)->firstOrFail();
+		$user = User::where('name_slug', $attrVal)->orWhere('email', $attrVal)->orWhere('id', $attrVal)->first();
 
         return response(
             [
