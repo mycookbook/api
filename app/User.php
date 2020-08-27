@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,10 @@ class User extends Model implements
     protected $fillable = [
         'name', 'email', 'password', 'following', 'followers', 'name_slug'
     ];
+
+//	protected $casts = [
+//		'created_at' => 'datetime:H:i:s'
+//	];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -97,6 +102,16 @@ class User extends Model implements
                 ->to("api/v1/users/{$this->attributes['name_slug']}")
         ];
     }
+
+	/**
+	 * Set attribute created at
+	 *
+	 * @return string
+	 */
+    public function getCreatedAtAttribute()
+	{
+		return Carbon::parse($this->attributes['created_at'])->diffForHumans();
+	}
 
 	/**
 	 * Get the User name_slug
