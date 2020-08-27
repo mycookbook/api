@@ -506,7 +506,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -550,7 +549,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -594,7 +592,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -638,7 +635,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -682,7 +678,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -725,7 +720,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => '',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -768,7 +762,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'invalid-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -811,7 +804,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => '',
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->flag->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -854,7 +846,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => '',
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -897,93 +888,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => 0,
-				'flag_id' => $this->createFlag()->id,
-				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
-				'calorie_count' => 1200,
-				'cook_time' => '2020-04-07 00:55:00',
-				'servings' => 2
-			], [
-			'HTTP_Authorization' => 'Bearer' . $token
-		])->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_422_if_recipe_flag_id_is_not_given()
-	{
-		$this->json(
-			'POST', '/api/v1/auth/register', [
-				'name' => 'Sally',
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$login = $this->json(
-			'POST', '/api/v1/auth/login', [
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$obj = json_decode($login->response->getContent());
-		$token = $obj->{'token'};
-
-		$this->json(
-			'POST',
-			'/api/v1/recipes',
-			[
-				'title' => 'test title',
-				'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
-				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-				'summary' => Str::random(100),
-				'imgUrl' => 'http://sample-url',
-				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => '',
-				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
-				'calorie_count' => 1200,
-				'cook_time' => '2020-04-07 00:55:00',
-				'servings' => 2
-			], [
-			'HTTP_Authorization' => 'Bearer' . $token
-		])->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_422_if_recipe_flag_id_does_not_exist()
-	{
-		$this->json(
-			'POST', '/api/v1/auth/register', [
-				'name' => 'Sally',
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$login = $this->json(
-			'POST', '/api/v1/auth/login', [
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$obj = json_decode($login->response->getContent());
-		$token = $obj->{'token'};
-
-		$this->json(
-			'POST',
-			'/api/v1/recipes',
-			[
-				'title' => 'test title',
-				'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
-				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-				'summary' => Str::random(100),
-				'imgUrl' => 'http://sample-url',
-				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => 0,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1026,7 +930,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => null,
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1069,7 +972,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => 'not-json',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1112,7 +1014,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => "{'invalid-json'}",
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1155,7 +1056,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => null,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1198,7 +1098,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 'not-a-number',
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1241,7 +1140,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => null,
@@ -1284,7 +1182,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '07/04/2020',
@@ -1327,7 +1224,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
@@ -1370,7 +1266,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'summary' => Str::random(100),
 				'imgUrl' => 'http://sample-url',
 				'cookbookId' => $this->createCookbook()->id,
-				'flag_id' => $this->createFlag()->id,
 				'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 				'calorie_count' => 1200,
 				'cook_time' => '2020-04-07 00:55:00',
