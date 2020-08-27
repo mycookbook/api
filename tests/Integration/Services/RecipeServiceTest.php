@@ -2,6 +2,7 @@
 
 namespace Integration\Services;
 
+use App\Exceptions\CookbookModelNotFoundException;
 use App\Recipe;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -34,6 +35,7 @@ class RecipeServiceTest extends \TestCase
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
+			'flag_id' => $this->createFlag()->id,
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
@@ -56,6 +58,7 @@ class RecipeServiceTest extends \TestCase
 			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
+			'flag_id' => $this->createFlag()->id,
 			'summary' => Str::random(100),
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
@@ -92,7 +95,7 @@ class RecipeServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_retrieving_a_recipe_that_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new RecipeService();
 		$service->show(0);
@@ -103,7 +106,7 @@ class RecipeServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_trying_to_update_a_recipe_that_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new RecipeService();
 
@@ -143,7 +146,7 @@ class RecipeServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_trying_to_delete_a_recipe_that_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new RecipeService();
 

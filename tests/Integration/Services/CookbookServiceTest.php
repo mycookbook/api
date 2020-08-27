@@ -3,6 +3,7 @@
 namespace Integration\Services;
 
 use App\Cookbook;
+use App\Exceptions\CookbookModelNotFoundException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -87,7 +88,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_retrieving_a_cookbook_that_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new CookbookService();
 		$service->show(0);
@@ -98,7 +99,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_trying_to_update_a_cookbook_that_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new CookbookService();
 
@@ -136,7 +137,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_trying_to_delete_a_cookbook_that_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new CookbookService();
 

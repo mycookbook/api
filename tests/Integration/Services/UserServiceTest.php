@@ -2,6 +2,7 @@
 
 namespace Integration\Services;
 
+use App\Exceptions\CookbookModelNotFoundException;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -74,7 +75,7 @@ class UserServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_if_the_resource_does_not_exist()
 	{
-		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+		$this->expectException(CookbookModelNotFoundException::class);
 
 		$service = new UserService();
 		$service->show('test-mate');

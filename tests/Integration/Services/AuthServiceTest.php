@@ -24,7 +24,7 @@ class AuthServiceTest extends \TestCase
 		]));
 
 		$service = new AuthService();
-		$response = $service->signIn($signInRequest->getParams(), app(JWTAuth::class));
+		$response = $service->login($signInRequest->getParams(), app(JWTAuth::class));
 
 		$this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
 	}
@@ -50,7 +50,7 @@ class AuthServiceTest extends \TestCase
 		]));
 
 		$service = new AuthService();
-		$response = $service->signIn($signInRequest->getParams(), app(JWTAuth::class));
+		$response = $service->login($signInRequest->getParams(), app(JWTAuth::class));
 
 		$this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 	}
