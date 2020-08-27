@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -24,12 +26,7 @@ class Recipe extends Model
     protected $casts = [
     	'cook_time' => 'datetime:H:i:s',
 		'ingredients' => 'json',
-//		'nutritional_detail' => 'json'
 	];
-
-//	protected $attributes = [
-//		'nutritional_detail' => ["cal" => "0g", "fat" => "0g", "carbs" => "0g", "protein" => "0g"]
-//	];
 
     /**
      * A recipe belongs to a user
@@ -79,6 +76,18 @@ class Recipe extends Model
                 ->to("api/v1/recipes/{$this->attributes['id']}")
         ];
     }
+
+	/**
+	 * Set Attribute Cook Time
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+    public function getCookTimeAttribute()
+	{
+		$dt = Carbon::parse($this->attributes['cook_time']);
+		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+	}
 
     /**
      * Unserialize Ingredients
