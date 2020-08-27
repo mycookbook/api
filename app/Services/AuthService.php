@@ -17,7 +17,7 @@ class AuthService
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function signIn(Request $request, JWTAuth $jwt)
+	public function login(Request $request, JWTAuth $jwt)
 	{
 		$credentials = $request->only('email', 'password');
 

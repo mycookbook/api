@@ -59,6 +59,7 @@ class CookbookController extends Controller
 	 * @param int $cookbookId
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
     public function update(Request $request, $cookbookId)
     {
@@ -71,6 +72,7 @@ class CookbookController extends Controller
 	 * @param int $cookbookId cookbookId
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
     public function delete($cookbookId)
     {
@@ -83,6 +85,7 @@ class CookbookController extends Controller
 	 * @param int $id
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
     public function show($id)
     {

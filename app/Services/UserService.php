@@ -2,15 +2,14 @@
 
 namespace App\Services;
 
-use App\Jobs\SendEmail;
 use App\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Jobs\SendEmail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Interfaces\serviceInterface;
 use Illuminate\Hashing\BcryptHasher;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Interfaces\serviceInterface;
+use App\Exceptions\CookbookModelNotFoundException;
 
 /**
  * Class UserService
@@ -68,17 +67,11 @@ class UserService implements serviceInterface
 	 * @param string $q
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
 	 */
     public function show($q)
     {
-		$user = User::where('id', $q)
-			->orWhere('email', $q)
-			->orWhere('name_slug', $q)
-			->first();
-
-		if (!$user) {
-			throw new ModelNotFoundException();
-		}
+		$user = $this->get($q);
 
         return response(
             [
@@ -97,10 +90,11 @@ class UserService implements serviceInterface
 	 * @param string $username
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
 	 */
     public function update(Request $request, $username)
     {
-		$record = User::where('name_slug', $username)->firstOrFail();
+		$record = $this->get($username);
 
 		if ($request->all()) {
 			$updated = $record->update([
@@ -121,4 +115,25 @@ class UserService implements serviceInterface
 			return response([], Response::HTTP_NO_CONTENT);
 		}
     }
+
+	/**
+	 * Find user record
+	 *
+	 * @param $q
+	 * @return mixed
+	 * @throws CookbookModelNotFoundException
+	 */
+    public function get($q)
+	{
+		$record = User::where('id', $q)
+			->orWhere('email', $q)
+			->orWhere('name_slug', $q)
+			->first();
+
+		if (!$record) {
+			throw new CookbookModelNotFoundException();
+		}
+
+		return $record;
+	}
 }

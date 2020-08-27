@@ -6,6 +6,7 @@ use App\Cookbook;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Interfaces\serviceInterface;
+use App\Exceptions\CookbookModelNotFoundException;
 
 /**
  * Class CookbookService
@@ -56,17 +57,18 @@ class CookbookService implements serviceInterface
 		}
     }
 
-    /**
-     * Update cookbook resource
-     *
-     * @param $request
-     * @param int $id identifier
-     *
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     */
+	/**
+	 * Update cookbook resource
+	 *
+	 * @param $request
+	 * @param int $id identifier
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
+	 */
     public function update($request, $id)
     {
-    	$cookbook = Cookbook::findOrfail($id);
+		$cookbook = $this->get($id);
 
         return response(
             [
@@ -75,16 +77,17 @@ class CookbookService implements serviceInterface
         );
     }
 
-    /**
-     * Delete Cookbook resource
-     *
-     * @param int $id identofier
-     *
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     */
+	/**
+	 * Delete Cookbook resource
+	 *
+	 * @param int $id identofier
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
+	 */
     public function delete($id)
     {
-		$cookbook = Cookbook::findOrfail($id);
+		$cookbook = $this->get($id);
 
         return response(
             [
@@ -97,12 +100,37 @@ class CookbookService implements serviceInterface
 	 * @param $id
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 * @throws CookbookModelNotFoundException
 	 */
 	public function show($id)
 	{
-		return Cookbook::with('Users')
-			->where('id', $id)
-			->orWhere('slug', $id)
-			->firstOrFail();
+		$cookbook = $this->get($id);
+
+		if (!$cookbook) {
+			throw new CookbookModelNotFoundException();
+		}
+
+		return $cookbook;
+	}
+
+	/**
+	 * Find cookbook record
+	 *
+	 * @param $q
+	 * @return mixed
+	 * @throws CookbookModelNotFoundException
+	 */
+	public function get($q)
+	{
+		$record =  Cookbook::with('Users')
+			->where('id', $q)
+			->orWhere('slug', $q)
+			->first();
+
+		if (!$record) {
+			throw new CookbookModelNotFoundException();
+		}
+
+		return $record;
 	}
 }

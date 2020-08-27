@@ -31,6 +31,7 @@ class StoreRequest extends Controller
 
 		foreach ($request->get('categories') as $category) {
 			if (!Category::find($category)) {
+
 				throw new UnprocessibleEntityException('Category does not exist', Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 		}

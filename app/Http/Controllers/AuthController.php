@@ -29,6 +29,6 @@ class AuthController extends Controller
 	 */
 	public function login(SignInRequest $request, JWTAuth $jwt)
 	{
-		return $this->service->signIn($request->getParams(), $jwt);
+		return $this->service->login($request->getParams(), $jwt);
 	}
 }

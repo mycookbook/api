@@ -6,6 +6,7 @@ use App\Recipe;
 use App\Cookbook;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Exceptions\CookbookModelNotFoundException;
 
 /**
  * Class RecipeService
@@ -33,13 +34,17 @@ class RecipeService
 	 * @param $id
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 * @throws CookbookModelNotFoundException
 	 */
     public function show($id)
 	{
-		return Recipe::with('User', 'Cookbook')
-			->where('id', $id)
-			->orWhere('slug', $id)
-			->firstOrFail();
+		$recipe = $this->get($id);
+
+		if (!$recipe) {
+			throw new CookbookModelNotFoundException();
+		}
+
+		return $recipe;
 	}
 
 	/**
@@ -68,16 +73,17 @@ class RecipeService
 	/**
 	 * Update recipe
 	 *
-	 * @param \Illuminate\Http\Request; $request
+	 * @param Request $request
 	 * @param int $id
 	 *
 	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
 	 */
     public function update(Request $request, $id)
     {
     	//TODO: if user dont own recipe, can update it
 
-		$recipe = Recipe::findOrfail($id);
+		$recipe = $this->get($id);
 
 		return response(
 			[
@@ -86,18 +92,19 @@ class RecipeService
 		);
     }
 
-    /**
-     * Delete recipe
-     *
-     * @param int $id recipeId
-     *
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     */
+	/**
+	 * Delete recipe
+	 *
+	 * @param int $id recipeId
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
+	 */
     public function delete($id)
     {
     	//TODO: if user dont own recipe, cannot delete it
 
-		$recipe = Recipe::findOrfail($id);
+		$recipe = $this->get($id);
 
 		return response(
 			[
@@ -112,10 +119,12 @@ class RecipeService
 	 * @param $recipeId
 	 *
 	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws CookbookModelNotFoundException
 	 */
     public function addClap($recipeId)
 	{
-		$recipe = Recipe::findOrFail($recipeId);
+		$recipe = $this->get($recipeId);
+
 		$recipe->claps = $recipe->claps + 1;
 		$recipe->save();
 
@@ -124,5 +133,26 @@ class RecipeService
 				'updated' => true,
 			],Response::HTTP_OK
 		);
+	}
+
+	/**
+	 * Find recipe record
+	 *
+	 * @param $q
+	 * @return mixed
+	 * @throws CookbookModelNotFoundException
+	 */
+	public function get($q)
+	{
+		$record = Recipe::with('User', 'Cookbook')
+			->where('id', $q)
+			->orWhere('slug', $q)
+			->first();
+
+		if (!$record) {
+			throw new CookbookModelNotFoundException();
+		}
+
+		return $record;
 	}
 }
