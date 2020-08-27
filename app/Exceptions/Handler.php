@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
@@ -60,7 +61,7 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof UnauthorizedHttpException) {
 
-            if(is_null($e->getPrevious())) {
+            if (is_null($e->getPrevious())) {
                 return response()->json(
                     [
                         'status' => 'Unauthorized',
@@ -79,6 +80,13 @@ class Handler extends ExceptionHandler
                         'message' => 'Token is invalid'
                     ], $e->getStatusCode()
                 );
+			case TokenExpiredException::class:
+				return response()->json(
+					[
+						'status' => 'error',
+						'message' => 'Token has expired'
+					], $e->getStatusCode()
+				);
             }
         }
 
