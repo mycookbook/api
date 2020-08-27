@@ -3,11 +3,10 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
@@ -28,15 +27,16 @@ class Handler extends ExceptionHandler
 //        ValidationException::class,
 //    ];
 
-    /**
-     * Report or log an exception.
-     *
-     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-     *
-     * @param \Exception $e exception
-     *
-     * @return void
-     */
+	/**
+	 * Report or log an exception.
+	 *
+	 * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
+	 *
+	 * @param \Exception $e exception
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
     public function report(Exception $e)
     {
 		if (app()->bound('sentry') && $this->shouldReport($e)) {
@@ -46,14 +46,16 @@ class Handler extends ExceptionHandler
         parent::report($e);
     }
 
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param \Illuminate\Http\Request $request request
-     * @param \Exception               $e       exception
-     *
-     * @return \Illuminate\Http\Response
-     */
+	/**
+	 * Render an exception into an HTTP response.
+	 *
+	 * @param \Illuminate\Http\Request $request request
+	 * @param Exception $e exception
+	 *
+	 * @throws Exception
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
     public function render($request, Exception $e)
     {
         if ($e instanceof UnauthorizedHttpException) {
@@ -93,18 +95,12 @@ class Handler extends ExceptionHandler
             );
         }
 
-        if ($e instanceof ModelNotFoundException) {
-        	return response()->json([
-        		'error' => 'Record Not found.'
-			], 404);
-		}
-
 		if ($e instanceof UnprocessibleEntityException) {
 			return response()->json([
 				'error' => $e->getMessage()
 			], $e->getCode());
 		}
 
-        return  parent::render($request, $e);
+        return parent::render($request, $e);
     }
 }
