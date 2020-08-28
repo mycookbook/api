@@ -63,7 +63,7 @@ class User extends Model implements
     }
 
     /**
-     * JWT Identofier
+     * JWT Identifier
      *
      * @return mixed
      */

@@ -89,15 +89,4 @@ class Recipe extends Model
 		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
 	}
 
-    /**
-     * Unserialize Ingredients
-     *
-     * @param [] $recipe recipe
-     *
-     * @return mixed
-     */
-    public function getIngredientsAttribute($recipe)
-    {
-        return explode(", ", $recipe);
-    }
 }
