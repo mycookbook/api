@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Support\Facades\Validator;
 
-class NutritionalDetailJsonStructure
+class NutritionalDetailJsonStructureRule
 {
 	public static function validate()
 	{

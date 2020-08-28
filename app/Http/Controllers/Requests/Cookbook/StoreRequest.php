@@ -16,12 +16,11 @@ class StoreRequest extends Controller
 			$request, [
 				'name' => 'required',
 				'description' => 'required|min:126',
-				'bookCoverImg' => 'required|url',
+				'bookCoverImg' => 'required|img_url',
 				'categories' => 'required|json',
 				'flag_id' => 'required|exists:flags,id'
 			]
 		);
-
 		$categories = json_decode($request->get('categories'));
 
 		//strip duplicates if exists in categories

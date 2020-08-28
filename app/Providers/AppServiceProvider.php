@@ -2,14 +2,16 @@
 
 namespace App\Providers;
 
+use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Support\ServiceProvider;
-use App\Rules\NutritionalDetailJsonStructure;
+use App\Rules\NutritionalDetailJsonStructureRule;
 
 class AppServiceProvider extends ServiceProvider
 {
 	public function boot()
 	{
-		NutritionalDetailJsonStructure::validate();
+		NutritionalDetailJsonStructureRule::validate();
+		SupportedImageUrlFormatsRule::validate();
 	}
 
     /**

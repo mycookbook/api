@@ -13,7 +13,7 @@ class StoreRequest extends Controller
 			$request, [
 				'title' => 'required|string',
 				'ingredients' => 'required|json',
-				'imgUrl' => 'required|url',
+				'imgUrl' => 'required|img_url',
 				'description' => 'required|string', //EDITOR to include steps
 				'cookbookId' => 'required|exists:cookbooks,id',
 				'summary' => 'required|string',
