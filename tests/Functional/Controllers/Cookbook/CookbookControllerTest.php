@@ -3,7 +3,6 @@
 namespace Tests\Functional\Controllers\Cookbook;
 
 use App\Cookbook;
-use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
@@ -61,7 +60,7 @@ class CookbookControllerTest extends \TestCase
             'POST', '/api/v1/cookbooks', [
                 'name' => 'sample cookbook',
                 'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-                'bookCoverImg' => 'https://cover-image-url',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
                 'categories' => json_encode([$this->createCategory()->id]),
                 'flag_id' => $this->createFlag()->id
             ], [
@@ -104,7 +103,7 @@ class CookbookControllerTest extends \TestCase
 			'POST', '/api/v1/cookbooks', [
 			'name' => 'sample cookbook',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-			'bookCoverImg' => 'https://cover-image-url',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category1, $category2, $category2]),
 			'flag_id' => $this->createFlag()->id
 		], [
@@ -128,7 +127,7 @@ class CookbookControllerTest extends \TestCase
 			'POST', '/api/v1/cookbooks', [
 			'name' => 'sample cookbook',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-			'bookCoverImg' => 'https://cover-image-url',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$this->createCategory()->id]),
 			'flag_id' => $this->createFlag()->id
 		], [
@@ -137,7 +136,7 @@ class CookbookControllerTest extends \TestCase
 		)->seeJson([
 			'status' => "error",
 			'message' => "Token is invalid"
-		])->seeStatusCode(401);
+		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
 	}
 
     /**
@@ -182,7 +181,7 @@ class CookbookControllerTest extends \TestCase
             ]
         );
 
-        $this->assertResponseStatus(422);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
 	/**
@@ -213,8 +212,10 @@ class CookbookControllerTest extends \TestCase
 			'/api/v1/cookbooks',
 			[
 				'name' => '',
-				'description' => 'sample description',
-				'bookCoverImg' => 'http://sample-image'
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'categories' => json_encode([$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -226,7 +227,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -256,8 +257,10 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'description' => 'sample description',
-				'bookCoverImg' => 'http://sample-image'
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'categories' => json_encode([$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -269,7 +272,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -299,9 +302,11 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
+				'name' => 'sample cookbook',
 				'description' => '',
-				'bookCoverImg' => 'http://sample-image'
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'categories' => json_encode([$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -313,7 +318,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -343,8 +348,10 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'bookCoverImg' => 'http://sample-image'
+				'name' => 'sample cookbook',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'categories' => json_encode([$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -356,7 +363,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -386,9 +393,11 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
+				'name' => 'sample cookbook',
 				'description' => 'short description',
-				'bookCoverImg' => 'http://sample-image'
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'categories' => json_encode([$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -400,7 +409,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -430,11 +439,11 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => '',
 				'categories' => json_encode([$this->createCategory()->id]),
-				'flag_id' => 1
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -446,7 +455,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -476,10 +485,10 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'categories' => json_encode([$this->createCategory()->id]),
-				'flag_id' => 1
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -491,13 +500,13 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
 	 * @test
 	 */
-	public function it_responds_with_a_422_if_the_bookCoverImg_field_is_not_a_valid_url()
+	public function it_responds_with_a_404_if_the_bookCoverImg_field_is_not_a_valid_image_url()
 	{
 		$this->json(
 			'POST', '/api/v1/auth/register', [
@@ -521,23 +530,23 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'invalid-url',
 				'categories' => json_encode([$this->createCategory()->id]),
-				'flag_id' => 1
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
 		)->seeJson(
 			[
 				'bookCoverImg' => [
-					'The book cover img format is invalid.'
+					'The given url is not a valid image url'
 				]
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -567,9 +576,9 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
-				'bookCoverImg' => 'http://sample-image',
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
 				'categories' => '',
 				'flag_id' => $this->createFlag()->id
 			], [
@@ -583,7 +592,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -612,9 +621,9 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
-				'bookCoverImg' => 'http://sample-image',
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -627,7 +636,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -656,11 +665,11 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
-				'bookCoverImg' => 'http://sample-image',
-				'categories' => json_encode([0]),
-				'flag_id' => $this->createFlag()->id
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'flag_id' => $this->createFlag()->id,
+				'categories' => json_encode([0])
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -670,7 +679,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -700,9 +709,9 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
-				'bookCoverImg' => 'http://sample-image',
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
 				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => ''
 			], [
@@ -716,7 +725,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -745,10 +754,10 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
-				'bookCoverImg' => 'http://sample-image',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'categories' => json_encode([$this->createCategory()->id])
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -760,7 +769,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -789,9 +798,9 @@ class CookbookControllerTest extends \TestCase
 		$this->post(
 			'/api/v1/cookbooks',
 			[
-				'name' => 'sample title',
-				'description' => Str::random(126),
-				'bookCoverImg' => 'http://sample-image',
+				'name' => 'sample cookbook',
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
 				'categories' => json_encode([$this->createCategory()->id]),
 				'flag_id' => 0
 			], [
@@ -805,7 +814,7 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
-		$this->assertResponseStatus(422);
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -893,7 +902,7 @@ class CookbookControllerTest extends \TestCase
 		)->seeJson([
 			'status' => "error",
 			'message' => "Token is invalid"
-		])->seeStatusCode(401);
+		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
 	}
 
 	/**

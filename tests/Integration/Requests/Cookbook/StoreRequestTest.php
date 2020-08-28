@@ -45,7 +45,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -76,7 +76,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => '',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -104,7 +104,7 @@ class StoreRequestTest extends \TestCase
 
 		$request = new StoreRequest(new Request([
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -133,7 +133,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => '',
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -161,7 +161,7 @@ class StoreRequestTest extends \TestCase
 
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -190,7 +190,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(125),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -256,7 +256,7 @@ class StoreRequestTest extends \TestCase
 	/**
 	 * @test
 	 */
-	public function it_throws_an_exception_if_bookCoverImg_is_not_a_valid_url()
+	public function it_throws_an_exception_if_bookCoverImg_is_not_a_img_valid_url()
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
@@ -276,7 +276,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'invalid-url',
+			'bookCoverImg' => 'http://dummuy-image.jpg',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -298,7 +298,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => null,
 			'flag_id' => $flag->id
 		]));
@@ -320,7 +320,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => "invalid-json",
 			'flag_id' => $flag->id
 		]));
@@ -342,7 +342,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([0]),
 			'flag_id' => $flag->id
 		]));
@@ -365,7 +365,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => ''
 		]));
@@ -388,7 +388,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id])
 		]));
 	}
@@ -410,7 +410,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => 0
 		]));
@@ -439,7 +439,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id, 0]),
 			'flag_id' => $flag->id
 		]));
@@ -466,7 +466,7 @@ class StoreRequestTest extends \TestCase
 		$requestData = [
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		];

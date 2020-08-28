@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Validator;
 
 class NutritionalDetailJsonStructure
 {
-	public static function validate(){
-
+	public static function validate()
+	{
 		Validator::extend('nutritional_detail_json_structure', function ($attribute, $value) {
 			$specs = [
 				"cal" => [

@@ -32,7 +32,7 @@ class RecipeServiceTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
 			'summary' => Str::random(100),
@@ -54,7 +54,7 @@ class RecipeServiceTest extends \TestCase
 		$request = new Request([
 			'title' => 'sample title',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
 			'summary' => Str::random(100),

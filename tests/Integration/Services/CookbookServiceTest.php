@@ -35,7 +35,7 @@ class CookbookServiceTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$category->id]),
 			'flag_id' => $flag->id
 		]));
@@ -54,7 +54,7 @@ class CookbookServiceTest extends \TestCase
 		$request = new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$this->createCategory()->id]),
 			'flag_id' => $this->createFlag()->id
 		]);

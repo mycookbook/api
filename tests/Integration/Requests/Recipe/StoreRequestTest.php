@@ -29,7 +29,7 @@ class StoreRequestTest extends \TestCase
 		$request = new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -54,7 +54,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => '',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -77,7 +77,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => '',
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -100,7 +100,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => 'invalid-json',
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'flag_id' => $this->createFlag()->id,
 			'summary' => Str::random(100),
@@ -137,7 +137,7 @@ class StoreRequestTest extends \TestCase
 	/**
 	 * @test
 	 */
-	public function it_throws_an_exception_if_imgUrl_is_not_a_valid_url()
+	public function it_throws_an_exception_if_imgUrl_is_not_a_valid_img_url()
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
@@ -146,7 +146,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'invalid-url',
+			'imgUrl' => 'http://sample-url',
 			'description' => 'sample description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -169,7 +169,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => '',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -190,7 +190,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => '',
 			'summary' => Str::random(100),
@@ -211,7 +211,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => '',
 			'cookbookId' => 0,
 			'summary' => Str::random(100),
@@ -234,7 +234,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => '',
 			'cookbookId' => $cookbook->id,
 			'summary' => '',
@@ -257,7 +257,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'short description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -279,7 +279,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'short description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -301,7 +301,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'short description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -324,7 +324,7 @@ class StoreRequestTest extends \TestCase
 		new StoreRequest(new Request([
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'short description',
 			'cookbookId' => $cookbook->id,
 			'summary' => Str::random(100),
@@ -343,7 +343,7 @@ class StoreRequestTest extends \TestCase
 		$requestData = [
 			'title' => 'sample title',
 			'ingredients' => json_encode(["data" => ["ingredient1", "ingredient2"]]),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbookId' => $this->createCookbook()->id,
 			'summary' => Str::random(100),

@@ -62,9 +62,8 @@ class RecipeControllerTest extends \TestCase
 			'title' => 'sample recipe',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-			'bookCoverImg' => 'https://cover-image-url',
 			'summary' => Str::random(100),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'cookbookId' => $this->createCookbook()->id,
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
@@ -75,7 +74,7 @@ class RecipeControllerTest extends \TestCase
 			]
 		)->seeJson([
 			'created' => true
-		])->seeStatusCode(201);
+		])->seeStatusCode(Response::HTTP_CREATED);
 	}
 
 	/**
@@ -89,9 +88,8 @@ class RecipeControllerTest extends \TestCase
 			'title' => 'sample recipe',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-			'bookCoverImg' => 'https://cover-image-url',
 			'summary' => Str::random(100),
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'cookbookId' => $this->createCookbook()->id,
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
