@@ -159,7 +159,6 @@ class CookbookControllerTest extends \TestCase
             ]
         );
 
-        
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
 
@@ -672,10 +671,6 @@ class CookbookControllerTest extends \TestCase
 				'categories' => json_encode([0])
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
-			]
-		)->seeJson(
-			[
-				'error' => 'Category does not exist'
 			]
 		);
 

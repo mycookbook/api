@@ -341,42 +341,6 @@ class UnprocessibleentityExceptionTest extends \TestCase
 	/**
 	 * @test
 	 */
-	public function it_responds_with_a_422_if_cookbook_categories_is_not_a_valid_json()
-	{
-		$this->json(
-			'POST', '/api/v1/auth/register', [
-				'name' => 'Sally',
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$login = $this->json(
-			'POST', '/api/v1/auth/login', [
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$obj = json_decode($login->response->getContent());
-		$token = $obj->{'token'};
-
-		$this->json(
-			'POST', '/api/v1/cookbooks',
-			[
-				'name' => 'test title',
-				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-				'bookCoverImg' => 'https://cover-image-url',
-				'categories' => array(),
-				'flag_id' => $this->createFlag()->id
-			], [
-				'HTTP_Authorization' => 'Bearer' . $token]
-		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
-	}
-
-	/**
-	 * @test
-	 */
 	public function it_responds_with_a_422_if_cookbook_flag_is_not_given()
 	{
 		$this->json(

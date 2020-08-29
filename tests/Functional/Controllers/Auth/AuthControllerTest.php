@@ -2,6 +2,7 @@
 
 namespace Tests\Functional\Controllers\Auth;
 
+use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 /**
@@ -27,7 +28,7 @@ class AuthControllerTest extends \TestCase
 					'The email field is required.'
 				]
 			]
-		)->seeStatusCode(422);
+		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -45,7 +46,7 @@ class AuthControllerTest extends \TestCase
 					'The email field is required.'
 				]
 			]
-		)->seeStatusCode(422);
+		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -64,7 +65,7 @@ class AuthControllerTest extends \TestCase
 					'The password field is required.'
 				]
 			]
-		)->seeStatusCode(422);
+		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -82,7 +83,7 @@ class AuthControllerTest extends \TestCase
 					'The password field is required.'
 				]
 			]
-		)->seeStatusCode(422);
+		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -101,7 +102,7 @@ class AuthControllerTest extends \TestCase
 					'The email field is required.'
 				]
 			]
-		)->seeStatusCode(422);
+		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
 	/**
@@ -126,6 +127,6 @@ class AuthControllerTest extends \TestCase
 			[
 				'Not found or Invalid Credentials.'
 			]
-		)->seeStatusCode(404);
+		)->seeStatusCode(Response::HTTP_NOT_FOUND);
 	}
 }

@@ -307,31 +307,9 @@ class StoreRequestTest extends \TestCase
 	/**
 	 * @test
 	 */
-	public function it_throws_an_exception_if_categories_is_invalid_json()
-	{
-		$this->expectException(\Illuminate\Validation\ValidationException::class);
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
-		$request = new StoreRequest(new Request([
-			'name' => 'sample title',
-			'description' => Str::random(126),
-			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => "invalid-json",
-			'flag_id' => $flag->id
-		]));
-	}
-
-	/**
-	 * @test
-	 */
 	public function it_throws_an_exception_if_given_categories_does_not_exist()
 	{
-		$this->expectException(\App\Exceptions\UnprocessibleEntityException::class);
+		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
 		$flag = new Flag([
 			'flag' => 'ug',
@@ -421,7 +399,7 @@ class StoreRequestTest extends \TestCase
 	 */
 	public function it_responds_with_a_422_if_any_of_the_categories_does_not_exist_in_the_categories_table()
 	{
-		$this->expectException(\App\Exceptions\UnprocessibleEntityException::class);
+		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
 		$category = new Category([
 			'name' => 'test_title',

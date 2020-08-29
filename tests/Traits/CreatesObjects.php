@@ -87,7 +87,7 @@ trait CreatesObjects
 		$cookbook = new Cookbook([
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
-			'bookCoverImg' => 'http://dummuy-image.jpg',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
 			'categories' => json_encode([$this->category->id]),
 			'flag_id' => $this->flag->id,
 			'user_id' => $this->user->id
@@ -110,7 +110,7 @@ trait CreatesObjects
 		$recipe = new Recipe([
 			'name' => 'sample title',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
-			'imgUrl' => 'http://sample-url',
+			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
 			'cookbook_id' => $this->cookbook->id,
 			'summary' => Str::random(100),
