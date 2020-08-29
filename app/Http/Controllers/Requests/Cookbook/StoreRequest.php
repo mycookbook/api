@@ -2,38 +2,35 @@
 
 namespace App\Http\Controllers\Requests\Cookbook;
 
-use App\Category;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use App\Exceptions\UnprocessibleEntityException;
 
 class StoreRequest extends Controller
 {
 	public function __construct(Request $request)
 	{
+		$categoriesArr = json_decode($request->get('categories'));
+
+		// convert to array
+		$request->merge([
+			'categories' => $categoriesArr
+		]);
+
 		$this->validate(
 			$request, [
 				'name' => 'required',
 				'description' => 'required|min:126',
 				'bookCoverImg' => 'required|img_url',
-				'categories' => 'required|json',
+				'categories' => 'required|array',
+				'categories.*' => 'exists:categories,id',
 				'flag_id' => 'required|exists:flags,id'
 			]
 		);
-		$categories = json_decode($request->get('categories'));
 
 		//strip duplicates if exists in categories
 		$request->merge([
-			'categories' => array_unique($categories),
+			'categories' => array_unique($categoriesArr),
 		]);
-
-		foreach ($request->get('categories') as $category) {
-			if (!Category::find($category)) {
-
-				throw new UnprocessibleEntityException('Category does not exist', Response::HTTP_UNPROCESSABLE_ENTITY);
-			}
-		}
 
 		parent::__construct($request);
 	}
