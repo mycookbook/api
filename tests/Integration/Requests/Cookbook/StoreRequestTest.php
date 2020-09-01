@@ -11,7 +11,6 @@ use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 
 class StoreRequestTest extends \TestCase
 {
-
 	/**
 	 * @test
 	 */
@@ -20,6 +19,8 @@ class StoreRequestTest extends \TestCase
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
 		$storeRequest = new StoreRequest(new Request([]));
+
+		$this->assertResponseOk();
 	}
 
 	/**
@@ -71,6 +72,7 @@ class StoreRequestTest extends \TestCase
 			'flag' => 'ug',
 			'nationality' => 'Ugandan'
 		]);
+
 		$flag->save();
 
 		$request = new StoreRequest(new Request([
