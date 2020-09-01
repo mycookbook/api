@@ -51,6 +51,7 @@ $app->singleton(
 $app->configure('cors');
 $app->configure('queue');
 $app->configure('mail');
+$app->configure('jwt');
 
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
