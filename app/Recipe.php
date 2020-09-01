@@ -89,4 +89,13 @@ class Recipe extends Model
 		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
 	}
 
+	/**
+	 * Set the default value of servings if not given in the request
+	 *
+	 * @param integer $value
+	 */
+	public function setServingsAttribute($value)
+	{
+		$this->attributes['servings'] = ($value) ? $value : 1;
+	}
 }

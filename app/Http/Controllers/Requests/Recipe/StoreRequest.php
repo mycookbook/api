@@ -24,8 +24,6 @@ class StoreRequest extends Controller
 			]
 		);
 
-		$valid_request_payload['servings'] = abs($valid_request_payload['servings']);
-
 		parent::__construct($request->merge($valid_request_payload));
 	}
 }
