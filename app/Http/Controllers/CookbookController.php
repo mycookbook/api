@@ -48,8 +48,8 @@ class CookbookController extends Controller
 	 */
     public function store(StoreRequest $request, JWTAuth $jwt)
     {
-		$jwt->parseToken()->authenticate();
-		return $this->service->store($request->getParams());
+    	$jwt->parseToken()->authenticate();
+    	return $this->service->store($request->getParams());
     }
 
 	/**
