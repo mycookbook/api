@@ -97,12 +97,14 @@ class DatabaseSeeder extends Seeder
 			'cookbook_id' => $this->cookbooks[0],
 			'summary' => $faker->sentence(20),
 			'calorie_count' => 0,
-			'cook_time' => '2020-07-09 00::45:15',
+			'cook_time' => '2020-07-09 01:45:00',
+			'prep_time' => '2020-07-09 00:10:00',
 			'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
 			'servings' => 1,
 			'user_id' => $this->user->id,
 			'resource_type' => 'recipe'
 		]);
+		$recipe1->slug = slugify($recipe1->name);
 
 		$recipe1->save();
 		$this->createVariation($faker, $recipe1);
@@ -115,13 +117,15 @@ class DatabaseSeeder extends Seeder
 			'cookbook_id' => $this->cookbooks[1],
 			'summary' => $faker->sentence(20),
 			'calorie_count' => 0,
-			'cook_time' => '2020-07-09 01::15:00',
+			'cook_time' => '2020-07-09 01:15:00',
+			'prep_time' => '2020-07-09 00:10:00',
 			'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
 			'servings' => 1,
 			'user_id' => $this->user->id,
 			'resource_type' => 'recipe'
 		]);
 
+		$recipe2->slug = slugify($recipe2->name);
 		$recipe2->save();
 
 		$this->recipes = [$recipe1->id, $recipe2->id];
