@@ -9,5 +9,5 @@
  * @return string
  */
 function slugify($slug) {
-    return str_replace(" ", "-", $slug);
+    return str_replace(" ", "-", strtolower($slug));
 }
