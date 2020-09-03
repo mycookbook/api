@@ -20,11 +20,12 @@ class Recipe extends Model
      */
     protected $fillable = [
         'name', 'imgUrl', 'ingredients', 'description', 'user_id', 'cookbook_id', 'summary', 'nutritional_detail',
-        'slug', 'calorie_count', 'cook_time'
+        'slug', 'calorie_count', 'cook_time', 'prep_time'
     ];
 
     protected $casts = [
     	'cook_time' => 'datetime:H:i:s',
+		'prep_time' => 'datetime:H:i:s',
 		'ingredients' => 'json',
 	];
 
@@ -57,11 +58,11 @@ class Recipe extends Model
 	}
 
     /**
-     * Append links attribute.
+     * Append custom attributes
      *
      * @var array
      */
-    protected $appends = ['_links'];
+    protected $appends = ['total_time', '_links'];
 
     /**
      * Set attributes links
@@ -78,6 +79,21 @@ class Recipe extends Model
     }
 
 	/**
+	 * Compute total time to prepare recipe
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getTotalTimeAttribute()
+	{
+		$cook_time = strtotime(Carbon::parse($this->attributes['cook_time']));
+		$prep_time = strtotime(Carbon::parse($this->attributes['prep_time']));
+		$total_time = $cook_time + $prep_time;
+		$total_time = Carbon::createFromTimestamp($total_time);
+		return CarbonInterval::createFromFormat('H:i:s', $total_time->toTimeString())->forHumans();
+	}
+
+	/**
 	 * Set Attribute Cook Time
 	 *
 	 * @return string
@@ -86,6 +102,18 @@ class Recipe extends Model
     public function getCookTimeAttribute()
 	{
 		$dt = Carbon::parse($this->attributes['cook_time']);
+		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+	}
+
+	/**
+	 * Set Attribute prep Time
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getPrepTimeAttribute()
+	{
+		$dt = Carbon::parse($this->attributes['prep_time']);
 		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
 	}
 
