@@ -29,10 +29,6 @@ class User extends Model implements
         'name', 'email', 'password', 'following', 'followers', 'name_slug'
     ];
 
-//	protected $casts = [
-//		'created_at' => 'datetime:H:i:s'
-//	];
-
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -87,7 +83,10 @@ class User extends Model implements
      *
      * @var array
      */
-    protected $appends = ['_links'];
+    protected $appends = [
+    	'contributions',
+		'_links'
+	];
 
     /**
      * Set attributes links
@@ -104,13 +103,30 @@ class User extends Model implements
     }
 
 	/**
+	 * Compute total nos of contributions made by this user
+	 * cookbooks and recipes
+	 *
+	 * @return int
+	 */
+    public function getContributionsAttribute()
+	{
+		$cookbooks = $this->cookbooks()->count();
+		$recipes = $this->recipes()->count();
+
+		return $cookbooks + $recipes;
+	}
+
+	/**
 	 * Set attribute created at
 	 *
 	 * @return string
 	 */
     public function getCreatedAtAttribute()
 	{
-		return Carbon::parse($this->attributes['created_at'])->diffForHumans();
+		$year = Carbon::parse($this->attributes['created_at'])->year;
+		$month = Carbon::parse($this->attributes['created_at'])->month;
+
+		return Carbon::createFromDate($year, $month)->format('F Y');
 	}
 
 	/**

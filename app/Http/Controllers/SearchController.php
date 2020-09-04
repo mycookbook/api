@@ -25,6 +25,8 @@ class SearchController extends Controller
 		$recipe_variations = DB::table('recipe_variations')
 			->whereRaw("MATCH(name,description,ingredients) AGAINST(? IN BOOLEAN MODE)", array($q));
 
-		return $cookbooks->get()->merge($recipes->get())->merge($recipe_variations->get());
+		return response()->json([
+			'response' => $cookbooks->get()->merge($recipes->get())->merge($recipe_variations->get())
+		]);
 	}
 }

@@ -62,7 +62,11 @@ class Recipe extends Model
      *
      * @var array
      */
-    protected $appends = ['total_time', '_links'];
+    protected $appends = [
+    	'total_time',
+		'varieties_count',
+		'_links'
+	];
 
     /**
      * Set attributes links
@@ -91,6 +95,16 @@ class Recipe extends Model
 		$total_time = $cook_time + $prep_time;
 		$total_time = Carbon::createFromTimestamp($total_time);
 		return CarbonInterval::createFromFormat('H:i:s', $total_time->toTimeString())->forHumans();
+	}
+
+	/**
+	 * Compute Recipe variations count
+	 *
+	 * @return int
+	 */
+	public function getVarietiesCountAttribute()
+	{
+		return $this->variations()->count();
 	}
 
 	/**
