@@ -49,6 +49,16 @@ class User extends Model implements
     }
 
 	/**
+	 * User has one contact detail
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+    public function contact()
+	{
+		return $this->hasOne('App\UserContactDetail');
+	}
+
+	/**
 	 * A user can be subscribed to multiple cookbooks
 	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -73,7 +83,7 @@ class User extends Model implements
      *
      * @return array
      */
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims(): array
     {
         return [];
     }
@@ -93,7 +103,7 @@ class User extends Model implements
      *
      * @return array
      */
-    public function getLinksAttribute()
+    public function getLinksAttribute(): array
     {
         return [
             'self' => app()
@@ -106,14 +116,18 @@ class User extends Model implements
 	 * Compute total nos of contributions made by this user
 	 * cookbooks and recipes
 	 *
-	 * @return int
+	 * @return array
 	 */
-    public function getContributionsAttribute()
+    public function getContributionsAttribute(): array
 	{
 		$cookbooks = $this->cookbooks()->count();
 		$recipes = $this->recipes()->count();
 
-		return $cookbooks + $recipes;
+		return [
+			'cookbooks' => $cookbooks,
+			'recipes' => $recipes,
+			'total' => $cookbooks + $recipes
+		];
 	}
 
 	/**
@@ -121,7 +135,7 @@ class User extends Model implements
 	 *
 	 * @return string
 	 */
-    public function getCreatedAtAttribute()
+    public function getCreatedAtAttribute(): string
 	{
 		$year = Carbon::parse($this->attributes['created_at'])->year;
 		$month = Carbon::parse($this->attributes['created_at'])->month;
@@ -134,7 +148,7 @@ class User extends Model implements
 	 *
 	 * @return string
 	 */
-    public function getSlug()
+    public function getSlug(): string
 	{
 		return $this->name_slug;
 	}
