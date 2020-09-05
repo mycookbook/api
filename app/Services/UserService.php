@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Hashing\BcryptHasher;
+use App\Jobs\CreateUserContactDetail;
 use App\Interfaces\serviceInterface;
 use App\Exceptions\CookbookModelNotFoundException;
 
@@ -21,7 +22,7 @@ class UserService implements serviceInterface
      */
     public function index()
     {
-        $users = User::with('cookbooks', 'recipes')->get();
+        $users = User::with('cookbooks', 'recipes', 'contact')->get();
 
         return response([
         	'data' => $users
@@ -47,7 +48,9 @@ class UserService implements serviceInterface
 		]);
 
         $created = $user->save();
+        $serialized = $request->merge(['user_id' => $user->id]);
 
+        dispatch(new CreateUserContactDetail($serialized->all()));
         dispatch(new SendEmail());
 
         return response()->json(
@@ -71,13 +74,12 @@ class UserService implements serviceInterface
 	 */
     public function show($q)
     {
-		$user = $this->get($q);
+		$user = $this->get($q)->with('recipes', 'contact')->get();
 
         return response(
             [
                 "data" => [
-                	'user' => $user,
-					'recipes' => $user->recipes()->get()
+                	'user' => $user
 				],
             ], Response::HTTP_OK
         );
@@ -127,8 +129,7 @@ class UserService implements serviceInterface
 	{
 		$record = User::where('id', $q)
 			->orWhere('email', $q)
-			->orWhere('name_slug', $q)
-			->first();
+			->orWhere('name_slug', $q);
 
 		if (!$record) {
 			throw new CookbookModelNotFoundException();
