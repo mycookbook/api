@@ -2,7 +2,10 @@
 
 namespace Tests\Functional\Controllers\User;
 
+use App\Jobs\CreateUserContactDetail;
+use App\Jobs\SendEmail;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Queue;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 /**
  * Class UserControllerTest
@@ -16,6 +19,8 @@ class UserControllerTest extends \TestCase
 	 */
 	public function it_returns_422_if_the_request_is_empty()
 	{
+		Queue::fake();
+
 		$this->json(
 			'POST', '/api/v1/auth/register', []
 		)->seeJson(
@@ -31,6 +36,9 @@ class UserControllerTest extends \TestCase
 				],
 			]
 		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
 	}
 
     /**
@@ -40,6 +48,8 @@ class UserControllerTest extends \TestCase
      */
     public function testThatNameFieldIsRequired()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => '',
@@ -53,6 +63,9 @@ class UserControllerTest extends \TestCase
                 ]
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
     }
 
     /**
@@ -62,6 +75,8 @@ class UserControllerTest extends \TestCase
      */
     public function testThatEmailFieldIsRequired()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
@@ -75,6 +90,9 @@ class UserControllerTest extends \TestCase
                 ]
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
     }
 
     /**
@@ -84,6 +102,8 @@ class UserControllerTest extends \TestCase
      */
     public function testThatEmailFieldIsValidEmail()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
@@ -97,6 +117,9 @@ class UserControllerTest extends \TestCase
                 ]
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
     }
 
     /**
@@ -106,6 +129,8 @@ class UserControllerTest extends \TestCase
      */
     public function testThatPasswordFieldIsRequired()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
@@ -119,6 +144,9 @@ class UserControllerTest extends \TestCase
                 ]
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
     }
 
     /**
@@ -128,6 +156,8 @@ class UserControllerTest extends \TestCase
      */
     public function testThatPasswordFieldIsAMinimumOf5Characters()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
@@ -141,6 +171,9 @@ class UserControllerTest extends \TestCase
                 ]
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
     }
 
     /**
@@ -148,8 +181,10 @@ class UserControllerTest extends \TestCase
      *
      * @return void
      */
-    public function testThatNameEmailAndPasswordParamsareRequired()
+    public function testThatNameEmailAndPasswordParamsAreRequired()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', []
         )->seeJson(
@@ -165,6 +200,9 @@ class UserControllerTest extends \TestCase
                 ]
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+		Queue::assertNotPushed(CreateUserContactDetail::class);
+		Queue::assertNotPushed(SendEmail::class);
     }
 
     /**
@@ -174,6 +212,8 @@ class UserControllerTest extends \TestCase
      */
     public function testAUserCanBeCreated()
     {
+    	Queue::fake();
+
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
@@ -198,12 +238,15 @@ class UserControllerTest extends \TestCase
                     'status'
                 ]
             ]
-        )->seeStatusCode(201)->seeInDatabase(
+        )->seeStatusCode(Response::HTTP_CREATED)->seeInDatabase(
             'users', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com'
             ]
         );
+
+        Queue::assertPushed(CreateUserContactDetail::class);
+        Queue::assertPushed(SendEmail::class);
     }
 
     /**
