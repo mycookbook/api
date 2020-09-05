@@ -68,6 +68,7 @@ class RecipeControllerTest extends \TestCase
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
 			'cook_time' => '2020-04-07 00:55:00',
+			'prep_time' => '2020-04-07 00:00:10',
 			'servings' => 2
 		], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -94,6 +95,7 @@ class RecipeControllerTest extends \TestCase
 			'nutritional_detail' => '{"cal": "462", "carbs": "42g", "protein": "43g", "fat":"28g"}',
 			'calorie_count' => 1200,
 			'cook_time' => '2020-04-07 00:55:00',
+			'prep_time' => '2020-04-07 00:00:10',
 			'servings' => 2
 		], [
 				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
@@ -101,7 +103,7 @@ class RecipeControllerTest extends \TestCase
 		)->seeJson([
 			'status' => "error",
 			'message' => "Token is invalid"
-		])->seeStatusCode(401);
+		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
 	}
 
 	/**
@@ -138,7 +140,7 @@ class RecipeControllerTest extends \TestCase
 			]
 		)->seeJson([
 			'updated' => true
-		])->seeStatusCode(200);
+		])->seeStatusCode(Response::HTTP_OK);
 	}
 
 	/**
@@ -158,7 +160,7 @@ class RecipeControllerTest extends \TestCase
 		)->seeJson([
 			'status' => "error",
 			'message' => "Token is invalid"
-		])->seeStatusCode(401);
+		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
 	}
 
 	/**
@@ -195,7 +197,7 @@ class RecipeControllerTest extends \TestCase
 			]
 		)->seeJson([
 			'deleted' => true
-		])->seeStatusCode(202);
+		])->seeStatusCode(Response::HTTP_ACCEPTED);
 	}
 
 	/**
@@ -215,7 +217,7 @@ class RecipeControllerTest extends \TestCase
 		)->seeJson([
 			'status' => "error",
 			'message' => "Token is invalid"
-		])->seeStatusCode(401);
+		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
 	}
 
 	public function an_authenticated_user_can_update_a_recipe_they_dont_own() {}
