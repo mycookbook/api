@@ -2,10 +2,10 @@
 
 namespace Tests\Functional\Controllers\User;
 
-use App\Jobs\CreateUserContactDetail;
 use App\Jobs\SendEmail;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
+use App\Jobs\CreateUserContactDetail;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 /**
  * Class UserControllerTest
@@ -273,7 +273,6 @@ class UserControllerTest extends \TestCase
             ]
         );
 
-
         $obj = json_decode($res->response->getContent());
         $token = $obj->{'token'};
         $username = $obj->{'username'};
@@ -282,13 +281,12 @@ class UserControllerTest extends \TestCase
             '/api/v1/users/' . $username,
             [
                 'name' => 'Joromi 2',
-                'follower' => 1
+                'followers' => 1
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
         )->seejson(
             [
-                'updated' => true,
                 'status' => 'success'
             ]
         );
@@ -378,7 +376,7 @@ class UserControllerTest extends \TestCase
             '/api/v1/users/0',
             [
                 'name' => 'Joromi2',
-                'follower' => 1
+                'followers' => 1
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]

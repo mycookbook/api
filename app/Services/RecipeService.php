@@ -84,6 +84,7 @@ class RecipeService
     	//TODO: if user dont own recipe, can update it
 
 		$recipe = $this->get($id);
+//		$recipe->prep_time
 
 		return response(
 			[

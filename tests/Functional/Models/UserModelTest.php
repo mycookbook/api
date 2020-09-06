@@ -62,24 +62,4 @@ class UserModelTest extends \TestCase
 		$this->assertTrue(method_exists($user, 'cookbooks'));
 		$this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsToMany', $user->cookbooks());
 	}
-
-	/**
-	 * @test
-	 */
-	public function the_created_at_attribute_is_translated_to_human_readable_format()
-	{
-		$user = new User([
-			'name' => 'test name',
-			'email' => 'test@mail.com',
-			'password' => 'testpassword',
-			'following' => 0,
-			'followers' => 0
-		]);
-
-		$user->save();
-		$user->created_at = Carbon::now()->subDays(3);
-		$user->save();
-		$user_ = User::find($user->id);
-		$this->assertSame('3 days ago', $user_->created_at);
-	}
 }

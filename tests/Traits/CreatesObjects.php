@@ -102,6 +102,7 @@ trait CreatesObjects
 	 * Returns a recipe Instance
 	 *
 	 * @return Recipe
+	 * @throws \Exception
 	 */
 	protected function createRecipe(): Recipe
 	{
@@ -118,11 +119,15 @@ trait CreatesObjects
 			'calorie_count' => 1200,
 			'user_id' => $this->user->id,
 			'cook_time' => '2020-04-07 00:55:00',
-			'servings' => 2
+			'servings' => 2,
+			'prep_time' => '2020-01-01 00:00:00'
 		]);
 
-		if ($recipe->save()) {
+		try {
+			$recipe->save();
 			return $this->recipe = $recipe;
+		} catch(\Exception $e) {
+			throw new \Exception($e->getMessage());
 		}
 	}
 }

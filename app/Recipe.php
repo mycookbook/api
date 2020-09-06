@@ -140,4 +140,14 @@ class Recipe extends Model
 	{
 		$this->attributes['servings'] = ($value) ? $value : 1;
 	}
+
+	/**
+	 * Set the default value of prep time if not given in the request
+	 *
+	 * @param integer $value
+	 */
+	public function setPrepTimeAttribute($value)
+	{
+		$this->attributes['prep_time'] = ($value) ? $value : '2020-01-01 00:00:00';
+	}
 }

@@ -127,14 +127,14 @@ class UserService implements serviceInterface
 	 */
     public function get($q)
 	{
-		$record = User::where('id', $q)
+		$r = User::where('id', $q)
 			->orWhere('email', $q)
 			->orWhere('name_slug', $q);
 
-		if (!$record) {
+		if (!$r->first()) {
 			throw new CookbookModelNotFoundException();
 		}
 
-		return $record;
+		return $r;
 	}
 }
