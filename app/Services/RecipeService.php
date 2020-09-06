@@ -132,6 +132,7 @@ class RecipeService
 		return response(
 			[
 				'updated' => true,
+				'claps' => $recipe->claps
 			],Response::HTTP_OK
 		);
 	}
