@@ -18,7 +18,8 @@
         "symfony/console": "4.4.7",
         "doctrine/dbal": "^2.10",
         "sentry/sentry-laravel": "1.7.1",
-        "illuminate/mail": "6.x-dev"
+        "illuminate/mail": "6.x-dev",
+        "symfony/http-kernel": "4.4.13"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
