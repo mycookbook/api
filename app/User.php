@@ -94,7 +94,8 @@ class User extends Model implements
      * @var array
      */
     protected $appends = [
-    	'contributions'
+    	'contributions',
+		'is_verified'
 	];
 
 	/**
@@ -129,6 +130,20 @@ class User extends Model implements
 	}
 
 	/**
+	 * Show user email verification status
+	 *
+	 * @return bool
+	 */
+	public function getIsVerifiedAttribute()
+	{
+		$entity = $this->email_verification()->get()->first();
+		if (is_null($entity) || is_null($entity->is_verified)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Get the User name_slug
 	 *
 	 * @return string
@@ -136,5 +151,13 @@ class User extends Model implements
     public function getSlug(): string
 	{
 		return $this->name_slug;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function email_verification()
+	{
+		return $this->hasOne('App\EmailVerification');
 	}
 }
