@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\TriggerEmailVerificationProcess;
 use App\User;
 use Carbon\Carbon;
 use App\EmailVerification;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
+use App\Jobs\TriggerEmailVerificationProcess;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Class UserController
