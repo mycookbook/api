@@ -47,7 +47,8 @@ class UserService implements serviceInterface
 			'password' => (new BcryptHasher)->make($request->password),
 			'following' => 0,
 			'followers' => 0,
-			'name_slug' => slugify($request->name)
+			'name_slug' => slugify($request->name),
+			'avatar' => 'https://bit.ly/3m3M73g',
 		]);
 
         $created = $user->save();
@@ -106,10 +107,10 @@ class UserService implements serviceInterface
 				'name' => Str::ucfirst($request->name),
 				'name_slug' => slugify($request->name),
 				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
-				'avatar' => $request->avatar ? $request->avatar : NULL,
+				'avatar' => $request->avatar ? $request->avatar : 'https://bit.ly/3m3M73g',
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
 				'about' => $request->about ? $request->about : NULL,
-				'can_take_orders' => ($request->can_take_orders == true) ? 1 : 0,
+				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
 				'followers' => $request->followers ? $request->followers : 0,
 				'following' => $request->following ? $request->following : 0,
 			]);
