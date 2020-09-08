@@ -33,7 +33,8 @@ class AuthService
 			[
 				'success' => true,
 				'token' => $token,
-				'username' => Auth::user()->getSlug()
+				'username' => Auth::user()->getSlug(),
+				'is_verified' => Auth::user()->is_verified
 			], Response::HTTP_OK
 		);
 	}

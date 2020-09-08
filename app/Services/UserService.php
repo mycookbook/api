@@ -131,6 +131,7 @@ class UserService implements serviceInterface
 				[
 					"updated" => $updated,
 					"status" => "success",
+					"username" => $request->name
 				], Response::HTTP_OK
 			);
 		} else {

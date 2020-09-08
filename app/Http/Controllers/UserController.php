@@ -88,7 +88,7 @@ class UserController extends Controller
 				throw new \Exception('There was a problem processing this request. Please try again later.');
 			}
 
-			$user = User::findOrFail('email', $payload['email']);
+			$user = User::findOrFail($payload['user_id']);
 
 			if ($user) {
 				$verification = EmailVerification::where('user_id', $payload['user_id']);
