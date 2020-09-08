@@ -84,7 +84,7 @@ class UserController extends Controller
 
 		try {
 			if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
-				Log::info('Invalid secret provided for resending email verification', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
+				Log::info('Invalid secret provided for verifying this email', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
 				throw new \Exception('There was a problem processing this request. Please try again later.');
 			}
 
