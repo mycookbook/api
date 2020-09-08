@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Jobs\UpdateUserContactDetail;
+use App\Jobs\UpdateUserContactDetailJob;
 use App\User;
 use App\Jobs\SendEmail;
 use Illuminate\Support\Str;
@@ -10,6 +12,7 @@ use Illuminate\Http\Response;
 use Illuminate\Hashing\BcryptHasher;
 use App\Jobs\CreateUserContactDetail;
 use App\Interfaces\serviceInterface;
+use Illuminate\Support\Facades\Log;
 use App\Exceptions\CookbookModelNotFoundException;
 
 /**
@@ -94,7 +97,7 @@ class UserService implements serviceInterface
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
-    public function update(Request $request, $username)
+    public function update(Request $request, string $username)
     {
 		$record = $this->get($username);
 
@@ -102,10 +105,18 @@ class UserService implements serviceInterface
 			$updated = $record->update([
 				'name' => Str::ucfirst($request->name),
 				'name_slug' => slugify($request->name),
-				'password' => (new BcryptHasher)->make($request->password),
+				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
+				'avatar' => $request->avatar ? $request->avatar : NULL,
+				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
+				'about' => $request->about ? $request->about : NULL,
+				'can_take_orders' => ($request->can_take_orders == true) ? 1 : 0,
 				'followers' => $request->followers ? $request->followers : 0,
-				'following' => $request->following ? $request->following : 0
+				'following' => $request->following ? $request->following : 0,
 			]);
+
+			$request->merge(['user_id' => $record->get()->first()->id]);
+
+			dispatch(new UpdateUserContactDetailJob($request->all()));
 
 			return response(
 				[

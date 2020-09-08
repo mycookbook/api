@@ -5,50 +5,57 @@ namespace App\Services;
 use App\User;
 use App\UserContactDetail;
 use Illuminate\Http\Request;
-use App\Interfaces\serviceInterface;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
-class UserContactDetailsService implements serviceInterface
+class UserContactDetailsService
 {
-	public function __construct(Request $request)
-	{
-		$user = User::findorFail($request->get('user_id'));
-	}
+	protected $contact_detail;
 
-	public function index()
-	{
-		// TODO: Implement index() method.
-	}
-
-	public function show($option)
-	{
-		// TODO: Implement show() method.
-	}
-
+	/**
+	 * Creates new user contact detail
+	 *
+	 * @param Request $request
+	 */
 	public function store(Request $request)
 	{
 		$detail = new UserContactDetail($request->only([
-			'visibility',
 			'user_id',
+			'visibility',
 			'facebook',
 			'twitter',
 			'instagram',
-			'skype',
 			'office_address',
 			'phone',
 			'calendly',
 			'skype',
 			'website'
 		]));
+
 		$detail->save();
 	}
 
-	public function update(Request $request, $option)
+	/**
+	 * @param Request $request
+	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
+	public function updateUserSettings(Request $request)
 	{
-		// TODO: Implement update() method.
-	}
+		$user = User::where('email', $request->get('email'))->get()->first();
+		$contact_detail = UserContactDetail::where('user_id', '=', $user->id)->get()->first();
 
-	function get($q)
-	{
-		// TODO: Implement get() method.
+		if ($contact_detail) {
+			Log::info('user contact detail found', [$contact_detail->get()->first()]);
+			$updated = $contact_detail->update($request->all());
+			return response(
+				[
+					"updated" => $updated,
+					"status" => "success",
+				], Response::HTTP_OK
+			);
+
+		} else {
+			Log::info('User contact detail not found.:', ['user_id' => $user->id]);
+		}
 	}
 }
