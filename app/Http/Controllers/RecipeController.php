@@ -57,31 +57,34 @@ class RecipeController extends Controller
 	 * @param int $recipeId
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
     public function update(Request $request, $recipeId)
     {
         return $this->service->update($request, $recipeId);
     }
 
-    /**
-     * Delete recipe
-     *
-     * @param int $recipeId recipe
-     *
-     * @return string
-     */
+	/**
+	 * Delete recipe
+	 *
+	 * @param int $recipeId recipe
+	 *
+	 * @return string
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
+	 */
     public function delete($recipeId)
     {
         return $this->service->delete($recipeId);
     }
 
-    /**
-     * Find resource
-     *
-     * @param int $id identifier
-     *
-     * @return mixed
-     */
+	/**
+	 * Find resource
+	 *
+	 * @param int $id identifier
+	 *
+	 * @return mixed
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
+	 */
     public function show($id)
     {
 		return $this->service->show($id);
@@ -93,6 +96,7 @@ class RecipeController extends Controller
 	 * @param Request $request
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 * @throws \Illuminate\Validation\ValidationException
 	 */
 	public function addClap(Request $request)
