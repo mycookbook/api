@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Exceptions\UnprocessibleEntityException;
+use Illuminate\Support\Facades\Log;
 
 class UpdateRequest extends Controller
 {
