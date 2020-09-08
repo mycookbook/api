@@ -101,5 +101,10 @@ $router->group(
 		*/
 
 		$router->post('add-clap', 'RecipeController@addClap'); //increment recipe clap
+
+		/**
+		 * Email verification
+		 */
+		$router->get('verify-email/{token}', 'UserController@verifyEmail');
     }
 );

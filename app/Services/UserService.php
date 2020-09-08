@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\TriggerEmailVerificationProcess;
 use App\Jobs\UpdateUserContactDetail;
 use App\Jobs\UpdateUserContactDetailJob;
 use App\User;
@@ -55,7 +56,14 @@ class UserService implements serviceInterface
         $serialized = $request->merge(['user_id' => $user->id]);
 
         dispatch(new CreateUserContactDetail($serialized->all()));
-        dispatch(new SendEmail());
+        dispatch(new TriggerEmailVerificationProcess($user->id));
+
+//        TODO: send post req using a webhook to the notifications service: to handle sending
+// the email containing the verification link - the link is the token generated
+		// a new token will be generated and used as the payload
+		//this will be sent in the message body
+		//this token will contain the user email
+		// if the email in the token exists in the db then set the email verification field of that entry to current date time stamp
 
         return response()->json(
             [

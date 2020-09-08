@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\EmailVerification;
 use App\Services\UserService;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * Class UserController
@@ -59,8 +65,32 @@ class UserController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 */
-	public function update(UpdateRequest $request, $userId)
+	public function update(UpdateRequest $request, string $userId)
 	{
 		return $this->service->update($request->getParams(), $userId);
+	}
+
+	/**
+	 * Email Verification
+	 *
+	 * @param Request $request
+	 * @param $token
+	 */
+	public function verifyEmail(Request $request, $token)
+	{
+		$email = Crypt::decryptString($token);
+
+		try {
+			$user = User::where('email', $email);
+			$verification = EmailVerification::where('user_id', $user->id);
+			$verification->update([
+				'is_verified' => Carbon::now()
+			]);
+
+			return response()->json(null, Response::HTTP_NO_CONTENT);
+
+		} catch (\Exception $e) {
+			return response()->json('Something went wrong. Please try again later.', Response::HTTP_CONFLICT);
+		}
 	}
 }
