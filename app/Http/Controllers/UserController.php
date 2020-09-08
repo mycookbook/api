@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\EmailVerification;
-use App\Services\UserService;
-use App\Http\Controllers\Requests\User\StoreRequest;
-use App\Http\Controllers\Requests\User\UpdateRequest;
+use App\Jobs\TriggerEmailVerificationProcess;
 use App\User;
 use Carbon\Carbon;
+use App\EmailVerification;
 use Illuminate\Http\Request;
+use App\Services\UserService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Crypt;
+use App\Http\Controllers\Requests\User\StoreRequest;
+use App\Http\Controllers\Requests\User\UpdateRequest;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class UserController
@@ -78,19 +80,43 @@ class UserController extends Controller
 	 */
 	public function verifyEmail(Request $request, $token)
 	{
-		$email = Crypt::decryptString($token);
+		$payload = Crypt::decrypt($token);
 
 		try {
-			$user = User::where('email', $email);
-			$verification = EmailVerification::where('user_id', $user->id);
-			$verification->update([
-				'is_verified' => Carbon::now()
-			]);
+			if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
+				Log::info('Invalid secret provided for resending email verification', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
+				throw new \Exception('There was a problem processing this request. Please try again later.');
+			}
 
-			return response()->json(null, Response::HTTP_NO_CONTENT);
+			$user = User::findOrFail('email', $payload['email']);
 
+			if ($user) {
+				$verification = EmailVerification::where('user_id', $payload['user_id']);
+				$verification->update([
+					'is_verified' => Carbon::now()
+				]);
+
+				return response()->json(null, Response::HTTP_NO_CONTENT);
+			}
 		} catch (\Exception $e) {
-			return response()->json('Something went wrong. Please try again later.', Response::HTTP_CONFLICT);
+			return response()->json($e->getMessage(), Response::HTTP_CONFLICT);
+		}
+	}
+
+	/**
+	 * @param Request $request
+	 * @param $token
+	 * @throws \Exception
+	 */
+	public function resend(Request $request, $token)
+	{
+		$payload = Crypt::decrypt($token);
+
+		if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
+			Log::info('Invalid secret provided for resending email verification', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
+			throw new \Exception('There was a problem processing this request. Please try again later.');
+		} else {
+			dispatch(new TriggerEmailVerificationProcess($payload['user_id']));
 		}
 	}
 }

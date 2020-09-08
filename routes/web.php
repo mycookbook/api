@@ -106,5 +106,6 @@ $router->group(
 		 * Email verification
 		 */
 		$router->get('verify-email/{token}', 'UserController@verifyEmail');
+		$router->get('resend-email-verification-link/{token}', 'UserController@resend');
     }
 );
