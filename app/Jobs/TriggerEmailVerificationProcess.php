@@ -37,8 +37,7 @@ class TriggerEmailVerificationProcess implements ShouldQueue
 	{
 		$email_verification = new EmailVerification([
 			'user_id' => $this->user->id,
-			'token' => $this->token,
-			'is_verified' => Carbon::now()
+			'token' => $this->token
 		]);
 
 		if (!$email_verification->save()) {
