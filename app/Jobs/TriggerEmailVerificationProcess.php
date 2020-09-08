@@ -32,7 +32,7 @@ class TriggerEmailVerificationProcess implements ShouldQueue
 	 */
 	public function handle()
 	{
-		$this->user = User::find($this->userId)->get()->first();
+		$this->user = User::find($this->userId);
 
 		if (!$this->user) {
 			Log::info('This user does not exist', ['user_id' => $this->userId]);
