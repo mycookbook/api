@@ -2,13 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Services\UserContactDetailsService;
 use Illuminate\Http\Request;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Services\UserContactDetailsService;
 
 class CreateUserContactDetail implements ShouldQueue
 {
@@ -25,7 +24,7 @@ class CreateUserContactDetail implements ShouldQueue
 	public function __construct(array $request)
 	{
 		$this->request = new Request($request);
-		$this->service = new UserContactDetailsService($this->request);
+		$this->service = new UserContactDetailsService();
 	}
 
 	/**
@@ -35,6 +34,5 @@ class CreateUserContactDetail implements ShouldQueue
 	public function handle()
 	{
 		$this->service->store($this->request);
-		Log::info('Email job queued and executed...');
 	}
 }
