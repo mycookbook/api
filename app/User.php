@@ -97,20 +97,6 @@ class User extends Model implements
     	'contributions'
 	];
 
-    /**
-     * Set attributes links
-     *
-     * @return array
-     */
-//    public function getLinksAttribute(): array
-//    {
-//        return [
-//            'self' => app()
-//                ->make('url')
-//                ->to("api/v1/users/{$this->attributes['name_slug']}")
-//        ];
-//    }
-
 	/**
 	 * Compute total nos of contributions made by this user
 	 * cookbooks and recipes

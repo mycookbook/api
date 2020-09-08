@@ -55,7 +55,7 @@ class UserService implements serviceInterface
         $serialized = $request->merge(['user_id' => $user->id]);
 
         dispatch(new CreateUserContactDetail($serialized->all()));
-        dispatch(new SendEmail());
+//        TODO: send pot req using a webhook to the notifications service: to handle sending the email containing the verification link
 
         return response()->json(
             [
