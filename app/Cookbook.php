@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -44,6 +45,19 @@ class Cookbook extends Model
                 ->to("api/v1/cookbooks/{$this->attributes['id']}")
         ];
     }
+
+	/**
+	 * Set attribute created at
+	 *
+	 * @return string
+	 */
+	public function getCreatedAtAttribute(): string
+	{
+		$year = Carbon::parse($this->attributes['created_at'])->year;
+		$month = Carbon::parse($this->attributes['created_at'])->month;
+
+		return Carbon::createFromDate($year, $month)->format('F Y');
+	}
 
     /**
      * A cookbook has many recipes
