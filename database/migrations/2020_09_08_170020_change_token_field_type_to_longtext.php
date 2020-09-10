@@ -13,5 +13,6 @@ class ChangeTokenFieldTypeToLongtext extends Migration
     public function up()
     {
 		DB::raw('ALTER TABLE email_verifications MODIFY token longtext');
+//		LONGTEXT
     }
 }
