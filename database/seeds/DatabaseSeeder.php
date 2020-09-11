@@ -43,13 +43,17 @@ class DatabaseSeeder extends Seeder
 			'following' => 0,
 			'avatar' => $faker->imageUrl(),
 			'pronouns' => 'She/Her',
-			'expertise_level' => 'professional bartender @ macys'
+			'expertise_level' => 'professional bartender @ macys',
+			'can_take_orders' => false
 		]);
 		$user->name_slug = slugify($user->name);
 
 		$user->save();
 
 		$this->user = $user;
+
+		$this->createContactDetail($user);
+		$this->createEmailVerification($user);
 	}
 
 	private function createCookbooks(\Faker\Generator $faker)
@@ -180,5 +184,40 @@ class DatabaseSeeder extends Seeder
 				<img src="https://media.giphy.com/media/xT0xePlbYZgrRWHodi/giphy.gif" />
 			</div>
 		</div>';
+	}
+
+	/**
+	 * Add user conatct detail
+	 * @param \App\User $user
+	 */
+	private function createContactDetail(\App\User $user)
+	{
+		$contact = new \App\UserContactDetail([
+			'user_id' => $user->id,
+			'visibility' => 'public',
+			'phone' => '(647) 000 0000',
+			'facebook' => 'https://facebook.com/test-user',
+			'twitter' => 'https://twitter.com/test-user',
+			'instagram' => 'https://instagram.com/test-user',
+			'skype' => '@test-user',
+			'calendly' => 'https://calendly.com/test-user',
+			'office_address' => '560 Tim Hortons Blvd ON M5V 3M3',
+			'website' => 'www.mywebsite.com'
+		]);
+		$contact->save();
+	}
+
+	/**
+	 * Create Verified user
+	 * @param \App\User $user
+	 */
+	private function createEmailVerification(\App\User $user)
+	{
+		$verification = new \App\EmailVerification([
+			'user_id' => $user->id,
+			'token' => \Illuminate\Support\Facades\Crypt::encrypt(['user_id' => $user->id, 'email' => $user->email, 'secret' => env('CRYPT_SECRET')]),
+			'is_verified' => \Carbon\Carbon::now()
+		]);
+		$verification->save();
 	}
 }
