@@ -50,7 +50,7 @@ class UserController extends Controller
 	/**
 	 * Get one user
 	 *
-	 * @param int $username username
+	 * @param mixed $username username
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 */

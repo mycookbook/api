@@ -79,14 +79,14 @@ class UserService implements serviceInterface
 	/**
 	 * Get one user
 	 *
-	 * @param string $q
+	 * @param mixed $q
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
     public function show($q)
     {
-		$user = $this->get($q)->with('recipes', 'contact')->get();
+		$user = $this->get($q)->with('cookbooks', 'recipes', 'contact')->get();
 
         return response(
             [
@@ -108,10 +108,11 @@ class UserService implements serviceInterface
 	 */
     public function update(Request $request, string $username)
     {
-		$record = $this->get($username);
+		$user_record = $this->get($username);
+		$user_contact_detail = $user_record->get()->first()->contact;
 
 		if ($request->all()) {
-			$updated = $record->update([
+			$updated = $user_record->update([
 				'name' => Str::ucfirst($request->name),
 				'name_slug' => slugify($request->name),
 				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
@@ -119,13 +120,10 @@ class UserService implements serviceInterface
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
 				'about' => $request->about ? $request->about : NULL,
 				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
-				'followers' => $request->followers ? $request->followers : 0,
-				'following' => $request->following ? $request->following : 0,
 			]);
 
-			$request->merge(['user_id' => $record->get()->first()->id]);
-
-			dispatch(new UpdateUserContactDetailJob($request->all()));
+			$request->merge(['user_id' => $user_record->get()->first()->id]);
+			$user_contact_detail->update($request->all());
 
 			return response(
 				[

@@ -39,6 +39,8 @@ class CookbookService implements serviceInterface
     {
         $cookbook = new Cookbook($request->all());
 
+        //TODO: CookbookPOlicy to ascertain that user is able to create a cookbook
+
 		$cookbook->user_id = $request->user()->id;
         $cookbook->slug = slugify($request->name);
 
@@ -68,6 +70,7 @@ class CookbookService implements serviceInterface
 	 */
     public function update($request, $id)
     {
+		//TODO: Cookbook Policy to ascertain that user is able to update this cookbook
 		$cookbook = $this->get($id);
 
         return response(
