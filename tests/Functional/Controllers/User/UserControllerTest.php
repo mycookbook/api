@@ -225,9 +225,6 @@ class UserControllerTest extends \TestCase
                 'response' => [
                     'created',
                     'data' => [
-                        '_links' => [
-                            'self'
-                        ],
                         'created_at',
                         'updated_at',
                         'email',

@@ -30,7 +30,7 @@ class Cookbook extends Model
      *
      * @var array
      */
-    protected $appends = ['_links'];
+    protected $appends = ['_links', 'recipes_count', 'categories'];
 
     /**
      * Set attributes links
@@ -45,6 +45,23 @@ class Cookbook extends Model
                 ->to("api/v1/cookbooks/{$this->attributes['id']}")
         ];
     }
+
+	/**
+	 * Get the recipes count
+	 * @return int
+	 */
+    public function getRecipesCountAttribute()
+	{
+		return count($this->recipes);
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getCategoriesAttribute()
+	{
+		return $this->categories()->get();
+	}
 
 	/**
 	 * Set attribute created at

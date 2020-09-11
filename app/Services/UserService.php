@@ -123,6 +123,7 @@ class UserService implements serviceInterface
 			]);
 
 			$request->merge(['user_id' => $user_record->get()->first()->id]);
+			Log::info('contact info', [$request->all()]);
 			$user_contact_detail->update($request->all());
 
 			return response(
