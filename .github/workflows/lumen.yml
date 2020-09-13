@@ -1,4 +1,4 @@
-# GitHub Action for Lumen with MySQL and Redis
+# GitHub Action for Lumen with MariaDb
 name: Testing Lumen with MySQL
 on: [push, pull_request]
 jobs:
@@ -9,10 +9,6 @@ jobs:
       DB_DATABASE: cookbook_test
       DB_CONNECTION: mysql
       DB_USERNAME: root
-      BROADCAST_DRIVER: log
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
     services:
       mariadb:
         image: mariadb:latest
@@ -24,11 +20,6 @@ jobs:
           MYSQL_DATABASE: cookbook_test
           MYSQL_ROOT_PASSWORD: password
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
-      redis:
-        image: redis
-        ports:
-          - 6379/tcp
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
       fail-fast: false
       matrix:
@@ -56,8 +47,6 @@ jobs:
       - name: Install Composer dependencies
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
-          composer require predis/predis:v1.1.6
-          composer require illuminate/redis:v6.0.0
       - name: Prepare the application
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       - name: Verify MariaDB connection
