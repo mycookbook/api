@@ -14,15 +14,16 @@ jobs:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
     services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: cookbook_test
+      mariadb:
+        image: mariadb:latest
         ports:
           - '8888:3306'
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        env:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: cookbook_test
+          MYSQL_ROOT_PASSWORD: password
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
       redis:
         image: redis
         ports:
@@ -41,8 +42,6 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, dom, fileinfo, mysql
           coverage: xdebug #optional
-      - name: Start mysql service
-        run: sudo /etc/init.d/mysql start
       - name: Get composer cache directory
         id: composercache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -61,15 +60,12 @@ jobs:
           composer require illuminate/redis:v6.0.0
       - name: Prepare the application
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-      - name: Register Redis as service provider
-        run: sed -i '$i\$app->register(Illuminate\\Redis\\RedisServiceProvider::class);' bootstrap/app.php
-      - name: Run Migration
-        run: php artisan migrate -v
+      - name: Verify MariaDB connection
         env:
-          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
-          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+          PORT: ${{ job.services.mariadb.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
       - name: Test with phpunit
         run: vendor/bin/phpunit --coverage-text
-        env:
-          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
-          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
