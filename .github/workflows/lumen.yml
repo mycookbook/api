@@ -43,6 +43,8 @@ jobs:
           coverage: xdebug #optional
       - name: Start mysql service
         run: sudo /etc/init.d/mysql start
+      - name: Create testing db
+        run: mysql -h 127.0.0.1 --port 8888 -u root -p password -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
       - name: Get composer cache directory
         id: composercache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
