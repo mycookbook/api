@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DB_DATABASE: cookbook_test
-      DB_CONNECTION:: mysql
+      DB_CONNECTION: mysql
       DB_USERNAME: root
       DB_PASSWORD: password
       BROADCAST_DRIVER: log
