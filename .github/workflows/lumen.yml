@@ -9,7 +9,6 @@ jobs:
       DB_DATABASE: cookbook_test
       DB_CONNECTION: mysql
       DB_USERNAME: root
-      DB_PASSWORD: password
       BROADCAST_DRIVER: log
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
@@ -18,7 +17,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: cookbook_test
         ports:
