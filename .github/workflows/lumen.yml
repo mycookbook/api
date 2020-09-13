@@ -15,13 +15,13 @@ jobs:
       SESSION_DRIVER: redis
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: cookbook_test
         ports:
-          - 3306/tcp
+          - '8888:3306'
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis
@@ -43,8 +43,6 @@ jobs:
           coverage: xdebug #optional
       - name: Start mysql service
         run: sudo /etc/init.d/mysql start
-      - name: Create testing db
-        run: mysql -h 127.0.0.1 --port 8888 -u root -p password -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
       - name: Get composer cache directory
         id: composercache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
