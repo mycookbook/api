@@ -1,9 +1,6 @@
 # GitHub Action for Lumen with MariaDb
 name: Testing Lumen with MySQL
 on: [push, pull_request]
-env:
-    PHP_VERSION: 7.4
-    COMPOSER_ALLOW_SUPERUSER: '1' # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 jobs:
   lumen:
     name: Lumen (PHP ${{ matrix.php-versions }})
