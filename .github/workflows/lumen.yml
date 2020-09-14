@@ -44,6 +44,6 @@ jobs:
         env:
           PORT: '3306'
           MYSQL_PASSWORD: rootpass
-        run: mysql –host 127.0.0.1 --port "$PORT" -u root -P"$MYSQL_PASSWORD" -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
+        run: mysql –host 127.0.0.1 --port "$PORT" -u root -p "$MYSQL_PASSWORD" -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
       - name: Test with phpunit
         run: vendor/bin/phpunit
