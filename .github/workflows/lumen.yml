@@ -12,7 +12,7 @@ jobs:
           - '8888:3306'
         env:
           MYSQL_DATABASE: cookbook_test
-          MYSQL_ROOT_PASSWORD: my-secret-pw
+          MYSQL_ROOT_PASSWORD: rootpass
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
     strategy:
       fail-fast: false
@@ -40,12 +40,9 @@ jobs:
           composer install --no-progress --prefer-dist --optimize-autoloader
       - name: Prepare the application
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-#       - name: Verify MariaDB connection
-#         env:
-#           PORT: '3306'
-#         run: |
-#           while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
-#             sleep 1
-#           done
+      - name: Verify MariaDB connection
+        env:
+          PORT: '3306'
+        run: mysql –host 127.0.0.1 --port 8888 -u root -prootpass -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
       - name: Test with phpunit
         run: vendor/bin/phpunit
