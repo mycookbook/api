@@ -43,6 +43,7 @@ jobs:
       - name: Verify MariaDB connection
         env:
           PORT: '3306'
-        run: mysql –host 127.0.0.1 --port 8888 -u root -P"$PORT" -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
+          MYSQL_PASSWORD: rootpass
+        run: mysql –host 127.0.0.1 --port "$PORT" -u root -P"$MYSQL_PASSWORD" -e 'CREATE DATABASE IF NOT EXISTS cookbook_test;'
       - name: Test with phpunit
         run: vendor/bin/phpunit
