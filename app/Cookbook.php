@@ -111,4 +111,13 @@ class Cookbook extends Model
     {
         return $this->belongsTo('App\Flag');
     }
+
+	/**
+	 * original author
+	 * @return mixed
+	 */
+    public function author()
+	{
+		return User::find($this->user_id);
+	}
 }

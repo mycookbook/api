@@ -22,8 +22,12 @@ class CookbookService implements serviceInterface
     {
 		return response()->json(
 			[
-				'data' =>  Cookbook::with('Recipes.User', 'Recipes.Variations', 'Recipes.User.Contact', 'Users', 'Categories', 'Flag')
-					->take(50)->orderByDesc('created_at')->get()
+				'data' =>  Cookbook::with([
+					'categories',
+					'flag',
+					'recipes',
+					'users'
+				])->take(50)->orderByDesc('created_at')->get()
 			], Response::HTTP_OK
 		);
     }

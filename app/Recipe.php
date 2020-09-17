@@ -29,6 +29,8 @@ class Recipe extends Model
 		'ingredients' => 'json',
 	];
 
+    protected $hidden = ['user_id', 'cookbook_id'];
+
     /**
      * A recipe belongs to a user
      *
@@ -65,7 +67,8 @@ class Recipe extends Model
     protected $appends = [
     	'total_time',
 		'varieties_count',
-		'_links'
+		'_links',
+		'my_cookbook'
 	];
 
     /**
@@ -129,6 +132,22 @@ class Recipe extends Model
 	{
 		$dt = Carbon::parse($this->attributes['prep_time']);
 		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+	}
+
+	/**
+	 * Recipe cookbook
+	 *
+	 * @return array
+	 */
+	public function getMyCookbookAttribute()
+	{
+		$cookbook = $this->cookbook()->get()->first();
+
+		return [
+			"id" => $cookbook->id,
+			"name" => $cookbook->name,
+			"author" => $cookbook->author()
+		];
 	}
 
 	/**
