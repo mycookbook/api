@@ -95,7 +95,8 @@ class User extends Model implements
      */
     protected $appends = [
     	'contributions',
-		'is_verified'
+		'is_verified',
+		'contact_detail'
 	];
 
 	/**
@@ -141,6 +142,16 @@ class User extends Model implements
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Get user contact detail
+	 *
+	 * @return mixed
+	 */
+	public function getContactDetailAttribute()
+	{
+		return $this->contact()->get()->first();
 	}
 
 	/**
