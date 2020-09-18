@@ -9,11 +9,11 @@ jobs:
       mariadb:
         image: mariadb:latest
         ports:
-          - '8888:3306'
+          - 3306
         env:
           MYSQL_DATABASE: cookbook_test
           MYSQL_ROOT_PASSWORD: rootpass
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
       fail-fast: false
       matrix:
@@ -40,3 +40,7 @@ jobs:
           composer install --no-progress --prefer-dist --optimize-autoloader
       - name: Prepare the application
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Test with phpunit
+        run: vendor/bin/phpunit
+        env:
+          DB_PORT: ${{ job.services.mariadb.ports[3306] }}
