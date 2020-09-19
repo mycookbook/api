@@ -52,6 +52,7 @@ $app->configure('cors');
 $app->configure('queue');
 $app->configure('mail');
 $app->configure('jwt');
+$app->configure('tinker');
 
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
@@ -89,6 +90,7 @@ $app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(Sentry\Laravel\ServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
+$app->register(\Laravel\Tinker\TinkerServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
