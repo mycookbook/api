@@ -19,14 +19,29 @@ class Recipe extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'imgUrl', 'ingredients', 'description', 'user_id', 'cookbook_id', 'summary', 'nutritional_detail',
-        'slug', 'calorie_count', 'cook_time', 'prep_time'
+        'name',
+		'imgUrl',
+		'ingredients',
+		'description',
+		'user_id',
+		'cookbook_id',
+		'summary',
+		'nutritional_detail',
+        'slug',
+		'calorie_count',
+		'cook_time',
+		'prep_time'
     ];
 
     protected $casts = [
     	'cook_time' => 'datetime:H:i:s',
 		'prep_time' => 'datetime:H:i:s',
 		'ingredients' => 'json',
+	];
+
+    protected $attributes = [
+    	'servings' => 1,
+		'prep_time' => '2020-01-01 00:00:00'
 	];
 
     protected $hidden = ['user_id', 'cookbook_id'];
@@ -148,25 +163,5 @@ class Recipe extends Model
 			"name" => $cookbook->name,
 			"author" => $cookbook->author()
 		];
-	}
-
-	/**
-	 * Set the default value of servings if not given in the request
-	 *
-	 * @param integer $value
-	 */
-	public function setServingsAttribute($value)
-	{
-		$this->attributes['servings'] = ($value) ? $value : 1;
-	}
-
-	/**
-	 * Set the default value of prep time if not given in the request
-	 *
-	 * @param integer $value
-	 */
-	public function setPrepTimeAttribute($value)
-	{
-		$this->attributes['prep_time'] = ($value) ? $value : '2020-01-01 00:00:00';
 	}
 }

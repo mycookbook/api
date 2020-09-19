@@ -5,7 +5,6 @@ namespace Tests\Functional\Controllers\User;
 use App\Jobs\SendEmail;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
-use App\Jobs\CreateUserContactDetail;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 /**
  * Class UserControllerTest
@@ -37,7 +36,6 @@ class UserControllerTest extends \TestCase
 			]
 		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
 	}
 
@@ -64,7 +62,6 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
     }
 
@@ -91,7 +88,6 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
     }
 
@@ -118,7 +114,6 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
     }
 
@@ -145,7 +140,6 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
     }
 
@@ -172,7 +166,6 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
     }
 
@@ -201,7 +194,6 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(CreateUserContactDetail::class);
 		Queue::assertNotPushed(SendEmail::class);
     }
 
@@ -242,7 +234,6 @@ class UserControllerTest extends \TestCase
             ]
         );
 
-        Queue::assertPushed(CreateUserContactDetail::class);
         Queue::assertPushed(SendEmail::class);
     }
 

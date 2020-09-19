@@ -2,12 +2,12 @@
 
 namespace Integration\Services;
 
-use App\Exceptions\CookbookModelNotFoundException;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\UserService;
 use App\Interfaces\serviceInterface;
+use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
 
@@ -102,13 +102,11 @@ class UserServiceTest extends \TestCase
 			'following' => 1
 		]));
 
-		$response= $service->update($updateRequest->getParams(), 'test-mate');
+		$response = $service->update($updateRequest->getParams(), 'test-mate');
 		$user = User::where('email', 'you@test.com')->first();
 
 		$this->assertSame($response->getStatusCode(), Response::HTTP_OK);
 		$this->assertSame($user->name_slug, 'test-mate-2');
-		$this->assertSame((int)$user->followers, 13);
-		$this->assertSame((int)$user->following, 1);
 	}
 
 	/**

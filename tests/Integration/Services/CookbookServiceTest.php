@@ -3,11 +3,11 @@
 namespace Integration\Services;
 
 use App\Cookbook;
-use App\Exceptions\CookbookModelNotFoundException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\CookbookService;
+use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 
 class CookbookServiceTest extends \TestCase

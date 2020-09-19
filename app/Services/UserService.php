@@ -11,9 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Hashing\BcryptHasher;
-use App\Jobs\CreateUserContactDetail;
 use App\Interfaces\serviceInterface;
-use Illuminate\Support\Facades\Log;
 use App\Exceptions\CookbookModelNotFoundException;
 
 /**
@@ -54,8 +52,9 @@ class UserService implements serviceInterface
 
         $created = $user->save();
         $serialized = $request->merge(['user_id' => $user->id]);
+		$contact = new UserContactDetailsService();
+		$contact->store(new Request($serialized->all()));
 
-        dispatch(new CreateUserContactDetail($serialized->all()));
         dispatch(new TriggerEmailVerificationProcess($user->id));
 
 //        TODO: send post req using a webhook to the notifications service: to handle sending
@@ -109,6 +108,7 @@ class UserService implements serviceInterface
     public function update(Request $request, string $username)
     {
 		$user_record = $this->get($username);
+		$user_id = $user_record->get()->first()->id;
 		$user_contact_detail = $user_record->get()->first()->contact;
 
 		if ($request->all()) {
@@ -122,8 +122,7 @@ class UserService implements serviceInterface
 				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
 			]);
 
-			$request->merge(['user_id' => $user_record->get()->first()->id]);
-			Log::info('contact info', [$request->all()]);
+			$request->merge(['user_id' => $user_id]);
 			$user_contact_detail->update($request->all());
 
 			return response(
