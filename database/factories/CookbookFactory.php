@@ -5,7 +5,7 @@ $factory->define(
         return [
             'name' => $faker->jobTitle,
             'description' => $faker->sentence,
-            'bookCoverImg' => 'http://localhost:5001/static/ketogenic-lifestyle.jpg',
+            'bookCoverImg' => $faker->imageUrl(),
             'user_id' => 1,
             'flag_id' => 1
         ];

@@ -21,7 +21,8 @@
         "illuminate/mail": "6.x-dev",
         "symfony/http-kernel": "4.4.13",
       "ext-exif": "*",
-        "laravel/tinker": "^2.4"
+        "laravel/tinker": "^2.4",
+      "ext-json": "*"
     },
     "require-dev": {
         "mockery/mockery": "~0.9",

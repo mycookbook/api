@@ -33,6 +33,10 @@ class DatabaseSeeder extends Seeder
 		$this->createRecipes($faker);
     }
 
+	/**
+	 * creates users
+	 * @param \Faker\Generator $faker
+	 */
 	private function createUser(\Faker\Generator $faker)
 	{
 		$user = new \App\User([
@@ -44,8 +48,11 @@ class DatabaseSeeder extends Seeder
 			'avatar' => $faker->imageUrl(),
 			'pronouns' => 'She/Her',
 			'expertise_level' => 'professional bartender @ macys',
-			'can_take_orders' => false
+			'can_take_orders' => false,
+			'about' => $faker->paragraphs(2),
+			'email_verified' => '2020-01-01 00:00:00'
 		]);
+
 		$user->name_slug = slugify($user->name);
 
 		$user->save();
@@ -56,85 +63,78 @@ class DatabaseSeeder extends Seeder
 		$this->createEmailVerification($user);
 	}
 
+	/**
+	 * creates cookbooks
+	 * @param \Faker\Generator $faker
+	 */
 	private function createCookbooks(\Faker\Generator $faker)
 	{
-		$cookbook1 = new \App\Cookbook([
-			'name' => $faker->word,
-			'description' => $faker->sentence(150),
-			'bookCoverImg' => $faker->imageUrl(),
-			'flag_id' => 35,
-			'user_id' => $this->user->id,
-			'resource_type' => 'cookbook',
-			'created_at' => new DateTime(),
-			'updated_at' => new DateTime()
-		]);
+		$cookbook = null;
+		$cookbooks = [];
 
-		$cookbook1->save();
-		$cookbook1->users()->attach($this->user->id);
-		$cookbook1->categories()->attach([3,6]);
+		for ($i= 0; $i<5; $i++) {
+			$cookbook =  new \App\Cookbook([
+				'name' => $faker->word,
+				'description' => $faker->sentence(150),
+				'bookCoverImg' => $faker->imageUrl(),
+				'flag_id' => 35,
+				'user_id' => $this->user->id,
+				'resource_type' => 'cookbook',
+				'created_at' => new DateTime(),
+				'updated_at' => new DateTime()
+			]);
 
-		$cookbook2 = new \App\Cookbook([
-			'name' => $faker->word,
-			'description' => $faker->sentence(150),
-			'bookCoverImg' => $faker->imageUrl(),
-			'flag_id' => 25,
-			'user_id' => $this->user->id,
-			'resource_type' => 'cookbook',
-			'created_at' => new DateTime(),
-			'updated_at' => new DateTime()
-		]);
+			$cookbook->save();
+			$cookbook->users()->attach($this->user->id);
+			$cookbook->categories()->attach([3,6]);
+			$cookbooks[] = $cookbook->id;
+		}
 
-		$cookbook2->save();
-		$cookbook2->users()->attach($this->user->id);
-		$cookbook2->categories()->attach([4,5]);
-
-		$this->cookbooks = [$cookbook1->id, $cookbook2->id];
+		$this->cookbooks = $cookbooks;
 	}
 
+	/**
+	 * Creates Recipes
+	 *
+	 * @param \Faker\Generator $faker
+	 */
 	private function createRecipes(\Faker\Generator $faker)
 	{
-		$recipe1 = new \App\Recipe([
-			'name' => $faker->word,
-			'ingredients' => json_encode(['data' => ['2 lbs red potatoes', '4 tablespoons', '1 medium onion chopped']]),
-			'imgUrl' => $faker->imageUrl(),
-			'description' => $this->stepByStepWithGifTemplate(),
-			'cookbook_id' => $this->cookbooks[0],
-			'summary' => $faker->sentence(20),
-			'calorie_count' => 0,
-			'cook_time' => '2020-07-09 01:45:00',
-			'prep_time' => '2020-07-09 00:10:00',
-			'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
-			'servings' => 1,
-			'user_id' => $this->user->id,
-			'resource_type' => 'recipe'
-		]);
-		$recipe1->slug = slugify($recipe1->name);
+		$recipe = null;
+		$recipes = [];
 
-		$recipe1->save();
-		$this->createVariation($faker, $recipe1);
+		for ($k=0; $k<20; $k++) {
+			$recipe = new \App\Recipe([
+				'name' => $faker->word,
+				'ingredients' => json_encode(['data' => ['2 lbs red potatoes', '4 tablespoons', '1 medium onion chopped']]),
+				'imgUrl' => $faker->imageUrl(),
+				'description' => $this->stepByStepWithGifTemplate(),
+				'cookbook_id' => $this->cookbooks[0],
+				'summary' => $faker->sentence(20),
+				'calorie_count' => 0,
+				'cook_time' => '2020-07-09 01:45:00',
+				'prep_time' => '2020-07-09 00:10:00',
+				'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
+				'servings' => 1,
+				'user_id' => $this->user->id,
+				'resource_type' => 'recipe'
+			]);
+			$recipe->slug = slugify($recipe->name);
 
-		$recipe2 = new \App\Recipe([
-			'name' => $faker->word,
-			'ingredients' => json_encode(['data' => ['2 lbs red potatoes', '4 tablespoons', '1 medium onion chopped']]),
-			'imgUrl' => $faker->imageUrl(),
-			'description' => $faker->paragraph(1),
-			'cookbook_id' => $this->cookbooks[1],
-			'summary' => $faker->sentence(20),
-			'calorie_count' => 0,
-			'cook_time' => '2020-07-09 01:15:00',
-			'prep_time' => '2020-07-09 00:10:00',
-			'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
-			'servings' => 1,
-			'user_id' => $this->user->id,
-			'resource_type' => 'recipe'
-		]);
+			$recipe->save();
+			$this->createVariation($faker, $recipe);
+			$recipes[] = $recipe->id;
+		}
 
-		$recipe2->slug = slugify($recipe2->name);
-		$recipe2->save();
-
-		$this->recipes = [$recipe1->id, $recipe2->id];
+		$this->recipes = $recipes;
 	}
 
+	/**
+	 * Creates Variation
+	 *
+	 * @param \Faker\Generator $faker
+	 * @param \App\Recipe $recipe
+	 */
 	private function createVariation(\Faker\Generator $faker, \App\Recipe $recipe)
 	{
 		$variation = new \App\RecipeVariation([
@@ -187,7 +187,7 @@ class DatabaseSeeder extends Seeder
 	}
 
 	/**
-	 * Add user conatct detail
+	 * Add user contact detail
 	 * @param \App\User $user
 	 */
 	private function createContactDetail(\App\User $user)
