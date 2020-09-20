@@ -1,7 +1,7 @@
 {
-    "name": "laravel/lumen",
-    "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
+    "name": "cookbook/api",
+    "description": "The official cookbookshq api",
+    "keywords": ["php", "cookbookshq", "api"],
     "license": "MIT",
     "type": "project",
     "require": {

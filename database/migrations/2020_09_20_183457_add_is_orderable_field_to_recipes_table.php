@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddExpertiseLevelToUsersTable extends Migration
+class AddIsOrderableFieldToRecipesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddExpertiseLevelToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('expertise_level')->default('novice');
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->dateTime('is_orderable')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class AddExpertiseLevelToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('expertise_level');
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->dropColumn('is_orderable');
         });
     }
 }
