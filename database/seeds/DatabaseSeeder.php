@@ -25,6 +25,29 @@ class DatabaseSeeder extends Seeder
 		'https://cancunmexicanbarandgrill.com/files/2019/03/dl2.jpg'
 	];
 
+	protected $avatars = [
+		'https://assets3.thrillist.com/v1/image/2739725/1200x600/scale;',
+		'https://restaurantpassiflore.com/wp-content/uploads/2018/05/Cooking3.jpeg',
+		'https://blog.sfceurope.com/hubfs/My%20Post%20(78).jpg',
+		'https://ak.picdn.net/shutterstock/videos/1006565299/thumb/1.jpg',
+		'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQSvnMhjpUnA4unBsQtH2R8A6JDjY1x5fWucg&usqp=CAU',
+		'https://idolwiki.com/pics/PatiJinich/PatiJinich.jpg',
+		'https://i1.wp.com/shoppeblack.us/wp-content/uploads/2018/07/201206-omag-tanya-holland-kitchen-600x411.jpg?resize=600%2C411&ssl=1',
+		'https://celebpie.com/wp-content/uploads/2020/09/641e4d6b61deff3b3963f8d3c37028.jpg',
+		'https://i2.wp.com/www.uselessdaily.com/wp-content/uploads/2020/08/nadiya.png?resize=702%2C445&ssl=1&is-pending-load=1',
+		'https://upload.wikimedia.org/wikipedia/commons/e/e3/Nigella_Lawson_in_Manilla_-_2017_%2829946044613%29_%28cropped%29.jpg',
+		'https://assets3.thrillist.com/v1/image/2739725/1200x600/scale;',
+		'https://restaurantpassiflore.com/wp-content/uploads/2018/05/Cooking3.jpeg',
+		'https://blog.sfceurope.com/hubfs/My%20Post%20(78).jpg',
+		'https://ak.picdn.net/shutterstock/videos/1006565299/thumb/1.jpg',
+		'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQSvnMhjpUnA4unBsQtH2R8A6JDjY1x5fWucg&usqp=CAU',
+		'https://idolwiki.com/pics/PatiJinich/PatiJinich.jpg',
+		'https://i1.wp.com/shoppeblack.us/wp-content/uploads/2018/07/201206-omag-tanya-holland-kitchen-600x411.jpg?resize=600%2C411&ssl=1',
+		'https://celebpie.com/wp-content/uploads/2020/09/641e4d6b61deff3b3963f8d3c37028.jpg',
+		'https://i2.wp.com/www.uselessdaily.com/wp-content/uploads/2020/08/nadiya.png?resize=702%2C445&ssl=1&is-pending-load=1',
+		'https://upload.wikimedia.org/wikipedia/commons/e/e3/Nigella_Lawson_in_Manilla_-_2017_%2829946044613%29_%28cropped%29.jpg'
+	];
+
 	/**
 	 * Run the database seeds.
 	 *
@@ -97,9 +120,22 @@ class DatabaseSeeder extends Seeder
 		$cookbook = null;
 		$cookbooks = [];
 
+		$sample_titles = [
+			'Vegan Cookbook',
+			'A beginners Guide to Modern Cookery',
+			'Bread and Muffins',
+			'Homemade Cocktails',
+			'Be your own Chef',
+			'The 5 minute Chef',
+			'What to do with leftovers',
+			'Meat Lovers',
+			'For my furry friends',
+			'European Food'
+		];
+
 		for ($i= 0; $i<10; $i++) {
 			$cookbook =  new \App\Cookbook([
-				'name' => $faker->word,
+				'name' => $sample_titles[$i],
 				'description' => $faker->sentence(150),
 				'bookCoverImg' => $this->images[$i],
 				'flag_id' => array_rand(range(1, 35)),
