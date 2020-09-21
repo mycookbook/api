@@ -2,15 +2,28 @@
 
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class DatabaseSeeder
  */
 class DatabaseSeeder extends Seeder
 {
-	protected $user;
+	protected $users;
 	protected $cookbooks;
 	protected $recipes;
+	protected $images = [
+		'https://i.pinimg.com/originals/0d/91/1b/0d911b9d554b317d6e19aa4c9b55c0a0.jpg',
+		'https://i.pinimg.com/originals/f0/b6/15/f0b615f78dd809d68ec389f4bc8d94bb.jpg',
+		'https://image.winudf.com/v2/image/Y29tLnl0b2ZmbGluZWJpcnlhbmlfc2NyZWVuXzdfMTUxNTg4NjgxN18wNzE/screen-7.jpg?fakeurl=1&type=.jpg',
+		'https://i.pinimg.com/originals/96/e9/c1/96e9c13abb804bef082d218a36cc1d37.jpg',
+		'https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
+		'https://i.pinimg.com/originals/59/5a/00/595a00a1954d27d774457746c3a7ebcd.jpg',
+		'https://eskipaper.com/images/awesome-seafood-wallpaper-1.jpg',
+		'https://i.pinimg.com/originals/59/ac/29/59ac29392d87d20728724dab4eef3eec.jpg',
+		'https://c4.wallpaperflare.com/wallpaper/208/568/982/food-mexican-corn-wallpaper-preview.jpg',
+		'https://cancunmexicanbarandgrill.com/files/2019/03/dl2.jpg'
+	];
 
 	/**
 	 * Run the database seeds.
@@ -20,47 +33,59 @@ class DatabaseSeeder extends Seeder
 	 */
     public function run()
     {
-    	//Defaults
-        $this->call(DefinitionsSeeder::class);
-        $this->call(FlagsSeeder::class);
-        $this->call(CategoriesSeeder::class);
+    	DB::transaction(function () {
+			//Defaults
+			$this->call(DefinitionsSeeder::class);
+			$this->call(FlagsSeeder::class);
+			$this->call(CategoriesSeeder::class);
 
-        //fakes
-		$faker = Faker::create();
+			//fakes
+			$faker = Faker::create();
 
-		$this->createUser($faker);
-		$this->createCookbooks($faker);
-		$this->createRecipes($faker);
+			$this->createUsers($faker);
+			$this->createCookbooks($faker);
+//			$this->createRecipes($faker);
+		});
     }
 
 	/**
 	 * creates users
 	 * @param \Faker\Generator $faker
 	 */
-	private function createUser(\Faker\Generator $faker)
+	private function createUsers(\Faker\Generator $faker)
 	{
-		$user = new \App\User([
-			'name' => $faker->firstName . ' ' . $faker->lastName,
-			'email' => $faker->email,
-			'password' =>  app('hash')->make('secret'),
-			'followers' => 0,
-			'following' => 0,
-			'avatar' => $faker->imageUrl(),
-			'pronouns' => 'She/Her',
-			'expertise_level' => 'professional bartender @ macys',
-			'can_take_orders' => false,
-			'about' => $faker->paragraphs(2),
-			'email_verified' => '2020-01-01 00:00:00'
-		]);
+		$user = null;
+		$user_ids = [];
+		$pronouns = ['She/Her', 'He/Him', 'They/Them'];
+		$can_take_orders = [true, false];
 
-		$user->name_slug = slugify($user->name);
+		for ($j=0; $j<20; $j++) {
+			$user = new \App\User([
+				'name' => $faker->firstName . ' ' . $faker->lastName,
+				'email' => $faker->email,
+				'password' =>  app('hash')->make('secret'),
+				'followers' => 0,
+				'following' => 0,
+				'avatar' => $faker->imageUrl(),
+				'pronouns' => array_rand($pronouns),
+				'expertise_level' => 'professional bartender @ macys',
+				'can_take_orders' => array_rand($can_take_orders),
+				'about' => 'Rrow itself, let it be sorrow; let him love it; let him pursue it, ishing for its acquisitiendum. Because he will ab hold, uniess but through concer, and also of those who resist. Now a pure snore disturbeded sum dust. He ejjnoyes, in order that somewon, also with a severe one, unless of life. May a cusstums offficer somewon nothing of a poison-filled. Until, from a twho, twho chaffinch may also pursue it, not even a lump. But as twho, as a tank; a proverb, yeast; or else they tinscribe nor. Yet yet dewlap bed. Twho may be, let him love fellows of a polecat. Now amour, the, twhose being, drunk, yet twhitch and, an enclosed valley’s always a laugh. In acquisitiendum the Furies are Earth; in (he takes up) a lump vehicles bien',
+				'email_verified' => '2020-01-01 00:00:00'
+			]);
 
-		$user->save();
+			$user->name_slug = slugify($user->name);
 
-		$this->user = $user;
+			$user->save();
 
-		$this->createContactDetail($user);
-		$this->createEmailVerification($user);
+			$this->user = $user;
+
+			$this->createContactDetail($user);
+			$this->createEmailVerification($user);
+			$user_ids[] = $user->id;
+		}
+
+		$this->users = $user_ids;
 	}
 
 	/**
@@ -72,21 +97,21 @@ class DatabaseSeeder extends Seeder
 		$cookbook = null;
 		$cookbooks = [];
 
-		for ($i= 0; $i<5; $i++) {
+		for ($i= 0; $i<10; $i++) {
 			$cookbook =  new \App\Cookbook([
 				'name' => $faker->word,
 				'description' => $faker->sentence(150),
-				'bookCoverImg' => $faker->imageUrl(),
-				'flag_id' => 35,
-				'user_id' => $this->user->id,
+				'bookCoverImg' => $this->images[$i],
+				'flag_id' => array_rand(range(1, 35)),
+				'user_id' => array_rand($this->users),
 				'resource_type' => 'cookbook',
 				'created_at' => new DateTime(),
 				'updated_at' => new DateTime()
 			]);
 
 			$cookbook->save();
-			$cookbook->users()->attach($this->user->id);
-			$cookbook->categories()->attach([3,6]);
+			$cookbook->users()->attach($cookbook->user_id);
+			$cookbook->categories()->attach(array_rand([1,2,3,4,5,6], 2));
 			$cookbooks[] = $cookbook->id;
 		}
 
@@ -100,6 +125,7 @@ class DatabaseSeeder extends Seeder
 	 */
 	private function createRecipes(\Faker\Generator $faker)
 	{
+//		dd($this->cookbooks);
 		$recipe = null;
 		$recipes = [];
 
@@ -109,24 +135,26 @@ class DatabaseSeeder extends Seeder
 				'ingredients' => json_encode(['data' => ['2 lbs red potatoes', '4 tablespoons', '1 medium onion chopped']]),
 				'imgUrl' => $faker->imageUrl(),
 				'description' => $this->stepByStepWithGifTemplate(),
-				'cookbook_id' => $this->cookbooks[0],
+				'cookbook_id' => 1,
+				'user_id' => 1,
 				'summary' => $faker->sentence(20),
 				'calorie_count' => 0,
 				'cook_time' => '2020-07-09 01:45:00',
 				'prep_time' => '2020-07-09 00:10:00',
 				'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
 				'servings' => 1,
-				'user_id' => $this->user->id,
 				'resource_type' => 'recipe'
 			]);
 			$recipe->slug = slugify($recipe->name);
+//			dd($recipe);
 
 			$recipe->save();
-			$this->createVariation($faker, $recipe);
-			$recipes[] = $recipe->id;
+
+//			$this->createVariation($faker, $recipe);
+//			$recipes[] = $recipe->id;
 		}
 
-		$this->recipes = $recipes;
+//		$this->recipes = $recipes;
 	}
 
 	/**
