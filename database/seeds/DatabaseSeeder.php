@@ -152,12 +152,12 @@ class DatabaseSeeder extends Seeder
 			]);
 
 			$cookbook->save();
-			$random_users = array_rand($this->users, rand(2, 5));
+//			$random_users = array_rand($this->users, rand(2, 5));
 			$cookbook->users()->attach($cookbook->user_id);
 
-			foreach ($random_users as $key => $val) {
-				$cookbook->users()->attach($val);
-			}
+//			foreach ($random_users as $key => $val) {
+//				$cookbook->users()->attach($val);
+//			}
 
 			$category_ids = range(1, 6);
 			$random_category_ids = array_rand($category_ids, rand(2, 3));
