@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\MustVerifyEmail;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
@@ -70,7 +72,11 @@ $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 */
 
 $app->middleware([
-	Fruitcake\Cors\HandleCors::class
+	Fruitcake\Cors\HandleCors::class,
+]);
+
+$app->routeMiddleware([
+	'must-verify-email' => MustVerifyEmail::class,
 ]);
 
 /*
