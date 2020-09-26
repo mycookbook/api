@@ -25,29 +25,6 @@ class DatabaseSeeder extends Seeder
 		'https://cancunmexicanbarandgrill.com/files/2019/03/dl2.jpg'
 	];
 
-	protected $avatars = [
-		'https://assets3.thrillist.com/v1/image/2739725/1200x600/scale;',
-		'https://restaurantpassiflore.com/wp-content/uploads/2018/05/Cooking3.jpeg',
-		'https://blog.sfceurope.com/hubfs/My%20Post%20(78).jpg',
-		'https://ak.picdn.net/shutterstock/videos/1006565299/thumb/1.jpg',
-		'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQSvnMhjpUnA4unBsQtH2R8A6JDjY1x5fWucg&usqp=CAU',
-		'https://idolwiki.com/pics/PatiJinich/PatiJinich.jpg',
-		'https://i1.wp.com/shoppeblack.us/wp-content/uploads/2018/07/201206-omag-tanya-holland-kitchen-600x411.jpg?resize=600%2C411&ssl=1',
-		'https://celebpie.com/wp-content/uploads/2020/09/641e4d6b61deff3b3963f8d3c37028.jpg',
-		'https://i2.wp.com/www.uselessdaily.com/wp-content/uploads/2020/08/nadiya.png?resize=702%2C445&ssl=1&is-pending-load=1',
-		'https://upload.wikimedia.org/wikipedia/commons/e/e3/Nigella_Lawson_in_Manilla_-_2017_%2829946044613%29_%28cropped%29.jpg',
-		'https://assets3.thrillist.com/v1/image/2739725/1200x600/scale;',
-		'https://restaurantpassiflore.com/wp-content/uploads/2018/05/Cooking3.jpeg',
-		'https://blog.sfceurope.com/hubfs/My%20Post%20(78).jpg',
-		'https://ak.picdn.net/shutterstock/videos/1006565299/thumb/1.jpg',
-		'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQSvnMhjpUnA4unBsQtH2R8A6JDjY1x5fWucg&usqp=CAU',
-		'https://idolwiki.com/pics/PatiJinich/PatiJinich.jpg',
-		'https://i1.wp.com/shoppeblack.us/wp-content/uploads/2018/07/201206-omag-tanya-holland-kitchen-600x411.jpg?resize=600%2C411&ssl=1',
-		'https://celebpie.com/wp-content/uploads/2020/09/641e4d6b61deff3b3963f8d3c37028.jpg',
-		'https://i2.wp.com/www.uselessdaily.com/wp-content/uploads/2020/08/nadiya.png?resize=702%2C445&ssl=1&is-pending-load=1',
-		'https://upload.wikimedia.org/wikipedia/commons/e/e3/Nigella_Lawson_in_Manilla_-_2017_%2829946044613%29_%28cropped%29.jpg'
-	];
-
 	/**
 	 * Run the database seeds.
 	 *
@@ -67,7 +44,7 @@ class DatabaseSeeder extends Seeder
 
 			$this->createUsers($faker);
 			$this->createCookbooks($faker);
-//			$this->createRecipes($faker);
+			$this->createRecipes($faker);
 		});
     }
 
@@ -77,6 +54,29 @@ class DatabaseSeeder extends Seeder
 	 */
 	private function createUsers(\Faker\Generator $faker)
 	{
+		$avatars = [
+			'https://bit.ly/35RTEfA',
+			'https://bit.ly/2RIHDB9',
+			'https://bit.ly/2FKXI6Q',
+			'https://bit.ly/32NIPtl',
+			'https://bit.ly/3cgr09f',
+			'https://bit.ly/35RTEfA',
+			'https://bit.ly/2RIHDB9',
+			'https://bit.ly/2FKXI6Q',
+			'https://bit.ly/32NIPtl',
+			'https://bit.ly/3cgr09f',
+			'https://bit.ly/35RTEfA',
+			'https://bit.ly/2RIHDB9',
+			'https://bit.ly/2FKXI6Q',
+			'https://bit.ly/32NIPtl',
+			'https://bit.ly/3cgr09f',
+			'https://bit.ly/35RTEfA',
+			'https://bit.ly/2RIHDB9',
+			'https://bit.ly/2FKXI6Q',
+			'https://bit.ly/32NIPtl',
+			'https://bit.ly/3cgr09f'
+		];
+
 		$user = null;
 		$user_ids = [];
 		$pronouns = ['She/Her', 'He/Him', 'They/Them'];
@@ -89,8 +89,8 @@ class DatabaseSeeder extends Seeder
 				'password' =>  app('hash')->make('secret'),
 				'followers' => 0,
 				'following' => 0,
-				'avatar' => $faker->imageUrl(),
-				'pronouns' => array_rand($pronouns),
+				'avatar' => $avatars[$j],
+				'pronouns' => $pronouns[rand(0,2)],
 				'expertise_level' => 'professional bartender @ macys',
 				'can_take_orders' => array_rand($can_take_orders),
 				'about' => 'Rrow itself, let it be sorrow; let him love it; let him pursue it, ishing for its acquisitiendum. Because he will ab hold, uniess but through concer, and also of those who resist. Now a pure snore disturbeded sum dust. He ejjnoyes, in order that somewon, also with a severe one, unless of life. May a cusstums offficer somewon nothing of a poison-filled. Until, from a twho, twho chaffinch may also pursue it, not even a lump. But as twho, as a tank; a proverb, yeast; or else they tinscribe nor. Yet yet dewlap bed. Twho may be, let him love fellows of a polecat. Now amour, the, twhose being, drunk, yet twhitch and, an enclosed valley’s always a laugh. In acquisitiendum the Furies are Earth; in (he takes up) a lump vehicles bien',
@@ -119,6 +119,8 @@ class DatabaseSeeder extends Seeder
 	{
 		$cookbook = null;
 		$cookbooks = [];
+		$lucky_spin = array_rand($this->users);
+		$random_author_id = $this->users[$lucky_spin];
 
 		$sample_titles = [
 			'Vegan Cookbook',
@@ -134,20 +136,40 @@ class DatabaseSeeder extends Seeder
 		];
 
 		for ($i= 0; $i<10; $i++) {
+			$flag_ids = range(2, 35);
+			$lucky_flagId_spin = array_rand($flag_ids);
+			$flagId = $flag_ids[$lucky_flagId_spin];
+
 			$cookbook =  new \App\Cookbook([
 				'name' => $sample_titles[$i],
 				'description' => $faker->sentence(150),
 				'bookCoverImg' => $this->images[$i],
-				'flag_id' => array_rand(range(1, 35)),
-				'user_id' => array_rand($this->users),
+				'flag_id' => $flagId,
+				'user_id' => $random_author_id,
 				'resource_type' => 'cookbook',
 				'created_at' => new DateTime(),
 				'updated_at' => new DateTime()
 			]);
 
 			$cookbook->save();
+			$random_users = array_rand($this->users, rand(2, 5));
 			$cookbook->users()->attach($cookbook->user_id);
-			$cookbook->categories()->attach(array_rand([1,2,3,4,5,6], 2));
+
+			foreach ($random_users as $key => $val) {
+				$cookbook->users()->attach($val);
+			}
+
+			$category_ids = range(1, 6);
+			$random_category_ids = array_rand($category_ids, rand(2, 3));
+
+			foreach($random_category_ids as $key => $val) {
+				if ($val == 0) {
+					$cookbook->users()->attach(2);
+				} else {
+					$cookbook->categories()->attach($val);
+				}
+			}
+
 			$cookbooks[] = $cookbook->id;
 		}
 
@@ -161,36 +183,58 @@ class DatabaseSeeder extends Seeder
 	 */
 	private function createRecipes(\Faker\Generator $faker)
 	{
-//		dd($this->cookbooks);
+		$cuisine = [
+			'chinese',
+			'mexican',
+			'african',
+			'french',
+			'italian',
+			'thai',
+			'spanish',
+			'indian'
+		];
+
+		$course = [
+			'main',
+			'side',
+			'dessert'
+		];
+
 		$recipe = null;
 		$recipes = [];
 
-		for ($k=0; $k<20; $k++) {
+		for ($k=0; $k<10; $k++) {
+			$random_cookbookId = array_rand($this->cookbooks);
+			$random_userId = array_rand($this->users);
+			$random_cuisine = array_rand($cuisine);
+			$random_course = array_rand($course);
+
 			$recipe = new \App\Recipe([
 				'name' => $faker->word,
 				'ingredients' => json_encode(['data' => ['2 lbs red potatoes', '4 tablespoons', '1 medium onion chopped']]),
-				'imgUrl' => $faker->imageUrl(),
+				'imgUrl' => $this->images[$k],
 				'description' => $this->stepByStepWithGifTemplate(),
-				'cookbook_id' => 1,
-				'user_id' => 1,
+				'cookbook_id' => $this->cookbooks[$random_cookbookId],
+				'user_id' => $this->users[$random_userId],
 				'summary' => $faker->sentence(20),
 				'calorie_count' => 0,
 				'cook_time' => '2020-07-09 01:45:00',
 				'prep_time' => '2020-07-09 00:10:00',
 				'nutritional_detail' => json_encode(['cal' => '462', 'carbs' => '42', 'protein' => '43', 'fat' => '28']),
-				'servings' => 1,
-				'resource_type' => 'recipe'
+				'servings' => rand(1,10),
+				'resource_type' => 'recipe',
+				'cuisine' => $cuisine[$random_cuisine],
+				'course' => $course[$random_course]
 			]);
-			$recipe->slug = slugify($recipe->name);
-//			dd($recipe);
 
+			$recipe->slug = slugify($recipe->name);
 			$recipe->save();
 
-//			$this->createVariation($faker, $recipe);
-//			$recipes[] = $recipe->id;
+			$this->createVariation($faker, $recipe);
+			$recipes[] = $recipe->id;
 		}
 
-//		$this->recipes = $recipes;
+		$this->recipes = $recipes;
 	}
 
 	/**

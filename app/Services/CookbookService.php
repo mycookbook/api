@@ -27,7 +27,7 @@ class CookbookService implements serviceInterface
 					'flag',
 					'recipes',
 					'users'
-				])->take(50)->orderByDesc('created_at')->get()
+				])->take(15)->orderByDesc('created_at')->get()
 			], Response::HTTP_OK
 		);
     }

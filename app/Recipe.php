@@ -44,8 +44,6 @@ class Recipe extends Model
 		'prep_time' => '2020-01-01 00:00:00'
 	];
 
-    protected $hidden = ['user_id', 'cookbook_id'];
-
     /**
      * A recipe belongs to a user
      *
@@ -83,7 +81,7 @@ class Recipe extends Model
     	'total_time',
 		'varieties_count',
 		'_links',
-		'my_cookbook'
+		'author'
 	];
 
     /**
@@ -154,14 +152,8 @@ class Recipe extends Model
 	 *
 	 * @return array
 	 */
-	public function getMyCookbookAttribute()
+	public function getAuthorAttribute()
 	{
-		$cookbook = $this->cookbook()->get()->first();
-
-		return [
-			"id" => $cookbook->id,
-			"name" => $cookbook->name,
-			"author" => $cookbook->author()
-		];
+		return $this->user()->get()->first();
 	}
 }
