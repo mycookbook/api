@@ -12,6 +12,7 @@
  * @link     Somelink <http://somelink.com>
  */
 
+use App\Events\ExampleEvent;
 use Illuminate\Support\Facades\Route;
 
 $router->group(
@@ -35,6 +36,15 @@ $router->group(
 		*/
         $router->get(
         	'/search', 'SearchController@fetch'
+		);
+
+		/*
+		|--------------------------------------------------------------------------
+		| Static content - user policies, terms and conditions
+		|--------------------------------------------------------------------------
+		*/
+		$router->get(
+			'/policies', 'StaticContentController@get'
 		);
 
 		/*
