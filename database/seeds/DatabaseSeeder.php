@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
 			$this->call(DefinitionsSeeder::class);
 			$this->call(FlagsSeeder::class);
 			$this->call(CategoriesSeeder::class);
+			$this->call(StaticContentsSeeder::class);
 
 			//fakes
 			$faker = Faker::create();
