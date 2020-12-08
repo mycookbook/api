@@ -12,9 +12,17 @@
  * @link     Somelink <http://somelink.com>
  */
 
-$router->get(
-	'/', function () {
-		return 'Cookbook API v1.0';
+use Illuminate\Http\Response;
+
+$router->get('/', function () {
+	return response([
+			'path' => '/',
+			'api-version' => 'v1.0',
+			'releases' => [
+				'latest' => 'https://github.com/mycookbook/api/releases',
+			],
+			'contribute' => 'Contact rep. +1 (000) 000 0000'
+		], Response::HTTP_OK);
 	}
 );
 
