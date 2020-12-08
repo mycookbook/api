@@ -19,9 +19,9 @@ $router->get('/', function () {
 			'path' => '/',
 			'api-version' => 'v1.0',
 			'releases' => [
-				'latest' => 'https://github.com/mycookbook/api/releases',
+				'latest' => null,
 			],
-			'contribute' => 'Contact rep. +1 (000) 000 0000'
+			'contribute' => 'mailto:developer@cookbookshq.com'
 		], Response::HTTP_OK);
 	}
 );
