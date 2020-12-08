@@ -22,7 +22,8 @@
         "symfony/http-kernel": "4.4.13",
       "ext-exif": "*",
         "laravel/tinker": "^2.4",
-      "ext-json": "*"
+      "ext-json": "*",
+        "pusher/pusher-php-server": "^4.1"
     },
     "require-dev": {
         "mockery/mockery": "~0.9",
