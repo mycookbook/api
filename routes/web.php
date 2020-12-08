@@ -12,22 +12,14 @@
  * @link     Somelink <http://somelink.com>
  */
 
-use App\Events\ExampleEvent;
-use Illuminate\Support\Facades\Route;
+$router->get(
+	'/', function () {
+		return 'Cookbook API v1.0';
+	}
+);
 
 $router->group(
     ['prefix' => 'api/v1'], function () use ($router) {
-		/*
-		|--------------------------------------------------------------------------
-		| PUBLIC ROUTES
-		|--------------------------------------------------------------------------
-		*/
-
-        $router->get(
-            '/', function () {
-                return 'Cookbook API v1.0';
-            }
-        );
 
 		/*
 		|--------------------------------------------------------------------------
@@ -125,7 +117,6 @@ $router->group(
         $router->group(
             [
             	'middleware' => [
-            		'must-verify-email',
 					'jwt.auth'
 				]
 			], function () use ($router) {
