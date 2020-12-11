@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Middleware\MustVerifyEmail;
+use App\Http\Middleware\PurgeUnauthorizedRequest;
+use App\Http\Middleware\ThrottleRequests;
+use Laravel\Tinker\TinkerServiceProvider;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -55,6 +58,7 @@ $app->configure('queue');
 $app->configure('mail');
 $app->configure('jwt');
 $app->configure('tinker');
+//$app->configure('broadcasting');
 
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
@@ -77,6 +81,8 @@ $app->middleware([
 
 $app->routeMiddleware([
 	'must-verify-email' => MustVerifyEmail::class,
+	'api-key' => PurgeUnauthorizedRequest::class,
+	'throttle' => ThrottleRequests::class
 ]);
 
 /*
@@ -96,7 +102,8 @@ $app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(Sentry\Laravel\ServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
-$app->register(\Laravel\Tinker\TinkerServiceProvider::class);
+$app->register(TinkerServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
