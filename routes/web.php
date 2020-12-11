@@ -26,8 +26,12 @@ $router->get('/', function () {
 	}
 );
 
-$router->group(
-    ['prefix' => 'api/v1'], function () use ($router) {
+$router->group([
+	'prefix' => 'api/v1',
+	'middleware' => [
+		'api-key',
+		'throttle'
+	]], function () use ($router) {
 
 		/*
 		|--------------------------------------------------------------------------
@@ -82,6 +86,7 @@ $router->group(
 		| Cookbooks
 		|--------------------------------------------------------------------------
 		*/
+
 		$router->get('/cookbooks', 'CookbookController@index');
 		$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
 
@@ -109,7 +114,6 @@ $router->group(
 
 		$router->get('/categories', 'CategoryController@index'); //get all categories
 		$router->get('/definitions', 'DefinitionsController@index'); //get all definitions
-
 
 		/**
 		 * Email verification
