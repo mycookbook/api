@@ -5,7 +5,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "laravel/lumen-framework": "6.x-dev",
         "vlucas/phpdotenv": "3.3.x-dev",
         "fzaninotto/faker": "1.9.1",
@@ -23,7 +23,8 @@
       "ext-exif": "*",
         "laravel/tinker": "^2.4",
       "ext-json": "*",
-        "pusher/pusher-php-server": "^4.1"
+        "pusher/pusher-php-server": "^4.1",
+        "illuminate/routing": "6.x-dev"
     },
     "require-dev": {
         "mockery/mockery": "~0.9",
