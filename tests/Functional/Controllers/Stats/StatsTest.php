@@ -1,12 +1,16 @@
 <?php
 
-namespace Tests\Functional\Controllers\Stats;
+namespace Functional\Controllers\Stats;
+
+use Laravel\Lumen\Testing\WithoutMiddleware;
 
 /**
  * Class StatsTest
  */
 class StatsTest extends \TestCase
 {
+	use WithoutMiddleware;
+
     /**
      * Test Application
      *

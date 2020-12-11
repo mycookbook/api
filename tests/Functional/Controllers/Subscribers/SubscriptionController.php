@@ -5,9 +5,11 @@ namespace Functional\Controllers\Subscribers;
 use App\Subscriber;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Lumen\Testing\WithoutMiddleware;
 
 class SubscriptionController extends \TestCase
 {
+	use WithoutMiddleware;
 	use DatabaseMigrations;
 
 	/**

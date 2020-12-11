@@ -1,15 +1,17 @@
 <?php
 
-namespace Tests\Functional\Controllers\Auth;
+namespace Functional\Controllers\Auth;
 
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Lumen\Testing\WithoutMiddleware;
 
 /**
  * Class UserControllerTest
  */
 class AuthControllerTest extends \TestCase
 {
+	use WithoutMiddleware;
 	use DatabaseMigrations;
 
 	/**

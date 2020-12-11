@@ -1,16 +1,18 @@
 <?php
 
-namespace Tests\Functional\Controllers\Cookbook;
+namespace Functional\Controllers\Cookbook;
 
 use App\Cookbook;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Lumen\Testing\WithoutMiddleware;
 
 /**
  * Class UserControllerTest
  */
 class CookbookControllerTest extends \TestCase
 {
+	use WithoutMiddleware;
 	use DatabaseMigrations;
 
 	/**
@@ -116,27 +118,6 @@ class CookbookControllerTest extends \TestCase
 		])->seeStatusCode(Response::HTTP_CREATED);
 
 		$this->assertCount(2, Cookbook::all()->last()->categories()->get());
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_cannot_create_a_cookbook_for_an_unauthenticated_user()
-	{
-		$this->json(
-			'POST', '/api/v1/cookbooks', [
-			'name' => 'sample cookbook',
-			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$this->createCategory()->id]),
-			'flag_id' => $this->createFlag()->id
-		], [
-				'HTTP_Authorization' => 'Bearer' . 'invalid_token'
-			]
-		)->seeJson([
-			'status' => "error",
-			'message' => "Token is invalid"
-		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
 	}
 
     /**
@@ -885,24 +866,6 @@ class CookbookControllerTest extends \TestCase
 	/**
 	 * @test
 	 */
-	public function it_cannot_update_a_cookbook_for_a_user_with_an_invalid_token()
-	{
-		$cookbook = $this->createCookbook();
-		$this->json(
-			'PUT', '/api/v1/cookbooks' . '/' . $cookbook->id, [
-			'name' => 'new title'
-		], [
-				'HTTP_Authorization' => 'Bearer' . 'invalid-token'
-			]
-		)->seeJson([
-			'status' => "error",
-			'message' => "Token is invalid"
-		])->seeStatusCode(Response::HTTP_UNAUTHORIZED);
-	}
-
-	/**
-	 * @test
-	 */
 	public function it_can_delete_an_existing_cookbook_for_an_authenticated_user()
 	{
 		$this->json(
@@ -964,21 +927,5 @@ class CookbookControllerTest extends \TestCase
 		)->seeJson([
 			'error' => 'Record Not found.'
 		])->seeStatusCode(Response::HTTP_NOT_FOUND);
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_cannot_delete_a_cookbook_for_a_user_with_an_invalid_token()
-	{
-		$cookbook = $this->createCookbook();
-		$this->json(
-			'DELETE', '/api/v1/cookbooks' . '/' . $cookbook->id,
-			[],
-			['HTTP_Authorization' => 'Bearer' . 'invalid-token']
-		)->seeJson([
-			'status' => "error",
-			'message' => "Token is invalid"
-		])->seeStatusCode(401);
 	}
 }
