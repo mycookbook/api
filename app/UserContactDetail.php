@@ -22,6 +22,8 @@ class UserContactDetail extends Model
 		'website'
 	];
 
+	protected $hidden = ['id', 'user_id'];
+
 	protected $appends = ['is_public'];
 
 	/**

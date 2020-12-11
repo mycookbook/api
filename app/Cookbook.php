@@ -42,7 +42,7 @@ class Cookbook extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/cookbooks/{$this->attributes['id']}")
+                ->to("api/v1/cookbooks/{$this->attributes['slug']}")
         ];
     }
 
