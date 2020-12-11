@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\MustVerifyEmail;
-use App\Http\Middleware\PurgeUnauthorizedRequest;
+use App\Http\Middleware\AuthorizationGuard;
 use App\Http\Middleware\ThrottleRequests;
 use Laravel\Tinker\TinkerServiceProvider;
 
@@ -81,7 +81,7 @@ $app->middleware([
 
 $app->routeMiddleware([
 	'must-verify-email' => MustVerifyEmail::class,
-	'api-key' => PurgeUnauthorizedRequest::class,
+	'auth-guard' => AuthorizationGuard::class,
 	'throttle' => ThrottleRequests::class
 ]);
 

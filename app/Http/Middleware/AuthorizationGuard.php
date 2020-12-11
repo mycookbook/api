@@ -4,12 +4,16 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Carbon\Carbon;
+use App\AuthorizedClient;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\Response;
+use App\Exceptions\UnauthorizedClientException;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PurgeUnauthorizedRequest
+class AuthorizationGuard
 {
 	/**
 	 * Handle an incoming request. Based on Asm89\Stack\Cors by asm89
@@ -18,23 +22,36 @@ class PurgeUnauthorizedRequest
 	 * @param \Closure $next
 	 *
 	 * @return Response
+	 *
+	 * @throws UnauthorizedClientException
 	 */
 	public function handle(Request $request, Closure $next)
 	{
-		if (!$request->header('X-API-KEY')) {
-			Log::info([
-				'type' => 'unauthorized request. does not contain api-key header',
-				'timestamp' => Carbon::now()
+		if (!$request->header('X-API-KEY') || !$request->header('X-CLIENT-SECRET')) {
+			Log::alert([
+				'type' => 'Unauthorized',
+				'content' => 'The header does not contain an api-key',
+				'timestamp' => Carbon::now()->toDateTimeString()
 			]);
 
-			return response(
-				[
-					'message' => [
-						'type' => 'warning',
-						'content' => 'Unrecognized request.'
-					]
-				], \Illuminate\Http\Response::HTTP_UNAUTHORIZED
-			);
+			throw new UnauthorizedClientException();
+		}
+
+		$client = AuthorizedClient::where(['api_key' => $request->header('X-API-KEY')]);
+
+		if (!$client->get()->first()) {
+			throw new NotFoundHttpException();
+		}
+
+		try {
+			$decrypted = Crypt::decrypt($request->header('X-CLIENT-SECRET'));
+			$payload = explode(".", $decrypted);
+
+			if ($payload[0] !== $request->header('X-API-KEY') || $payload[1] !== $client->get()->first()->passphrase) {
+				throw new UnauthorizedClientException();
+			}
+		} catch (DecryptException $e) {
+			throw new UnauthorizedClientException();
 		}
 
 		return $next($request);
