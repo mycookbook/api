@@ -30,13 +30,14 @@ class User extends Model implements
         'name', 'email', 'password', 'following', 'followers', 'name_slug'
     ];
 
+
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'id'
+        'password', 'remember_token', 'id', 'pivot'
     ];
 
     /**
