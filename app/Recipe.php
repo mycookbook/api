@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -17,8 +19,32 @@ class Recipe extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'imgUrl', 'ingredients', 'description', 'user_id', 'cookbook_id', 'summary', 'nutritional_detail'
+        'name',
+		'imgUrl',
+		'ingredients',
+		'description',
+		'user_id',
+		'cookbook_id',
+		'summary',
+		'nutritional_detail',
+        'slug',
+		'calorie_count',
+		'cook_time',
+		'prep_time'
     ];
+
+    protected $hidden = ['user_id'];
+
+    protected $casts = [
+    	'cook_time' => 'datetime:H:i:s',
+		'prep_time' => 'datetime:H:i:s',
+		'ingredients' => 'json',
+	];
+
+    protected $attributes = [
+    	'servings' => 1,
+		'prep_time' => '2020-01-01 00:00:00'
+	];
 
     /**
      * A recipe belongs to a user
@@ -40,12 +66,25 @@ class Recipe extends Model
         return $this->belongsTo('App\Cookbook');
     }
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+    public function variations()
+	{
+		return $this->hasMany('App\RecipeVariation');
+	}
+
     /**
-     * Append links attribute.
+     * Append custom attributes
      *
      * @var array
      */
-    protected $appends = ['_links'];
+    protected $appends = [
+    	'total_time',
+		'varieties_count',
+		'_links',
+		'author'
+	];
 
     /**
      * Set attributes links
@@ -57,19 +96,66 @@ class Recipe extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/recipes/{$this->attributes['id']}")
+                ->to("api/v1/recipes/{$this->attributes['slug']}")
         ];
     }
 
-    /**
-     * Unserialize Ingredients
-     *
-     * @param [] $recipe recipe
-     *
-     * @return mixed
-     */
-    public function getIngredientsAttribute($recipe)
-    {
-        return explode(", ", $recipe);
-    }
+	/**
+	 * Compute total time to prepare recipe
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getTotalTimeAttribute()
+	{
+		$cook_time = strtotime(Carbon::parse($this->attributes['cook_time']));
+		$prep_time = strtotime(Carbon::parse($this->attributes['prep_time']));
+		$total_time = $cook_time + $prep_time;
+		$total_time = Carbon::createFromTimestamp($total_time);
+		return CarbonInterval::createFromFormat('H:i:s', $total_time->toTimeString())->forHumans();
+	}
+
+	/**
+	 * Compute Recipe variations count
+	 *
+	 * @return int
+	 */
+	public function getVarietiesCountAttribute()
+	{
+		return $this->variations()->count();
+	}
+
+	/**
+	 * Set Attribute Cook Time
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+    public function getCookTimeAttribute()
+	{
+		$dt = Carbon::parse($this->attributes['cook_time']);
+		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+	}
+
+	/**
+	 * Set Attribute prep Time
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getPrepTimeAttribute()
+	{
+		$dt = Carbon::parse($this->attributes['prep_time']);
+		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+	}
+
+	/**
+	 * Recipe cookbook
+	 *
+	 * @return array
+	 */
+	public function getAuthorAttribute()
+	{
+		return $this->user()->get()->first();
+	}
 }

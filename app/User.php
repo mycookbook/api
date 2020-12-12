@@ -2,10 +2,12 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Traits\CookbookUserMustVerifyEmail;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
@@ -17,7 +19,7 @@ class User extends Model implements
     AuthorizableContract,
     JWTSubject
 {
-    use Authenticatable, Authorizable;
+    use Authenticatable, Authorizable, CookbookUserMustVerifyEmail;
 
     /**
      * The attributes that are mass assignable.
@@ -25,8 +27,9 @@ class User extends Model implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'following', 'followers'
+        'name', 'email', 'password', 'following', 'followers', 'name_slug'
     ];
+
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -34,7 +37,7 @@ class User extends Model implements
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'id', 'pivot'
     ];
 
     /**
@@ -44,21 +47,31 @@ class User extends Model implements
      */
     public function recipes()
     {
-        return $this->hasMany('App\Recipe');
+        return $this->hasMany('App\Recipe', 'user_id');
     }
 
-    /**
-     * A user can be subscribed to multiple cookbooks
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	/**
+	 * User has one contact detail
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+    public function contact()
+	{
+		return $this->hasOne('App\UserContactDetail');
+	}
+
+	/**
+	 * A user can be subscribed to multiple cookbooks
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
     public function cookbooks()
     {
-        return $this->belongsToMany('App\Cookbook');
+        return $this->belongsToMany('App\Cookbook', 'cookbook_user');
     }
 
     /**
-     * JWT Identofier
+     * JWT Identifier
      *
      * @return mixed
      */
@@ -72,7 +85,7 @@ class User extends Model implements
      *
      * @return array
      */
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims(): array
     {
         return [];
     }
@@ -82,19 +95,82 @@ class User extends Model implements
      *
      * @var array
      */
-    protected $appends = ['_links'];
+    protected $appends = [
+    	'contributions',
+		'is_verified',
+		'contact_detail'
+	];
 
-    /**
-     * Set attributes links
-     *
-     * @return array
-     */
-    public function getLinksAttribute()
-    {
-        return [
-            'self' => app()
-                ->make('url')
-                ->to("api/v1/users/{$this->attributes['id']}")
-        ];
-    }
+	/**
+	 * Compute total nos of contributions made by this user
+	 * cookbooks and recipes
+	 *
+	 * @return array
+	 */
+    public function getContributionsAttribute(): array
+	{
+		$cookbooks = $this->cookbooks()->count();
+		$recipes = $this->recipes()->count();
+
+		return [
+			'cookbooks' => $cookbooks,
+			'recipes' => $recipes,
+			'total' => $cookbooks + $recipes
+		];
+	}
+
+	/**
+	 * Set attribute created at
+	 *
+	 * @return string
+	 */
+    public function getCreatedAtAttribute(): string
+	{
+		$year = Carbon::parse($this->attributes['created_at'])->year;
+		$month = Carbon::parse($this->attributes['created_at'])->month;
+
+		return Carbon::createFromDate($year, $month)->format('F Y');
+	}
+
+	/**
+	 * Show user email verification status
+	 *
+	 * @return bool
+	 */
+	public function getIsVerifiedAttribute()
+	{
+		$entity = $this->email_verification()->get()->first();
+		if (is_null($entity) || is_null($entity->is_verified)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Get user contact detail
+	 *
+	 * @return mixed
+	 */
+	public function getContactDetailAttribute()
+	{
+		return $this->contact()->get()->first();
+	}
+
+	/**
+	 * Get the User name_slug
+	 *
+	 * @return string
+	 */
+    public function getSlug(): string
+	{
+		return $this->name_slug;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function email_verification()
+	{
+		return $this->hasOne('App\EmailVerification');
+	}
 }

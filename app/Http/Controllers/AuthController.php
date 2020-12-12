@@ -3,47 +3,32 @@
 namespace App\Http\Controllers;
 
 use Tymon\JWTAuth\JWTAuth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Services\AuthService;
+use App\Http\Controllers\Requests\Auth\SignInRequest;
 
 /**
  * Class AuthController
  */
 class AuthController extends Controller
 {
-    /**
-     * Signin
-     *
-     * @param Request $request form inputs
-     * @param JWTAuth $jwt     jwt
-     *
-     * @return array|string
-     */
-    public function signin(Request $request, JWTAuth $jwt)
-    {
-        $this->validate(
-            $request, [
-                'email' => 'required',
-                'password' => 'required'
-            ]
-        );
+	/**
+	 * @param AuthService $service
+	 */
+	public function __construct(AuthService $service)
+	{
+		$this->service = $service;
+	}
 
-        $credentials = $request->only('email', 'password');
-
-        if (! $token = $jwt->attempt($credentials) ) {
-            return response()->json(
-                [
-                    'Not found or Invalid Credentials.'
-                ], 404
-            );
-        }
-
-        return response()->json(
-            [
-                'success' => true,
-                'token' => $token,
-                'user' => Auth::user()->name
-            ], 200
-        );
-    }
+	/**
+	 * Authenticate the user with AuthService
+	 *
+	 * @param SignInRequest $request
+	 * @param JWTAuth $jwt
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function login(SignInRequest $request, JWTAuth $jwt)
+	{
+		return $this->service->login($request->getParams(), $jwt);
+	}
 }

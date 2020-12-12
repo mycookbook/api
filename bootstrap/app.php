@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Middleware\MustVerifyEmail;
+use App\Http\Middleware\AuthorizationGuard;
+use App\Http\Middleware\ThrottleRequests;
+use Laravel\Tinker\TinkerServiceProvider;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
+    (Dotenv\Dotenv::create(__DIR__.'/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
@@ -49,6 +54,15 @@ $app->singleton(
 );
 
 $app->configure('cors');
+$app->configure('queue');
+$app->configure('mail');
+$app->configure('jwt');
+$app->configure('tinker');
+//$app->configure('broadcasting');
+
+$app->alias('mailer', Illuminate\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -61,20 +75,15 @@ $app->configure('cors');
 |
 */
 
-$app->middleware(
-    [
-//        App\Http\Middleware\ExampleMiddleware::class,
-        \Barryvdh\Cors\HandleCors::class
-    ]
-);
+$app->middleware([
+	Fruitcake\Cors\HandleCors::class,
+]);
 
-$app->routeMiddleware(
-    [
-//        'auth' => App\Http\Middleware\Authenticate::class,
-//        'throttle' => App\Http\Middleware\ThrottleRequests::class,
-        'cors' => \Barryvdh\Cors\HandleCors::class
-    ]
-);
+$app->routeMiddleware([
+	'must-verify-email' => MustVerifyEmail::class,
+	'auth-guard' => AuthorizationGuard::class,
+	'throttle' => ThrottleRequests::class
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -88,11 +97,13 @@ $app->routeMiddleware(
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-//$app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-//$app->register(App\Providers\EventServiceProvider::class);
-$app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
+$app->register(Sentry\Laravel\ServiceProvider::class);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
+$app->register(TinkerServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -105,14 +116,12 @@ $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 |
 */
 
-$app->group(
-    [
-        'namespace' => 'App\Http\Controllers'], function ($app) {
-            require __DIR__.'/../routes/web.php';
-        }
-);
+$app->router->group([
+	'namespace' => 'App\Http\Controllers',
+], function ($router) {
+	require __DIR__.'/../routes/web.php';
+});
 
 $app->alias('cache', 'Illuminate\Cache\CacheManager');
-//$app->alias('auth', 'Illuminate\Auth\AuthManager');
 
 return $app;

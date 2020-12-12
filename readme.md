@@ -1,5 +1,5 @@
 # cookbook - api
+![Testing Lumen with MariaDb](https://github.com/mycookbook/api/workflows/Testing%20Lumen%20with%20MariaDb/badge.svg)
 
-[![Build Status](https://travis-ci.org/mycookbook/api.svg?branch=master)](https://travis-ci.org/mycookbook/api)
+![Mark stale issues and pull requests](https://github.com/mycookbook/api/workflows/Mark%20stale%20issues%20and%20pull%20requests/badge.svg)
 
-[![Coverage Status](https://coveralls.io/repos/github/mycookbook/api/badge.svg?branch=master)](https://coveralls.io/github/mycookbook/api?branch=master)

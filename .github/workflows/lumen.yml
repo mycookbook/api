@@ -1,0 +1,58 @@
+# GitHub Action for Lumen with MariaDb
+name: Testing Lumen with MariaDb
+on: [push, pull_request]
+jobs:
+  cookbook-api-lumen:
+    name: API (PHP ${{ matrix.php-versions }})
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:latest
+        ports:
+          - 32768
+        env:
+          MYSQL_DATABASE: cookbook_test
+          MYSQL_ROOT_PASSWORD: rootpass
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, dom, fileinfo, mysql
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install Composer dependencies
+        run: |
+          composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Prepare the application
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Start MariaDB
+        uses: getong/mariadb-action@v1.1
+        with:
+          host port: 3800
+          container port: 3307
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mariadb version: '10.4.10'
+          mysql database: 'cookbook_test'
+          mysql root password: ${{ secrets.RootPassword }}
+          mysql user: 'developer'
+          mysql password: ${{ secrets.DatabasePassword }}
+      - name: Test with phpunit
+        run: vendor/bin/phpunit
+        env:
+          DB_PORT: ${{ job.services.mariadb.ports[32768] }}

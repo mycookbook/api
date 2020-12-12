@@ -8,6 +8,7 @@ $factory->define(
             'password' => app('hash')->make('secret'),
             'following' => rand(1, 100),
             'followers' => rand(1, 100),
+			'name_slug' => $faker->name
         ];
     }
 );

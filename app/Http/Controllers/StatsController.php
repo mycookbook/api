@@ -11,73 +11,63 @@ use App\Cookbook;
  */
 class StatsController extends Controller
 {
-    /**
-     * Return stats meta data
-     * Users, Recipes and Cookbooks count
-     *
-     * @param User     $user     user
-     * @param Recipe   $recipe   recipe
-     * @param Cookbook $cookbook cookbook
-     *
-     * @return array
-     */
+	/**
+	 * Return stats meta data
+	 * Users, Recipes and Cookbooks count
+	 *
+	 * @param User $user user
+	 * @param Recipe $recipe recipe
+	 * @param Cookbook $cookbook cookbook
+	 *
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 */
     public function index(
         User $user,
         Recipe $recipe,
         Cookbook $cookbook
     ) {
-        $users = self::getUsersStats($user);
-        $recipes = self::getRecipesStats($recipe);
-        $cookbooks = self::getCookbooksStats($cookbook);
-
         $data = [
-            'users' => $users,
-            'recipes' => $recipes,
-            'cookbooks' => $cookbooks
+            'users' => self::getUsersStats($user),
+            'recipes' =>  self::getRecipesStats($recipe),
+            'cookbooks' => self::getCookbooksStats($cookbook)
         ];
 
         return response(["data" => $data]);
     }
 
-    /**
-     * Return users count
-     *
-     * @param User $user user instance
-     *
-     * @return UserController
-     */
-    protected static function getUsersStats($user)
+	/**
+	 * Return users count
+	 *
+	 * @param \App\User $user
+	 *
+	 * @return int
+	 */
+    protected static function getUsersStats($user): int
     {
-        $users = $user->count();
-
-        return $users;
+        return $user->count();
     }
 
     /**
-     * Return recipes stats
+     * Return recipes count
      *
-     * @param Recipe $recipe recipe instance
+     * @param \App\Recipe $recipe
      *
-     * @return RecipeController
+     * @return int
      */
-    protected static function getRecipesStats($recipe)
+    protected static function getRecipesStats($recipe): int
     {
-        $recipes = $recipe->count();
-
-        return $recipes;
+        return $recipe->count();
     }
 
     /**
-     * Return Cookbook stats
+     * Return Cookbook count
      *
-     * @param Cookbook $cookbook cookbook instance
+     * @param \App\Cookbook $cookbook
      *
-     * @return CookbookController
+     * @return int
      */
-    protected static function getCookbooksStats($cookbook)
+    protected static function getCookbooksStats($cookbook): int
     {
-        $cookbooks = $cookbook->count();
-
-        return $cookbooks;
+        return $cookbook->count();
     }
 }
