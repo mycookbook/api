@@ -1,29 +1,17 @@
 <?php
 
+namespace Functional\Exceptions;
+
 use Illuminate\Http\Response;
+use Laravel\Lumen\Testing\WithoutMiddleware;
 
 /**
  * Class HttpExceptionsTest
  */
-class HttpExceptionsTest extends TestCase
+class HttpExceptionsTest extends \TestCase
 {
-    /**
-     * Test MethodNotAllowedException
-     *
-     * @return void
-     */
-    public function testMethodNotAllowedException()
-    {
-        $response = $this->call('POST', '/api/v1');
 
-        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $response->status());
-
-        $this->seeJsonStructure(
-            [
-                'status', 'message', 'docs'
-            ]
-        );
-    }
+	use WithoutMiddleware;
 
     /**
      * Test testNotFoundHttpException

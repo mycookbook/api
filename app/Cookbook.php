@@ -30,7 +30,7 @@ class Cookbook extends Model
      *
      * @var array
      */
-    protected $appends = ['_links', 'recipes_count', 'categories'];
+    protected $appends = ['_links', 'recipes_count', 'categories', 'author'];
 
     /**
      * Set attributes links
@@ -42,7 +42,7 @@ class Cookbook extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/cookbooks/{$this->attributes['id']}")
+                ->to("api/v1/cookbooks/{$this->attributes['slug']}")
         ];
     }
 
@@ -119,5 +119,13 @@ class Cookbook extends Model
     public function author()
 	{
 		return User::find($this->user_id);
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getAuthorAttribute()
+	{
+		return $this->author();
 	}
 }

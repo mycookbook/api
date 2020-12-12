@@ -1,18 +1,9 @@
 <?php
 
 /**
- * Welcome API documentation page
- *
- * PHP version  7.0.12
- *
- * @category CookbookAPI
- * @package  CookbookAPi_V1
+ * PHP version 8.0.0
  * @author   Florence Okosun <okosununzflorence@gmail.com>
- * @license  MIT <http://somelink.com>
- * @link     Somelink <http://somelink.com>
  */
-
-use Illuminate\Http\Response;
 
 $router->get('/', function () {
 	return response([
@@ -22,14 +13,14 @@ $router->get('/', function () {
 				'latest' => null,
 			],
 			'contribute' => 'mailto:developer@cookbookshq.com'
-		], Response::HTTP_OK);
+		], \Illuminate\Http\Response::HTTP_OK);
 	}
 );
 
 $router->group([
 	'prefix' => 'api/v1',
 	'middleware' => [
-		'api-key',
+		'auth-guard',
 		'throttle'
 	]], function () use ($router) {
 

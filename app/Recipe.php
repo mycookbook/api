@@ -33,6 +33,8 @@ class Recipe extends Model
 		'prep_time'
     ];
 
+    protected $hidden = ['user_id'];
+
     protected $casts = [
     	'cook_time' => 'datetime:H:i:s',
 		'prep_time' => 'datetime:H:i:s',
@@ -94,7 +96,7 @@ class Recipe extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/recipes/{$this->attributes['id']}")
+                ->to("api/v1/recipes/{$this->attributes['slug']}")
         ];
     }
 

@@ -4,9 +4,12 @@ namespace Functional\Exceptions;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
+use Laravel\Lumen\Testing\WithoutMiddleware;
 
 class UnprocessibleentityExceptionTest extends \TestCase
 {
+	use WithoutMiddleware;
+
 	/**
 	 * It throws a 422 when the request is null
 	 * @test
