@@ -103,7 +103,7 @@ $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(Sentry\Laravel\ServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(TinkerServiceProvider::class);
-$app->register(App\Providers\EventServiceProvider::class);
+//$app->register(App\Providers\EventServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
