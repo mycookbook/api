@@ -20,7 +20,7 @@ $router->get('/', function () {
 $router->group([
 	'prefix' => 'api/v1',
 	'middleware' => [
-//		'auth-guard',
+		'auth-guard',
 		'throttle'
 	]], function () use ($router) {
 
@@ -31,6 +31,10 @@ $router->group([
 		*/
         $router->get(
         	'/search', 'SearchController@fetch'
+		);
+
+		$router->post(
+			'/keywords', 'SearchController@writeToCsv'
 		);
 
 		/*

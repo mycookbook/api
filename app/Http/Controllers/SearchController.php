@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Requests\SearchRequest;
 
@@ -28,5 +29,28 @@ class SearchController extends Controller
 		return response()->json([
 			'response' => $cookbooks->get()->merge($recipes->get())->merge($recipe_variations->get())
 		]);
+	}
+
+	/**
+	 * Get the user meta data and write to a csv file for ML purposes
+	 *
+	 * @param Request $request
+	 */
+	public function writeToCsv(Request $request)
+	{
+		$csv = $request->only([
+			'city',
+			'country',
+			'ip',
+			'keyword',
+			'loc',
+			'timezone'
+		]);
+
+		$csv['server_time'] = \Carbon\Carbon::now()->toDateTimeString();
+
+		$file_open = fopen('keywords.csv', 'a+');
+
+		fputcsv($file_open, $csv);
 	}
 }
