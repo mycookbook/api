@@ -40,7 +40,7 @@ class AuthorizationGuard
 		$client = AuthorizedClient::where(['api_key' => $request->header('X-API-KEY')]);
 
 		if (!$client->get()->first()) {
-			throw new NotFoundHttpException();
+			throw new UnauthorizedClientException();
 		}
 
 		try {
