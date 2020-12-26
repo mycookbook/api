@@ -24,7 +24,8 @@
         "laravel/tinker": "^2.4",
       "ext-json": "*",
         "pusher/pusher-php-server": "^4.1",
-        "illuminate/routing": "6.x-dev"
+        "illuminate/routing": "6.x-dev",
+        "league/flysystem": " ~1.0"
     },
     "require-dev": {
         "mockery/mockery": "~0.9",
