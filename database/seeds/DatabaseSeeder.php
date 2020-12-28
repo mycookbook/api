@@ -53,7 +53,8 @@ class DatabaseSeeder extends Seeder
 					'expertise_level' => 'Founder',
 					'can_take_orders' => false,
 					'about' => '',
-					'email_verified' => '2020-01-01 00:00:00'
+					'email_verified' => '2020-01-01 00:00:00',
+					'name_slug' => 'florence_okosun'
 				]);
 				$admin->save();
 
@@ -68,7 +69,8 @@ class DatabaseSeeder extends Seeder
 					'expertise_level' => 'VP Product Engineering',
 					'can_take_orders' => false,
 					'about' => '',
-					'email_verified' => '2020-01-01 00:00:00'
+					'email_verified' => '2020-01-01 00:00:00',
+					'name_slug' => 'tony_udomaiye'
 				]);
 				$editor->save();
 
@@ -83,7 +85,8 @@ class DatabaseSeeder extends Seeder
 					'expertise_level' => 'Freelancer',
 					'can_take_orders' => true,
 					'about' => '',
-					'email_verified' => null
+					'email_verified' => null,
+					'name_slug' => 'test_user'
 				]);
 
 				$contributor->save();
