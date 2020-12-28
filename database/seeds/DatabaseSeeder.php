@@ -3,6 +3,7 @@
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Class DatabaseSeeder
@@ -100,6 +101,21 @@ class DatabaseSeeder extends Seeder
 				]);
 
 				$cookbook->save();
+
+				//create one authorized client
+
+				$api_key = Str::random(50);
+				$passphrase = Str::random(10);
+				$secret = Illuminate\Support\Facades\Crypt::encrypt($api_key . "." . $passphrase);
+
+				$authorized_client = new \App\AuthorizedClient([
+					'api_key' => $api_key,
+					'client_secret' => $secret,
+					'passphrase' => $passphrase
+				]);
+
+				$authorized_client->save();
+
 			} else {
 				//fakes
 				$faker = Faker::create();
