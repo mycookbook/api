@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
 					'can_take_orders' => false,
 					'about' => '',
 					'email_verified' => '2020-01-01 00:00:00',
-					'name_slug' => 'florence_okosun'
+					'name_slug' => 'florence-okosun'
 				]);
 				$admin->save();
 
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
 					'can_take_orders' => false,
 					'about' => '',
 					'email_verified' => '2020-01-01 00:00:00',
-					'name_slug' => 'tony_udomaiye'
+					'name_slug' => 'tony-udomaiye'
 				]);
 				$editor->save();
 
@@ -86,7 +86,7 @@ class DatabaseSeeder extends Seeder
 					'can_take_orders' => true,
 					'about' => '',
 					'email_verified' => null,
-					'name_slug' => 'test_user'
+					'name_slug' => 'test-user'
 				]);
 
 				$contributor->save();
