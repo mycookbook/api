@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
 			$this->call(CategoriesSeeder::class);
 			$this->call(StaticContentsSeeder::class);
 
-			if (env('APP_ENV') !== 'local') {
+			if (env('APP_ENV') !== 'production') {
 				$admin = new \App\User([
 					'name' => 'Florence Okosun',
 					'email' => 'okosunuzflorence@gmail.com',
@@ -258,8 +258,8 @@ class DatabaseSeeder extends Seeder
 //				$cookbook->users()->attach($val);
 //			}
 
-			$category_ids = range(1, 6);
-			$random_category_ids = array_rand($category_ids, rand(2, 3));
+			$category_ids = range(1, 10);
+			$random_category_ids = array_rand($category_ids, 2);
 
 			foreach($random_category_ids as $key => $val) {
 				if ($val == 0) {
