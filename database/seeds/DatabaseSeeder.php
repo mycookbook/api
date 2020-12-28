@@ -110,19 +110,6 @@ class DatabaseSeeder extends Seeder
 				$cookbook->categories()->attach(1);
 				$cookbook->categories()->attach(2);
 
-				//create one authorized client
-				$api_key = Str::random(50);
-				$passphrase = Str::random(10);
-				$secret = Illuminate\Support\Facades\Crypt::encrypt($api_key . "." . $passphrase);
-
-				$authorized_client = new \App\AuthorizedClient([
-					'api_key' => "SijjocvGGcgnXVbXzSoVtmN5qPor0jl8PnlRJ25U26JCODpoyi",
-					'client_secret' => "eyJpdiI6Iko2Ujhya1lBN3ZxeHRKV3JMK2I2NWc9PSIsInZhbHVlIjoiKzhaaE9mckY3V0RDN1ljT2lNT1pheFdLKzJcL2pTOTMwS2ZMcmc5aitQenlVV3hqbytZRkpGeXgyS09CSmpFQXZcL1hDSGFtOWhrNWF3bzdqMU9hNFVudjJvSnZLZk5GOVI2T3R5ZjNQeXkrTT0iLCJtYWMiOiIyOGVmYTZkZjMyZDA3M2MzMzdkZDg0ZDI5Zjg0Y2MzYzliMmM0MGZjNTcxMDliMDk2ZjQ5M2VjYzFkZGFmZTEzIn0=",
-					'passphrase' => "kpfSpywUdY"
-				]);
-
-				$authorized_client->save();
-
 			} else {
 				//fakes
 				$faker = Faker::create();
@@ -132,6 +119,15 @@ class DatabaseSeeder extends Seeder
 				$this->createRecipes($faker);
 			}
 		});
+
+		//create one authorized client
+		$authorized_client = new \App\AuthorizedClient([
+			'api_key' => "SijjocvGGcgnXVbXzSoVtmN5qPor0jl8PnlRJ25U26JCODpoyi",
+			'client_secret' => "eyJpdiI6Iko2Ujhya1lBN3ZxeHRKV3JMK2I2NWc9PSIsInZhbHVlIjoiKzhaaE9mckY3V0RDN1ljT2lNT1pheFdLKzJcL2pTOTMwS2ZMcmc5aitQenlVV3hqbytZRkpGeXgyS09CSmpFQXZcL1hDSGFtOWhrNWF3bzdqMU9hNFVudjJvSnZLZk5GOVI2T3R5ZjNQeXkrTT0iLCJtYWMiOiIyOGVmYTZkZjMyZDA3M2MzMzdkZDg0ZDI5Zjg0Y2MzYzliMmM0MGZjNTcxMDliMDk2ZjQ5M2VjYzFkZGFmZTEzIn0=",
+			'passphrase' => "kpfSpywUdY"
+		]);
+
+		$authorized_client->save();
     }
 
 	/**
