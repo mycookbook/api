@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
 			$this->call(CategoriesSeeder::class);
 			$this->call(StaticContentsSeeder::class);
 
-			if (config('app.env') === 'production') {
+			if (env('APP_ENV') !== 'local') {
 				$admin = new \App\User([
 					'name' => 'Florence Okosun',
 					'email' => 'okosunuzflorence@gmail.com',
