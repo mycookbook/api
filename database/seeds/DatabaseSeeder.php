@@ -107,9 +107,10 @@ class DatabaseSeeder extends Seeder
 				]);
 
 				$cookbook->save();
+				$cookbook->categories()->attach(1);
+				$cookbook->categories()->attach(2);
 
 				//create one authorized client
-
 				$api_key = Str::random(50);
 				$passphrase = Str::random(10);
 				$secret = Illuminate\Support\Facades\Crypt::encrypt($api_key . "." . $passphrase);
