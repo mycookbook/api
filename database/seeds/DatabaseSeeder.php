@@ -33,19 +33,81 @@ class DatabaseSeeder extends Seeder
 	 */
     public function run()
     {
-    	DB::transaction(function () {
+		DB::transaction(function () {
 			//Defaults
 			$this->call(DefinitionsSeeder::class);
 			$this->call(FlagsSeeder::class);
 			$this->call(CategoriesSeeder::class);
 			$this->call(StaticContentsSeeder::class);
 
-			//fakes
-			$faker = Faker::create();
+			if (config('app.env') === 'production') {
+				$admin = new \App\User([
+					'name' => 'Florence Okosun',
+					'email' => 'okosunuzflorence@gmail.com',
+					'password' =>  app('hash')->make('0B10r@.UM3h'),
+					'followers' => 0,
+					'following' => 0,
+					'avatar' => '',
+					'pronouns' => 'She/Her',
+					'expertise_level' => 'Founder',
+					'can_take_orders' => false,
+					'about' => '',
+					'email_verified' => '2020-01-01 00:00:00'
+				]);
+				$admin->save();
 
-			$this->createUsers($faker);
-			$this->createCookbooks($faker);
-			$this->createRecipes($faker);
+				$editor = new \App\User([
+					'name' => 'Tony Udomaye',
+					'email' => 'udomiayetony@gmail.com',
+					'password' =>  app('hash')->make('secret'),
+					'followers' => 0,
+					'following' => 0,
+					'avatar' => 'https://ca.slack-edge.com/T5QPN806A-U01A3835GPP-72238718978f-512',
+					'pronouns' => 'He/Him',
+					'expertise_level' => 'VP Product Engineering',
+					'can_take_orders' => false,
+					'about' => '',
+					'email_verified' => '2020-01-01 00:00:00'
+				]);
+				$editor->save();
+
+				$contributor = new \App\User([
+					'name' => 'Test user',
+					'email' => 'test@somemail.com',
+					'password' =>  app('hash')->make('secret'),
+					'followers' => 0,
+					'following' => 0,
+					'avatar' => '',
+					'pronouns' => 'They/Them',
+					'expertise_level' => 'Freelancer',
+					'can_take_orders' => true,
+					'about' => '',
+					'email_verified' => null
+				]);
+
+				$contributor->save();
+
+				//create cookbooks for canada, us and african countries. dont add recipes to any
+				$cookbook =  new \App\Cookbook([
+					'name' => 'Nigerian Party Food (Owambe)',
+					'description' => 'A collection of common Nigerian Party foods, everything from Jollof rice to swallows and soups to mention a few. This cookbook may contain contributions from multiple contributors and content thereof belongs to cookbookhq. Dive right in to browse different Nigerian party food recipes.',
+					'bookCoverImg' => 'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/nigeria-party-food.jpg',
+					'flag_id' => 1,
+					'user_id' => $admin->id,
+					'resource_type' => 'cookbook',
+					'created_at' => new DateTime(),
+					'updated_at' => new DateTime()
+				]);
+
+				$cookbook->save();
+			} else {
+				//fakes
+				$faker = Faker::create();
+
+				$this->createUsers($faker);
+				$this->createCookbooks($faker);
+				$this->createRecipes($faker);
+			}
 		});
     }
 
