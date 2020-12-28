@@ -100,23 +100,23 @@ class UserService implements serviceInterface
 	 * Implement a full/partial update
 	 *
 	 * @param \Illuminate\Http\Request $request request
-	 * @param string $username
+	 * @param string $option
 	 *
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
-    public function update(Request $request, string $username)
+    public function update(Request $request, string $option)
     {
-		$user_record = $this->get($username);
+		$user_record = $this->get($option);
 		$user_id = $user_record->get()->first()->id;
 		$user_contact_detail = $user_record->get()->first()->contact;
 
-		if ($request->all()) {
+		try {
 			$updated = $user_record->update([
 				'name' => Str::ucfirst($request->name),
 				'name_slug' => slugify($request->name),
 				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
-				'avatar' => $request->avatar ? $request->avatar : 'https://bit.ly/3m3M73g',
+				'avatar' => $request->avatar ? $request->avatar : '',
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
 				'about' => $request->about ? $request->about : NULL,
 				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
@@ -132,8 +132,10 @@ class UserService implements serviceInterface
 					"username" => $request->name
 				], Response::HTTP_OK
 			);
-		} else {
-			return response([], Response::HTTP_NO_CONTENT);
+		} catch (\Exception $e) {
+			return response([
+				'errors' => $e->getMessage()
+			], Response::HTTP_NO_CONTENT);
 		}
     }
 
