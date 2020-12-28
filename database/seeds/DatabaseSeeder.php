@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
 					'name_slug' => 'florence-okosun'
 				]);
 				$admin->save();
+				$this->createContactDetail($admin);
 
 				$editor = new \App\User([
 					'name' => 'Tony Udomaye',
@@ -73,6 +74,7 @@ class DatabaseSeeder extends Seeder
 					'name_slug' => 'tony-udomaiye'
 				]);
 				$editor->save();
+				$this->createContactDetail($editor);
 
 				$contributor = new \App\User([
 					'name' => 'Test user',
@@ -90,6 +92,7 @@ class DatabaseSeeder extends Seeder
 				]);
 
 				$contributor->save();
+				$this->createContactDetail($contributor);
 
 				//create cookbooks for canada, us and african countries. dont add recipes to any
 				$cookbook =  new \App\Cookbook([
