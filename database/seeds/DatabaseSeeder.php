@@ -14,16 +14,16 @@ class DatabaseSeeder extends Seeder
 	protected $cookbooks;
 	protected $recipes;
 	protected $images = [
-		'https://i.pinimg.com/originals/0d/91/1b/0d911b9d554b317d6e19aa4c9b55c0a0.jpg',
-		'https://i.pinimg.com/originals/f0/b6/15/f0b615f78dd809d68ec389f4bc8d94bb.jpg',
-		'https://image.winudf.com/v2/image/Y29tLnl0b2ZmbGluZWJpcnlhbmlfc2NyZWVuXzdfMTUxNTg4NjgxN18wNzE/screen-7.jpg?fakeurl=1&type=.jpg',
-		'https://i.pinimg.com/originals/96/e9/c1/96e9c13abb804bef082d218a36cc1d37.jpg',
-		'https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
-		'https://i.pinimg.com/originals/59/5a/00/595a00a1954d27d774457746c3a7ebcd.jpg',
-		'https://eskipaper.com/images/awesome-seafood-wallpaper-1.jpg',
-		'https://i.pinimg.com/originals/59/ac/29/59ac29392d87d20728724dab4eef3eec.jpg',
-		'https://c4.wallpaperflare.com/wallpaper/208/568/982/food-mexican-corn-wallpaper-preview.jpg',
-		'https://cancunmexicanbarandgrill.com/files/2019/03/dl2.jpg'
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/3.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/4.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/5.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/6.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/beginners.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/corn.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/kebab.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/neigerian-party-food.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/vegan.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/wraps.jpg'
 	];
 
 	/**
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
 			$this->call(CategoriesSeeder::class);
 			$this->call(StaticContentsSeeder::class);
 
-			if (env('APP_ENV') !== 'production') {
+			if (env('APP_ENV') !== 'local') {
 				$admin = new \App\User([
 					'name' => 'Florence Okosun',
 					'email' => 'okosunuzflorence@gmail.com',
@@ -110,14 +110,14 @@ class DatabaseSeeder extends Seeder
 				$cookbook->categories()->attach(1);
 				$cookbook->categories()->attach(2);
 
-			} else {
-				//fakes
-				$faker = Faker::create();
-
-				$this->createUsers($faker);
-				$this->createCookbooks($faker);
-				$this->createRecipes($faker);
 			}
+
+			//fakes
+			$faker = Faker::create();
+
+			$this->createUsers($faker);
+			$this->createCookbooks($faker);
+			$this->createRecipes($faker);
 		});
 
 		//create one authorized client
