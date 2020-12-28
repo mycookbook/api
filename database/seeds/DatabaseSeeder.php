@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/beginners.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/corn.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/kebab.jpg',
-		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/neigerian-party-food.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/nigerian-party-food.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/vegan.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/wraps.jpg'
 	];
@@ -103,7 +103,8 @@ class DatabaseSeeder extends Seeder
 					'user_id' => $admin->id,
 					'resource_type' => 'cookbook',
 					'created_at' => new DateTime(),
-					'updated_at' => new DateTime()
+					'updated_at' => new DateTime(),
+					'alt_text' => '5 trays containing nigerian party food arranged in one line'
 				]);
 
 				$cookbook->save();
@@ -243,7 +244,8 @@ class DatabaseSeeder extends Seeder
 				'user_id' => $random_author_id,
 				'resource_type' => 'cookbook',
 				'created_at' => new DateTime(),
-				'updated_at' => new DateTime()
+				'updated_at' => new DateTime(),
+				'alt_test' => 'sample image'
 			]);
 
 			$cookbook->save();
