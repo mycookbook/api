@@ -245,7 +245,7 @@ class DatabaseSeeder extends Seeder
 				'resource_type' => 'cookbook',
 				'created_at' => new DateTime(),
 				'updated_at' => new DateTime(),
-				'alt_test' => 'sample image'
+				'alt_text' => 'sample image'
 			]);
 
 			$cookbook->save();
