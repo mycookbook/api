@@ -5,6 +5,8 @@
  * @author   Florence Okosun <okosununzflorence@gmail.com>
  */
 
+use Illuminate\Http\Response;
+
 $router->get('/', function () {
 	return response([
 			'path' => '/',
@@ -13,7 +15,7 @@ $router->get('/', function () {
 				'latest' => null,
 			],
 			'contribute' => 'mailto:developer@cookbookshq.com'
-		], \Illuminate\Http\Response::HTTP_OK);
+		], Response::HTTP_OK);
 	}
 );
 
@@ -31,6 +33,10 @@ $router->group([
 		*/
         $router->get(
         	'/search', 'SearchController@fetch'
+		);
+
+		$router->post(
+			'/keywords', 'SearchController@writeToCsv'
 		);
 
 		/*

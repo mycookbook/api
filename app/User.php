@@ -173,4 +173,9 @@ class User extends Model implements
 	{
 		return $this->hasOne('App\EmailVerification');
 	}
+
+	public function isVerified()
+	{
+		return $this->email_verified;
+	}
 }

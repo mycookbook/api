@@ -27,7 +27,7 @@ class AuthorizationGuard
 	 */
 	public function handle(Request $request, Closure $next)
 	{
-		if (!$request->header('X-API-KEY') || !$request->header('X-CLIENT-SECRET')) {
+		if (!$request->header('X-API-KEY')) {
 			Log::alert([
 				'type' => 'Unauthorized',
 				'content' => 'The header does not contain an api-key',
@@ -40,11 +40,11 @@ class AuthorizationGuard
 		$client = AuthorizedClient::where(['api_key' => $request->header('X-API-KEY')]);
 
 		if (!$client->get()->first()) {
-			throw new NotFoundHttpException();
+			throw new UnauthorizedClientException();
 		}
 
 		try {
-			$decrypted = Crypt::decrypt($request->header('X-CLIENT-SECRET'));
+			$decrypted = Crypt::decrypt($client->get()->first()->client_secret);
 			$payload = explode(".", $decrypted);
 
 			if ($payload[0] !== $request->header('X-API-KEY') || $payload[1] !== $client->get()->first()->passphrase) {

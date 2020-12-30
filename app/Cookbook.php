@@ -20,7 +20,7 @@ class Cookbook extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'bookCoverImg', 'user_id', 'flag_id', 'slug',
+        'name', 'description', 'bookCoverImg', 'user_id', 'flag_id', 'slug', 'alt_text'
     ];
 
     protected $hidden = ['user_id', 'pivot'];
