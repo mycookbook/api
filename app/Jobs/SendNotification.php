@@ -39,7 +39,7 @@ class SendNotification implements ShouldQueue
 
 		$this->userId = $userId;
 
-		$this->uri = env('NOTIFICATIONS_SERVER_URL') . '/events';
+		$this->uri = env('NOTIFICATIONS_SERVER_URL') . '/notifications';
 	}
 
 	/**
