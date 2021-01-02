@@ -12,7 +12,7 @@ trait EncryptsPayload
 	 * @param array $payload
 	 * @return string
 	 */
-	public function payload(Array $payload): string
+	public function getPayload(Array $payload): string
 	{
 		$payload['secret'] = env('CRYPT_SECRET');
 

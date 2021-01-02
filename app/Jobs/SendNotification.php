@@ -5,34 +5,40 @@ namespace App\Jobs;
 use App\User;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
+use App\Traits\EncryptsPayload;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
-use App\Traits\EncryptsPayload;
 
 class SendNotification implements ShouldQueue
 {
 	use InteractsWithQueue, Queueable, SerializesModels, EncryptsPayload;
 
-	protected $type;
 	protected $uri;
-	protected $id;
+	protected $userId;
+	protected $channelId;
+	protected $payload;
 
 	/**
 	 * SendNotification constructor.
 	 *
 	 * @param $type
-	 * @param $id
+	 * @param $userId
+	 * @param string $channelId
 	 */
-	public function __construct($type, $id)
+	public function __construct($type, $userId, $channelId = 'channel-id')
 	{
-		//TODO: other types will be supported in the future e.g sms in-app
-		//the payload will be different in each case
-		//for example an sms type requires phone
+		$this->payload = [
+			'type' => $type
+		];
 
-		$this->type = $type;
-		$this->id = $id;
+		if ($type === 'in-app') {
+			$this->payload['in-app'] = $channelId;
+		}
+
+		$this->userId = $userId;
+
 		$this->uri = env('NOTIFICATIONS_SERVER_URL') . '/events';
 	}
 
@@ -42,14 +48,19 @@ class SendNotification implements ShouldQueue
 	public function handle()
 	{
 		try {
-			$user = User::findOrFail($this->id);
+			$user = User::findOrFail($this->userId);
+
+			if ($this->payload['type'] === 'email') {
+				$this->payload['email'] = $user->email;
+				$this->payload['username'] = $user->name;
+			}
+
+			if ($this->payload['type'] === 'sms') {
+				$this->payload['phone'] = $user->contact()->get()->first()->phone;
+			}
 
 			$options['headers'] = [
-				'payload' => $this->payload([
-					'type' => $this->type,
-					'email' => $user->email,
-					'username' => $user->name
-				])
+				'payload' => $this->getPayload($this->payload)
 			];
 
 			$client = new Client();
