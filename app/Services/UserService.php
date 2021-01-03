@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\SendNotification;
+use App\Jobs\SendEmailNotification;
 use App\User;
 use App\Jobs\SendEmail;
 use Illuminate\Support\Str;
@@ -55,7 +55,7 @@ class UserService implements serviceInterface
 		$contact = new UserContactDetailsService();
 		$contact->store(new Request($serialized->all()));
 
-		dispatch(new SendNotification('email', $user->id));
+		dispatch(new SendEmailNotification($user->id));
 
         return response()->json(
             [
