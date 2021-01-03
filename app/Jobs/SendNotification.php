@@ -17,6 +17,7 @@ class SendNotification implements ShouldQueue
 
 	protected $uri;
 	protected $userId;
+	protected $event;
 	protected $channelId;
 	protected $payload;
 
@@ -25,9 +26,10 @@ class SendNotification implements ShouldQueue
 	 *
 	 * @param $type
 	 * @param $userId
+	 * @param string $event
 	 * @param string $channelId
 	 */
-	public function __construct($type, $userId, $channelId = 'channel-id')
+	public function __construct($type, $userId, $event = 'new-user', $channelId = 'channel-id')
 	{
 		$this->payload = [
 			'type' => $type
@@ -38,6 +40,7 @@ class SendNotification implements ShouldQueue
 		}
 
 		$this->userId = $userId;
+		$this->event = $event;
 
 		$this->uri = env('NOTIFICATIONS_SERVER_URL') . '/notifications';
 	}
@@ -51,6 +54,7 @@ class SendNotification implements ShouldQueue
 			$user = User::findOrFail($this->userId);
 
 			if ($this->payload['type'] === 'email') {
+				$this->payload['event'] = $this->event;
 				$this->payload['email'] = $user->email;
 				$this->payload['username'] = $user->name;
 			}
