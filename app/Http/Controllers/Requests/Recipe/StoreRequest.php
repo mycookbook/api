@@ -11,7 +11,7 @@ class StoreRequest extends Controller
 	{
 		$valid_request_payload = $this->validate(
 			$request, [
-				'title' => 'required|string',
+				'name' => 'required|string',
 				'ingredients' => 'required|json',
 				'imgUrl' => 'required|img_url',
 				'description' => 'required|string', //EDITOR to include steps
