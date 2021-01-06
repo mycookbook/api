@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/beginners.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/corn.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/kebab.jpg',
-		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/nigerian-party-food.jpg',
+		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/nigeria-party-food.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/vegan.jpg',
 		'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/wraps.jpg'
 	];

@@ -78,6 +78,9 @@ class RecipeService
 		$cookbook = Cookbook::findOrfail($request->cookbookId);
 		$recipe->cookbook_id = $cookbook->id;
 
+		//TODO:
+		//if tags present, create tags instances and attach to recipe
+
         return response([
         	"created" => $recipe->save()
 		], Response::HTTP_CREATED);

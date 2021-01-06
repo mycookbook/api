@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\TriggerEmailVerificationProcess;
-use App\Jobs\UpdateUserContactDetail;
-use App\Jobs\UpdateUserContactDetailJob;
+use App\Jobs\SendEmailNotification;
 use App\User;
 use App\Jobs\SendEmail;
 use Illuminate\Support\Str;
@@ -12,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Hashing\BcryptHasher;
 use App\Interfaces\serviceInterface;
+use App\Jobs\UpdateUserContactDetail;
+use App\Jobs\UpdateUserContactDetailJob;
 use App\Exceptions\CookbookModelNotFoundException;
 
 /**
@@ -38,8 +38,8 @@ class UserService implements serviceInterface
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-    public function store(Request $request)
-    {
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+	{
         $user = new User([
         	'name' => $request->name,
 			'email' => $request->email,
@@ -55,14 +55,7 @@ class UserService implements serviceInterface
 		$contact = new UserContactDetailsService();
 		$contact->store(new Request($serialized->all()));
 
-        dispatch(new TriggerEmailVerificationProcess($user->id));
-
-//        TODO: send post req using a webhook to the notifications service: to handle sending
-// the email containing the verification link - the link is the token generated
-		// a new token will be generated and used as the payload
-		//this will be sent in the message body
-		//this token will contain the user email
-		// if the email in the token exists in the db then set the email verification field of that entry to current date time stamp
+		dispatch(new SendEmailNotification($user->id));
 
         return response()->json(
             [

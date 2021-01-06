@@ -158,4 +158,12 @@ class Recipe extends Model
 	{
 		return $this->user()->get()->first();
 	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function tags(): \Illuminate\Database\Eloquent\Relations\HasMany
+	{
+		return $this->hasMany(RecipeTag::class);
+	}
 }
