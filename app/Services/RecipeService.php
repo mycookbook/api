@@ -68,8 +68,10 @@ class RecipeService
 			'calorie_count',
 			'cook_time',
 			'nutritional_detail',
-			'servings'
+			'servings',
+			'tags'
 		]);
+
 		$payload['slug'] = slugify($request->title);
 		$payload['user_id'] = $user->id;
 

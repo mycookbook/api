@@ -30,7 +30,8 @@ class Recipe extends Model
         'slug',
 		'calorie_count',
 		'cook_time',
-		'prep_time'
+		'prep_time',
+		'tags'
     ];
 
     protected $hidden = ['user_id'];
@@ -84,7 +85,7 @@ class Recipe extends Model
 		'varieties_count',
 		'_links',
 		'author',
-		'submission_date'
+		'submission_date',
 	];
 
     /**

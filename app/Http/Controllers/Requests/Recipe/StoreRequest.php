@@ -20,7 +20,8 @@ class StoreRequest extends Controller
 				'calorie_count' => 'integer',
 				'cook_time' => 'required|date_format:Y-m-d H:i:s',
 				'nutritional_detail' => 'json|nutritional_detail_json_structure',
-				'servings' => 'integer'
+				'servings' => 'integer',
+				'tags' => 'json'
 			]
 		);
 
