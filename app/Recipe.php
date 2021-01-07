@@ -43,7 +43,7 @@ class Recipe extends Model
 
     protected $attributes = [
     	'servings' => 1,
-		'prep_time' => '2020-01-01 00:00:00'
+		'prep_time' => '2020-01-01 00:00:00',
 	];
 
     /**
@@ -83,7 +83,8 @@ class Recipe extends Model
     	'total_time',
 		'varieties_count',
 		'_links',
-		'author'
+		'author',
+		'submission_date'
 	];
 
     /**
@@ -147,6 +148,16 @@ class Recipe extends Model
 	{
 		$dt = Carbon::parse($this->attributes['prep_time']);
 		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+	}
+
+	/**
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getSubmissionDateAttribute()
+	{
+		$dt = Carbon::parse($this->attributes['created_at']);
+		return $dt->diffForHumans();
 	}
 
 	/**
