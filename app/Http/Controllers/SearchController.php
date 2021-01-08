@@ -18,13 +18,43 @@ class SearchController extends Controller
 		$q = $request->getParams()->input('query');
 
 		$cookbooks = DB::table('cookbooks')
-			->whereRaw("MATCH(name,description) AGAINST(? IN BOOLEAN MODE)", array($q));
+			->select([
+				'cookbooks.name',
+				'cookbooks.description',
+				'cookbooks.created_at',
+				'cookbooks.bookCoverImg',
+				'cookbooks.resource_type',
+				'users.name AS author'
+			])
+			->leftJoin('users', 'users.id', '=', 'cookbooks.user_id')
+			->whereRaw("MATCH(cookbooks.name,cookbooks.description) AGAINST(? IN BOOLEAN MODE)", array($q));
 
 		$recipes = DB::table('recipes')
-			->whereRaw("MATCH(name,description,ingredients,nutritional_detail,summary) AGAINST(? IN BOOLEAN MODE)", array($q));
+			->select([
+				'recipes.name',
+				'recipes.description',
+				'recipes.summary',
+				'recipes.ingredients',
+				'recipes.resource_type',
+				'recipes.nutritional_detail',
+				'recipes.imgUrl',
+				'recipes.created_at',
+				'users.name AS author'
+			])
+			->leftJoin('users', 'users.id', '=', 'recipes.user_id')
+			->whereRaw("MATCH(recipes.name,recipes.description,recipes.ingredients,recipes.nutritional_detail,recipes.summary) AGAINST(? IN BOOLEAN MODE)", array($q));
 
 		$recipe_variations = DB::table('recipe_variations')
-			->whereRaw("MATCH(name,description,ingredients) AGAINST(? IN BOOLEAN MODE)", array($q));
+			->select([
+				'recipe_variations.name',
+				'recipe_variations.description',
+				'recipe_variations.ingredients',
+				'recipe_variations.resource_type',
+				'recipe_variations.imgUrl',
+				'recipe_variations.created_at',
+				'recipe_variations.name AS author',
+				'recipe_variations.recipe_id',
+			])->whereRaw("MATCH(name,description,ingredients) AGAINST(? IN BOOLEAN MODE)", array($q));
 
 		return response()->json([
 			'response' => $cookbooks->get()->merge($recipes->get())->merge($recipe_variations->get())
