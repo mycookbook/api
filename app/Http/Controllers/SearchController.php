@@ -20,7 +20,7 @@ class SearchController extends Controller
 		$cookbooks = DB::table('cookbooks')
 			->select([
 				'cookbooks.name',
-				'cookbooks.description',
+				DB::raw('SUBSTR(cookbooks.description,1,300) as description'),
 				'cookbooks.created_at',
 				'cookbooks.bookCoverImg',
 				'cookbooks.resource_type',
