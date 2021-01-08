@@ -21,7 +21,7 @@ class SearchController extends Controller
 			->select([
 				'cookbooks.id',
 				'cookbooks.name',
-				DB::raw('SUBSTR(cookbooks.description,1,300) as description'),
+				DB::raw('SUBSTR(cookbooks.description,1,250) as description'),
 				DB::raw('DATE_FORMAT(cookbooks.created_at, "%d %M %Y") as created_at'),
 				'cookbooks.bookCoverImg',
 				'cookbooks.resource_type',
@@ -36,8 +36,7 @@ class SearchController extends Controller
 			->select([
 				'recipes.id',
 				'recipes.name',
-				'recipes.description',
-				'recipes.summary',
+				DB::raw('SUBSTR(recipes.summary,1,250) as summary'),
 				'recipes.ingredients',
 				'recipes.resource_type',
 				'recipes.nutritional_detail',
