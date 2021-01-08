@@ -19,6 +19,7 @@ class SearchController extends Controller
 
 		$cookbooks = DB::table('cookbooks')
 			->select([
+				'cookbooks.id',
 				'cookbooks.name',
 				DB::raw('SUBSTR(cookbooks.description,1,300) as description'),
 				'cookbooks.created_at',
@@ -31,6 +32,7 @@ class SearchController extends Controller
 
 		$recipes = DB::table('recipes')
 			->select([
+				'recipes.id',
 				'recipes.name',
 				'recipes.description',
 				'recipes.summary',
@@ -46,6 +48,7 @@ class SearchController extends Controller
 
 		$recipe_variations = DB::table('recipe_variations')
 			->select([
+				'recipe_variations.id',
 				'recipe_variations.name',
 				'recipe_variations.description',
 				'recipe_variations.ingredients',
