@@ -22,7 +22,7 @@ class SearchController extends Controller
 				'cookbooks.id',
 				'cookbooks.name',
 				DB::raw('SUBSTR(cookbooks.description,1,300) as description'),
-				'cookbooks.created_at',
+				DB::raw('DATE_FORMAT(cookbooks.created_at, "%d %M %Y") as created_at'),
 				'cookbooks.bookCoverImg',
 				'cookbooks.resource_type',
 				'users.name AS author'
@@ -40,7 +40,7 @@ class SearchController extends Controller
 				'recipes.resource_type',
 				'recipes.nutritional_detail',
 				'recipes.imgUrl',
-				'recipes.created_at',
+				DB::raw('DATE_FORMAT(recipes.created_at, "%d %M %Y") as created_at'),
 				'users.name AS author'
 			])
 			->leftJoin('users', 'users.id', '=', 'recipes.user_id')
@@ -54,7 +54,7 @@ class SearchController extends Controller
 				'recipe_variations.ingredients',
 				'recipe_variations.resource_type',
 				'recipe_variations.imgUrl',
-				'recipe_variations.created_at',
+				DB::raw('DATE_FORMAT(recipe_variations.created_at, "%d %M %Y") as created_at'),
 				'recipe_variations.name AS author',
 				'recipe_variations.recipe_id',
 			])->whereRaw("MATCH(name,description,ingredients) AGAINST(? IN BOOLEAN MODE)", array($q));
