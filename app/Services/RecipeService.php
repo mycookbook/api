@@ -58,10 +58,25 @@ class RecipeService
     {
 		$user = $request->user();
 
-		$recipe = new Recipe($request->all());
-		$recipe->name = $request->title;
-        $recipe->slug = slugify($request->title);
-		$recipe->user_id = $user->id;
+		$payload = $request->only([
+			'name',
+			'ingredients',
+			'imgUrl',
+			'description',
+			'cookbookId',
+			'summary',
+			'calorie_count',
+			'cook_time',
+			'nutritional_detail',
+			'servings',
+			'tags'
+		]);
+
+		$payload['slug'] = slugify($request->title);
+		$payload['user_id'] = $user->id;
+
+		$recipe = new Recipe($payload);
+
 		$cookbook = Cookbook::findOrfail($request->cookbookId);
 		$recipe->cookbook_id = $cookbook->id;
 
