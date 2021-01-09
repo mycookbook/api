@@ -17,7 +17,37 @@ class SearchController extends Controller
 	{
 		$q = $request->getParams()->input('query');
 
-		$cookbooks = DB::table('cookbooks')
+		$by_cookbook = 'cookbooks by';
+		$by_recipe = 'recipes by';
+
+		if (strpos($q, $by_cookbook) !== false) {
+			$q = trim(str_replace($by_cookbook, "", $q));
+
+			return response()->json([
+				'response' => $this->fetchCookbooks($q)
+			]);
+		}
+
+		if (strpos($q, $by_recipe) !== false) {
+			$q = trim(str_replace($by_recipe, "", $q));
+
+			return response()->json([
+				'response' => $this->fetchRecipes($q)
+			]);
+		}
+
+		return response()->json([
+			'response' => $this->fetchCookbooks($q)->merge($this->fetchRecipes($q))
+		]);
+	}
+
+	/**
+	 * @param $q
+	 * @return \Illuminate\Support\Collection
+	 */
+	private function fetchCookbooks($q): \Illuminate\Support\Collection
+	{
+		return DB::table('cookbooks')
 			->select([
 				'cookbooks.id AS cookbook_id',
 				'cookbooks.name',
@@ -33,8 +63,15 @@ class SearchController extends Controller
 			->whereRaw("MATCH(cookbooks.name,cookbooks.description) AGAINST(? IN BOOLEAN MODE)", array($q))
 			->orWhereRaw("MATCH(users.name) AGAINST(? IN BOOLEAN MODE)", array($q))
 			->get();
+	}
 
-		$recipes = DB::table('recipes')
+	/**
+	 * @param $q
+	 * @return \Illuminate\Support\Collection
+	 */
+	private function fetchRecipes($q): \Illuminate\Support\Collection
+	{
+		return DB::table('recipes')
 			->select([
 				'recipes.id as recipe_id',
 				'recipes.name',
@@ -52,23 +89,6 @@ class SearchController extends Controller
 			->whereRaw("MATCH(recipes.name,recipes.description,recipes.ingredients,recipes.nutritional_detail,recipes.summary) AGAINST(? IN BOOLEAN MODE)", array($q))
 			->orWhereRaw("MATCH(users.name) AGAINST(? IN BOOLEAN MODE)", array($q))
 			->get();
-
-//		$recipe_variations = DB::table('recipe_variations')
-//			->select([
-//				'recipe_variations.id',
-//				'recipe_variations.name',
-//				'recipe_variations.description',
-//				'recipe_variations.ingredients',
-//				'recipe_variations.resource_type',
-//				'recipe_variations.imgUrl',
-//				DB::raw('DATE_FORMAT(recipe_variations.created_at, "%d %M %Y") as created_at'),
-//				'recipe_variations.name AS author',
-//				'recipe_variations.recipe_id',
-//			])->whereRaw("MATCH(name,description,ingredients) AGAINST(? IN BOOLEAN MODE)", array($q));
-
-		return response()->json([
-			'response' => $cookbooks->merge($recipes)
-		]);
 	}
 
 	/**
