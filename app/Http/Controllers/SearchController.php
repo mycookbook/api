@@ -46,7 +46,7 @@ class SearchController extends Controller
 	 */
 	private function fetchCookbooks($q): \Illuminate\Support\Collection
 	{
-		return DB::table('cookbooks')
+		$query = DB::table('cookbooks')
 			->select([
 				'cookbooks.id AS cookbook_id',
 				'cookbooks.name',
@@ -58,7 +58,13 @@ class SearchController extends Controller
 				'users.name AS author_name',
 				'users.id AS author_id'
 			])
-			->leftJoin('users', 'users.id', '=', 'cookbooks.user_id')
+			->leftJoin('users', 'users.id', '=', 'cookbooks.user_id');
+
+		if ($q === "cookbooks") {
+			return $query->get();
+		}
+
+		return $query
 			->whereRaw("MATCH(cookbooks.name,cookbooks.description) AGAINST(? IN BOOLEAN MODE)", array($q))
 			->orWhereRaw("MATCH(users.name) AGAINST(? IN BOOLEAN MODE)", array($q))
 			->get();
