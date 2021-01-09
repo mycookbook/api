@@ -30,7 +30,9 @@ class SearchController extends Controller
 				'users.id AS author_id'
 			])
 			->leftJoin('users', 'users.id', '=', 'cookbooks.user_id')
-			->whereRaw("MATCH(cookbooks.name,cookbooks.description) AGAINST(? IN BOOLEAN MODE)", array($q));
+			->whereRaw("MATCH(cookbooks.name,cookbooks.description) AGAINST(? IN BOOLEAN MODE)", array($q))
+			->orWhereRaw("MATCH(users.name) AGAINST(? IN BOOLEAN MODE)", array($q))
+			->get();
 
 		$recipes = DB::table('recipes')
 			->select([
@@ -47,7 +49,9 @@ class SearchController extends Controller
 				'users.id AS author_id'
 			])
 			->leftJoin('users', 'users.id', '=', 'recipes.user_id')
-			->whereRaw("MATCH(recipes.name,recipes.description,recipes.ingredients,recipes.nutritional_detail,recipes.summary) AGAINST(? IN BOOLEAN MODE)", array($q));
+			->whereRaw("MATCH(recipes.name,recipes.description,recipes.ingredients,recipes.nutritional_detail,recipes.summary) AGAINST(? IN BOOLEAN MODE)", array($q))
+			->orWhereRaw("MATCH(users.name) AGAINST(? IN BOOLEAN MODE)", array($q))
+			->get();
 
 //		$recipe_variations = DB::table('recipe_variations')
 //			->select([
@@ -63,7 +67,7 @@ class SearchController extends Controller
 //			])->whereRaw("MATCH(name,description,ingredients) AGAINST(? IN BOOLEAN MODE)", array($q));
 
 		return response()->json([
-			'response' => $cookbooks->get()->merge($recipes->get())
+			'response' => $cookbooks->merge($recipes)
 		]);
 	}
 
