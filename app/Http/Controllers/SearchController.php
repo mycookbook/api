@@ -19,7 +19,7 @@ class SearchController extends Controller
 
 		$cookbooks = DB::table('cookbooks')
 			->select([
-				'cookbooks.id',
+				'cookbooks.id AS cookbook_id',
 				'cookbooks.name',
 				DB::raw('SUBSTR(cookbooks.description,1,250) as description'),
 				DB::raw('DATE_FORMAT(cookbooks.created_at, "%d %M %Y") as created_at'),
@@ -34,13 +34,14 @@ class SearchController extends Controller
 
 		$recipes = DB::table('recipes')
 			->select([
-				'recipes.id',
+				'recipes.id as recipe_id',
 				'recipes.name',
 				DB::raw('SUBSTR(recipes.summary,1,250) as summary'),
 				'recipes.ingredients',
 				'recipes.resource_type',
 				'recipes.nutritional_detail',
 				'recipes.imgUrl',
+				'recipes.cookbook_id AS cookbook_id',
 				DB::raw('DATE_FORMAT(recipes.created_at, "%d %M %Y") as created_at'),
 				'users.name AS author_name',
 				'users.id AS author_id'
