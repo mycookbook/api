@@ -10,10 +10,9 @@ class SearchController extends Controller
 {
 	/**
 	 * @param SearchRequest $request
-	 *
-	 * @return mixed
+	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function fetch(SearchRequest $request)
+	public function fetch(SearchRequest $request): \Illuminate\Http\JsonResponse
 	{
 		$q = $request->getParams()->input('query');
 
