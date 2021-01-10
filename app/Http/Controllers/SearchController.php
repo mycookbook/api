@@ -49,7 +49,8 @@ class SearchController extends Controller
 		$query = DB::table('cookbooks')
 			->select([
 				'cookbooks.id AS cookbook_id',
-				'cookbooks.name',
+				'cookbooks.name AS cookbook_name',
+				'cookbooks.slug AS cookbook_slug',
 				DB::raw('SUBSTR(cookbooks.description,1,250) as description'),
 				DB::raw('DATE_FORMAT(cookbooks.created_at, "%d %M %Y") as created_at'),
 				'cookbooks.bookCoverImg',
@@ -80,7 +81,8 @@ class SearchController extends Controller
 		return DB::table('recipes')
 			->select([
 				'recipes.id as recipe_id',
-				'recipes.name',
+				'recipes.name AS recipe_name',
+				'recipes.slug AS recipe_slug',
 				DB::raw('SUBSTR(recipes.summary,1,250) as summary'),
 				'recipes.ingredients',
 				'recipes.resource_type',
