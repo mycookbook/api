@@ -56,6 +56,7 @@ class SearchController extends Controller
 				'cookbooks.resource_type',
 				'cookbooks.is_locked',
 				'users.name AS author_name',
+				'users.name_slug AS username',
 				'users.id AS author_id'
 			])
 			->leftJoin('users', 'users.id', '=', 'cookbooks.user_id');
@@ -88,6 +89,7 @@ class SearchController extends Controller
 				'recipes.cookbook_id AS cookbook_id',
 				DB::raw('DATE_FORMAT(recipes.created_at, "%d %M %Y") as created_at'),
 				'users.name AS author_name',
+				'users.name_slug AS username',
 				'users.id AS author_id'
 			])
 			->leftJoin('users', 'users.id', '=', 'recipes.user_id')
