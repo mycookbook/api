@@ -120,9 +120,9 @@ class UserService implements serviceInterface
 
 			return response(
 				[
-					"updated" => $updated,
+					"updated" => (bool) $updated,
 					"status" => "success",
-					"username" => $request->name
+					"username" => $request->username
 				], Response::HTTP_OK
 			);
 		} catch (\Exception $e) {
