@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\ImplicitRule;
 
-class SupportedImageUrlFormatsRule implements ImplicitRule
+class DisallowedCharactersRule implements ImplicitRule
 {
 	/**
 	 * @param string $attribute
@@ -13,12 +13,11 @@ class SupportedImageUrlFormatsRule implements ImplicitRule
 	 */
 	public function passes($attribute, $value): bool
 	{
-		try {
-			exif_imagetype($value);
-			return true;
-		} catch(\Exception $e) {
+		if (preg_match('/[\'^£$%&*.}{#~?><>,|=+¬-]/', $value)) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -26,6 +25,6 @@ class SupportedImageUrlFormatsRule implements ImplicitRule
 	 */
 	public function message(): string
 	{
-		return 'The :attribute format is not supported';
+		return 'The :attribute must not contain any special characters.';
 	}
 }

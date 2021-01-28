@@ -3,18 +3,13 @@
 namespace App\Providers;
 
 use App\Adapters\Search\FulltextSearchAdapterInterface;
+use Tymon\JWTAuth\Providers\LumenServiceProvider;
 use App\Adapters\Search\MySqlAdapter;
-use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Support\ServiceProvider;
-use App\Rules\NutritionalDetailJsonStructureRule;
 
 class AppServiceProvider extends ServiceProvider
 {
-	public function boot()
-	{
-		NutritionalDetailJsonStructureRule::validate();
-		SupportedImageUrlFormatsRule::validate();
-	}
+	public function boot() {}
 
     /**
      * Register any application services.
@@ -23,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+        $this->app->register(LumenServiceProvider::class);
 
         $this->app->bind(FulltextSearchAdapterInterface::class, MySqlAdapter::class);
     }

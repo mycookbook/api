@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Requests\Cookbook;
 
+use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -20,7 +21,7 @@ class StoreRequest extends Controller
 			$request, [
 				'name' => 'required',
 				'description' => 'required|min:126',
-				'bookCoverImg' => 'required|img_url',
+				'bookCoverImg' => ['required', new SupportedImageUrlFormatsRule()],
 				'categories' => 'required|array',
 				'categories.*' => 'exists:categories,id',
 				'flag_id' => 'required|exists:flags,id'
