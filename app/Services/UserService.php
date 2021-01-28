@@ -118,8 +118,8 @@ class UserService implements serviceInterface
 
 			$updated = DB::table("users")->where("id", "=", $user_record->get()->first()->getKey())->update($data);
 
-//			$request->merge(['user_id' => $user_id]);
-//			$user_contact_detail->update($request->all());
+			$request->merge(['user_id' => $user_id]);
+			$user_contact_detail->update($request->all());
 
 			return response(
 				[
