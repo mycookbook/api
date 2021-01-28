@@ -128,7 +128,7 @@ class UserService implements serviceInterface
 		} catch (\Exception $e) {
 			return response([
 				'errors' => $e->getMessage()
-			], $e->getCode());
+			], Response::HTTP_BAD_REQUEST);
 		}
     }
 
