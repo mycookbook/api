@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\SendEmailNotification;
 use App\User;
 use App\Jobs\SendEmail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -105,18 +106,20 @@ class UserService implements serviceInterface
 		$user_contact_detail = $user_record->get()->first()->contact;
 
 		try {
-			$updated = $user_record->update([
+			$data = [
 				'name' => Str::ucfirst($request->name),
 				'name_slug' => slugify($request->name),
-				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
-				'avatar' => $request->avatar ? $request->avatar : '',
+				'pronouns' => "",
+				'avatar' => "",
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
-				'about' => $request->about ? $request->about : NULL,
+				'about' => "",
 				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
-			]);
+			];
 
-			$request->merge(['user_id' => $user_id]);
-			$user_contact_detail->update($request->all());
+			$updated = DB::table("users")->where("id", "=", $user_record->get()->first()->getKey())->update($data);
+
+//			$request->merge(['user_id' => $user_id]);
+//			$user_contact_detail->update($request->all());
 
 			return response(
 				[
