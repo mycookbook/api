@@ -54,7 +54,7 @@ class Recipe extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -114,7 +114,8 @@ class Recipe extends Model
 		$prep_time = strtotime(Carbon::parse($this->attributes['prep_time']));
 		$total_time = $cook_time + $prep_time;
 		$total_time = Carbon::createFromTimestamp($total_time);
-		return CarbonInterval::createFromFormat('H:i:s', $total_time->toTimeString())->forHumans();
+		return $total_time;
+//		return CarbonInterval::createFromFormat('H:i:s', $total_time)->forHumans();
 	}
 
 	/**
@@ -136,7 +137,7 @@ class Recipe extends Model
     public function getCookTimeAttribute()
 	{
 		$dt = Carbon::parse($this->attributes['cook_time']);
-		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+		return $dt->diffForHumans();
 	}
 
 	/**
@@ -148,7 +149,7 @@ class Recipe extends Model
 	public function getPrepTimeAttribute()
 	{
 		$dt = Carbon::parse($this->attributes['prep_time']);
-		return CarbonInterval::createFromFormat('H:i:s', $dt->toTimeString())->forHumans();
+		return $dt->diffForHumans();
 	}
 
 	/**

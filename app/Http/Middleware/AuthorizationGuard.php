@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\Response;
 use App\Exceptions\UnauthorizedClientException;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AuthorizationGuard
 {
@@ -28,7 +27,7 @@ class AuthorizationGuard
 	public function handle(Request $request, Closure $next)
 	{
 		if (!$request->header('X-API-KEY')) {
-			Log::alert([
+			Log::alert((string)[
 				'type' => 'Unauthorized',
 				'content' => 'The header does not contain an api-key',
 				'timestamp' => Carbon::now()->toDateTimeString()

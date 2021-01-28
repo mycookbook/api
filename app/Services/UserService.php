@@ -78,7 +78,7 @@ class UserService implements serviceInterface
 	 */
     public function show($q)
     {
-		$user = $this->get($q)->with('cookbooks', 'recipes', 'contact')->get();
+		$user = $this->get($q)->get();
 
         return response(
             [

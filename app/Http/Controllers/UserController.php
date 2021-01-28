@@ -69,7 +69,7 @@ class UserController extends Controller
 	public function update($username, UpdateRequest $request)
 	{
 		if ($request->getParams()->all()) {
-			$request->getParams()->merge(["username" => $username]);
+			$request->getParams()->merge(["username"]);
 			return $this->service->update($request->getParams(), $username);
 		}
 

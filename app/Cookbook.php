@@ -86,15 +86,7 @@ class Cookbook extends Model
         return $this->hasMany('App\Recipe');
     }
 
-	/**
-	 * A cookbook belongs to one user
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-    public function users()
-    {
-        return $this->belongsToMany('App\User');
-    }
+
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
