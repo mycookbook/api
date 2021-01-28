@@ -125,9 +125,9 @@ $router->group([
 		*/
         $router->group(
             [
-            	'middleware' => [
-					'jwt.auth'
-				]
+//            	'middleware' => [
+//					'jwt.auth'
+//				]
 			], function () use ($router) {
                 $router->put(
                     '/users/{username}', 'UserController@update'
