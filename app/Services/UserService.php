@@ -109,10 +109,10 @@ class UserService implements serviceInterface
 			$data = [
 				'name' => Str::ucfirst($request->name),
 				'name_slug' => slugify($request->name),
-				'pronouns' => "",
-				'avatar' => "",
+				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
+				'avatar' => $request->avatar ? $request->avatar : '',
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
-				'about' => "",
+				'about' => $request->about ? $request->about : NULL,
 				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
 			];
 

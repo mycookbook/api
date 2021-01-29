@@ -27,12 +27,6 @@ class AuthorizationGuard
 	public function handle(Request $request, Closure $next)
 	{
 		if (!$request->header('X-API-KEY')) {
-			Log::alert((string)[
-				'type' => 'Unauthorized',
-				'content' => 'The header does not contain an api-key',
-				'timestamp' => Carbon::now()->toDateTimeString()
-			]);
-
 			throw new UnauthorizedClientException();
 		}
 
