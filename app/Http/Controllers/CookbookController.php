@@ -82,13 +82,13 @@ class CookbookController extends Controller
 	/**
 	 * Find resource
 	 *
-	 * @param int $id
+	 * @param int $cookbookId
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
 	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
-    public function show($id)
+    public function show($cookbookId)
     {
-    	return $this->service->show($id);
+    	return $this->service->show($cookbookId);
     }
 }
