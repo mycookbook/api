@@ -19,6 +19,22 @@ $router->get('/', function () {
 	}
 );
 
+$router->get('api/v1/create-auth-client', function() {
+	$api_key = \Illuminate\Support\Facades\Crypt::encryptString('Hello DevDojo');
+
+	$client = new \App\AuthorizedClient([
+		'api_key' => $api_key,
+		'client_secret' => 'Hello DevDojo',
+		'passphrase' => 'potatoes'
+	]);
+
+	if ($client->save()) {
+		return $client;
+	}
+
+	return null;
+});
+
 $router->group([
 	'prefix' => 'api/v1',
 	'middleware' => [

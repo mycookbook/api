@@ -91,9 +91,9 @@ class Cookbook extends Model
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
-	public function categories()
+	public function categories(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	{
-		return $this->belongsToMany('App\Category', 'category_cookbook');
+		return $this->belongsToMany(Category::class);
 	}
 
     /**
@@ -119,5 +119,13 @@ class Cookbook extends Model
 	public function getAuthorAttribute()
 	{
 		return $this->author();
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	{
+		return $this->belongsToMany(User::class);
 	}
 }

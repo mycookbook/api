@@ -100,6 +100,8 @@ class DatabaseSeeder extends Seeder
 					'description' => 'A collection of common Nigerian Party foods, everything from Jollof rice to swallows and soups to mention a few. This cookbook may contain contributions from multiple contributors and content thereof belongs to cookbookhq. Dive right in to browse different Nigerian party food recipes.',
 					'bookCoverImg' => 'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/nigeria-party-food.jpg',
 					'flag_id' => 1,
+					'slug' => slugify('Nigerian Party Food (Owambe)'),
+					'category_id' => 1,
 					'user_id' => $admin->id,
 					'resource_type' => 'cookbook',
 					'created_at' => new DateTime(),
@@ -108,9 +110,21 @@ class DatabaseSeeder extends Seeder
 				]);
 
 				$cookbook->save();
-				$cookbook->categories()->attach(1);
-				$cookbook->categories()->attach(2);
 
+				$cookbook->users()->attach($editor->getKey());
+				$cookbook->users()->attach($contributor->getKey());
+
+				$categories = \App\Category::all();
+
+				$categoryIds = $categories->map(function($item) {
+					return $item->id;
+				});
+
+				$categoryIds = $categoryIds->toArray();
+
+				foreach ($categoryIds as $key => $val) {
+					$cookbook->categories()->attach($val);
+				}
 			}
 
 			//fakes
@@ -248,23 +262,38 @@ class DatabaseSeeder extends Seeder
 				'alt_text' => 'sample image'
 			]);
 
-			$cookbook->save();
-//			$random_users = array_rand($this->users, rand(2, 5));
-			$cookbook->users()->attach($cookbook->user_id);
+			$cookbook->slug = slugify($cookbook->name);
 
-//			foreach ($random_users as $key => $val) {
-//				$cookbook->users()->attach($val);
-//			}
+			$cookbook->save();
+			$random_users = array_rand($this->users, rand(2, 5));
+
+			$categories = \App\Category::all();
+
+			$categoryIds = $categories->map(function($item) {
+				return $item->id;
+			});
+
+			$categoryIds = $categoryIds->toArray();
+
+			$random_categories = array_rand($categoryIds, rand(2,5));
+
+			foreach ($random_users as $key => $val) {
+				$cookbook->users()->attach($val);
+			}
+
+			foreach ($random_categories as $key => $val) {
+				$cookbook->category_id = $val;
+				$cookbook->save();
+			}
 
 			$category_ids = range(1, 10);
 			$random_category_ids = array_rand($category_ids, 2);
 
 			foreach($random_category_ids as $key => $val) {
 				if ($val == 0) {
-					$cookbook->users()->attach(2);
-				} else {
-					$cookbook->categories()->attach($val);
+					continue;
 				}
+//				$cookbook->categories()->attach($val);
 			}
 
 			$cookbooks[] = $cookbook->id;

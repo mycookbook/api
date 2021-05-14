@@ -6,6 +6,9 @@ use App\Jobs\SendEmailNotification;
 use App\User;
 use App\Jobs\SendEmail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Optional;
+use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -108,7 +111,7 @@ class UserService implements serviceInterface
 		try {
 			$data = [
 				'name' => Str::ucfirst($request->name),
-				'name_slug' => slugify($request->name),
+				'name_slug' => Str::slug($request->name),
 				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
 				'avatar' => $request->avatar ? $request->avatar : '',
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',

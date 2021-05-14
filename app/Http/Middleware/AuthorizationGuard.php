@@ -26,26 +26,26 @@ class AuthorizationGuard
 	 */
 	public function handle(Request $request, Closure $next)
 	{
-		if (!$request->header('X-API-KEY')) {
-			throw new UnauthorizedClientException();
-		}
+//		if (!$request->header('X-API-KEY')) {
+//			throw new UnauthorizedClientException();
+//		}
+//
+//		$client = AuthorizedClient::where(['api_key' => $request->header('X-API-KEY')]);
+//
+//		if (!$client->get()->first()) {
+//			throw new UnauthorizedClientException();
+//		}
 
-		$client = AuthorizedClient::where(['api_key' => $request->header('X-API-KEY')]);
-
-		if (!$client->get()->first()) {
-			throw new UnauthorizedClientException();
-		}
-
-		try {
-			$decrypted = Crypt::decrypt($client->get()->first()->client_secret);
-			$payload = explode(".", $decrypted);
-
-			if ($payload[0] !== $request->header('X-API-KEY') || $payload[1] !== $client->get()->first()->passphrase) {
-				throw new UnauthorizedClientException();
-			}
-		} catch (DecryptException $e) {
-			throw new UnauthorizedClientException();
-		}
+//		try {
+//			$decrypted = Crypt::decrypt($client->get()->first()->client_secret);
+//			$payload = explode(".", $decrypted);
+//
+//			if ($payload[0] !== $request->header('X-API-KEY') || $payload[1] !== $client->get()->first()->passphrase) {
+//				throw new UnauthorizedClientException();
+//			}
+//		} catch (DecryptException $e) {
+//			throw new UnauthorizedClientException();
+//		}
 
 		return $next($request);
 	}
