@@ -80,14 +80,14 @@ class RecipeController extends Controller
 	/**
 	 * Find resource
 	 *
-	 * @param int $id identifier
+	 * @param int $recipeId identifier
 	 *
 	 * @return mixed
 	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
-    public function show($id)
+    public function show($recipeId)
     {
-		return $this->service->show($id);
+		return $this->service->show($recipeId);
     }
 
 	/**

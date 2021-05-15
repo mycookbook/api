@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cookbook extends Model
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -37,8 +36,8 @@ class Cookbook extends Model
      *
      * @return array
      */
-    public function getLinksAttribute()
-    {
+    public function getLinksAttribute(): array
+	{
         return [
             'self' => app()
                 ->make('url')
@@ -50,7 +49,7 @@ class Cookbook extends Model
 	 * Get the recipes count
 	 * @return int
 	 */
-    public function getRecipesCountAttribute()
+    public function getRecipesCountAttribute(): int
 	{
 		return count($this->recipes);
 	}
@@ -81,12 +80,10 @@ class Cookbook extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function recipes()
-    {
+    public function recipes(): \Illuminate\Database\Eloquent\Relations\HasMany
+	{
         return $this->hasMany('App\Recipe');
     }
-
-
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -99,8 +96,8 @@ class Cookbook extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function flag()
-    {
+    public function flag(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+	{
         return $this->belongsTo('App\Flag');
     }
 
