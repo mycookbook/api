@@ -42,6 +42,18 @@ $router->group([
 		'throttle'
 	]], function () use ($router) {
 
+		$router->get('flags', function() {
+			return response()->json([
+				"data" => \App\Flag::all()
+			]);
+		});
+
+	$router->get('categories', function() {
+		return response()->json([
+			"data" => \App\Category::all()
+		]);
+	});
+
 		/*
 		|--------------------------------------------------------------------------
 		| Search

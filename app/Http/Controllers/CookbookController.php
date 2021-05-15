@@ -46,8 +46,8 @@ class CookbookController extends Controller
 	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \Tymon\JWTAuth\Exceptions\JWTException
 	 */
-    public function store(StoreRequest $request, JWTAuth $jwt)
-    {
+    public function store(StoreRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+	{
     	$jwt->parseToken()->authenticate();
     	return $this->service->store($request->getParams());
     }

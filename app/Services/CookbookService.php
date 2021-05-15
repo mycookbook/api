@@ -32,25 +32,34 @@ class CookbookService implements serviceInterface
 		);
     }
 
-    /**
-     * Create cookbook resource
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request)
-    {
-        $cookbook = new Cookbook($request->all());
+	/**
+	 * Create cookbook resource
+	 *
+	 * @param \Illuminate\Http\Request $request
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 * @throws \Exception
+	 */
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+	{
+		//TODO: CookbookPolicy to ascertain that user is able to create a cookbook
 
-        //TODO: CookbookPOlicy to ascertain that user is able to create a cookbook
+		if (!is_array($request->get("categories"))) {
+			throw new \Exception("There was a problem processing this request. Please try again.");
+		}
 
+		$categories = $request->get("categories");
+
+		$cookbook = new Cookbook($request->all());
 		$cookbook->user_id = $request->user()->id;
         $cookbook->slug = slugify($request->name);
 
         if ($cookbook->save()) {
 			$cookbook->users()->attach($request->user()->id);
-			$cookbook->categories()->attach($request->get('categories'));
+
+			foreach ($categories as $category) {
+				$cookbook->categories()->attach($category);
+			}
 
 			return response()->json(
 				[
