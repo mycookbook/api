@@ -21,7 +21,7 @@ class Category extends Model
         'name', 'slug', 'color', 'emoji'
     ];
 
-    protected $hidden = ['id', 'pivot'];
+    protected $hidden = ['pivot'];
 
     /**
      * Append links attribute.
