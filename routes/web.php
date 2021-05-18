@@ -113,6 +113,7 @@ $router->group([
 		*/
 
 		$router->get('/cookbooks', 'CookbookController@index');
+//		$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
 		$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
 
 		/*

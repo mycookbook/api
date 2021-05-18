@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * Class Recipe
@@ -47,11 +48,24 @@ class Cookbook extends Model
 
 	/**
 	 * Get the recipes count
-	 * @return int
 	 */
-    public function getRecipesCountAttribute(): int
+    public function getRecipesCountAttribute(): string
 	{
-		return count($this->recipes);
+		$count = count($this->recipes);
+
+		if ($count >= 100 && $count < 1000) {
+			return '100+ Recipes';
+		}
+
+		if ($count >= 1000 && $count < 1000000) {
+			return '1K+ Recipes';
+		}
+
+		if ($count > 1000000) {
+			return '1M+ Recipes';
+		}
+
+		return $count . " " . Str::pluralStudly('Recipe', $count);
 	}
 
 	/**
