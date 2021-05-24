@@ -122,8 +122,9 @@ $router->group([
 		|--------------------------------------------------------------------------
 		*/
 		$router->get('/recipes', 'RecipeController@index');
+		$router->get('/my/recipes', 'RecipeController@myRecipes');
 		$router->get('/recipes/{recipeId}', 'RecipeController@show');
-		$router->post('add-clap', 'RecipeController@addClap');
+		$router->post('/add-clap', 'RecipeController@addClap');
 
 		/*
 		|--------------------------------------------------------------------------

@@ -30,10 +30,19 @@ class RecipeController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
-    {
+    public function index(): \Illuminate\Http\JsonResponse
+	{
         return $this->service->index();
     }
+
+	/**
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+    public function myRecipes(Request $request): \Illuminate\Http\JsonResponse
+	{
+		return $this->service->index($request->get("user_id"));
+	}
 
 	/**
 	 * Create recipe for user

@@ -16,14 +16,24 @@ class RecipeService
 	/**
 	 * Get all recipes
 	 *
+	 * @param null $user_id
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-    public function index()
-    {
+    public function index($user_id = null): \Illuminate\Http\JsonResponse
+	{
+    	$recipes = Recipe::with('Cookbook', 'User');
+
+    	if($user_id) {
+			return response()->json(
+				[
+					'data' => $recipes->where("user_id", "=", $user_id)->paginate(100)
+				], Response::HTTP_OK
+			);
+		}
+
 		return response()->json(
 			[
-				'data' =>  Recipe::with('Cookbook', 'User') //eagerload with cookbook and user relationships
-					->paginate(100)
+				'data' => $recipes->paginate(100)
 			], Response::HTTP_OK
 		);
     }
