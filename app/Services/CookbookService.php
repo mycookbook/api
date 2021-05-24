@@ -130,9 +130,9 @@ class CookbookService implements serviceInterface
     }
 
 	/**
-	 * @param $id
+	 * @param mixed $id
 	 *
-	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
 	public function show($id)
@@ -143,7 +143,11 @@ class CookbookService implements serviceInterface
 			throw new CookbookModelNotFoundException();
 		}
 
-		return $cookbook;
+		return response(
+			[
+				'data' => $cookbook
+			], Response::HTTP_OK
+		);
 	}
 
 	/**

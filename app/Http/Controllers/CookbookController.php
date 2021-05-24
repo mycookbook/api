@@ -91,7 +91,7 @@ class CookbookController extends Controller
 	/**
 	 * Find resource
 	 *
-	 * @param int $cookbookId
+	 * @param mixed $cookbookId
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
 	 * @throws \App\Exceptions\CookbookModelNotFoundException

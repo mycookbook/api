@@ -112,16 +112,6 @@ $router->group([
 
 		/*
 		|--------------------------------------------------------------------------
-		| Cookbooks
-		|--------------------------------------------------------------------------
-		*/
-
-		$router->get('/cookbooks', 'CookbookController@index');
-		$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
-		$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
-
-		/*
-		|--------------------------------------------------------------------------
 		| Recipes
 		|--------------------------------------------------------------------------
 		*/
@@ -170,6 +160,16 @@ $router->group([
                 $router->patch(
                     '/users/{username}', 'UserController@update'
                 );
+
+				/*
+				|--------------------------------------------------------------------------
+				| Cookbooks
+				|--------------------------------------------------------------------------
+				*/
+
+				$router->get('/cookbooks', 'CookbookController@index');
+				$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
+				$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
 
 				/*
 				|--------------------------------------------------------------------------
