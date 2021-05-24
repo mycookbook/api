@@ -13,21 +13,38 @@ use App\Exceptions\CookbookModelNotFoundException;
  */
 class CookbookService implements serviceInterface
 {
-    /**
-     * Return all cookbooks
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
-    {
+	/**
+	 * Return all cookbooks
+	 *
+	 * @param null $user_id
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+    public function index($user_id = null): \Illuminate\Http\JsonResponse
+	{
+		$cookbooks = Cookbook::with([
+			'categories',
+			'flag',
+			'recipes',
+			'users'
+		]);
+
+		if ($user_id) {
+			return response()->json(
+				[
+					'data' =>  $cookbooks
+						->where("user_id", "=", $user_id)
+						->take(15)
+						->orderByDesc('created_at')
+						->get()
+				], Response::HTTP_OK
+			);
+		}
+
 		return response()->json(
 			[
-				'data' =>  Cookbook::with([
-					'categories',
-					'flag',
-					'recipes',
-					'users'
-				])->take(15)->orderByDesc('created_at')->get()
+				'data' =>  $cookbooks->take(15)
+					->orderByDesc('created_at')
+					->get()
 			], Response::HTTP_OK
 		);
     }

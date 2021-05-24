@@ -48,11 +48,11 @@ $router->group([
 			]);
 		});
 
-	$router->get('categories', function() {
-		return response()->json([
-			"data" => \App\Category::all()
-		]);
-	});
+		$router->get('categories', function() {
+			return response()->json([
+				"data" => \App\Category::all()
+			]);
+		});
 
 		/*
 		|--------------------------------------------------------------------------
@@ -113,7 +113,7 @@ $router->group([
 		*/
 
 		$router->get('/cookbooks', 'CookbookController@index');
-//		$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
+		$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
 		$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
 
 		/*

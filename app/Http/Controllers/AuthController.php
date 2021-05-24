@@ -27,7 +27,7 @@ class AuthController extends Controller
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function login(SignInRequest $request, JWTAuth $jwt)
+	public function login(SignInRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
 	{
 		return $this->service->login($request->getParams(), $jwt);
 	}

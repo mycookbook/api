@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\Response;
 use App\Exceptions\UnauthorizedClientException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthorizationGuard
 {
@@ -46,6 +47,12 @@ class AuthorizationGuard
 //		} catch (DecryptException $e) {
 //			throw new UnauthorizedClientException();
 //		}
+
+		$token = JWTAuth::getToken();
+		$user_id = JWTAuth::getPayload($token)->toArray()["sub"];
+
+		$request->merge(["user_id" => $user_id]);
+
 
 		return $next($request);
 	}

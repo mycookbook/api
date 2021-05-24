@@ -32,10 +32,19 @@ class CookbookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
-    {
+    public function index(): \Illuminate\Http\JsonResponse
+	{
         return $this->service->index();
     }
+
+	/**
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+    public function myCookbooks(Request $request): \Illuminate\Http\JsonResponse
+	{
+		return $this->service->index($request->get("user_id"));
+	}
 
 	/**
 	 * Create cookbook for user
