@@ -35,6 +35,17 @@ $router->get('api/v1/create-auth-client', function() {
 	return null;
 });
 
+
+$router->group(['prefix' => 'api/v1'], function () use ($router) {
+	$router->post(
+		'/auth/register', 'UserController@store'
+	);
+
+	$router->post(
+		'/auth/login', 'AuthController@login'
+	);
+});
+
 $router->group([
 	'prefix' => 'api/v1',
 	'middleware' => [
@@ -81,13 +92,6 @@ $router->group([
 		| Users Auth
 		|--------------------------------------------------------------------------
 		*/
-        $router->post(
-            '/auth/register', 'UserController@store'
-        );
-
-        $router->post(
-            '/auth/login', 'AuthController@login'
-        );
 
         $router->get(
             '/users/', 'UserController@index'
