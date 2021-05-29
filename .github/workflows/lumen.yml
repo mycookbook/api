@@ -38,4 +38,4 @@ jobs:
       - name: check phpunit version
         run: vendor/bin/phpunit --version
       - name: Run Tests
-        run: vendor/bin/phpunit tests/Functional/Controllers/
+        run: vendor/bin/phpunit tests/Functional/Exceptions/
