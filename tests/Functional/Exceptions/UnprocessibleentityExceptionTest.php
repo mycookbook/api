@@ -111,6 +111,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -137,6 +139,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -174,6 +178,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -209,6 +215,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -246,6 +254,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -281,6 +291,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -318,6 +330,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -353,6 +367,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -390,6 +406,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -426,6 +444,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -451,6 +471,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -495,6 +517,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -537,6 +561,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -581,6 +607,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -623,6 +651,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -667,6 +697,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -708,6 +740,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -751,6 +785,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -792,6 +828,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -835,6 +873,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -876,6 +916,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -919,6 +961,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -960,6 +1004,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -1003,6 +1049,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -1044,6 +1092,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -1087,6 +1137,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -1128,6 +1180,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -1171,6 +1225,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -1212,6 +1268,8 @@ class UnprocessibleentityExceptionTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$login = $this->json(
 			'POST', '/api/v1/auth/login', [
