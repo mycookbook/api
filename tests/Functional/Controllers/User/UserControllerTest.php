@@ -257,6 +257,8 @@ class UserControllerTest extends \TestCase
             ]
         );
 
+		$this->json('GET', '/api/v1/users/joromi@foo.com/verify');
+
         $res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
@@ -301,6 +303,8 @@ class UserControllerTest extends \TestCase
                 'password' => 'joromo1236'
             ]
         );
+
+		$this->json('GET', '/api/v1/users/joromi@foo.com/verify');
 
         $res = $this->json(
             'POST', '/api/v1/auth/login', [
@@ -353,7 +357,9 @@ class UserControllerTest extends \TestCase
             ]
         );
 
-        $res = $this->json(
+		$this->json('GET', '/api/v1/users/joromi@foo.com/verify');
+
+		$res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
                 'password' => 'joromo1236'
@@ -430,10 +436,12 @@ class UserControllerTest extends \TestCase
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'sally',
-                'email' => 'sally@foo.com',
+                'email' => 'sallytu@foo.com',
                 'password' => 'salis'
             ]
         );
+
+		$this->json('GET', '/api/v1/users/sallytu@foo.com/verify');
 
         $response = $this->call('GET', '/api/v1/users/sally');
 
