@@ -37,5 +37,7 @@ jobs:
         run: composer install --no-interaction
       - name: check phpunit version
         run: vendor/bin/phpunit --version
-      - name: Run Tests
-        run: vendor/bin/phpunit tests/Functional/Exceptions/
+      - name: Run Functional/Controllers tests
+        run: vendor/bin/phpunit tests/Functional/Controllers/
+      - name: Run Functional/Exceptions tests
+        run: vendor/bin/phpunit tests/Functional/Exceptions
