@@ -35,8 +35,6 @@ jobs:
         run: sudo composer self-update 1.10.15 --no-interaction
       - name: Run Composer Install
         run: composer install --no-interaction
-      - name: check phpunit version
-        run: vendor/bin/phpunit --version
       - name: Run Functional tests
         run: vendor/bin/phpunit tests/Functional/
       - name: Run Unit tests
