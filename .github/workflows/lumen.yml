@@ -54,6 +54,6 @@ jobs:
           mysql user: 'developer'
           mysql password: ${{ secrets.DatabasePassword }}
       - name: Test with phpunit
-        run: vendor/bin/phpunit
+        run: php artisan migrate && vendor/bin/phpunit
         env:
           DB_PORT: ${{ job.services.mariadb.ports[32768] }}
