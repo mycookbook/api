@@ -83,8 +83,6 @@ class CookbookServiceTest extends \TestCase
 
 		$this->assertResponseStatus(Response::HTTP_OK);
 
-		$decoded = json_decode($response->getContent(), true);
-
 		$this->assertSame($decoded["data"]["name"], $cookbook->name);
 		$this->assertSame($decoded["data"]["description"], $cookbook->description);
 		$this->assertSame($decoded["data"]["bookCoverImg"], $cookbook->bookCoverImg);
