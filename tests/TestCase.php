@@ -1,6 +1,7 @@
 <?php
 
 use Traits\CreatesObjects;
+use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
 /**
@@ -29,6 +30,12 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 	public function tearDown(): void
 	{
 		$this->artisan('migrate:reset');
+
+		$this->beforeApplicationDestroyed(function () {
+			DB::disconnect();
+		});
+
+		parent::tearDown();
 	}
 
 //    protected function disableExceptionHandling()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Services;
+namespace Functional\Integration\Services;
 
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
@@ -43,6 +43,7 @@ class AuthServiceTest extends \TestCase
 		$userService = new UserService();
 		$userService->store($storeRequest->getParams());
 
+		$this->json('GET', '/api/v1/users/you@test.com/verify');
 
 		$signInRequest = new SignInRequest(new Request([
 			'email' => 'you@test.com',

@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Requests\Recipe;
+namespace Functional\Integration\Requests\Recipe;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

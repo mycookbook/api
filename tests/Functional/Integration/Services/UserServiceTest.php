@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Services;
+namespace Functional\Integration\Services;
 
 use App\User;
 use Illuminate\Http\Request;
@@ -107,25 +107,5 @@ class UserServiceTest extends \TestCase
 
 		$this->assertSame($response->getStatusCode(), Response::HTTP_OK);
 		$this->assertSame($user->name_slug, 'test-mate-2');
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_204_if_there_is_nothing_to_update()
-	{
-		$storeRequest = new StoreRequest(new Request([
-			'name' => 'test mate',
-			'email' => 'you@test.com',
-			'password' => '@X_I123^76'
-		]));
-
-		$service = new UserService();
-		$service->store($storeRequest->getParams());
-
-		$updateRequest = new UpdateRequest(new Request([]));
-		$response = $service->update($updateRequest->getParams(), 'test-mate');
-
-		$this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
 	}
 }

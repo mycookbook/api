@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Requests\Cookbook;
+namespace Functional\Integration\Requests\Cookbook;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;

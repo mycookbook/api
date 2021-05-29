@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Integration\Requests;
+namespace Functional\Integration\Requests;
 
 use Monolog\Test\TestCase;
 use Illuminate\Http\Request;

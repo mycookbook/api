@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Requests\Auth;
+namespace Functional\Integration\Requests\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Requests\FormRequest;

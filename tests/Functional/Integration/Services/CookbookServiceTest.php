@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Services;
+namespace Functional\Integration\Services;
 
 use App\Cookbook;
 use Illuminate\Support\Str;
@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use App\Services\CookbookService;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Controllers\Requests\Cookbook\StoreRequest;
+use Illuminate\Validation\ValidationException;
 
 class CookbookServiceTest extends \TestCase
 {
@@ -27,7 +28,7 @@ class CookbookServiceTest extends \TestCase
 	 */
 	public function it_throws_an_exception_when_an_unauthenticated_user_attempts_to_create_a_cookbook()
 	{
-		$this->expectException(\ErrorException::class);
+		$this->expectException(ValidationException::class);
 
 		$category = $this->createCategory();
 		$flag = $this->createFlag();
@@ -80,7 +81,13 @@ class CookbookServiceTest extends \TestCase
 		$service = new CookbookService();
 		$response = $service->show($cookbook->id);
 
-		$this->assertInstanceOf(Cookbook::class, $response);
+		$this->assertResponseStatus(Response::HTTP_OK);
+
+		$decoded = json_decode($response->getContent(), true);
+
+		$this->assertSame($decoded["data"]["name"], $cookbook->name);
+		$this->assertSame($decoded["data"]["description"], $cookbook->description);
+		$this->assertSame($decoded["data"]["bookCoverImg"], $cookbook->bookCoverImg);
 	}
 
 	/**

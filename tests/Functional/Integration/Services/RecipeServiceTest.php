@@ -1,13 +1,13 @@
 <?php
 
-namespace Integration\Services;
+namespace Functional\Integration\Services;
 
-use App\Exceptions\CookbookModelNotFoundException;
 use App\Recipe;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\RecipeService;
+use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Controllers\Requests\Recipe\StoreRequest;
 
 class RecipeServiceTest extends \TestCase
@@ -30,7 +30,7 @@ class RecipeServiceTest extends \TestCase
 		$this->expectException(\ErrorException::class);
 
 		$request = new StoreRequest(new Request([
-			'title' => 'sample title',
+			'name' => 'sample title',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
@@ -52,7 +52,7 @@ class RecipeServiceTest extends \TestCase
 	public function it_responds_with_a_201_when_an_authenticated_user_attempts_to_create_a_recipe()
 	{
 		$request = new Request([
-			'title' => 'sample title',
+			'name' => 'sample title',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'imgUrl' => 'http://lorempixel.com/400/200/',
 			'description' => 'sample description',
