@@ -59,7 +59,10 @@ class Handler extends ExceptionHandler
 	 */
     public function render($request, Exception $e)
     {
-//    	dd($e->getMessage());
+		if (app()->bound('sentry') && $this->shouldReport($e)) {
+			app('sentry')->captureException($e);
+		}
+
         if ($e instanceof UnauthorizedHttpException) {
 
             if (is_null($e->getPrevious())) {

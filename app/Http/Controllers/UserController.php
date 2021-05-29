@@ -63,13 +63,19 @@ class UserController extends Controller
 	 * Implement a full/partial update
 	 *
 	 * @param \App\Http\Controllers\Requests\User\UpdateRequest $request
-	 * @param string $userId userName
-	 *
-	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+	 * @param $username
+	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
-	public function update(UpdateRequest $request, string $userId)
+	public function update($username, UpdateRequest $request)
 	{
-		return $this->service->update($request->getParams(), $userId);
+		if ($request->getParams()->all()) {
+			$request->getParams()->merge(["username"]);
+			return $this->service->update($request->getParams(), $username);
+		}
+
+		return response([
+			'message' => "nothing to update."
+		], Response::HTTP_OK);
 	}
 
 	/**

@@ -32,10 +32,19 @@ class CookbookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
-    {
+    public function index(): \Illuminate\Http\JsonResponse
+	{
         return $this->service->index();
     }
+
+	/**
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+    public function myCookbooks(Request $request): \Illuminate\Http\JsonResponse
+	{
+		return $this->service->index($request->get("user_id"));
+	}
 
 	/**
 	 * Create cookbook for user
@@ -46,8 +55,8 @@ class CookbookController extends Controller
 	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \Tymon\JWTAuth\Exceptions\JWTException
 	 */
-    public function store(StoreRequest $request, JWTAuth $jwt)
-    {
+    public function store(StoreRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+	{
     	$jwt->parseToken()->authenticate();
     	return $this->service->store($request->getParams());
     }
@@ -82,13 +91,13 @@ class CookbookController extends Controller
 	/**
 	 * Find resource
 	 *
-	 * @param int $id
+	 * @param mixed $cookbookId
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
 	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
-    public function show($id)
+    public function show($cookbookId)
     {
-    	return $this->service->show($id);
+    	return $this->service->show($cookbookId);
     }
 }

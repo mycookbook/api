@@ -5,6 +5,10 @@ namespace App\Services;
 use App\Jobs\SendEmailNotification;
 use App\User;
 use App\Jobs\SendEmail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Optional;
+use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -78,7 +82,7 @@ class UserService implements serviceInterface
 	 */
     public function show($q)
     {
-		$user = $this->get($q)->with('cookbooks', 'recipes', 'contact')->get();
+		$user = $this->get($q)->get();
 
         return response(
             [
@@ -105,30 +109,32 @@ class UserService implements serviceInterface
 		$user_contact_detail = $user_record->get()->first()->contact;
 
 		try {
-			$updated = $user_record->update([
+			$data = [
 				'name' => Str::ucfirst($request->name),
-				'name_slug' => slugify($request->name),
+				'name_slug' => Str::slug($request->name),
 				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
 				'avatar' => $request->avatar ? $request->avatar : '',
 				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
 				'about' => $request->about ? $request->about : NULL,
 				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
-			]);
+			];
+
+			$updated = DB::table("users")->where("id", "=", $user_record->get()->first()->getKey())->update($data);
 
 			$request->merge(['user_id' => $user_id]);
 			$user_contact_detail->update($request->all());
 
 			return response(
 				[
-					"updated" => $updated,
+					"updated" => (bool) $updated,
 					"status" => "success",
-					"username" => $request->name
+					"username" => $request->username
 				], Response::HTTP_OK
 			);
 		} catch (\Exception $e) {
 			return response([
 				'errors' => $e->getMessage()
-			], Response::HTTP_NO_CONTENT);
+			], Response::HTTP_BAD_REQUEST);
 		}
     }
 

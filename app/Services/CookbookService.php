@@ -13,44 +13,70 @@ use App\Exceptions\CookbookModelNotFoundException;
  */
 class CookbookService implements serviceInterface
 {
-    /**
-     * Return all cookbooks
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
-    {
+	/**
+	 * Return all cookbooks
+	 *
+	 * @param null $user_id
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+    public function index($user_id = null): \Illuminate\Http\JsonResponse
+	{
+		$cookbooks = Cookbook::with([
+			'categories',
+			'flag',
+			'recipes',
+			'users'
+		]);
+
+		if ($user_id) {
+			return response()->json(
+				[
+					'data' =>  $cookbooks
+						->where("user_id", "=", $user_id)
+						->take(15)
+						->orderByDesc('created_at')
+						->get()
+				], Response::HTTP_OK
+			);
+		}
+
 		return response()->json(
 			[
-				'data' =>  Cookbook::with([
-					'categories',
-					'flag',
-					'recipes',
-					'users'
-				])->take(15)->orderByDesc('created_at')->get()
+				'data' =>  $cookbooks->take(15)
+					->orderByDesc('created_at')
+					->get()
 			], Response::HTTP_OK
 		);
     }
 
-    /**
-     * Create cookbook resource
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request)
-    {
-        $cookbook = new Cookbook($request->all());
+	/**
+	 * Create cookbook resource
+	 *
+	 * @param \Illuminate\Http\Request $request
+	 *
+	 * @return \Illuminate\Http\JsonResponse
+	 * @throws \Exception
+	 */
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+	{
+		//TODO: CookbookPolicy to ascertain that user is able to create a cookbook
 
-        //TODO: CookbookPOlicy to ascertain that user is able to create a cookbook
+		if (!is_array($request->get("categories"))) {
+			throw new \Exception("There was a problem processing this request. Please try again.");
+		}
 
+		$categories = $request->get("categories");
+
+		$cookbook = new Cookbook($request->all());
 		$cookbook->user_id = $request->user()->id;
         $cookbook->slug = slugify($request->name);
 
         if ($cookbook->save()) {
 			$cookbook->users()->attach($request->user()->id);
-			$cookbook->categories()->attach($request->get('categories'));
+
+			foreach ($categories as $category) {
+				$cookbook->categories()->attach($category);
+			}
 
 			return response()->json(
 				[
@@ -104,9 +130,9 @@ class CookbookService implements serviceInterface
     }
 
 	/**
-	 * @param $id
+	 * @param mixed $id
 	 *
-	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
 	public function show($id)
@@ -117,7 +143,11 @@ class CookbookService implements serviceInterface
 			throw new CookbookModelNotFoundException();
 		}
 
-		return $cookbook;
+		return response(
+			[
+				'data' => $cookbook
+			], Response::HTTP_OK
+		);
 	}
 
 	/**

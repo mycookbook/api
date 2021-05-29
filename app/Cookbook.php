@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * Class Recipe
@@ -13,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cookbook extends Model
 {
-
     /**
      * The attributes that are mass assignable.
      *
@@ -37,8 +37,8 @@ class Cookbook extends Model
      *
      * @return array
      */
-    public function getLinksAttribute()
-    {
+    public function getLinksAttribute(): array
+	{
         return [
             'self' => app()
                 ->make('url')
@@ -48,11 +48,24 @@ class Cookbook extends Model
 
 	/**
 	 * Get the recipes count
-	 * @return int
 	 */
-    public function getRecipesCountAttribute()
+    public function getRecipesCountAttribute(): string
 	{
-		return count($this->recipes);
+		$count = count($this->recipes);
+
+		if ($count >= 100 && $count < 1000) {
+			return '100+ Recipes';
+		}
+
+		if ($count >= 1000 && $count < 1000000) {
+			return '1K+ Recipes';
+		}
+
+		if ($count > 1000000) {
+			return '1M+ Recipes';
+		}
+
+		return $count . " " . Str::pluralStudly('Recipe', $count);
 	}
 
 	/**
@@ -81,34 +94,24 @@ class Cookbook extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function recipes()
-    {
+    public function recipes(): \Illuminate\Database\Eloquent\Relations\HasMany
+	{
         return $this->hasMany('App\Recipe');
     }
 
 	/**
-	 * A cookbook belongs to one user
-	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
-    public function users()
-    {
-        return $this->belongsToMany('App\User');
-    }
-
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-	public function categories()
+	public function categories(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	{
-		return $this->belongsToMany('App\Category', 'category_cookbook');
+		return $this->belongsToMany(Category::class);
 	}
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function flag()
-    {
+    public function flag(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+	{
         return $this->belongsTo('App\Flag');
     }
 
@@ -127,5 +130,13 @@ class Cookbook extends Model
 	public function getAuthorAttribute()
 	{
 		return $this->author();
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	{
+		return $this->belongsToMany(User::class);
 	}
 }

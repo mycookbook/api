@@ -31,13 +31,29 @@ $router->get('/api/v1/users/{id}/verify', function ($id){
 
 });
 
+$router->get('api/v1/create-auth-client', function() {
+	$api_key = \Illuminate\Support\Facades\Crypt::encryptString('Hello DevDojo');
+
+	$client = new \App\AuthorizedClient([
+		'api_key' => $api_key,
+		'client_secret' => 'Hello DevDojo',
+		'passphrase' => 'potatoes'
+	]);
+
+	if ($client->save()) {
+		return $client;
+	}
+
+	return null;
+});
+
 /*
 |--------------------------------------------------------------------------
 | Users Auth
 |--------------------------------------------------------------------------
 */
-$router->group([
-	'prefix' => '/api/v1'], function () use ($router) {
+
+$router->group(['prefix' => 'api/v1'], function () use ($router) {
 	$router->post(
 		'/auth/register', 'UserController@store'
 	);
@@ -53,6 +69,18 @@ $router->group([
 		'auth-guard',
 		'throttle'
 	]], function () use ($router) {
+
+		$router->get('flags', function() {
+			return response()->json([
+				"data" => \App\Flag::all()
+			]);
+		});
+
+		$router->get('categories', function() {
+			return response()->json([
+				"data" => \App\Category::all()
+			]);
+		});
 
 		/*
 		|--------------------------------------------------------------------------
@@ -76,6 +104,12 @@ $router->group([
 			'/policies', 'StaticContentController@get'
 		);
 
+
+		/*
+		|--------------------------------------------------------------------------
+		| Users Auth
+		|--------------------------------------------------------------------------
+		*/
         $router->get(
             '/users/', 'UserController@index'
         );
@@ -108,8 +142,9 @@ $router->group([
 		|--------------------------------------------------------------------------
 		*/
 		$router->get('/recipes', 'RecipeController@index');
+		$router->get('/my/recipes', 'RecipeController@myRecipes');
 		$router->get('/recipes/{recipeId}', 'RecipeController@show');
-		$router->post('add-clap', 'RecipeController@addClap');
+		$router->post('/add-clap', 'RecipeController@addClap');
 
 		/*
 		|--------------------------------------------------------------------------
@@ -151,6 +186,16 @@ $router->group([
                 $router->patch(
                     '/users/{username}', 'UserController@update'
                 );
+
+				/*
+				|--------------------------------------------------------------------------
+				| Cookbooks
+				|--------------------------------------------------------------------------
+				*/
+
+				$router->get('/cookbooks', 'CookbookController@index');
+				$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
+				$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
 
 				/*
 				|--------------------------------------------------------------------------
