@@ -11,6 +11,7 @@ jobs:
         ports:
           - 32768
         env:
+          DB_PORT: '127.0.0.1'
           MYSQL_DATABASE: cookbook_test
           MYSQL_ROOT_PASSWORD: rootpass
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
