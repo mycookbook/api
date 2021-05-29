@@ -1,59 +1,42 @@
-# GitHub Action for Lumen with MariaDb
-name: Testing Lumen with MariaDb
+name: Lumen tests
 on: [push, pull_request]
 jobs:
-  cookbook-api-lumen:
-    name: API (PHP ${{ matrix.php-versions }})
+  laravel-tests:
     runs-on: ubuntu-latest
-    services:
-      mariadb:
-        image: mariadb:latest
-        ports:
-          - 32768
-        env:
-          DB_PORT: '127.0.0.1'
-          MYSQL_DATABASE: cookbook_test
-          MYSQL_USER: admin
-          MYSQL_PASSWORD: rootpass
-          MYSQL_ROOT_PASSWORD: rootpass
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
-      fail-fast: false
       matrix:
+        operating-system: ['ubuntu-latest']
         php-versions: ['7.4']
+        phpunit-versions: ['latest']
+        include:
+          - operating-system: 'ubuntu-latest'
+            php-versions: '7.4'
+            tools: phpunit:6.2.0
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: giftagram_development
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: development
+          MYSQL_ROOT_PASSWORD: development
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v2
+      - uses: nanasess/setup-php@master
         with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, dom, fileinfo, mysql
-      - name: Get composer cache directory
-        id: composercache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache composer dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composercache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-      - name: Install Composer dependencies
+          php-version: '7.4'
+      - name: Copy .env
         run: |
-          composer install --no-progress --prefer-dist --optimize-autoloader
-      - name: Prepare the application
-        run: php -r "file_exists('.env') || copy('.env.github', '.env');"
-      - name: Start MariaDB
-        uses: getong/mariadb-action@v1.1
-        with:
-          host port: 3800
-          container port: 3307
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mariadb version: '10.4.10'
-          mysql database: 'cookbook_test'
-          mysql root password: ${{ secrets.RootPassword }}
-          mysql user: 'developer'
-          mysql password: ${{ secrets.DatabasePassword }}
-      - name: Test with phpunit
-        run: vendor/bin/phpunit
+          php -r "file_exists('.env') || copy('.env.github', '.env');"
+      - name: Update Composer
+        run: sudo composer self-update 1.10.15 --no-interaction
+      - name: Run Composer Install
+        run: composer install --no-interaction
+      - name: check phpunit version
+        run: vendor/bin/phpunit --version
+      - name: Run Tests
+        run: vendor/bin/phpunit tests/
