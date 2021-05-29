@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers\Requests\Recipe;
 
-use App\Rules\JsonStructureRule;
-use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Http\Request;
+use App\Rules\JsonStructureRule;
 use App\Http\Controllers\Controller;
+use App\Rules\SupportedImageUrlFormatsRule;
 
 class StoreRequest extends Controller
 {
+	/**
+	 * StoreRequest constructor.
+	 *
+	 * @param Request $request
+	 * @throws \Illuminate\Validation\ValidationException
+	 */
 	public function __construct(Request $request)
 	{
 		$valid_request_payload = $this->validate(

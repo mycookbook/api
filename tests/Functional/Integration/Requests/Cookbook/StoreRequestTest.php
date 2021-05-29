@@ -2,15 +2,16 @@
 
 namespace Integration\Requests\Cookbook;
 
-use App\Flag;
-use App\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Requests\FormRequest;
 use App\Http\Controllers\Requests\Cookbook\StoreRequest;
+use Traits\CreatesObjects;
 
 class StoreRequestTest extends \TestCase
 {
+	use CreatesObjects;
+
 	/**
 	 * @test
 	 */
@@ -28,27 +29,13 @@ class StoreRequestTest extends \TestCase
 	 */
 	public function it_is_an_instance_of_cookbook_form_request()
 	{
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 
 		$this->assertInstanceOf(FormRequest::class, $request);
@@ -61,26 +48,13 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => '',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -91,24 +65,12 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -119,25 +81,13 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => '',
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -148,24 +98,12 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -176,25 +114,13 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(125),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -205,25 +131,13 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => '',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -234,24 +148,12 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -262,69 +164,47 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://dummuy-image.jpg',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
 	/**
 	 * @test
 	 */
-	public function it_throws_an_exception_if_categories_is_null()
+	public function it_throws_an_exception_if_category_id_is_null()
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
 
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => null,
-			'flag_id' => $flag->id
+			'category_id' => null,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
 	/**
 	 * @test
 	 */
-	public function it_throws_an_exception_if_given_categories_does_not_exist()
+	public function it_throws_an_exception_if_given_category_id_does_not_exist()
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
 
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([0]),
-			'flag_id' => $flag->id
+			'category_id' => 0,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		]));
 	}
 
@@ -335,18 +215,12 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
 			'flag_id' => ''
 		]));
 	}
@@ -358,18 +232,12 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id])
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
 		]));
 	}
 
@@ -380,48 +248,13 @@ class StoreRequestTest extends \TestCase
 	{
 		$this->expectException(\Illuminate\Validation\ValidationException::class);
 
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
 		$request = new StoreRequest(new Request([
 			'name' => 'sample title',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
 			'flag_id' => 0
-		]));
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_422_if_any_of_the_categories_does_not_exist_in_the_categories_table()
-	{
-		$this->expectException(\Illuminate\Validation\ValidationException::class);
-
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
-		$request = new StoreRequest(new Request([
-			'name' => 'sample title',
-			'description' => Str::random(126),
-			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id, 0]),
-			'flag_id' => $flag->id
 		]));
 	}
 
@@ -430,25 +263,13 @@ class StoreRequestTest extends \TestCase
 	 */
 	public function it_returns_the_request_object()
 	{
-		$category = new Category([
-			'name' => 'test_title',
-			'slug' => 'test_slug',
-			'color' => '000000'
-		]);
-		$category->save();
-
-		$flag = new Flag([
-			'flag' => 'ug',
-			'nationality' => 'Ugandan'
-		]);
-		$flag->save();
-
 		$requestData = [
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category->id]),
-			'flag_id' => $flag->id
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
+			'flag_id' => $this->createFlag()->id
 		];
 
 		$storeRequest = new StoreRequest(new Request($requestData));

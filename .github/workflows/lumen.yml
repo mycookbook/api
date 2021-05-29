@@ -1,4 +1,4 @@
-name: e2e tests
+name: Integration tests
 on: [push, pull_request]
 jobs:
   laravel-tests:
@@ -39,7 +39,5 @@ jobs:
         run: vendor/bin/phpunit --version
       - name: Run Functional tests
         run: vendor/bin/phpunit tests/Functional/
-      - name: Run Integration tests
-        run: vendor/bin/phpunit tests/Integration/
       - name: Run Unit tests
         run: vendor/bin/phpunit tests/Unit/
