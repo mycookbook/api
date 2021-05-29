@@ -25,7 +25,8 @@
       "ext-json": "*",
         "pusher/pusher-php-server": "^4.1",
         "illuminate/routing": "6.x-dev",
-        "league/flysystem": " ~1.0"
+        "league/flysystem": " ~1.0",
+      "ext-pdo": "*"
     },
     "require-dev": {
         "mockery/mockery": "~0.9",

@@ -3,13 +3,17 @@
 namespace App\Providers;
 
 use App\Adapters\Search\FulltextSearchAdapterInterface;
+use Illuminate\Support\Facades\App;
 use Tymon\JWTAuth\Providers\LumenServiceProvider;
 use App\Adapters\Search\MySqlAdapter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-	public function boot() {}
+	public function boot()
+	{
+//		dd(App::environment());
+	}
 
     /**
      * Register any application services.

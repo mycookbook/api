@@ -16,8 +16,10 @@
   </testsuites>
   <php>
     <env name="APP_ENV" value="testing"/>
+
     <env name="CACHE_DRIVER" value="array"/>
     <env name="QUEUE_DRIVER" value="sync"/>
+
     <env name="DB_CONNECTION" value="mysql"/>
     <env name="DB_DATABASE" value="cookbook_test"/>
   </php>

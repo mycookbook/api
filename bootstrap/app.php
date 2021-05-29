@@ -58,6 +58,7 @@ $app->configure('queue');
 $app->configure('mail');
 $app->configure('jwt');
 $app->configure('tinker');
+$app->configure('database');
 //$app->configure('broadcasting');
 
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
