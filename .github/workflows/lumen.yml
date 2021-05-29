@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_DATABASE: giftagram_development
+          MYSQL_DATABASE: cookbook_testing
           MYSQL_HOST: 127.0.0.1
           MYSQL_USER: admin
           MYSQL_PASSWORD: development
