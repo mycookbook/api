@@ -19,6 +19,34 @@ $router->get('/', function () {
 	}
 );
 
+$router->get('/api/v1/users/{id}/verify', function ($id){
+//	endpoint with admin priv
+	$user = \App\User::where(["id" => $id])->orWhere(["email" => $id])->get()->first();
+
+	$user->update([
+		'email_verified' => \Carbon\Carbon::now()
+	]);
+
+	return $user;
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Users Auth
+|--------------------------------------------------------------------------
+*/
+$router->group([
+	'prefix' => '/api/v1'], function () use ($router) {
+	$router->post(
+		'/auth/register', 'UserController@store'
+	);
+
+	$router->post(
+		'/auth/login', 'AuthController@login'
+	);
+});
+
 $router->group([
 	'prefix' => 'api/v1',
 	'middleware' => [
@@ -48,19 +76,6 @@ $router->group([
 			'/policies', 'StaticContentController@get'
 		);
 
-		/*
-		|--------------------------------------------------------------------------
-		| Users Auth
-		|--------------------------------------------------------------------------
-		*/
-        $router->post(
-            '/auth/register', 'UserController@store'
-        );
-
-        $router->post(
-            '/auth/login', 'AuthController@login'
-        );
-
         $router->get(
             '/users/', 'UserController@index'
         );
@@ -85,7 +100,7 @@ $router->group([
 		*/
 
 		$router->get('/cookbooks', 'CookbookController@index');
-		$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
+		$router->get('/cookbooks/{id}', 'CookbookController@show');
 
 		/*
 		|--------------------------------------------------------------------------

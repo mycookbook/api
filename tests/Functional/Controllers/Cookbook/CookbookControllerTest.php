@@ -3,6 +3,8 @@
 namespace Functional\Controllers\Cookbook;
 
 use App\Cookbook;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\WithoutMiddleware;
@@ -48,6 +50,8 @@ class CookbookControllerTest extends \TestCase
             ]
         );
 
+        $this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
         $res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'sally@foo.com',
@@ -56,6 +60,7 @@ class CookbookControllerTest extends \TestCase
         );
 
         $obj = json_decode($res->response->getContent());
+        dd($obj);
         $token = $obj->{'token'};
 
         $this->json(

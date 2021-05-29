@@ -2,6 +2,8 @@
 
 namespace Functional\Controllers\Auth;
 
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\WithoutMiddleware;
@@ -119,6 +121,12 @@ class AuthControllerTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$user = User::where(["email" => "sally@foo.com"])->get()->first();
+
+		$user->update([
+			"email_verified" => Carbon::now()
+		]);
 
 		$this->json(
 			'POST', '/api/v1/auth/login', [
