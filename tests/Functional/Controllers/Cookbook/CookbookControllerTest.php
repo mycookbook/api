@@ -3,8 +3,6 @@
 namespace Functional\Controllers\Cookbook;
 
 use App\Cookbook;
-use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\WithoutMiddleware;
@@ -60,16 +58,17 @@ class CookbookControllerTest extends \TestCase
         );
 
         $obj = json_decode($res->response->getContent());
-        dd($obj);
         $token = $obj->{'token'};
 
         $this->json(
             'POST', '/api/v1/cookbooks', [
                 'name' => 'sample cookbook',
                 'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'alt_text' => 'example',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-                'categories' => json_encode([$this->createCategory()->id]),
-                'flag_id' => $this->createFlag()->id
+                'category_id' => json_encode($this->createCategory()->id),
+                'flag_id' => $this->createFlag()->id,
+				'categories' => json_encode($this->createCategory()->id) . ',' . json_encode($this->createCategory()->id)
             ], [
                 'HTTP_Authorization' => 'Bearer' . $token
             ]
@@ -93,6 +92,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -110,9 +111,11 @@ class CookbookControllerTest extends \TestCase
 			'POST', '/api/v1/cookbooks', [
 			'name' => 'sample cookbook',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+			'alt_text' => 'example',
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$category1, $category2, $category2]),
-			'flag_id' => $this->createFlag()->id
+			'category_id' => $category1,
+			'flag_id' => $this->createFlag()->id,
+			'categories' => implode(',', [$category1, $category2])
 		], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -123,6 +126,98 @@ class CookbookControllerTest extends \TestCase
 		])->seeStatusCode(Response::HTTP_CREATED);
 
 		$this->assertCount(2, Cookbook::all()->last()->categories()->get());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_422_if_the_additional_categories_is_more_than_two()
+	{
+		$this->json(
+			'POST', '/api/v1/auth/register', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/login', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$this->json(
+			'POST', '/api/v1/cookbooks', [
+			'name' => 'sample cookbook',
+			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+			'alt_text' => 'example',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
+			'category_id' => $this->createCategory()->id,
+			'flag_id' => $this->createFlag()->id,
+			'categories' => implode(',', [$this->createCategory()->id, $this->createCategory()->id, $this->createCategory()->id])
+		], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJson(
+			[
+				'categories' => [
+					'The categories cannot exceed 2.'
+				]
+			]
+		)->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_422_if_the_additional_categories_is_invalid()
+	{
+		$this->json(
+			'POST', '/api/v1/auth/register', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/login', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$this->json(
+			'POST', '/api/v1/cookbooks', [
+			'name' => 'sample cookbook',
+			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+			'alt_text' => 'example',
+			'bookCoverImg' => 'http://lorempixel.com/400/200/',
+			'category_id' => $this->createCategory()->id,
+			'flag_id' => $this->createFlag()->id,
+			'categories' => implode(',', [190])
+		], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJson(
+			[
+				'categories' => [
+					'The selected categories is invalid.'
+				]
+			]
+		)->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 	}
 
     /**
@@ -138,6 +233,8 @@ class CookbookControllerTest extends \TestCase
             ]
         );
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
         $res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'sally@foo.com',
@@ -149,9 +246,10 @@ class CookbookControllerTest extends \TestCase
         $token = $obj->{'token'};
 
         $this->post(
-            '/api/v1/cookbooks',
-            [],
-			['HTTP_Authorization' => 'Bearer' . $token]
+            '/api/v1/cookbooks', [],
+			[
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
         )->seeJson(
             [
                 'name' => [
@@ -162,12 +260,67 @@ class CookbookControllerTest extends \TestCase
                 ],
                 'bookCoverImg' => [
                   'The book cover img field is required.'
-                ]
+                ],
+				"category_id" => [
+					"The category id field is required."
+				],
+				"flag_id" => [
+					"The flag id field is required."
+				]
             ]
         );
 
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_a_422_if_the_name_field_is_null()
+	{
+		$this->json(
+			'POST', '/api/v1/auth/register', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/login', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$this->post(
+			'/api/v1/cookbooks',
+			[
+				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
+			], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJson(
+			[
+				'name' => [
+					'The name field is required.'
+				]
+			]
+		);
+
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+	}
 
 	/**
 	 * @test
@@ -181,6 +334,8 @@ class CookbookControllerTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -199,7 +354,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => '',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -208,97 +365,6 @@ class CookbookControllerTest extends \TestCase
 			[
 				'name' => [
 					'The name field is required.'
-				]
-			]
-		);
-
-		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_422_if_the_name_field_is_null()
-	{
-		$this->json(
-			'POST', '/api/v1/auth/register', [
-				'name' => 'Sally',
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$res = $this->json(
-			'POST', '/api/v1/auth/login', [
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		
-		$obj = json_decode($res->response->getContent());
-		$token = $obj->{'token'};
-
-		$this->post(
-			'/api/v1/cookbooks',
-			[
-				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
-				'flag_id' => $this->createFlag()->id
-			], [
-				'HTTP_Authorization' => 'Bearer' . $token
-			]
-		)->seeJson(
-			[
-				'name' => [
-					'The name field is required.'
-				]
-			]
-		);
-
-		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_422_if_the_description_field_is_empty()
-	{
-		$this->json(
-			'POST', '/api/v1/auth/register', [
-				'name' => 'Sally',
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		$res = $this->json(
-			'POST', '/api/v1/auth/login', [
-				'email' => 'sally@foo.com',
-				'password' => 'salis'
-			]
-		);
-
-		
-		$obj = json_decode($res->response->getContent());
-		$token = $obj->{'token'};
-
-		$this->post(
-			'/api/v1/cookbooks',
-			[
-				'name' => 'sample cookbook',
-				'description' => '',
-				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
-				'flag_id' => $this->createFlag()->id
-			], [
-				'HTTP_Authorization' => 'Bearer' . $token
-			]
-		)->seeJson(
-			[
-				'description' => [
-					'The description field is required.'
 				]
 			]
 		);
@@ -319,6 +385,57 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
+		$res = $this->json(
+			'POST', '/api/v1/auth/login', [
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+
+		$obj = json_decode($res->response->getContent());
+		$token = $obj->{'token'};
+
+		$this->post(
+			'/api/v1/cookbooks',
+			[
+				'name' => 'sample cookbook',
+				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
+			], [
+				'HTTP_Authorization' => 'Bearer' . $token
+			]
+		)->seeJson(
+			[
+				'description' => [
+					'The description field is required.'
+				]
+			]
+		);
+
+		$this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_a_422_if_the_description_field_is_empty()
+	{
+		$this->json(
+			'POST', '/api/v1/auth/register', [
+				'name' => 'Sally',
+				'email' => 'sally@foo.com',
+				'password' => 'salis'
+			]
+		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -334,8 +451,11 @@ class CookbookControllerTest extends \TestCase
 			'/api/v1/cookbooks',
 			[
 				'name' => 'sample cookbook',
+				'description' => '',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -364,6 +484,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -381,7 +503,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'short description',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -410,6 +534,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -427,7 +553,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => '',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -456,6 +584,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -472,7 +602,9 @@ class CookbookControllerTest extends \TestCase
 			[
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -501,6 +633,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -518,7 +652,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'invalid-url',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -526,7 +662,7 @@ class CookbookControllerTest extends \TestCase
 		)->seeJson(
 			[
 				'bookCoverImg' => [
-					'The given url is not a valid image url'
+					'The book cover img format is not supported'
 				]
 			]
 		);
@@ -547,6 +683,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -564,15 +702,17 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => '',
+				'alt_text' => 'example',
+				'category_id' => '',
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
 		)->seeJson(
 			[
-				'categories' => [
-					'The categories field is required.'
+				'category_id' => [
+					'The category id field is required.'
 				]
 			]
 		);
@@ -593,6 +733,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -609,14 +751,16 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
+				'alt_text' => 'example',
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
 		)->seeJson(
 			[
-				'categories' => [
-					'The categories field is required.'
+				'category_id' => [
+					'The category id field is required.'
 				]
 			]
 		);
@@ -637,6 +781,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -653,8 +799,10 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'flag_id' => $this->createFlag()->id,
-				'categories' => json_encode([0])
+				'alt_text' => 'example',
+				'category_id' => 0,
+				'categories' => implode(',', [$this->createCategory()->id]),
+				'flag_id' => $this->createFlag()->id
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -676,6 +824,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -693,7 +843,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => ''
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -722,6 +874,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -738,7 +892,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id])
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id])
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -766,6 +922,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -782,7 +940,9 @@ class CookbookControllerTest extends \TestCase
 				'name' => 'sample cookbook',
 				'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 				'bookCoverImg' => 'http://lorempixel.com/400/200/',
-				'categories' => json_encode([$this->createCategory()->id]),
+				'alt_text' => 'example',
+				'category_id' => $this->createCategory()->id,
+				'categories' => implode(',', [$this->createCategory()->id]),
 				'flag_id' => 0
 			], [
 				'HTTP_Authorization' => 'Bearer' . $token
@@ -811,6 +971,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -823,9 +985,9 @@ class CookbookControllerTest extends \TestCase
 
 		$cookbook = $this->createCookbook();
 
-		$this->json(
-			'PUT', '/api/v1/cookbooks' . '/' . $cookbook->id, [
-			'name' => 'new title'
+		$response = $this->json(
+			'PUT', '/api/v1/cookbooks/' . $cookbook->id, [
+				'name' => 'new title'
 		], [
 				'HTTP_Authorization' => 'Bearer' . $token
 			]
@@ -846,6 +1008,8 @@ class CookbookControllerTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -881,6 +1045,8 @@ class CookbookControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -914,6 +1080,8 @@ class CookbookControllerTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [

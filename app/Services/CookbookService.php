@@ -103,9 +103,13 @@ class CookbookService implements serviceInterface
 		//TODO: Cookbook Policy to ascertain that user is able to update this cookbook
 		$cookbook = $this->get($id);
 
+		$data = $request->only([
+			'name', 'description', 'bookCoverImg', 'category_id', 'flag_id', 'categories', 'alt_text'
+		]);
+
         return response(
             [
-                'updated' => $cookbook->update($request->all()),
+                'updated' => $cookbook->update($data),
             ],Response::HTTP_OK
         );
     }

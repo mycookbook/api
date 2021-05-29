@@ -48,7 +48,8 @@ trait CreatesObjects
 		$category = new Category([
 			'name' => 'test_title',
 			'slug' => 'test_slug',
-			'color' => '000000'
+			'color' => '000000',
+			'emoji' => ''
 		]);
 
 		if ($category->save()) {
@@ -88,9 +89,11 @@ trait CreatesObjects
 			'name' => 'sample cookbook',
 			'description' => Str::random(126),
 			'bookCoverImg' => 'http://lorempixel.com/400/200/',
-			'categories' => json_encode([$this->category->id]),
+			'category_id' => $this->createCategory()->id,
+			'categories' => implode(',', [$this->createCategory()->id]),
 			'flag_id' => $this->flag->id,
-			'user_id' => $this->user->id
+			'user_id' => $this->user->id,
+			'alt_text' => 'example'
 		]);
 
 		if ($cookbook->save()) {

@@ -129,15 +129,6 @@ $router->group([
 
 		/*
 		|--------------------------------------------------------------------------
-		| Cookbooks
-		|--------------------------------------------------------------------------
-		*/
-
-		$router->get('/cookbooks', 'CookbookController@index');
-		$router->get('/cookbooks/{id}', 'CookbookController@show');
-
-		/*
-		|--------------------------------------------------------------------------
 		| Recipes
 		|--------------------------------------------------------------------------
 		*/
@@ -189,16 +180,6 @@ $router->group([
 
 				/*
 				|--------------------------------------------------------------------------
-				| Cookbooks
-				|--------------------------------------------------------------------------
-				*/
-
-				$router->get('/cookbooks', 'CookbookController@index');
-				$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
-				$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
-
-				/*
-				|--------------------------------------------------------------------------
 				| Recipes Routes
 				|--------------------------------------------------------------------------
 				*/
@@ -215,9 +196,13 @@ $router->group([
 				|--------------------------------------------------------------------------
 				*/
 
-				$router->post('/cookbooks', 'CookbookController@store'); //create new cookbook
-				$router->put('/cookbooks/{cookbookId}', 'CookbookController@update'); //update one cookbook
-				$router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete'); //delete one cookbook
+				$router->get('/cookbooks', 'CookbookController@index');
+				$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
+				$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
+
+				$router->post('/cookbooks', 'CookbookController@store');
+				$router->put('/cookbooks/{id}', 'CookbookController@update');
+				$router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
             }
         );
     }

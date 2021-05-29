@@ -54,6 +54,7 @@ class CookbookController extends Controller
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \Tymon\JWTAuth\Exceptions\JWTException
+	 * @throws \Exception
 	 */
     public function store(StoreRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
 	{
@@ -64,15 +65,15 @@ class CookbookController extends Controller
 	/**
 	 * Update cookbook
 	 *
-	 * @param Request $request req
-	 * @param int $cookbookId
+	 * @param int $id
 	 *
+	 * @param Request $request req
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
-    public function update(Request $request, $cookbookId)
+    public function update(int $id, Request $request)
     {
-        return $this->service->update($request, $cookbookId);
+        return $this->service->update($request, $id);
     }
 
 	/**
@@ -92,8 +93,7 @@ class CookbookController extends Controller
 	 * Find resource
 	 *
 	 * @param mixed $cookbookId
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
     public function show($cookbookId)
