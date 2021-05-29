@@ -61,6 +61,15 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 	$router->post(
 		'/auth/login', 'AuthController@login'
 	);
+
+	$router->get('/definitions', 'DefinitionsController@index');
+	$router->get(
+		'/policies', 'StaticContentController@get'
+	);
+
+	$router->get('/cookbooks', 'CookbookController@index');
+	$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
+
 });
 
 $router->group([
@@ -94,16 +103,6 @@ $router->group([
 		$router->post(
 			'/keywords', 'SearchController@writeToCsv'
 		);
-
-		/*
-		|--------------------------------------------------------------------------
-		| Static content - user policies, terms and conditions
-		|--------------------------------------------------------------------------
-		*/
-		$router->get(
-			'/policies', 'StaticContentController@get'
-		);
-
 
 		/*
 		|--------------------------------------------------------------------------
@@ -144,14 +143,7 @@ $router->group([
 		*/
 		$router->post('subscriptions', 'SubscriptionController@store');
 
-		/*
-		|--------------------------------------------------------------------------
-		| Categories and Definitions
-		|--------------------------------------------------------------------------
-		*/
-
 		$router->get('/categories', 'CategoryController@index'); //get all categories
-		$router->get('/definitions', 'DefinitionsController@index'); //get all definitions
 
 		/**
 		 * Email verification
@@ -195,10 +187,7 @@ $router->group([
 				| Cookbooks Routes
 				|--------------------------------------------------------------------------
 				*/
-
-				$router->get('/cookbooks', 'CookbookController@index');
 				$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
-				$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
 
 				$router->post('/cookbooks', 'CookbookController@store');
 				$router->put('/cookbooks/{id}', 'CookbookController@update');
