@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
 {
 	public function boot()
 	{
-//		dd(App::environment());
+//		dd(env('TESTING_DB_DATABASE'));
 	}
 
     /**
