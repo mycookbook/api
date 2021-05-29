@@ -14,13 +14,13 @@ jobs:
             tools: phpunit:6.2.0
     services:
       mysql:
-        image: mysql:5.7
+        image: mariadb:latest
         env:
           MYSQL_DATABASE: cookbook_test
           MYSQL_HOST: 127.0.0.1
           MYSQL_USER: admin
-          MYSQL_PASSWORD: development
-          MYSQL_ROOT_PASSWORD: development
+          MYSQL_PASSWORD: rootpass
+          MYSQL_ROOT_PASSWORD: rootpass
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
