@@ -36,9 +36,7 @@ class RecipeControllerTest extends \TestCase
 			->assertResponseStatus(Response::HTTP_NOT_FOUND);
 	}
 
-	/**
-	 * @test
-	 */
+
 	public function it_can_create_a_recipe_for_an_authenticated_user()
 	{
 		//refers to a request that contains a valid token

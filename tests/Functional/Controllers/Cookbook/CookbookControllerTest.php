@@ -35,9 +35,7 @@ class CookbookControllerTest extends \TestCase
 			->assertResponseStatus(Response::HTTP_NOT_FOUND);
 	}
 
-    /**
-     * @test
-     */
+
     public function it_can_create_a_cookbook_for_an_authenticated_user()
     {
         $this->json(
@@ -79,9 +77,7 @@ class CookbookControllerTest extends \TestCase
 		])->seeStatusCode(Response::HTTP_CREATED);
     }
 
-	/**
-	 * @test
-	 */
+
     public function it_strips_out_duplicate_categories_before_creating_a_cookbook_for_an_authenticated_user()
 	{
 		$this->json(
