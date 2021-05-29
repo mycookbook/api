@@ -2,6 +2,7 @@
 
 namespace Functional\Controllers\Recipe;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Testing\DatabaseMigrations;
@@ -49,6 +50,8 @@ class RecipeControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -59,9 +62,9 @@ class RecipeControllerTest extends \TestCase
 		$obj = json_decode($res->response->getContent());
 		$token = $obj->{'token'};
 
-		$this->json(
+		$r = $this->json(
 			'POST', '/api/v1/recipes', [
-			'title' => 'sample recipe',
+			'name' => 'sample recipe',
 			'ingredients' => '{"data": [ "onions", "red pepper", "vegetable oil" ]}',
 			'description' => 'Qui quia vel dolor dolores aut in. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incid idunt.',
 			'summary' => Str::random(100),
@@ -95,6 +98,8 @@ class RecipeControllerTest extends \TestCase
 				'password' => 'salis'
 			]
 		);
+
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
 
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
@@ -133,6 +138,8 @@ class RecipeControllerTest extends \TestCase
 			]
 		);
 
+		$this->json('GET', '/api/v1/users/sally@foo.com/verify');
+
 		$res = $this->json(
 			'POST', '/api/v1/auth/login', [
 				'email' => 'sally@foo.com',
@@ -153,7 +160,4 @@ class RecipeControllerTest extends \TestCase
 			'deleted' => true
 		])->seeStatusCode(Response::HTTP_ACCEPTED);
 	}
-
-	public function an_authenticated_user_can_update_a_recipe_they_dont_own() {}
-	public function an_authenticated_user_cannot_delete_a_recipe_they_dont_own() {}
 }

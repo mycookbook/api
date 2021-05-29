@@ -2,8 +2,8 @@
 
 namespace Functional\Controllers\User;
 
-use App\Jobs\SendEmail;
 use Illuminate\Http\Response;
+use App\Jobs\SendEmailNotification;
 use Illuminate\Support\Facades\Queue;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\WithoutMiddleware;
@@ -39,7 +39,7 @@ class UserControllerTest extends \TestCase
 			]
 		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
 	}
 
     /**
@@ -65,7 +65,7 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -91,7 +91,7 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -117,7 +117,7 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -143,7 +143,7 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -169,7 +169,7 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -197,7 +197,7 @@ class UserControllerTest extends \TestCase
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmail::class);
+		Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**

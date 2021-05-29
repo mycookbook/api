@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Requests\Recipe;
 
 use App\Rules\JsonStructureRule;
+use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -14,7 +15,7 @@ class StoreRequest extends Controller
 			$request, [
 				'name' => 'required|string',
 				'ingredients' => 'required|json',
-				'imgUrl' => 'required|img_url',
+				'imgUrl' => ['required', new SupportedImageUrlFormatsRule()],
 				'description' => 'required|string', //EDITOR to include steps
 				'cookbookId' => 'required|exists:cookbooks,id',
 				'summary' => 'required|string',
