@@ -48,7 +48,9 @@ class AuthorizationGuard
 //			throw new UnauthorizedClientException();
 //		}
 
+
 		$token = JWTAuth::getToken();
+
 		$user_id = JWTAuth::getPayload($token)->toArray()["sub"];
 
 		$request->merge(["user_id" => $user_id]);

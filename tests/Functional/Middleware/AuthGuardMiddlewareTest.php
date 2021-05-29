@@ -9,9 +9,7 @@ use Illuminate\Support\Str;
 
 class AuthGuardMiddlewareTest extends \TestCase
 {
-	/**
-	 * @test
-	 */
+
 	public function public_cookbooks_routes()
 	{
 		$this->it_responds_with_401_if_the_api_key_and_client_secret_are_not_given();
