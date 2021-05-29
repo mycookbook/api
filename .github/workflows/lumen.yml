@@ -42,7 +42,7 @@ jobs:
         run: |
           composer install --no-progress --prefer-dist --optimize-autoloader
       - name: Prepare the application
-        run: php -r "file_exists('.env') || copy('.env', '.env.github');"
+        run: php -r "file_exists('.env') || copy('.env.github', '.env');"
       - name: Start MariaDB
         uses: getong/mariadb-action@v1.1
         with:
@@ -56,4 +56,4 @@ jobs:
           mysql user: 'developer'
           mysql password: ${{ secrets.DatabasePassword }}
       - name: Test with phpunit
-        run: php artisan migrate && vendor/bin/phpunit
+        run: vendor/bin/phpunit
