@@ -36,7 +36,5 @@ jobs:
       - name: Run Composer Install
         run: composer install --no-interaction
       - name: run tests
-        run: vendor/bin/phpunit --coverage-clover ./coverage.xml
-      - name: Test coverage report
-        uses: TonyBogdanov/coverage@master
+        run: vendor/bin/phpunit
 
