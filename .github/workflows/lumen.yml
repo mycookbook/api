@@ -28,6 +28,8 @@ jobs:
       - uses: nanasess/setup-php@master
         with:
           php-version: '7.4'
+          extensions: dom, mbstring
+          coverage: xdebug
       - name: Copy .env
         run: |
           php -r "file_exists('.env') || copy('.env.github', '.env');"
@@ -36,5 +38,5 @@ jobs:
       - name: Run Composer Install
         run: composer install --no-interaction
       - name: run tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit tests/ --coverage-text
 
