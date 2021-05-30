@@ -30,6 +30,10 @@ jobs:
           php-version: '7.4'
           extensions: dom, mbstring
           coverage: xdebug
+      - name: Install Xdebug
+        run: pecl install xdebug
+      - name: Enable Xdebug
+        run: php -i | grep xdebug
       - name: Copy .env
         run: |
           php -r "file_exists('.env') || copy('.env.github', '.env');"
@@ -37,6 +41,6 @@ jobs:
         run: sudo composer self-update 1.10.15 --no-interaction
       - name: Run Composer Install
         run: composer install --no-interaction
-      - name: run tests
+      - name: Run Tests
         run: vendor/bin/phpunit tests/ --coverage-text
 
