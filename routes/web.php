@@ -47,13 +47,7 @@ $router->get('api/v1/create-auth-client', function() {
 	return null;
 });
 
-/*
-|--------------------------------------------------------------------------
-| Users Auth
-|--------------------------------------------------------------------------
-*/
-
-$router->group(['prefix' => 'api/v1'], function () use ($router) {
+$router->group(['prefix' => 'api/v1',], function () use ($router) {
 	$router->post(
 		'/auth/register', 'UserController@store'
 	);
@@ -73,14 +67,19 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 	$router->get('/recipes', 'RecipeController@index');
 	$router->get('/recipes/{recipeId}', 'RecipeController@show');
 
-});
+	$router->get(
+		'/users/', 'UserController@index'
+	);
 
-$router->group([
-	'prefix' => 'api/v1',
-	'middleware' => [
-		'auth-guard',
-		'throttle'
-	]], function () use ($router) {
+	$router->get(
+		'/users/{username}', 'UserController@show'
+	);
+
+	$router->group([
+		'middleware' => [
+			'auth-guard',
+			'throttle'
+		]], function () use ($router) {
 
 		$router->get('flags', function() {
 			return response()->json([
@@ -99,8 +98,8 @@ $router->group([
 		| Search
 		|--------------------------------------------------------------------------
 		*/
-        $router->get(
-        	'/search', 'SearchController@fetch'
+		$router->get(
+			'/search', 'SearchController@fetch'
 		);
 
 		$router->post(
@@ -109,25 +108,12 @@ $router->group([
 
 		/*
 		|--------------------------------------------------------------------------
-		| Users Auth
-		|--------------------------------------------------------------------------
-		*/
-        $router->get(
-            '/users/', 'UserController@index'
-        );
-
-        $router->get(
-            '/users/{username}', 'UserController@show'
-        );
-
-		/*
-		|--------------------------------------------------------------------------
 		| Statistics
 		|--------------------------------------------------------------------------
 		*/
-        $router->get(
-            '/stats/', 'StatsController@index'
-        );
+		$router->get(
+			'/stats/', 'StatsController@index'
+		);
 
 		/*
 		|--------------------------------------------------------------------------
@@ -144,7 +130,7 @@ $router->group([
 		*/
 		$router->post('subscriptions', 'SubscriptionController@store');
 
-		$router->get('/categories', 'CategoryController@index'); //get all categories
+		$router->get('/categories', 'CategoryController@index');
 
 		/**
 		 * Email verification
@@ -157,43 +143,45 @@ $router->group([
 		| PROTECTED ROUTES
 		|--------------------------------------------------------------------------
 		*/
-        $router->group(
-            [
-            	'middleware' => [
+		$router->group(
+			[
+				'middleware' => [
 					'jwt.auth'
 				]
 			], function () use ($router) {
-                $router->put(
-                    '/users/{username}', 'UserController@update'
-                );
+			$router->put(
+				'/users/{username}', 'UserController@update'
+			);
 
-                $router->patch(
-                    '/users/{username}', 'UserController@update'
-                );
+			$router->patch(
+				'/users/{username}', 'UserController@update'
+			);
 
-				/*
-				|--------------------------------------------------------------------------
-				| Recipes Routes
-				|--------------------------------------------------------------------------
-				*/
-				$router->post('/recipes', 'RecipeController@store');
+			/*
+			|--------------------------------------------------------------------------
+			| Recipes Routes
+			|--------------------------------------------------------------------------
+			*/
+			$router->post('/recipes', 'RecipeController@store');
 
-				$router->put('/recipes/{recipeId}', 'RecipeController@update')
-					->patch('/recipes/{recipeId}', 'RecipeController@update');
+			$router->put('/recipes/{recipeId}', 'RecipeController@update')
+				->patch('/recipes/{recipeId}', 'RecipeController@update');
 
-				$router->delete('/recipes/{recipeId}', 'RecipeController@delete');
+			$router->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
-				/*
-				|--------------------------------------------------------------------------
-				| Cookbooks Routes
-				|--------------------------------------------------------------------------
-				*/
-				$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
+			/*
+			|--------------------------------------------------------------------------
+			| Cookbooks Routes
+			|--------------------------------------------------------------------------
+			*/
+			$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
 
-				$router->post('/cookbooks', 'CookbookController@store');
-				$router->put('/cookbooks/{id}', 'CookbookController@update');
-				$router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
-            }
-        );
+			$router->post('/cookbooks', 'CookbookController@store');
+			$router->put('/cookbooks/{id}', 'CookbookController@update');
+			$router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
+		}
+		);
+
+	});
     }
 );
