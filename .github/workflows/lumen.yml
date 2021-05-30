@@ -30,10 +30,8 @@ jobs:
           php-version: '7.4'
           extensions: dom, mbstring
           coverage: xdebug
-      - name: Install Xdebug
-        run: pecl install xdebug
-      - name: Enable Xdebug
-        run: php -i | grep xdebug
+      - name: Xdebug Action
+        uses: MilesChou/docker-xdebug@v1.1.0
       - name: Copy .env
         run: |
           php -r "file_exists('.env') || copy('.env.github', '.env');"
