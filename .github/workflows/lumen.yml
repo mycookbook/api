@@ -28,10 +28,6 @@ jobs:
       - uses: nanasess/setup-php@master
         with:
           php-version: '7.4'
-          extensions: dom, mbstring
-          coverage: xdebug
-      - name: Xdebug Action
-        uses: MilesChou/docker-xdebug@v1.1.0
       - name: Copy .env
         run: |
           php -r "file_exists('.env') || copy('.env.github', '.env');"
@@ -39,6 +35,6 @@ jobs:
         run: sudo composer self-update 1.10.15 --no-interaction
       - name: Run Composer Install
         run: composer install --no-interaction
-      - name: Run Tests
-        run: vendor/bin/phpunit tests/ --coverage-text
+      - name: run tests
+        run: vendor/bin/phpunit
 
