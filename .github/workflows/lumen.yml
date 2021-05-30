@@ -39,3 +39,10 @@ jobs:
         run: vendor/bin/phpunit tests/Functional/
       - name: Run Unit tests
         run: vendor/bin/phpunit tests/Unit/
+      - name: Check test coverage
+        id: test-coverage
+        uses: johanvanhelden/gha-clover-test-coverage-check@v1
+        with:
+          percentage: "95"
+          filename: "coverage.xml"
+
