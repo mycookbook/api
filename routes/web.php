@@ -75,6 +75,14 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
 		'/users/{username}', 'UserController@show'
 	);
 
+	$router->get(
+		'/search', 'SearchController@fetch'
+	);
+
+	$router->post(
+		'/keywords', 'SearchController@writeToCsv'
+	);
+
 	$router->group([
 		'middleware' => [
 			'auth-guard',
@@ -92,19 +100,6 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
 				"data" => \App\Category::all()
 			]);
 		});
-
-		/*
-		|--------------------------------------------------------------------------
-		| Search
-		|--------------------------------------------------------------------------
-		*/
-		$router->get(
-			'/search', 'SearchController@fetch'
-		);
-
-		$router->post(
-			'/keywords', 'SearchController@writeToCsv'
-		);
 
 		/*
 		|--------------------------------------------------------------------------
