@@ -35,6 +35,27 @@ class CookbookControllerTest extends \TestCase
 			->assertResponseStatus(Response::HTTP_NOT_FOUND);
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_responds_with_a_200_when_retrieving_a_cookbook_by_id()
+	{
+		$cookbook = $this->createCookbook();
+
+		$this->json('GET', '/api/v1/cookbooks/' . $cookbook->id)
+			->assertResponseStatus(Response::HTTP_OK);
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_responds_with_a_200_when_retrieving_a_cookbook_by_slug()
+	{
+		$cookbook = $this->createCookbook();
+
+		$this->json('GET', '/api/v1/cookbooks/' . $cookbook->slug)
+			->assertResponseStatus(Response::HTTP_OK);
+	}
 
     public function it_can_create_a_cookbook_for_an_authenticated_user()
     {

@@ -68,7 +68,10 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
 	);
 
 	$router->get('/cookbooks', 'CookbookController@index');
-	$router->get('/cookbooks/{cookbookId}', 'CookbookController@show');
+	$router->get('/cookbooks/{id}', 'CookbookController@show');
+
+	$router->get('/recipes', 'RecipeController@index');
+	$router->get('/recipes/{recipeId}', 'RecipeController@show');
 
 });
 
@@ -131,9 +134,7 @@ $router->group([
 		| Recipes
 		|--------------------------------------------------------------------------
 		*/
-		$router->get('/recipes', 'RecipeController@index');
 		$router->get('/my/recipes', 'RecipeController@myRecipes');
-		$router->get('/recipes/{recipeId}', 'RecipeController@show');
 		$router->post('/add-clap', 'RecipeController@addClap');
 
 		/*

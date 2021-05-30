@@ -134,14 +134,14 @@ class CookbookService implements serviceInterface
     }
 
 	/**
-	 * @param mixed $id
+	 * @param mixed $option
 	 *
 	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
-	public function show($id)
+	public function show($option)
 	{
-		$cookbook = $this->get($id);
+		$cookbook = $this->get($option);
 
 		if (!$cookbook) {
 			throw new CookbookModelNotFoundException();

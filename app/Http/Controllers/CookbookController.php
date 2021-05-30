@@ -92,12 +92,12 @@ class CookbookController extends Controller
 	/**
 	 * Find resource
 	 *
-	 * @param mixed $cookbookId
+	 * @param mixed $id
 	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws \App\Exceptions\CookbookModelNotFoundException
 	 */
-    public function show($cookbookId)
+    public function show($id)
     {
-    	return $this->service->show($cookbookId);
+    	return $this->service->show($id);
     }
 }
