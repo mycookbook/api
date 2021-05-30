@@ -35,11 +35,9 @@ jobs:
         run: sudo composer self-update 1.10.15 --no-interaction
       - name: Run Composer Install
         run: composer install --no-interaction
-      - name: Run Functional tests
-        run: vendor/bin/phpunit tests/Functional/
-      - name: Run Unit tests
-        run: vendor/bin/phpunit tests/Unit/
-      - name: Check test coverage
+      - name: run tests
+        run: vendor/bin/phpunit --coverage-clover ./coverage.xml
+      - name: check test coverage
         id: test-coverage
         uses: johanvanhelden/gha-clover-test-coverage-check@v1
         with:
