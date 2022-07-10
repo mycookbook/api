@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
@@ -33,12 +32,10 @@ class Handler extends ExceptionHandler
 	 *
 	 * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
 	 *
-	 * @param \Exception $e exception
-	 *
 	 * @return void
 	 * @throws Exception
 	 */
-    public function report(Exception $e)
+    public function report(\Throwable $e)
     {
 		if (app()->bound('sentry') && $this->shouldReport($e)) {
 			app('sentry')->captureException($e);
@@ -50,14 +47,8 @@ class Handler extends ExceptionHandler
 	/**
 	 * Render an exception into an HTTP response.
 	 *
-	 * @param \Illuminate\Http\Request $request request
-	 * @param Exception $e exception
-	 *
-	 * @throws Exception
-	 *
-	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-    public function render($request, Exception $e)
+    public function render($request, \Throwable $e)
     {
 		if (app()->bound('sentry') && $this->shouldReport($e)) {
 			app('sentry')->captureException($e);

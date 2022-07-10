@@ -1,26 +1,12 @@
 <?php
 
-/**
- * PHP version 8.0.0
- * @author   Florence Okosun <okosununzflorence@gmail.com>
- */
-
 use Illuminate\Http\Response;
 
 $router->get('/', function () {
-	return response([
-			'path' => '/',
-			'api-version' => 'v1.0',
-			'releases' => [
-				'latest' => null,
-			],
-			'contribute' => 'mailto:developer@cookbookshq.com'
-		], Response::HTTP_OK);
-	}
-);
+    dd('Cookbooks api v1');
+});
 
 $router->get('/api/v1/users/{id}/verify', function ($id){
-//	endpoint with admin priv
 	$user = \App\User::where(["id" => $id])->orWhere(["email" => $id])->get()->first();
 
 	$user->update([

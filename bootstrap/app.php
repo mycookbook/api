@@ -8,7 +8,7 @@ use Laravel\Tinker\TinkerServiceProvider;
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    (Dotenv\Dotenv::create(__DIR__.'/../'))->load();
+    (Dotenv\Dotenv::createImmutable(__DIR__.'/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
@@ -101,7 +101,7 @@ $app->routeMiddleware([
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Fruitcake\Cors\CorsServiceProvider::class);
-$app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
+//$app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
 $app->register(Sentry\Laravel\ServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(TinkerServiceProvider::class);

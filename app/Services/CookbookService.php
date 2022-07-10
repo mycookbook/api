@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Interfaces\serviceInterface;
 use App\Exceptions\CookbookModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Class CookbookService
@@ -15,18 +16,21 @@ class CookbookService implements serviceInterface
 {
 	/**
 	 * Return all cookbooks
-	 *
-	 * @param null $user_id
-	 * @return \Illuminate\Http\JsonResponse
 	 */
-    public function index($user_id = null): \Illuminate\Http\JsonResponse
+    public function index($user_id = null)
 	{
-		$cookbooks = Cookbook::with([
-			'categories',
-			'flag',
-			'recipes',
-			'users'
-		]);
+        if (Cache::has('cookbooks')) {
+            $cookbooks = Cache::get('cookbooks');
+        } else {
+            $cookbooks = Cookbook::with([
+                'categories',
+                'flag',
+                'recipes',
+                'users'
+            ]);
+
+            Cache::add('cookbooks', $cookbooks);
+        }
 
 		if ($user_id) {
 			return response()->json(
@@ -136,7 +140,6 @@ class CookbookService implements serviceInterface
 	/**
 	 * @param mixed $option
 	 *
-	 * @return Response|\Laravel\Lumen\Http\ResponseFactory
 	 * @throws CookbookModelNotFoundException
 	 */
 	public function show($option)
