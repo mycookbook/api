@@ -30,7 +30,7 @@ class Cookbook extends Model
      *
      * @var array
      */
-    protected $appends = ['_links', 'recipes_count', 'categories', 'author'];
+    protected $appends = ['_links', 'recipes_count', 'categories', 'author', 'contributors'];
 
     /**
      * Set attributes links
@@ -136,7 +136,17 @@ class Cookbook extends Model
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
 	public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	{
+    {
 		return $this->belongsToMany(User::class);
 	}
+
+    /**
+     * @return array
+     */
+    public function getContributorsAttribute(): array
+    {
+        $contributor_ids = $this->recipes()->get()->pluck("user_id")->toArray();
+
+        return array_values(array_unique($contributor_ids));
+    }
 }

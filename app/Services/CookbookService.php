@@ -19,18 +19,12 @@ class CookbookService implements serviceInterface
 	 */
     public function index($user_id = null)
 	{
-        if (Cache::has('cookbooks')) {
-            $cookbooks = Cache::get('cookbooks');
-        } else {
-            $cookbooks = Cookbook::with([
-                'categories',
-                'flag',
-                'recipes',
-                'users'
-            ]);
-
-            Cache::add('cookbooks', $cookbooks);
-        }
+        $cookbooks = Cookbook::with([
+            'categories',
+            'flag',
+            'recipes',
+            'users'
+        ]);
 
 		if ($user_id) {
 			return response()->json(
@@ -157,16 +151,16 @@ class CookbookService implements serviceInterface
 		);
 	}
 
-	/**
-	 * Find cookbook record
-	 *
-	 * @param $q
-	 * @return mixed
-	 * @throws CookbookModelNotFoundException
-	 */
+    /**
+     * Find cookbook record
+     *
+     * @param $q
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
+     * @throws CookbookModelNotFoundException
+     */
 	public function get($q)
 	{
-		$record =  Cookbook::with('Users')
+		$record = Cookbook::with('Users')
 			->where('id', $q)
 			->orWhere('slug', $q)
 			->first();
