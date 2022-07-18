@@ -3,7 +3,7 @@
 use Illuminate\Http\Response;
 
 $router->get('/', function () {
-    dd('Cookbooks api v1');
+    return 'Cookbooks api v1';
 });
 
 $router->get('/api/v1/users/{id}/verify', function ($id) {
