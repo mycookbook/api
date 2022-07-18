@@ -102,7 +102,6 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
         |--------------------------------------------------------------------------
         */
         $router->get('/my/recipes', 'RecipeController@myRecipes');
-        $router->post('/add-clap', 'RecipeController@addClap');
 
         /**
          * Email verification
@@ -163,7 +162,9 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
 
     $router->get('/categories', 'CategoryController@index');
 
+    $router->post('/add-clap', 'RecipeController@addClap');
+
     $router->get('/auth/tiktok', function() {
-        
+
     });
 });
