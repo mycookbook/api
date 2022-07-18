@@ -15,9 +15,10 @@ use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 class CookbookController extends Controller
 {
     /**
-	 * @param \App\Services\CookbookService $service
+     * @param Request $request
+     * @param \App\Services\CookbookService $service
      */
-    public function __construct(CookbookService $service)
+    public function __construct(Request $request, CookbookService $service)
     {
         $this->middleware('jwt.auth', ['except' => [
             'index',
