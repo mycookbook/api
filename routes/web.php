@@ -6,163 +6,160 @@ $router->get('/', function () {
     dd('Cookbooks api v1');
 });
 
-$router->get('/api/v1/users/{id}/verify', function ($id){
-	$user = \App\User::where(["id" => $id])->orWhere(["email" => $id])->get()->first();
+$router->get('/api/v1/users/{id}/verify', function ($id) {
+    $user = \App\User::where(["id" => $id])->orWhere(["email" => $id])->get()->first();
 
-	$user->update([
-		'email_verified' => \Carbon\Carbon::now()
-	]);
+    $user->update([
+        'email_verified' => \Carbon\Carbon::now()
+    ]);
 
-	return $user;
+    return $user;
 
 });
 
-$router->get('api/v1/create-auth-client', function() {
-	$api_key = \Illuminate\Support\Facades\Crypt::encryptString('Hello DevDojo');
+$router->get('api/v1/create-auth-client', function () {
+    $api_key = \Illuminate\Support\Facades\Crypt::encryptString('Hello DevDojo');
 
-	$client = new \App\AuthorizedClient([
-		'api_key' => $api_key,
-		'client_secret' => 'Hello DevDojo',
-		'passphrase' => 'potatoes'
-	]);
+    $client = new \App\AuthorizedClient([
+        'api_key' => $api_key,
+        'client_secret' => 'Hello DevDojo',
+        'passphrase' => 'potatoes'
+    ]);
 
-	if ($client->save()) {
-		return $client;
-	}
+    if ($client->save()) {
+        return $client;
+    }
 
-	return null;
+    return null;
 });
 
 $router->group(['prefix' => 'api/v1',], function () use ($router) {
-	$router->post(
-		'/auth/register', 'UserController@store'
-	);
+    $router->post(
+        '/auth/register', 'UserController@store'
+    );
 
-	$router->post(
-		'/auth/login', 'AuthController@login'
-	);
+    $router->post(
+        '/auth/login', 'AuthController@login'
+    );
 
-	$router->get('/definitions', 'DefinitionsController@index');
-	$router->get(
-		'/policies', 'StaticContentController@get'
-	);
+    $router->get('/definitions', 'DefinitionsController@index');
+    $router->get(
+        '/policies', 'StaticContentController@get'
+    );
 
-	$router->get('/cookbooks', 'CookbookController@index');
-	$router->get('/cookbooks/{id}', 'CookbookController@show');
+    $router->get('/cookbooks', 'CookbookController@index');
+    $router->get('/cookbooks/{id}', 'CookbookController@show');
 
-	$router->get('/recipes', 'RecipeController@index');
-	$router->get('/recipes/{recipeId}', 'RecipeController@show');
+    $router->get('/recipes', 'RecipeController@index');
+    $router->get('/recipes/{recipeId}', 'RecipeController@show');
 
-	$router->get(
-		'/users/', 'UserController@index'
-	);
+    $router->get(
+        '/users/', 'UserController@index'
+    );
 
-	$router->get(
-		'/users/{username}', 'UserController@show'
-	);
+    $router->get(
+        '/users/{username}', 'UserController@show'
+    );
 
-	$router->get(
-		'/search', 'SearchController@fetch'
-	);
+    $router->get(
+        '/search', 'SearchController@fetch'
+    );
 
-	$router->post(
-		'/keywords', 'SearchController@writeToCsv'
-	);
+    $router->post(
+        '/keywords', 'SearchController@writeToCsv'
+    );
 
-	$router->group([
-		'middleware' => [
-			'auth-guard',
-			'throttle'
-		]], function () use ($router) {
+    $router->group([
+        'middleware' => [
+            'auth-guard',
+            'throttle'
+        ]], function () use ($router) {
 
-		$router->get('flags', function() {
-			return response()->json([
-				"data" => \App\Flag::all()
-			]);
-		});
+        $router->get('flags', function () {
+            return response()->json([
+                "data" => \App\Flag::all()
+            ]);
+        });
 
-		$router->get('categories', function() {
-			return response()->json([
-				"data" => \App\Category::all()
-			]);
-		});
+        $router->get('categories', function () {
+            return response()->json([
+                "data" => \App\Category::all()
+            ]);
+        });
 
-		/*
-		|--------------------------------------------------------------------------
-		| Statistics
-		|--------------------------------------------------------------------------
-		*/
-		$router->get(
-			'/stats/', 'StatsController@index'
-		);
+        /*
+        |--------------------------------------------------------------------------
+        | Statistics
+        |--------------------------------------------------------------------------
+        */
+        $router->get(
+            '/stats/', 'StatsController@index'
+        );
 
-		/*
-		|--------------------------------------------------------------------------
-		| Recipes
-		|--------------------------------------------------------------------------
-		*/
-		$router->get('/my/recipes', 'RecipeController@myRecipes');
-		$router->post('/add-clap', 'RecipeController@addClap');
+        /*
+        |--------------------------------------------------------------------------
+        | Recipes
+        |--------------------------------------------------------------------------
+        */
+        $router->get('/my/recipes', 'RecipeController@myRecipes');
+        $router->post('/add-clap', 'RecipeController@addClap');
 
-		/*
-		|--------------------------------------------------------------------------
-		| Subscriptions
-		|--------------------------------------------------------------------------
-		*/
-		$router->post('subscriptions', 'SubscriptionController@store');
+        /**
+         * Email verification
+         */
+        $router->get('verify-email/{token}', 'UserController@verifyEmail');
+        $router->get('resend-email-verification-link/{token}', 'UserController@resend');
 
-		$router->get('/categories', 'CategoryController@index');
+        /*
+        |--------------------------------------------------------------------------
+        | PROTECTED ROUTES
+        |--------------------------------------------------------------------------
+        */
+        $router->group(
+            [
+                'middleware' => [
+                    'jwt.auth'
+                ]
+            ], function () use ($router) {
+            $router->put(
+                '/users/{username}', 'UserController@update'
+            );
 
-		/**
-		 * Email verification
-		 */
-		$router->get('verify-email/{token}', 'UserController@verifyEmail');
-		$router->get('resend-email-verification-link/{token}', 'UserController@resend');
+            $router->patch(
+                '/users/{username}', 'UserController@update'
+            );
 
-		/*
-		|--------------------------------------------------------------------------
-		| PROTECTED ROUTES
-		|--------------------------------------------------------------------------
-		*/
-		$router->group(
-			[
-				'middleware' => [
-					'jwt.auth'
-				]
-			], function () use ($router) {
-			$router->put(
-				'/users/{username}', 'UserController@update'
-			);
+            /*
+            |--------------------------------------------------------------------------
+            | Recipes Routes
+            |--------------------------------------------------------------------------
+            */
+            $router->post('/recipes', 'RecipeController@store');
 
-			$router->patch(
-				'/users/{username}', 'UserController@update'
-			);
+            $router->put('/recipes/{recipeId}', 'RecipeController@update')
+                ->patch('/recipes/{recipeId}', 'RecipeController@update');
 
-			/*
-			|--------------------------------------------------------------------------
-			| Recipes Routes
-			|--------------------------------------------------------------------------
-			*/
-			$router->post('/recipes', 'RecipeController@store');
+            $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
-			$router->put('/recipes/{recipeId}', 'RecipeController@update')
-				->patch('/recipes/{recipeId}', 'RecipeController@update');
+            /*
+            |--------------------------------------------------------------------------
+            | Cookbooks Routes
+            |--------------------------------------------------------------------------
+            */
+            $router->get('/my/cookbooks', 'CookbookController@myCookbooks');
 
-			$router->delete('/recipes/{recipeId}', 'RecipeController@delete');
+            $router->post('/cookbooks', 'CookbookController@store');
+            $router->put('/cookbooks/{id}', 'CookbookController@update');
+            $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
+        });
+    });
 
-			/*
-			|--------------------------------------------------------------------------
-			| Cookbooks Routes
-			|--------------------------------------------------------------------------
-			*/
-			$router->get('/my/cookbooks', 'CookbookController@myCookbooks');
+    /*
+     * |--------------------------------------------------------------------------
+     * | Subscriptions
+     * |--------------------------------------------------------------------------
+   */
+    $router->post('subscriptions', 'SubscriptionController@store');
 
-			$router->post('/cookbooks', 'CookbookController@store');
-			$router->put('/cookbooks/{id}', 'CookbookController@update');
-			$router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
-		}
-		);
-
-	});
-    }
-);
+    $router->get('/categories', 'CategoryController@index');
+});
