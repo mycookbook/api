@@ -164,6 +164,6 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
     $router->get('/categories', 'CategoryController@index');
 
     $router->get('/auth/tiktok', function() {
-
+        
     });
 });

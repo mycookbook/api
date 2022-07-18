@@ -178,4 +178,16 @@ class User extends Model implements
 	{
 		return $this->email_verified;
 	}
+
+    /**
+     * @return string
+     */
+    public function getFollowersAttribute()
+    {
+        if ($this->attributes['followers'] <= 10000) {
+            return $this->attributes['followers'];
+        }
+
+        return '10K+';
+    }
 }
