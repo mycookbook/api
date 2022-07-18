@@ -185,7 +185,7 @@ class User extends Model implements
     public function getFollowersAttribute()
     {
         if ($this->attributes['followers'] <= 10000) {
-            return $this->attributes['followers'];
+            return strval($this->attributes['followers']);
         }
 
         return '10K+';
