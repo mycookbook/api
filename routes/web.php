@@ -162,4 +162,8 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
     $router->post('subscriptions', 'SubscriptionController@store');
 
     $router->get('/categories', 'CategoryController@index');
+
+    $router->get('/auth/tiktok', function() {
+
+    });
 });
