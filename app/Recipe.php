@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recipe extends Model
 {
+    public $attributes = [
+        'servings',
+        'prep_time'
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,10 +46,19 @@ class Recipe extends Model
 		'ingredients' => 'json',
 	];
 
-    protected $attributes = [
-    	'servings' => 1,
-		'prep_time' => '2020-01-01 00:00:00',
-	];
+    /**
+     * Append custom attributes
+     *
+     * @var array
+     */
+    protected $appends = [
+        'total_time',
+        'varieties_count',
+        '_links',
+        'author',
+        'submission_date',
+        'comments'
+    ];
 
     /**
      * A recipe belongs to a user
@@ -73,19 +87,6 @@ class Recipe extends Model
 	{
 		return $this->hasMany('App\RecipeVariation');
 	}
-
-    /**
-     * Append custom attributes
-     *
-     * @var array
-     */
-    protected $appends = [
-    	'total_time',
-		'varieties_count',
-		'_links',
-		'author',
-		'submission_date',
-	];
 
     /**
      * Set attributes links
@@ -178,4 +179,12 @@ class Recipe extends Model
 	{
 		return $this->hasMany(RecipeTag::class);
 	}
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getCommentsAttribute(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->hasMany(Comment::class)->get();
+    }
 }
