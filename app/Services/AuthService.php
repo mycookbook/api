@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\User;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -50,4 +51,18 @@ class AuthService
 			], Response::HTTP_OK
 		);
 	}
+
+    /**
+     * @param Request $request
+     * @param JWTAuth $jwt
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function socialAuth(Request $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(
+            [
+                'access_token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+            ], ResponseAlias::HTTP_OK
+        );
+    }
 }

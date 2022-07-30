@@ -42,6 +42,10 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
         '/auth/login', 'AuthController@login'
     );
 
+    $router->post(
+        '/socialauth', 'AuthController@socialAuth'
+    );
+
     $router->get('/definitions', 'DefinitionsController@index');
     $router->get(
         '/policies', 'StaticContentController@get'

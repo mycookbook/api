@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWTAuth;
 use App\Services\AuthService;
 use App\Http\Controllers\Requests\Auth\SignInRequest;
@@ -31,4 +32,14 @@ class AuthController extends Controller
 	{
 		return $this->service->login($request->getParams(), $jwt);
 	}
+
+    /**
+     * @param Request $request
+     * @param JWTAuth $jwt
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function socialAuth(Request $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+    {
+        return $this->service->socialAuth($request, $jwt);
+    }
 }
