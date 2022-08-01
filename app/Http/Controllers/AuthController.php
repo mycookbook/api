@@ -45,29 +45,31 @@ class AuthController extends Controller
     {
         // fetch access token using code
         $code = $request->get("code");
-//        dd($code);
 
         $response = $client->post(
             'https://open-api.tiktok.com/oauth/access_token/',
             [
-                'client_key' => '',
-                'client_secret' => '',
+                'client_key' => 'awzqdaho7oawcchp',
+                'client_secret' => '5376fb91489d66bd64072222b454740a',
                 'code' => $code,
                 'grant_type' => 'authorization_code'
             ]
         );
 
-//        bPauvp6wDcJ0Vv1IBhhsGvn96ZUK3tHL4X8ZYqo5I72N3OS1wAqisWk-Jpzr1zzkpVBTC6YwDvJtpejnwa3FAs6PBY6WeT0bXpMNusfXk_E%2a2%214623
-//&scopes=user.info.basic,video.list&state=ficndb24cdp#/
+        $decoded = json_decode($response->getBody()->getContents(), true);
 
-        if ($response->getStatusCode() == 200) {
-            $responseBody = json_decode($response->getBody()->getContents(), true);
-
+        if ($decoded["message"]['error']) {
+            return response()->json(
+                [
+                    'error' => 'error from tiktok',
+                ], 400
+            );
+        } else {
             $userInfoResponse = $client->post(
                 'https://open-api.tiktok.com/user/info/',
                 [
-                    'open_id' => $responseBody['open_id'],
-                    'access_token' => $responseBody['access_token'],
+                    'open_id' => $decoded['open_id'],
+                    'access_token' => $decoded['access_token'],
                     'fields' => '["open_id", "avatar", "display_name"]'
                 ]
             );
@@ -79,7 +81,11 @@ class AuthController extends Controller
                     ], ResponseAlias::HTTP_OK
                 );
             } else {
-                dd('error');
+                return response()->json(
+                    [
+                        'error' => 'error from tiktok',
+                    ], 400
+                );
             }
         }
 
@@ -90,11 +96,5 @@ class AuthController extends Controller
         // if a user exists with that email, expire all user jwt tokens and generate a new jwt token
         // else create new user with that email and generate new jwt token
 //        return $this->service->socialAuth($request, $jwt);
-
-        return response()->json(
-            [
-                'error' => 'error from tiktok',
-            ], 400
-        );
     }
 }
