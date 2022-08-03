@@ -98,7 +98,8 @@ class User extends Model implements
     protected $appends = [
     	'contributions',
 		'is_verified',
-		'contact_detail'
+		'contact_detail',
+        'drafts',
 	];
 
 	/**
@@ -189,5 +190,13 @@ class User extends Model implements
         }
 
         return '10K+';
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getDraftsAttribute(): \Illuminate\Support\Collection
+    {
+        return collect([]);
     }
 }

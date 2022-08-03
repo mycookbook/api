@@ -147,7 +147,8 @@ class UserService implements serviceInterface
 	 */
     public function get($q)
 	{
-		$r = User::where('id', $q)
+		$r = User::with(['cookbooks', 'recipes'])
+            ->where('id', $q)
 			->orWhere('email', $q)
 			->orWhere('name_slug', $q);
 
