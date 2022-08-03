@@ -54,7 +54,7 @@ class AuthController extends Controller
                 'grant_type' => 'authorization_code'
             ]);
 
-            $response = $client->post("https://open-api.tiktok.com/oauth/access_token?" . $params);
+            $response = $client->post("https://open-api.tiktok.com/oauth/access_token/?" . $params);
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
