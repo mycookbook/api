@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\JWTAuth;
@@ -47,14 +48,15 @@ class AuthController extends Controller
         $code = $request->get("code");
 
         try {
-            $params = http_build_query([
-                'client_key' => 'awzqdaho7oawcchp',
-                'client_secret' => '5376fb91489d66bd64072222b454740a',
-                'code' => $code,
-                'grant_type' => 'authorization_code'
-            ]);
-
-            $response = $client->post("https://open-api.tiktok.com/oauth/access_token/?" . $params);
+            $response = $client->request('POST',
+                'https://open-api.tiktok.com/oauth/access_token/',
+                [
+                    'client_key' => 'awzqdaho7oawcchp',
+                    'client_secret' => '5376fb91489d66bd64072222b454740a',
+                    'code' => $code,
+                    'grant_type' => 'authorization_code'
+                ]
+            );
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
@@ -63,7 +65,7 @@ class AuthController extends Controller
 
                 return response()->json(
                     [
-                        'error' => $decoded,
+                        'error_' => $decoded,
                     ], 400
                 );
             } else {
@@ -91,6 +93,8 @@ class AuthController extends Controller
             // else create new user with that email and generate new jwt token
 //        return $this->service->socialAuth($request, $jwt);
         } catch(\Exception $exception) {
+            dd($exception->getMessage());
+        } catch (GuzzleException $e) {
             dd($exception->getMessage());
         }
     }
