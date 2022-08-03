@@ -41,60 +41,56 @@ class AuthController extends Controller
      * @param Client $client
      * @return \Illuminate\Http\JsonResponse
      */
-    public function tiktokLogin(Request $request, JWTAuth $jwt, Client $client): \Illuminate\Http\JsonResponse
+    public function tikTokLogin(Request $request, JWTAuth $jwt, Client $client): \Illuminate\Http\JsonResponse
     {
         // fetch access token using code
         $code = $request->get("code");
 
-        $response = $client->post(
-            'https://open-api.tiktok.com/oauth/access_token/',
-            [
-                'client_key' => 'awzqdaho7oawcchp',
-                'client_secret' => '5376fb91489d66bd64072222b454740a',
-                'code' => $code,
-                'grant_type' => 'authorization_code'
-            ]
-        );
-
-        $decoded = json_decode($response->getBody()->getContents(), true);
-
-        if ($decoded["message"]['error']) {
-            return response()->json(
+        try {
+            $response = $client->post(
+                'https://open-api.tiktok.com/oauth/access_token/',
                 [
-                    'error' => 'error from tiktok',
-                ], 400
-            );
-        } else {
-            $userInfoResponse = $client->post(
-                'https://open-api.tiktok.com/user/info/',
-                [
-                    'open_id' => $decoded['open_id'],
-                    'access_token' => $decoded['access_token'],
-                    'fields' => '["open_id", "avatar", "display_name"]'
+                    'client_key' => 'awzqdaho7oawcchp',
+                    'client_secret' => '5376fb91489d66bd64072222b454740a',
+                    'code' => $code,
+                    'grant_type' => 'authorization_code'
                 ]
             );
 
-            if ($userInfoResponse->getStatusCode() == 200) {
+            $decoded = json_decode($response->getBody()->getContents(), true);
+
+            if ($decoded["message"]) {
+                return response()->json(
+                    [
+                        'error' => $decoded,
+                    ], 400
+                );
+            } else {
+                $userInfoResponse = $client->post(
+                    'https://open-api.tiktok.com/user/info/',
+                    [
+                        'open_id' => $decoded['open_id'],
+                        'access_token' => $decoded['access_token'],
+                        'fields' => '["open_id", "avatar", "display_name"]'
+                    ]
+                );
+
                 return response()->json(
                     [
                         'access_token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
                     ], ResponseAlias::HTTP_OK
                 );
-            } else {
-                return response()->json(
-                    [
-                        'error' => 'error from tiktok',
-                    ], 400
-                );
             }
-        }
 
-        // grab access_token from response
-        // call the userInfo endpoint using this access token
-        // grab open_id and display_name from the response
-        // construct an email with the above combination
-        // if a user exists with that email, expire all user jwt tokens and generate a new jwt token
-        // else create new user with that email and generate new jwt token
+            // grab access_token from response
+            // call the userInfo endpoint using this access token
+            // grab open_id and display_name from the response
+            // construct an email with the above combination
+            // if a user exists with that email, expire all user jwt tokens and generate a new jwt token
+            // else create new user with that email and generate new jwt token
 //        return $this->service->socialAuth($request, $jwt);
+        } catch(\Exception $exception) {
+            dd($exception->getMessage());
+        }
     }
 }
