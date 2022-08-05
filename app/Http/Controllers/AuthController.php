@@ -71,7 +71,7 @@ class AuthController extends Controller
                         'form_params' => [
                             'open_id' => $decoded['data']['open_id'],
                             'access_token' => $decoded['data']['access_token'],
-                            'fields' => '["open_id", "avatar", "display_name"]'
+                            'fields' => json_encode(["open_id", "avatar", "display_name"])
                         ]
                     ]
                 );
