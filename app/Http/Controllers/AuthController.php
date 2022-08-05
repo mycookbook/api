@@ -45,10 +45,12 @@ class AuthController extends Controller
             $response = $client->request('POST',
                 'https://open-api.tiktok.com/oauth/access_token/',
                 [
-                    'client_key' => 'awzqdaho7oawcchp',
-                    'client_secret' => '5376fb91489d66bd64072222b454740a',
-                    'code' => $code,
-                    'grant_type' => 'authorization_code'
+                    'form_params' => [
+                        'client_key' => 'awzqdaho7oawcchp',
+                        'client_secret' => '5376fb91489d66bd64072222b454740a',
+                        'code' => $code,
+                        'grant_type' => 'authorization_code'
+                    ]
                 ]
             );
 
