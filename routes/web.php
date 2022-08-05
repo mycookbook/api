@@ -43,7 +43,7 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
     );
 
     $router->get(
-        '/auth/tiktok', 'AuthController@tikTokRedirect'
+        '/tiktok', 'AuthController@tikTokHandleCallback'
     );
 
     $router->post(
