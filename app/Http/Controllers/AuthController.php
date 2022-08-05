@@ -36,6 +36,11 @@ class AuthController extends Controller
 		return $this->service->login($request->getParams(), $jwt);
 	}
 
+    public function tikTokRedirect()
+    {
+        dd("handling tiktok redirect");
+    }
+
     /**
      * @param Request $request
      * @param JWTAuth $jwt
