@@ -38,17 +38,6 @@ class AuthController extends Controller
 
     public function tikTokHandleCallback()
     {
-        dd("handling tiktok redirect");
-    }
-
-    /**
-     * @param Request $request
-     * @param JWTAuth $jwt
-     * @param Client $client
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function tikTokLogin(Request $request, JWTAuth $jwt, Client $client): \Illuminate\Http\JsonResponse
-    {
         // fetch access token using code
         $code = $request->get("code");
 

@@ -46,10 +46,6 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
         '/tiktok', 'AuthController@tikTokHandleCallback'
     );
 
-    $router->post(
-        '/auth/tiktok', 'AuthController@tikTokLogin'
-    );
-
     $router->get('/definitions', 'DefinitionsController@index');
     $router->get(
         '/policies', 'StaticContentController@get'
