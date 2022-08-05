@@ -65,7 +65,7 @@ class AuthController extends Controller
                     ], 400
                 );
             } else {
-                $userInfoResponse = $client->post(
+                $userInfoResponse = $client->request('POST',
                     'https://open-api.tiktok.com/user/info/',
                     [
                         'form_params' => [
