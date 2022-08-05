@@ -36,7 +36,7 @@ class AuthController extends Controller
 		return $this->service->login($request->getParams(), $jwt);
 	}
 
-    public function tikTokHandleCallback()
+    public function tikTokHandleCallback(Request $request)
     {
         // fetch access token using code
         $code = $request->get("code");
