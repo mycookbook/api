@@ -56,8 +56,6 @@ class AuthController extends Controller
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
-            dd($decoded);
-
             if ($decoded["message"] === 'error') {
                 $decoded['code'] = $code;
 
@@ -70,11 +68,18 @@ class AuthController extends Controller
                 $userInfoResponse = $client->post(
                     'https://open-api.tiktok.com/user/info/',
                     [
-                        'open_id' => $decoded['open_id'],
-                        'access_token' => $decoded['access_token'],
-                        'fields' => '["open_id", "avatar", "display_name"]'
+                        'form_params' => [
+                            'open_id' => $decoded['data']['open_id'],
+                            'access_token' => $decoded['data']['access_token'],
+                            'fields' => '["open_id", "avatar", "display_name"]'
+                        ]
                     ]
                 );
+
+                dd([
+                    $userInfoResponse,
+                    request()->headers->get('referer')
+                ]);
 
                 return response()->json(
                     [
