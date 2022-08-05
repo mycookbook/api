@@ -56,6 +56,8 @@ class AuthController extends Controller
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
+            dd($decoded);
+
             if ($decoded["message"] === 'error') {
                 $decoded['code'] = $code;
 
