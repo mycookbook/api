@@ -102,11 +102,8 @@ class AuthController extends Controller
                             'password' => "fakePass"
                         ]));
 
-                        dd($response);
-
                         $decoded = json_decode($response->getContent(), true);
-                        dd($decoded);
-                        $user = $decoded['user'];
+                        $user = $decoded['data'];
                     } else {
                         $user->update([
                             "avatar" => $userInfo['data']['user']['avatar_url'],
