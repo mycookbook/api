@@ -78,7 +78,7 @@ return [
 			'sslmode' => 'prefer',
 		],
 
-		'testing' => [
+		'test_database' => [
 			'driver' => 'mysql',
 			'host' => env('TESTING_DB_HOST', '127.0.0.1'),
 			'port' => env('TESTING_DB_PORT', '3306'),
