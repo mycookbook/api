@@ -102,6 +102,8 @@ class AuthController extends Controller
                             'password' => "fakePass"
                         ]));
 
+                        dd($response);
+
                         $decoded = json_decode($response->getContent(), true);
                         dd($decoded);
                         $user = $decoded['user'];
@@ -128,11 +130,7 @@ class AuthController extends Controller
 
                     return redirect($to);
                 } else {
-                    return response()->json(
-                        [
-                            'auth_error' =>  'It looks like your account is Private. Please login using a public account.',
-                        ], 400
-                    );
+                    return redirect("https://web.cookbookshq.com/#/errors/?m=It looks like your account is Private. Please login using a public account.");
                 }
             }
         } catch (\Exception $e) {
