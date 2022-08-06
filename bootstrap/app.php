@@ -82,7 +82,7 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-	'must-verify-email' => MustVerifyEmail::class,
+//	'must-verify-email' => MustVerifyEmail::class,
 	'auth-guard' => AuthorizationGuard::class,
 	'throttle' => ThrottleRequests::class
 ]);

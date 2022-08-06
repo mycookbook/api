@@ -124,7 +124,7 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
                     'jwt.auth'
                 ]
             ], function () use ($router) {
-            $router->put(
+            $router->post(
                 '/users/{username}', 'UserController@update'
             );
 

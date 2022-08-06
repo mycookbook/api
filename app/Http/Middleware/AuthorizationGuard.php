@@ -49,11 +49,11 @@ class AuthorizationGuard
 //		}
 
 
-		$token = JWTAuth::getToken();
-
-		$user_id = JWTAuth::getPayload($token)->toArray()["sub"];
-
-		$request->merge(["user_id" => $user_id]);
+//		$token = JWTAuth::getToken();
+//
+//		$user_id = JWTAuth::getPayload($token)->toArray()["sub"];
+//
+//		$request->merge(["user_id" => $user_id]);
 
 
 		return $next($request);

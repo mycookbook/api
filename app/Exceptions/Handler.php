@@ -27,32 +27,32 @@ class Handler extends ExceptionHandler
 //        ValidationException::class,
 //    ];
 
-	/**
-	 * Report or log an exception.
-	 *
-	 * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-	 *
-	 * @return void
-	 * @throws Exception
-	 */
+    /**
+     * Report or log an exception.
+     *
+     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
+     *
+     * @return void
+     * @throws Exception
+     */
     public function report(\Throwable $e)
     {
-		if (app()->bound('sentry') && $this->shouldReport($e)) {
-			app('sentry')->captureException($e);
-		}
+        if (app()->bound('sentry') && $this->shouldReport($e)) {
+            app('sentry')->captureException($e);
+        }
 
         parent::report($e);
     }
 
-	/**
-	 * Render an exception into an HTTP response.
-	 *
-	 */
+    /**
+     * Render an exception into an HTTP response.
+     *
+     */
     public function render($request, \Throwable $e)
     {
-		if (app()->bound('sentry') && $this->shouldReport($e)) {
-			app('sentry')->captureException($e);
-		}
+        if (app()->bound('sentry') && $this->shouldReport($e)) {
+            app('sentry')->captureException($e);
+        }
 
         if ($e instanceof UnauthorizedHttpException) {
 
@@ -66,29 +66,29 @@ class Handler extends ExceptionHandler
             }
 
             switch (get_class($e->getPrevious())) {
-            case TokenInvalidException::class:
+                case TokenInvalidException::class:
 
-            case TokenBlacklistedException::class:
-                return response()->json(
-                    [
-                        'status' => 'error',
-                        'message' => 'Token is invalid'
-                    ], $e->getStatusCode()
-                );
-			case TokenExpiredException::class:
-				return response()->json(
-					[
-						'status' => 'error',
-						'message' => 'Token has expired'
-					], $e->getStatusCode()
-				);
+                case TokenBlacklistedException::class:
+                    return response()->json(
+                        [
+                            'status' => 'error',
+                            'message' => 'Token is invalid'
+                        ], $e->getStatusCode()
+                    );
+                case TokenExpiredException::class:
+                    return response()->json(
+                        [
+                            'status' => 'error',
+                            'message' => 'Token has expired'
+                        ], $e->getStatusCode()
+                    );
             }
         }
 
         if ($e instanceof MethodNotAllowedHttpException
             || $e instanceof NotFoundHttpException
         ) {
-            $docs = include __DIR__.'/../../config/docs.php';
+            $docs = include __DIR__ . '/../../config/docs.php';
             return response()->json(
                 [
                     'status' => 'error',
@@ -98,11 +98,11 @@ class Handler extends ExceptionHandler
             );
         }
 
-		if ($e instanceof UnprocessibleEntityException) {
-			return response()->json([
-				'error' => $e->getMessage()
-			], $e->getCode());
-		}
+        if ($e instanceof UnprocessibleEntityException) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], $e->getCode());
+        }
 
         return parent::render($request, $e);
     }

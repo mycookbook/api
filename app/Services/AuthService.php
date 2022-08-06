@@ -24,6 +24,7 @@ class AuthService
 	{
 		$credentials = $request->only('email', 'password');
 		$user = User::where("email", $request->get("email"))->get()->first();
+
 		Log::info('user', [$user]);
 
 		if (!is_null($user)) {

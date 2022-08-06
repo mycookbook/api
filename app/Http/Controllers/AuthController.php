@@ -44,6 +44,8 @@ class AuthController extends Controller
      *
      * @param Request $request
      * @param Client $client
+     * @param UserService $service
+     * @param JWTAuth $jwt
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Laravel\Lumen\Http\Redirector|void
      * @throws GuzzleException
      */
