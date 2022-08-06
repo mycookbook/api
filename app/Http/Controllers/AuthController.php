@@ -105,6 +105,7 @@ class AuthController extends Controller
                         ]));
 
                         $decoded = json_decode($response->getContent(), true);
+                        dd($decoded);
                         $user = $decoded['data'];
                     } else {
                         $user->update([
