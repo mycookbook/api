@@ -126,7 +126,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json(
                 [
-                    'auth_error' => 'There was an error processing this request, please try again.',
+                    'auth_error' =>  $e->getMessage(),
                 ], 400
             );
         }
