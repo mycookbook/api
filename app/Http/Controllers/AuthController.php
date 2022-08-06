@@ -94,7 +94,6 @@ class AuthController extends Controller
                     $tiktokEmail = $userInfo['data']['user']['open_id'] . "@tiktok.com";
 
                     $user = User::where(["email" => $tiktokEmail])->first();
-                    dd($user);
 
                     if (!$user instanceof User) {
                         $response = $service->store(new Request([
@@ -104,6 +103,7 @@ class AuthController extends Controller
                         ]));
 
                         $decoded = json_decode($response->getContent(), true);
+                        dd($decoded);
                         $user = $decoded['user'];
                     } else {
                         $user->update([
