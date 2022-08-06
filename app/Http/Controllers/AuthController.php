@@ -76,7 +76,7 @@ class AuthController extends Controller
                 );
 
                 dd([
-                    $userInfoResponse,
+                    $userInfoResponse->getBody()->getContents(),
                     request()->headers->get('referer')
                 ]);
 
