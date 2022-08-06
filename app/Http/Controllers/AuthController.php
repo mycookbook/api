@@ -70,7 +70,8 @@ class AuthController extends Controller
                     [
                         'json' => [
                             'open_id' => $decoded['data']['open_id'],
-                            'access_token' => $decoded['data']['access_token']
+                            'access_token' => $decoded['data']['access_token'],
+                            'fields' => '["open_id", "avatar", "display_name"]'
                         ]
                     ]
                 );
