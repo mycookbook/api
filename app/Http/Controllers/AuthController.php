@@ -108,6 +108,8 @@ class AuthController extends Controller
                         $user = $decoded['response']['data'];
                     }
 
+                    dd($user);
+
                     $user->update([
                         "avatar" => $userInfo['data']['user']['avatar_url'],
                         "pronouns" => "They/Them"
