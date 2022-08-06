@@ -68,7 +68,7 @@ class AuthController extends Controller
                 $userInfoResponse = $client->request('POST',
                     'https://open-api.tiktok.com/user/info/',
                     [
-                        'form_params' => [
+                        'json' => [
                             'open_id' => $decoded['data']['open_id'],
                             'access_token' => $decoded['data']['access_token'],
                             'fields' => json_encode(["open_id", "avatar", "display_name"])
