@@ -109,14 +109,10 @@ class AuthController extends Controller
                         $user = User::where(['email' => $data['email']])->first();
                     }
 
-                    dd($user);
-
                     $user->update([
                         "avatar" => $userInfo['data']['user']['avatar_url'],
                         "pronouns" => "They/Them"
                     ]);
-
-                    $user = $user->refresh();
 
                     $credentials = [
                         'email' => $user->email,
