@@ -2,20 +2,14 @@
 
 namespace App\Services;
 
-use App\Jobs\SendEmailNotification;
 use App\User;
-use App\Jobs\SendEmail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Optional;
-use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Hashing\BcryptHasher;
 use App\Interfaces\serviceInterface;
-use App\Jobs\UpdateUserContactDetail;
-use App\Jobs\UpdateUserContactDetailJob;
 use App\Exceptions\CookbookModelNotFoundException;
 
 /**
@@ -23,6 +17,16 @@ use App\Exceptions\CookbookModelNotFoundException;
  */
 class UserService implements serviceInterface
 {
+    /**
+     * @var array $modelFillables
+     */
+    protected $modelFillables;
+
+    public function __construct()
+    {
+        $this->modelFillables = (new \App\User)->getFillable();
+    }
+
     /**
      * Get all users from the database
      */
@@ -82,7 +86,7 @@ class UserService implements serviceInterface
 	 */
     public function show($q)
     {
-		$user = $this->get($q)->get();
+		$user = $this->findWhere($q)->get();
 
         return response(
             [
@@ -93,44 +97,44 @@ class UserService implements serviceInterface
         );
     }
 
-	/**
-	 * Implement a full/partial update
-	 *
-	 * @param \Illuminate\Http\Request $request request
-	 * @param string $option
-	 *
-	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-	 * @throws CookbookModelNotFoundException
-	 */
+    /**
+     * @param Request $request
+     * @param string $option
+     * @return Response|\Laravel\Lumen\Http\ResponseFactory
+     */
     public function update(Request $request, string $option)
     {
-		$user_record = $this->get($option);
-		$user_id = $user_record->get()->first()->id;
-		$user_contact_detail = $user_record->get()->first()->contact;
-
 		try {
-			$data = [
-				'name' => Str::ucfirst($request->name),
-				'name_slug' => Str::slug($request->name),
-				'pronouns' => $request->pronouns ? $request->pronouns : NULL,
-				'avatar' => $request->avatar ? $request->avatar : '',
-				'expertise_level' => $request->expertise_level ? $request->expertise_level : 'novice',
-				'about' => $request->about ? $request->about : NULL,
-				'can_take_orders' => ($request->can_take_orders == "0") ? 0 : 1,
-			];
+            $userRecord = User::findWhere($option, ['cookbooks', 'recipes'], ['email', 'name_slug'])->first();
 
-			$updated = DB::table("users")->where("id", "=", $user_record->get()->first()->getKey())->update($data);
+            $data = $request->only([
+                'name',
+                'email',
+                'name_slug',
+                'pronouns',
+                'avatar',
+                'contact_email',
+                'about',
+                'expertise_level',
+                'can_take_orders'
+            ]);
 
-			$request->merge(['user_id' => $user_id]);
-			$user_contact_detail->update($request->all());
+            foreach ($this->modelFillables as $fillable) {
+                if (isset($data[$fillable])) {
+                    $userRecord->$fillable = $data[$fillable];
+                }
+            }
 
-			return response(
-				[
-					"updated" => (bool) $updated,
-					"status" => "success",
-					"username" => $request->username
-				], Response::HTTP_OK
-			);
+            if ($updated = $userRecord->save()) {
+                return response(
+                    [
+                        "updated" => (bool) $updated,
+                        "status" => "success"
+                    ], Response::HTTP_OK
+                );
+            }
+
+            throw new \Exception("Not saved.");
 		} catch (\Exception $e) {
 			return response([
 				'errors' => $e->getMessage()
@@ -145,7 +149,7 @@ class UserService implements serviceInterface
 	 * @return mixed
 	 * @throws CookbookModelNotFoundException
 	 */
-    public function get($q)
+    public function findWhere($q)
 	{
 		$r = User::with(['cookbooks', 'recipes'])
             ->where('id', $q)

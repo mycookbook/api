@@ -34,7 +34,7 @@ class CategoryService implements serviceInterface
 		// TODO: Implement update() method.
 	}
 
-	function get($q)
+	function findWhere($q)
 	{
 		// TODO: Implement get() method.
 	}

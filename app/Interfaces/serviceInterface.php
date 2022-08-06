@@ -10,5 +10,5 @@ interface serviceInterface
 	public function show($option);
 	public function store(Request $request);
 	public function update(Request $request, string $option);
-	function get($q);
+	function findWhere($q);
 }

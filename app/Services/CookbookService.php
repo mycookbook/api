@@ -99,7 +99,7 @@ class CookbookService implements serviceInterface
     public function update($request, $id)
     {
 		//TODO: Cookbook Policy to ascertain that user is able to update this cookbook
-		$cookbook = $this->get($id);
+		$cookbook = $this->findWhere($id);
 
 		$data = $request->only([
 			'name', 'description', 'bookCoverImg', 'category_id', 'flag_id', 'categories', 'alt_text'
@@ -122,7 +122,7 @@ class CookbookService implements serviceInterface
 	 */
     public function delete($id)
     {
-		$cookbook = $this->get($id);
+		$cookbook = $this->findWhere($id);
 
         return response(
             [
@@ -138,7 +138,7 @@ class CookbookService implements serviceInterface
 	 */
 	public function show($option)
 	{
-		$cookbook = $this->get($option);
+		$cookbook = $this->findWhere($option);
 
 		if (!$cookbook) {
 			throw new CookbookModelNotFoundException();
@@ -158,7 +158,7 @@ class CookbookService implements serviceInterface
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      * @throws CookbookModelNotFoundException
      */
-	public function get($q)
+	public function findWhere($q)
 	{
 		$record = Cookbook::with('Users')
 			->where('id', $q)

@@ -2,8 +2,10 @@
 
 namespace App;
 
+use App\Exceptions\CookbookModelNotFoundException;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -198,5 +200,34 @@ class User extends Model implements
     public function getDraftsAttribute(): \Illuminate\Support\Collection
     {
         return collect([]);
+    }
+
+    /**
+     * @param $q
+     * @param array $relationships
+     * @param array $orWhereFields
+     * @return mixed
+     */
+    public static function findWhere($q, array $relationships = [], array $orWhereFields = [])
+    {
+        $record = self::where(['id' => $q]);
+
+        if ($relationships) {
+            $record = $record->with($relationships);
+        }
+
+        if ($orWhereFields) {
+            foreach ($orWhereFields as $orWhere) {
+                $record = $record->orWhere($orWhere, $q);
+            }
+        }
+
+        $record = $record->get();
+
+        if ($record->isEmpty()) {
+            throw new ModelNotFoundException("User record not found.");
+        }
+
+        return $record;
     }
 }
