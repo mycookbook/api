@@ -142,7 +142,7 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
             $router->put('/recipes/{recipeId}', 'RecipeController@update')
                 ->patch('/recipes/{recipeId}', 'RecipeController@update');
 
-            $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
+//            $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
 
             /*
             |--------------------------------------------------------------------------
@@ -153,7 +153,7 @@ $router->group(['prefix' => 'api/v1',], function () use ($router) {
 
             $router->post('/cookbooks', 'CookbookController@store');
             $router->put('/cookbooks/{id}', 'CookbookController@update');
-            $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
+//            $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
         });
     });
 
