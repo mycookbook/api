@@ -105,7 +105,8 @@ class AuthController extends Controller
                         ]));
 
                         $decoded = json_decode($response->getContent(), true);
-                        $user = $decoded['response']['data'];
+                        $data = $decoded['response']['data'];
+                        $user = User::where(['email' => $data['email']])->first();
                     }
 
                     dd($user);
@@ -114,6 +115,8 @@ class AuthController extends Controller
                         "avatar" => $userInfo['data']['user']['avatar_url'],
                         "pronouns" => "They/Them"
                     ]);
+
+                    $user = $user->refresh();
 
                     $credentials = [
                         'email' => $user->email,
