@@ -89,9 +89,8 @@ class AuthController extends Controller
                 //{"data":{"user":{"open_id":"a93c026e-dd03-4e99-98d9-a9d68a61b42c","display_name":"CookbooksHQ"}},"error":{"code":0,"message":""}}
 
                 $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
-                dd($userInfo);
 
-                if ($userInfo['data']['user']) {
+                if (!empty($userInfo['data']['user'])) {
                     $tiktokEmail = $userInfo['data']['user']['open_id'] . "@tiktok.com";
 
                     $user = User::where(["email" => $tiktokEmail])->first();
@@ -127,6 +126,12 @@ class AuthController extends Controller
                         ]);
 
                     return redirect($to);
+                } else {
+                    return response()->json(
+                        [
+                            'auth_error' =>  'It looks like your account is Private. Please login using a public account.',
+                        ], 400
+                    );
                 }
             }
         } catch (\Exception $e) {
