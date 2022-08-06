@@ -71,30 +71,19 @@ class AuthController extends Controller
                         'json' => [
                             'open_id' => $decoded['data']['open_id'],
                             'access_token' => $decoded['data']['access_token'],
-                            'fields' => ["open_id", "avatar", "display_name"]
+                            'fields' => ["open_id", "avatar_url", "display_name", "avatar_url_100"]
                         ]
                     ]
                 );
 
-                dd([
-                    $userInfoResponse->getBody()->getContents(),
-                    request()->headers->get('referer')
-                ]);
+                //{"data":{"user":{"open_id":"a93c026e-dd03-4e99-98d9-a9d68a61b42c","display_name":"CookbooksHQ"}},"error":{"code":0,"message":""}}
 
-                return response()->json(
-                    [
-                        'access_token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-                    ], ResponseAlias::HTTP_OK
-                );
+                $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
+
+                $to = "https://web.cookbookshq.com/#/tiktok/" . http_build_query(["code" => $userInfo['data']['user']['open_id']]);
+
+                return redirect($to);
             }
-
-            // grab access_token from response
-            // call the userInfo endpoint using this access token
-            // grab open_id and display_name from the response
-            // construct an email with the above combination
-            // if a user exists with that email, expire all user jwt tokens and generate a new jwt token
-            // else create new user with that email and generate new jwt token
-//        return $this->service->socialAuth($request, $jwt);
         } catch(\Exception $exception) {
             dd($exception->getMessage());
         } catch (GuzzleException $e) {
