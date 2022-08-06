@@ -127,7 +127,7 @@ class AuthController extends Controller
 
                     return redirect($to);
                 } else {
-                    return redirect("https://web.cookbookshq.com/#/errors/?m=It looks like your account is Private. Please login using a public account.");
+                    return redirect("https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.");
                 }
             }
         } catch (\Exception $e) {
