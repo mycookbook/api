@@ -80,7 +80,7 @@ class AuthController extends Controller
 
                 $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
-                $to = "https://web.cookbookshq.com/#/tiktok/" . http_build_query(["code" => $userInfo['data']['user']['open_id']]);
+                $to = "https://web.cookbookshq.com/#/tiktok/?" . http_build_query(["code" => $userInfo['data']['user']['open_id']]);
 
                 return redirect($to);
             }
