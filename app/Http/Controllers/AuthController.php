@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\UserService;
+use App\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\JWTAuth;
 use App\Services\AuthService;
@@ -15,30 +18,37 @@ use App\Http\Controllers\Requests\Auth\SignInRequest;
  */
 class AuthController extends Controller
 {
-	/**
-	 * @param AuthService $service
-	 */
-	public function __construct(AuthService $service)
-	{
-		$this->service = $service;
-	}
-
-	/**
-	 * Authenticate the user with AuthService
-	 *
-	 * @param SignInRequest $request
-	 * @param JWTAuth $jwt
-	 *
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	public function login(SignInRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
-	{
-		return $this->service->login($request->getParams(), $jwt);
-	}
-
-    public function tikTokHandleCallback(Request $request, Client $client)
+    /**
+     * @param AuthService $service
+     */
+    public function __construct(AuthService $service)
     {
-        // fetch access token using code
+        $this->service = $service;
+    }
+
+    /**
+     * Authenticate the user with AuthService
+     *
+     * @param SignInRequest $request
+     * @param JWTAuth $jwt
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(SignInRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+    {
+        return $this->service->login($request->getParams(), $jwt);
+    }
+
+    /**
+     * TikTok does not give you the user's email due to privacy policy
+     *
+     * @param Request $request
+     * @param Client $client
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Laravel\Lumen\Http\Redirector|void
+     * @throws GuzzleException
+     */
+    public function tikTokHandleCallback(Request $request, Client $client, UserService $service, JWTAuth $jwt)
+    {
         $code = $request->get("code");
 
         try {
@@ -80,14 +90,45 @@ class AuthController extends Controller
 
                 $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
-                $to = "https://web.cookbookshq.com/#/tiktok/?" . http_build_query(["code" => $userInfo['data']['user']['open_id']]);
+                if ($userInfo['data']['user']) {
+                    $tiktokEmail = $userInfo['data']['user']['open_id'] . "@tiktok.com";
 
-                return redirect($to);
+                    $user = User::where(["email" => $tiktokEmail])->first();
+
+                    if (!$user instanceof User) {
+                        $response = $service->store(new Request([
+                            'name' => $userInfo['data']['user']['display_name'],
+                            'email' => $tiktokEmail,
+                            'password' => "fakePass"
+                        ]));
+
+                        $decoded = json_decode($response->getContent(), true);
+                        $user = $decoded['user'];
+                    }
+
+                    $credentials = [
+                        'email' => $user->email,
+                        'password' => "fakePass"
+                    ];
+
+                    if (!$token = $jwt->attempt($credentials)) {
+                        return redirect("https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.");
+                    }
+
+                    $to = "https://web.cookbookshq.com/#/tiktok/?" . http_build_query([
+                            "code" => $token,
+                            "_d" => $user->getSlug()
+                        ]);
+
+                    return redirect($to);
+                }
             }
-        } catch(\Exception $exception) {
-            dd($exception->getMessage());
-        } catch (GuzzleException $e) {
-            dd($exception->getMessage());
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'auth_error' => 'There was an error processing this request, please try again.',
+                ], 400
+            );
         }
     }
 }

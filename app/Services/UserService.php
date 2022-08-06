@@ -59,7 +59,7 @@ class UserService implements serviceInterface
 		$contact = new UserContactDetailsService();
 		$contact->store(new Request($serialized->all()));
 
-		dispatch(new SendEmailNotification($user->id));
+//		dispatch(new SendEmailNotification($user->id));
 
         return response()->json(
             [
