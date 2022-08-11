@@ -9,7 +9,7 @@ use App\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\JWT;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\JWTAuth;
 
 /**
@@ -18,7 +18,7 @@ use Tymon\JWTAuth\JWTAuth;
 class AuthController extends Controller
 {
     /**
-     * @param  AuthService  $service
+     * @param AuthService $service
      */
     public function __construct(AuthService $service)
     {
@@ -28,8 +28,8 @@ class AuthController extends Controller
     /**
      * Authenticate the user with AuthService
      *
-     * @param  SignInRequest  $request
-     * @param  JWTAuth  $jwt
+     * @param SignInRequest $request
+     * @param JWTAuth $jwt
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(SignInRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
@@ -42,7 +42,7 @@ class AuthController extends Controller
      *
      * @throws GuzzleException
      */
-    public function tikTokHandleCallback(Request $request, Client $client, UserService $service, JWT $jwt)
+    public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
         $code = $request->get('code');
 
@@ -83,12 +83,12 @@ class AuthController extends Controller
 
                 $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
-                if (! empty($userInfo['data']['user'])) {
-                    $tiktokEmail = $userInfo['data']['user']['open_id'].'@tiktok.com';
+                if (!empty($userInfo['data']['user'])) {
+                    $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
 
                     $user = User::where(['email' => $tiktokEmail])->first();
 
-                    if (! $user instanceof User) {
+                    if (!$user instanceof User) {
                         $response = $service->store(new Request([
                             'name' => $userInfo['data']['user']['display_name'],
                             'email' => $tiktokEmail,
@@ -110,14 +110,14 @@ class AuthController extends Controller
                         'password' => 'fakePass',
                     ];
 
-                    if (! $token = $jwt->attempt($credentials)) {
+                    if (!$token = Auth::attempt($credentials)) {
                         return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
                     }
 
-                    $to = 'https://web.cookbookshq.com/#/tiktok/?'.http_build_query([
-                        'code' => $token,
-                        '_d' => $user->getSlug(),
-                    ]);
+                    $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
+                            'code' => $token,
+                            '_d' => $user->getSlug(),
+                        ]);
 
                     return redirect($to);
                 } else {
