@@ -2,13 +2,15 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Traits\CookbookUserMustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable;
+    use CookbookUserMustVerifyEmail;
 
     /**
      * The attributes that are mass assignable.
@@ -16,50 +18,206 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'following', 'followers', 'name_slug', 'email_verified', 'avatar', 'pronouns', 'about',
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'id', 'pivot',
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * A user has many recipes
      *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function cookbooks(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Cookbook::class, 'user_id', 'id');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function recipes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Recipe::class, 'user_id', 'id');
+        return $this->hasMany('App\Recipe', 'user_id');
     }
 
+    /**
+     * User has one contact detail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contact(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne('App\UserContactDetail');
+    }
+
+    /**
+     * A user can be subscribed to multiple cookbooks
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cookbooks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany('App\Cookbook', 'cookbook_user');
+    }
+
+    /**
+     * JWT Identifier
+     *
+     * @return mixed
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims()
+    /**
+     * Custom claims
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    /**
+     * Append links attribute.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'contributions',
+        'is_verified',
+        'contact_detail',
+        'drafts',
+    ];
+
+    /**
+     * Compute total nos of contributions made by this user
+     * cookbooks and recipes
+     *
+     * @return array
+     */
+    public function getContributionsAttribute(): array
+    {
+        $cookbooks = $this->cookbooks()->count();
+        $recipes = $this->recipes()->count();
+
+        return [
+            'cookbooks' => $cookbooks,
+            'recipes' => $recipes,
+            'total' => $cookbooks + $recipes,
+        ];
+    }
+
+    /**
+     * Set attribute created at
+     *
+     * @return string
+     */
+    public function getCreatedAtAttribute(): string
+    {
+        $year = Carbon::parse($this->attributes['created_at'])->year;
+        $month = Carbon::parse($this->attributes['created_at'])->month;
+
+        return Carbon::createFromDate($year, $month)->format('F Y');
+    }
+
+    /**
+     * Show user email verification status
+     *
+     * @return bool
+     */
+    public function getIsVerifiedAttribute(): bool
+    {
+        $entity = $this->email_verification()->get()->first();
+
+        if (is_null($entity) || is_null($entity->is_verified)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get user contact detail
+     *
+     * @return mixed
+     */
+    public function getContactDetailAttribute()
+    {
+        return $this->contact()->get()->first();
+    }
+
+    /**
+     * Get the User name_slug
+     *
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->name_slug;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function email_verification(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne('App\EmailVerification');
+    }
+
+    public function isVerified()
+    {
+        return $this->email_verified;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFollowersAttribute(): string
+    {
+        if ($this->attributes['followers'] <= 10000) {
+            return strval($this->attributes['followers']);
+        }
+
+        return '10K+';
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getDraftsAttribute(): \Illuminate\Support\Collection
+    {
+        return collect([]);
+    }
+
+    /**
+     * @param $q
+     * @param  array  $relationships
+     * @param  array  $orWhereFields
+     * @return mixed
+     */
+    public static function findWhere($q, array $relationships = [], array $orWhereFields = [])
+    {
+        $record = self::where(['id' => $q]);
+
+        if ($relationships) {
+            $record = $record->with($relationships);
+        }
+
+        if ($orWhereFields) {
+            foreach ($orWhereFields as $orWhere) {
+                $record = $record->orWhere($orWhere, $q);
+            }
+        }
+
+        $record = $record->get();
+
+        if ($record->isEmpty()) {
+            throw new ModelNotFoundException('User record not found.');
+        }
+
+        return $record;
     }
 }
