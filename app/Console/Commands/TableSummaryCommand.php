@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class TableSummary
  */
-class TableSummary extends Command
+class TableSummaryCommand extends Command
 {
     protected $signature = 'table:summary';
 

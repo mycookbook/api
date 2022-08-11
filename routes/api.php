@@ -49,6 +49,10 @@ Route::group(['prefix' => 'v1'], function () {
     );
 
     Route::get(
+        '/auth/logout', 'AuthController@logout'
+    );
+
+    Route::get(
         '/tiktok', 'AuthController@tikTokHandleCallback'
     );
 

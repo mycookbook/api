@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Requests\Auth\SignInRequest;
+use App\Http\Requests\SignInRequest;
 use App\Services\AuthService;
 use App\Services\UserService;
 use App\User;
@@ -10,7 +10,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\JWTAuth;
 
 /**
  * Class AuthController
@@ -26,15 +25,21 @@ class AuthController extends Controller
     }
 
     /**
-     * Authenticate the user with AuthService
-     *
      * @param SignInRequest $request
-     * @param JWTAuth $jwt
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(SignInRequest $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+    public function login(SignInRequest $request): \Illuminate\Http\JsonResponse
     {
-        return $this->service->login($request->getParams(), $jwt);
+        return $this->service->login($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request): \Illuminate\Http\Response
+    {
+        return $this->service->logout($request);
     }
 
     /**

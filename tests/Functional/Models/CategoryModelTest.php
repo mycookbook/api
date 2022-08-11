@@ -3,9 +3,8 @@
 namespace Functional\Models;
 
 use App\Category;
-use Monolog\Test\TestCase;
 
-class CategoryModelTest extends TestCase
+class CategoryModelTest extends \TestCase
 {
     /**
      * @test

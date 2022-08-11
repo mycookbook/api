@@ -2,39 +2,23 @@
 
 namespace App\Services;
 
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Tymon\JWTAuth\JWTAuth;
 
 class AuthService
 {
     /**
      * Authenticate the user
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Tymon\JWTAuth\JWTAuth  $jwt
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+    public function login(Request $request): \Illuminate\Http\JsonResponse
     {
         $credentials = $request->only('email', 'password');
-        $user = User::where('email', $request->get('email'))->get()->first();
 
-        Log::info('user', [$user]);
-
-        if (! is_null($user)) {
-            if (is_null($user->isVerified())) {
-                return response()->json([
-                    'message' => 'not verified',
-                ], Response::HTTP_NOT_ACCEPTABLE);
-            }
-        }
-
-        if (! $token = $jwt->attempt($credentials)) {
+        if (!$token = Auth::attempt($credentials)) {
             return response()->json(
                 [
                     'Not found or Invalid Credentials.',
@@ -46,23 +30,19 @@ class AuthService
             [
                 'success' => true,
                 'token' => $token,
-                'username' => Auth::user()->getSlug(),
-                'is_verified' => Auth::user()->is_verified,
+                'username' => Auth::user()->getSlug()
             ], Response::HTTP_OK
         );
     }
 
     /**
-     * @param  Request  $request
-     * @param  JWTAuth  $jwt
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return Response
      */
-    public function socialAuth(Request $request, JWTAuth $jwt): \Illuminate\Http\JsonResponse
+    public function logout(Request $request): Response
     {
-        return response()->json(
-            [
-                'access_token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-            ], ResponseAlias::HTTP_OK
-        );
+        Auth::logout();
+
+        return response()->noContent();
     }
 }

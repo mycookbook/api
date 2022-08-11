@@ -1,21 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
-use Laravel\Lumen\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Traits\CreatesObjects;
 
 /**
  * Class TestCase
  */
-abstract class TestCase extends Laravel\Lumen\Testing\TestCase
+abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     use CreatesObjects;
     use DatabaseMigrations;
 
     /**
-     * Creates the application.
-     *
-     * @return \Laravel\Lumen\Application
+     * @return mixed
      */
     public function createApplication()
     {
