@@ -94,9 +94,9 @@ class UserService implements serviceInterface
     }
 
     /**
-     * @param  Request  $request
-     * @param  string  $option
-     * @return Response|\Laravel\Lumen\Http\ResponseFactory
+     * @param Request $request
+     * @param string $option
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      */
     public function update(Request $request, string $option)
     {

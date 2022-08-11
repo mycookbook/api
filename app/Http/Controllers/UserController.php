@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\EmailVerification;
 use App\Http\Controllers\Requests\User\StoreRequest;
-use App\Http\Controllers\Requests\User\UpdateRequest;
+use App\Http\Requests\UpdateRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
 use App\Services\UserService;
 use App\User;
@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
     /**
-     * @param  \App\Services\UserService  $service
+     * @param \App\Services\UserService $service
      */
     public function __construct(UserService $service)
     {
@@ -38,10 +38,10 @@ class UserController extends Controller
     /**
      * Create new user
      *
-     * @param  \App\Http\Controllers\Requests\User\StoreRequest  $request
+     * @param \App\Http\Controllers\Requests\User\StoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): \Illuminate\Http\JsonResponse
     {
         return $this->service->store($request->getParams());
     }
@@ -49,8 +49,8 @@ class UserController extends Controller
     /**
      * Get one user
      *
-     * @param  mixed  $username username
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     * @param mixed $username username
+     * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     public function show($username)
     {
@@ -58,32 +58,29 @@ class UserController extends Controller
     }
 
     /**
-     * Implement a full/partial update
-     *
      * @param $username
-     * @param  \App\Http\Controllers\Requests\User\UpdateRequest  $request
-     * @return Response|\Laravel\Lumen\Http\ResponseFactory
-     *
-     * @throws \App\Exceptions\CookbookModelNotFoundException
+     * @param UpdateRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response
      */
     public function update($username, UpdateRequest $request)
     {
-        if ($request->getParams()->all()) {
-            $request->getParams()->merge(['username']);
+        if ($request->all()) {
+            $request->merge(['username']);
 
-            return $this->service->update($request->getParams(), $username);
+            return $this->service->update($request, $username);
         }
 
-        return response([
+        return response()->json([
             'message' => 'nothing to update.',
-        ], Response::HTTP_OK);
+        ]);
     }
 
     /**
      * Email Verification
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param $token
+     * @return \Illuminate\Http\JsonResponse|void
      */
     public function verifyEmail(Request $request, $token)
     {
@@ -111,7 +108,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @param $token
      *
      * @throws \Exception
