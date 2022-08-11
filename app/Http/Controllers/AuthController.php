@@ -9,6 +9,7 @@ use App\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\JWT;
 use Tymon\JWTAuth\JWTAuth;
 
 /**
@@ -41,7 +42,7 @@ class AuthController extends Controller
      *
      * @throws GuzzleException
      */
-    public function tikTokHandleCallback(Request $request, Client $client, UserService $service, JWTAuth $jwt)
+    public function tikTokHandleCallback(Request $request, Client $client, UserService $service, JWT $jwt)
     {
         $code = $request->get('code');
 
@@ -79,8 +80,6 @@ class AuthController extends Controller
                         ],
                     ]
                 );
-
-                //{"data":{"user":{"open_id":"a93c026e-dd03-4e99-98d9-a9d68a61b42c","display_name":"CookbooksHQ"}},"error":{"code":0,"message":""}}
 
                 $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
