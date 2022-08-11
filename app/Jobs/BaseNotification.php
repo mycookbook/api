@@ -2,54 +2,55 @@
 
 namespace App\Jobs;
 
+use App\Traits\EncryptsPayload;
 use App\User;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
-use App\Traits\EncryptsPayload;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 abstract class BaseNotification implements ShouldQueue
 {
-	use InteractsWithQueue, Queueable, SerializesModels, EncryptsPayload;
+    use InteractsWithQueue, Queueable, SerializesModels, EncryptsPayload;
 
-	protected $user;
-	protected $payload;
+    protected $user;
 
-	/**
-	 * BaseNotification constructor.
-	 * @param $userId
-	 */
-	public function __construct($userId)
-	{
-		$this->user = User::findOrFail($userId);
-	}
+    protected $payload;
 
-	/**
-	 * @return array
-	 */
-	public function headerOptions(): array
-	{
-		return ['headers' => [
-			'payload' => $this->encryptPayload($this->payload)
-		]];
-	}
+    /**
+     * BaseNotification constructor.
+     *
+     * @param $userId
+     */
+    public function __construct($userId)
+    {
+        $this->user = User::findOrFail($userId);
+    }
 
-	/**
-	 * Job Handler
-	 */
-	public function handle()
-	{
-		try {
-			$client = new Client();
-			$uri = env('NOTIFICATIONS_SERVER_URL') . '/notifications';
+    /**
+     * @return array
+     */
+    public function headerOptions(): array
+    {
+        return ['headers' => [
+            'payload' => $this->encryptPayload($this->payload),
+        ]];
+    }
 
-			$client->request('GET', $uri, $this->headerOptions());
+    /**
+     * Job Handler
+     */
+    public function handle()
+    {
+        try {
+            $client = new Client();
+            $uri = env('NOTIFICATIONS_SERVER_URL').'/notifications';
 
-		} catch(Exception $e) {
-			Log::info('error', ['notifications_server' => $e->getMessage()]);
-		}
-	}
+            $client->request('GET', $uri, $this->headerOptions());
+        } catch (Exception $e) {
+            Log::info('error', ['notifications_server' => $e->getMessage()]);
+        }
+    }
 }

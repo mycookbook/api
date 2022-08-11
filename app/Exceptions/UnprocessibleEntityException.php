@@ -2,4 +2,6 @@
 
 namespace App\Exceptions;
 
-class UnprocessibleEntityException extends \Exception {}
+class UnprocessibleEntityException extends \Exception
+{
+}

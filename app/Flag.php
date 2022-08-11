@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Recipe
- *
- * @package Cookbook
  */
-
 class Flag extends Model
 {
     /**
@@ -18,7 +15,7 @@ class Flag extends Model
      * @var array
      */
     protected $fillable = [
-        'flag', 'nationality'
+        'flag', 'nationality',
     ];
 
     /**
@@ -38,7 +35,7 @@ class Flag extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/flags/{$this->attributes['id']}")
+                ->to("api/v1/flags/{$this->attributes['id']}"),
         ];
     }
 

@@ -7,8 +7,8 @@ class HelpersTest extends TestCase
 {
     public function testSlugifyFunction()
     {
-        $output = slugify("plain text");
+        $output = slugify('plain text');
 
-        $this->assertEquals("plain-text", $output);
+        $this->assertEquals('plain-text', $output);
     }
 }

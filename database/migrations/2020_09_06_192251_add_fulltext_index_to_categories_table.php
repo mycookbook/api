@@ -14,7 +14,7 @@ class AddFulltextIndexToCategoriesTable extends Migration
     public function up()
     {
         Schema::table('categories', function (Blueprint $table) {
-			DB::statement('ALTER TABLE categories ADD FULLTEXT full(name)');
+            DB::statement('ALTER TABLE categories ADD FULLTEXT full(name)');
         });
     }
 }

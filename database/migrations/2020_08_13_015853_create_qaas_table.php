@@ -15,46 +15,45 @@ class CreateQaasTable extends Migration
     {
         Schema::create('qaas', function (Blueprint $table) {
             $table->increments('id');
-			$table->string('phone');
-			$table->string('question');
-			$table->dateTime('question_asked');
-			$table->string('answer');
-			$table->dateTime('answer_given');
-			$table->integer('author_id')->unsigned();
-			$table->integer('recipe_id')->unsigned();
-			$table->integer('variety_id')->unsigned();
+            $table->string('phone');
+            $table->string('question');
+            $table->dateTime('question_asked');
+            $table->string('answer');
+            $table->dateTime('answer_given');
+            $table->integer('author_id')->unsigned();
+            $table->integer('recipe_id')->unsigned();
+            $table->integer('variety_id')->unsigned();
         });
 
+        Schema::table(
+            'qaas', function ($table) {
+                $table
+                    ->foreign('author_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('cascade');
+            }
+        );
 
-		Schema::table(
-			'qaas', function ($table) {
-				$table
-					->foreign('author_id')
-					->references('id')
-					->on('users')
-					->onDelete('cascade');
-			}
-		);
+        Schema::table(
+            'qaas', function ($table) {
+                $table
+                    ->foreign('recipe_id')
+                    ->references('id')
+                    ->on('recipes')
+                    ->onDelete('cascade');
+            }
+        );
 
-		Schema::table(
-			'qaas', function ($table) {
-				$table
-					->foreign('recipe_id')
-					->references('id')
-					->on('recipes')
-					->onDelete('cascade');
-			}
-		);
-
-		Schema::table(
-			'qaas', function ($table) {
-				$table
-					->foreign('variety_id')
-					->references('id')
-					->on('recipe_variations')
-					->onDelete('cascade');
-			}
-		);
+        Schema::table(
+            'qaas', function ($table) {
+                $table
+                    ->foreign('variety_id')
+                    ->references('id')
+                    ->on('recipe_variations')
+                    ->onDelete('cascade');
+            }
+        );
     }
 
     /**

@@ -20,15 +20,15 @@ class CreateEmailVerificationsTable extends Migration
             $table->dateTime('is_verified')->nullable();
         });
 
-		Schema::table(
-			'email_verifications', function ($table) {
-			$table
-				->foreign('user_id')
-				->references('id')
-				->on('users')
-				->onDelete('cascade');
-			}
-		);
+        Schema::table(
+            'email_verifications', function ($table) {
+                $table
+                ->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+            }
+        );
     }
 
     /**

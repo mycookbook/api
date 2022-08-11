@@ -9,7 +9,7 @@ use Laravel\Lumen\Testing\WithoutMiddleware;
  */
 class StatsTest extends \TestCase
 {
-	use WithoutMiddleware;
+    use WithoutMiddleware;
 
     /**
      * Test Application
@@ -24,8 +24,8 @@ class StatsTest extends \TestCase
                     'data' => [
                         'users',
                         'recipes',
-                        'cookbooks'
-                    ]
+                        'cookbooks',
+                    ],
                 ]
             )->assertResponseStatus(200);
     }

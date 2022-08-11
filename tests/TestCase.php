@@ -1,16 +1,16 @@
 <?php
 
-use Traits\CreatesObjects;
 use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Traits\CreatesObjects;
 
 /**
  * Class TestCase
  */
 abstract class TestCase extends Laravel\Lumen\Testing\TestCase
 {
-	use CreatesObjects;
-	use DatabaseMigrations;
+    use CreatesObjects;
+    use DatabaseMigrations;
 
     /**
      * Creates the application.
@@ -22,21 +22,21 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
         return require __DIR__.'/../bootstrap/app.php';
     }
 
-	/**
-	 * Reset Migrations
-	 *
-	 * @return void
-	 */
-	public function tearDown(): void
-	{
-		$this->artisan('migrate:reset');
+    /**
+     * Reset Migrations
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        $this->artisan('migrate:reset');
 
-		$this->beforeApplicationDestroyed(function () {
-			DB::disconnect();
-		});
+        $this->beforeApplicationDestroyed(function () {
+            DB::disconnect();
+        });
 
-		parent::tearDown();
-	}
+        parent::tearDown();
+    }
 
 //    protected function disableExceptionHandling()
 //    {

@@ -16,25 +16,25 @@ class CreateRecipeVariationsTable extends Migration
         Schema::create('recipe_variations', function (Blueprint $table) {
             $table->increments('id');
 
-			$table->string('name');
-			$table->string('ingredients');
-			$table->string('imgUrl');
-			$table->longText('description');
+            $table->string('name');
+            $table->string('ingredients');
+            $table->string('imgUrl');
+            $table->longText('description');
 
-			$table->integer('recipe_id')->unsigned();
+            $table->integer('recipe_id')->unsigned();
 
             $table->timestamps();
         });
 
-		Schema::table(
-			'recipe_variations', function ($table) {
-			$table
-				->foreign('recipe_id')
-				->references('id')
-				->on('recipes')
-				->onDelete('cascade');
-			}
-		);
+        Schema::table(
+            'recipe_variations', function ($table) {
+                $table
+                ->foreign('recipe_id')
+                ->references('id')
+                ->on('recipes')
+                ->onDelete('cascade');
+            }
+        );
     }
 
     /**

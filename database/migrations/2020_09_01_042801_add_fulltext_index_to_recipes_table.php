@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class AddFulltextIndexToRecipesTable extends Migration
 {
@@ -13,6 +11,6 @@ class AddFulltextIndexToRecipesTable extends Migration
      */
     public function up()
     {
-		DB::statement('ALTER TABLE recipes ADD FULLTEXT full(name, description, ingredients, nutritional_detail, summary)');
+        DB::statement('ALTER TABLE recipes ADD FULLTEXT full(name, description, ingredients, nutritional_detail, summary)');
     }
 }

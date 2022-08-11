@@ -2,110 +2,109 @@
 
 namespace Functional\Integration\Services;
 
-use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Services\UserService;
-use App\Interfaces\serviceInterface;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
+use App\Interfaces\serviceInterface;
+use App\Services\UserService;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserServiceTest extends \TestCase
 {
+    /**
+     * @test
+     */
+    public function it_adheres_to_the_common_service_interface()
+    {
+        $service = new UserService();
+        $this->assertInstanceOf(serviceInterface::class, $service);
+    }
 
-	/**
-	 * @test
-	 */
-	public function it_adheres_to_the_common_service_interface()
-	{
-		$service = new UserService();
-		$this->assertInstanceOf(serviceInterface::class, $service);
-	}
+    /**
+     * @test
+     */
+    public function it_responds_with_200_when_retrieving_all_users()
+    {
+        $service = new UserService();
+        $response = $service->index();
 
-	/**
-	 * @test
-	 */
-	public function it_responds_with_200_when_retrieving_all_users()
-	{
-		$service = new UserService();
-		$response = $service->index();
+        $this->assertSame($response->getStatusCode(), Response::HTTP_OK);
+    }
 
-		$this->assertSame($response->getStatusCode(), Response::HTTP_OK);
-	}
+    /**
+     * @test
+     */
+    public function it_can_create_a_new_user_resource()
+    {
+        $storeRequest = new StoreRequest(new Request([
+            'name' => 'test',
+            'email' => 'you@test.com',
+            'password' => '@X_I123^76',
+        ]));
 
-	/**
-	 * @test
-	 */
-	public function it_can_create_a_new_user_resource()
-	{
-		$storeRequest = new StoreRequest(new Request([
-			'name' => 'test',
-			'email' => 'you@test.com',
-			'password' => '@X_I123^76'
-		]));
+        $service = new UserService();
+        $response = $service->store($storeRequest->getParams());
 
-		$service = new UserService();
-		$response = $service->store($storeRequest->getParams());
+        $this->assertSame($response->getStatusCode(), Response::HTTP_CREATED);
+    }
 
-		$this->assertSame($response->getStatusCode(), Response::HTTP_CREATED);
-	}
+    /**
+     * @test
+     */
+    public function it_can_retrieve_a_single_user_resource_that_exists()
+    {
+        $storeRequest = new StoreRequest(new Request([
+            'name' => 'test mate',
+            'email' => 'you@test.com',
+            'password' => '@X_I123^76',
+        ]));
 
-	/**
-	 * @test
-	 */
-	public function it_can_retrieve_a_single_user_resource_that_exists()
-	{
-		$storeRequest = new StoreRequest(new Request([
-			'name' => 'test mate',
-			'email' => 'you@test.com',
-			'password' => '@X_I123^76'
-		]));
+        $service = new UserService();
+        $service->store($storeRequest->getParams());
 
-		$service = new UserService();
-		$service->store($storeRequest->getParams());
+        $response = $service->show('test-mate');
 
-		$response = $service->show('test-mate');
+        $this->assertSame($response->getStatusCode(), Response::HTTP_OK);
+    }
 
-		$this->assertSame($response->getStatusCode(), Response::HTTP_OK);
-	}
+    /**
+     * @test
+     */
+    public function it_throws_an_exception_if_the_resource_does_not_exist()
+    {
+        $this->expectException(CookbookModelNotFoundException::class);
 
-	/**
-	 * @test
-	 */
-	public function it_throws_an_exception_if_the_resource_does_not_exist()
-	{
-		$this->expectException(CookbookModelNotFoundException::class);
+        $service = new UserService();
+        $service->show('test-mate');
+    }
 
-		$service = new UserService();
-		$service->show('test-mate');
-	}
+    /**
+     * @test
+     */
+    public function it_can_update_an_existing_resource()
+    {
+        $storeRequest = new StoreRequest(new Request([
+            'name' => 'test mate',
+            'email' => 'you@test.com',
+            'password' => '@X_I123^76',
+        ]));
 
-	/**
-	 * @test
-	 */
-	public function it_can_update_an_existing_resource()
-	{
-		$storeRequest = new StoreRequest(new Request([
-			'name' => 'test mate',
-			'email' => 'you@test.com',
-			'password' => '@X_I123^76'
-		]));
+        $service = new UserService();
+        $service->store($storeRequest->getParams());
 
-		$service = new UserService();
-		$service->store($storeRequest->getParams());
+        $updateRequest = new UpdateRequest(new Request([
+            'name' => 'test mate 2',
+            'password' => '@X_I123^76',
+            'followers' => 13,
+            'following' => 1,
+        ]));
 
-		$updateRequest = new UpdateRequest(new Request([
-			'name' => 'test mate 2',
-			'password' => '@X_I123^76',
-			'followers' => 13,
-			'following' => 1
-		]));
+        $response = $service->update($updateRequest->getParams(), 'test-mate');
+        $user = User::where('email', 'you@test.com')->first();
 
-		$response = $service->update($updateRequest->getParams(), 'test-mate');
-		$user = User::where('email', 'you@test.com')->first();
-
-		$this->assertSame($response->getStatusCode(), Response::HTTP_OK);
-		$this->assertSame($user->name_slug, 'test-mate-2');
-	}
+        $this->assertSame($response->getStatusCode(), Response::HTTP_OK);
+        $this->assertSame($user->name_slug, 'test-mate-2');
+    }
 }

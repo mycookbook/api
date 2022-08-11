@@ -20,15 +20,15 @@ class CreateRecipeTagsTable extends Migration
             $table->timestamps();
         });
 
-		Schema::table(
-			'recipe_tags', function ($table) {
-			$table
-				->foreign('recipe_id')
-				->references('id')
-				->on('recipes')
-				->onDelete('cascade');
-			}
-		);
+        Schema::table(
+            'recipe_tags', function ($table) {
+                $table
+                ->foreign('recipe_id')
+                ->references('id')
+                ->on('recipes')
+                ->onDelete('cascade');
+            }
+        );
     }
 
     /**

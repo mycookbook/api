@@ -6,47 +6,47 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserContactDetail extends Model
 {
-	const VISIBILITY = 'public';
+    const VISIBILITY = 'public';
 
-	protected $fillable = [
-		'visibility',
-		'user_id',
-		'facebook',
-		'twitter',
-		'instagram',
-		'skype',
-		'office_address',
-		'phone',
-		'calendly',
-		'skype',
-		'website'
-	];
+    protected $fillable = [
+        'visibility',
+        'user_id',
+        'facebook',
+        'twitter',
+        'instagram',
+        'skype',
+        'office_address',
+        'phone',
+        'calendly',
+        'skype',
+        'website',
+    ];
 
-	protected $hidden = ['id', 'user_id'];
+    protected $hidden = ['id', 'user_id'];
 
-	protected $appends = ['is_public'];
+    protected $appends = ['is_public'];
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function user()
-	{
-		return $this->belongsTo('App\User');
-	}
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function isPublic()
-	{
-		return ($this->visibility === self::VISIBILITY);
-	}
+    /**
+     * @return bool
+     */
+    public function isPublic()
+    {
+        return $this->visibility === self::VISIBILITY;
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function getIsPublicAttribute()
-	{
-		return $this->isPublic();
-	}
+    /**
+     * @return bool
+     */
+    public function getIsPublicAttribute()
+    {
+        return $this->isPublic();
+    }
 }

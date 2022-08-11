@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateFlagsTable extends Migration
 {
@@ -15,11 +15,11 @@ class CreateFlagsTable extends Migration
     {
         Schema::create(
             'flags', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('flag');
-            $table->string('nationality');
+                $table->increments('id');
+                $table->string('flag');
+                $table->string('nationality');
 
-            $table->timestamps();
+                $table->timestamps();
             }
         );
     }

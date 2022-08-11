@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use App\Recipe;
 use App\Cookbook;
+use App\Recipe;
+use App\User;
 
 /**
  * Class StatsController
  */
 class StatsController extends Controller
 {
-	/**
-	 * Return stats meta data
-	 * Users, Recipes and Cookbooks count
-	 *
-	 * @param User $user user
-	 * @param Recipe $recipe recipe
-	 * @param Cookbook $cookbook cookbook
-	 *
-	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-	 */
+    /**
+     * Return stats meta data
+     * Users, Recipes and Cookbooks count
+     *
+     * @param  User  $user user
+     * @param  Recipe  $recipe recipe
+     * @param  Cookbook  $cookbook cookbook
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
     public function index(
         User $user,
         Recipe $recipe,
@@ -28,20 +27,19 @@ class StatsController extends Controller
     ) {
         $data = [
             'users' => self::getUsersStats($user),
-            'recipes' =>  self::getRecipesStats($recipe),
-            'cookbooks' => self::getCookbooksStats($cookbook)
+            'recipes' => self::getRecipesStats($recipe),
+            'cookbooks' => self::getCookbooksStats($cookbook),
         ];
 
-        return response(["data" => $data]);
+        return response(['data' => $data]);
     }
 
-	/**
-	 * Return users count
-	 *
-	 * @param \App\User $user
-	 *
-	 * @return int
-	 */
+    /**
+     * Return users count
+     *
+     * @param  \App\User  $user
+     * @return int
+     */
     protected static function getUsersStats($user): int
     {
         return $user->count();
@@ -50,8 +48,7 @@ class StatsController extends Controller
     /**
      * Return recipes count
      *
-     * @param \App\Recipe $recipe
-     *
+     * @param  \App\Recipe  $recipe
      * @return int
      */
     protected static function getRecipesStats($recipe): int
@@ -62,8 +59,7 @@ class StatsController extends Controller
     /**
      * Return Cookbook count
      *
-     * @param \App\Cookbook $cookbook
-     *
+     * @param  \App\Cookbook  $cookbook
      * @return int
      */
     protected static function getCookbooksStats($cookbook): int

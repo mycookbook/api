@@ -6,16 +6,16 @@ use Illuminate\Support\Facades\Crypt;
 
 trait EncryptsPayload
 {
-	/**
-	 * Encrypts the given payload using Crypt
-	 *
-	 * @param array $payload
-	 * @return string
-	 */
-	public function encryptPayload(Array $payload): string
-	{
-		$payload['secret'] = env('CRYPT_SECRET');
+    /**
+     * Encrypts the given payload using Crypt
+     *
+     * @param  array  $payload
+     * @return string
+     */
+    public function encryptPayload(array $payload): string
+    {
+        $payload['secret'] = env('CRYPT_SECRET');
 
-		return Crypt::encrypt($payload);
-	}
+        return Crypt::encrypt($payload);
+    }
 }

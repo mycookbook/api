@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Recipe
- *
- * @package Cookbook
  */
-
 class Category extends Model
 {
     /**
@@ -18,7 +15,7 @@ class Category extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'color', 'emoji'
+        'name', 'slug', 'color', 'emoji',
     ];
 
     protected $hidden = ['pivot'];
@@ -40,7 +37,7 @@ class Category extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/categories/{$this->attributes['id']}")
+                ->to("api/v1/categories/{$this->attributes['id']}"),
         ];
     }
 

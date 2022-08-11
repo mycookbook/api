@@ -6,7 +6,7 @@ $factory->define(
             'name' => 'Vegan',
             'slug' => 'vegan',
             'color' => 'f0e1ff',
-			'emoji' => ''
+            'emoji' => '',
         ];
     }
 );
