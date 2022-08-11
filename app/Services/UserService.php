@@ -39,7 +39,7 @@ class UserService implements serviceInterface
     /**
      * Create a new user
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
@@ -73,11 +73,8 @@ class UserService implements serviceInterface
     }
 
     /**
-     * Get one user
-     *
-     * @param  mixed  $q
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @param $q
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      * @throws CookbookModelNotFoundException
      */
     public function show($q)
@@ -124,7 +121,7 @@ class UserService implements serviceInterface
             if ($updated = $userRecord->save()) {
                 return response(
                     [
-                        'updated' => (bool) $updated,
+                        'updated' => (bool)$updated,
                         'status' => 'success',
                     ], Response::HTTP_OK
                 );
@@ -153,7 +150,7 @@ class UserService implements serviceInterface
             ->orWhere('email', $q)
             ->orWhere('name_slug', $q);
 
-        if (! $r->first()) {
+        if (!$r->first()) {
             throw new CookbookModelNotFoundException();
         }
 
