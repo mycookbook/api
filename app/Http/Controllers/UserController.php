@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\EmailVerification;
-use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Requests\UpdateRequest;
+use App\Http\Requests\UserStoreRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
 use App\Services\UserService;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -36,14 +35,12 @@ class UserController extends Controller
     }
 
     /**
-     * Create new user
-     *
-     * @param \App\Http\Controllers\Requests\User\StoreRequest $request
+     * @param UserStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreRequest $request): \Illuminate\Http\JsonResponse
+    public function store(UserStoreRequest $request): \Illuminate\Http\JsonResponse
     {
-        return $this->service->store($request->getParams());
+        return $this->service->store($request);
     }
 
     /**
@@ -78,11 +75,10 @@ class UserController extends Controller
     /**
      * Email Verification
      *
-     * @param Request $request
      * @param $token
      * @return \Illuminate\Http\JsonResponse|void
      */
-    public function verifyEmail(Request $request, $token)
+    public function verifyEmail($token)
     {
         $payload = Crypt::decrypt($token);
 
@@ -108,12 +104,11 @@ class UserController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param $token
      *
      * @throws \Exception
      */
-    public function resend(Request $request, $token)
+    public function resend($token)
     {
         $payload = Crypt::decrypt($token);
 
