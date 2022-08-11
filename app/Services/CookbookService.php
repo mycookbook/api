@@ -40,8 +40,8 @@ class CookbookService implements serviceInterface
         return response()->json(
             [
                 'data' => $cookbooks->take(15)->get()
-                    ->orderByDesc('created_at')
-                    ->get(),
+//                    ->orderByDesc('created_at')
+//                    ->get(),
             ], Response::HTTP_OK
         );
     }
