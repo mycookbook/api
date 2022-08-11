@@ -63,7 +63,7 @@ class Recipe extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -73,7 +73,7 @@ class Recipe extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function cookbook()
+    public function cookbook(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo('App\Cookbook');
     }
@@ -81,7 +81,7 @@ class Recipe extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function variations()
+    public function variations(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany('App\RecipeVariation');
     }
@@ -90,31 +90,27 @@ class Recipe extends Model
      * Set attributes links
      *
      * @return array
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function getLinksAttribute()
+    public function getLinksAttribute(): array
     {
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/recipes/{$this->attributes['slug']}"),
+                ->to("api/v1/recipes/{$this->attributes['slug']}")
         ];
     }
 
     /**
-     * Compute total time to prepare recipe
-     *
      * @return string
-     *
-     * @throws \Exception
      */
-    public function getTotalTimeAttribute()
+    public function getTotalTimeAttribute(): string
     {
         $cook_time = strtotime(Carbon::parse($this->attributes['cook_time']));
         $prep_time = strtotime(Carbon::parse($this->attributes['prep_time']));
         $total_time = $cook_time + $prep_time;
-        $total_time = Carbon::createFromTimestamp($total_time);
 
-        return $total_time;
+        return Carbon::createFromTimestamp($total_time);
         //		return CarbonInterval::createFromFormat('H:i:s', $total_time)->forHumans();
     }
 
@@ -123,7 +119,7 @@ class Recipe extends Model
      *
      * @return int
      */
-    public function getVarietiesCountAttribute()
+    public function getVarietiesCountAttribute(): int
     {
         return $this->variations()->count();
     }
@@ -135,7 +131,7 @@ class Recipe extends Model
      *
      * @throws \Exception
      */
-    public function getCookTimeAttribute()
+    public function getCookTimeAttribute(): string
     {
         $dt = Carbon::parse($this->attributes['cook_time']);
 
@@ -149,7 +145,7 @@ class Recipe extends Model
      *
      * @throws \Exception
      */
-    public function getPrepTimeAttribute()
+    public function getPrepTimeAttribute(): string
     {
         $dt = Carbon::parse($this->attributes['prep_time']);
 
@@ -161,7 +157,7 @@ class Recipe extends Model
      *
      * @throws \Exception
      */
-    public function getSubmissionDateAttribute()
+    public function getSubmissionDateAttribute(): string
     {
         $dt = Carbon::parse($this->attributes['created_at']);
 
@@ -169,9 +165,7 @@ class Recipe extends Model
     }
 
     /**
-     * Recipe cookbook
-     *
-     * @return array
+     * @return mixed
      */
     public function getAuthorAttribute()
     {

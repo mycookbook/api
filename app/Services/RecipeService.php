@@ -14,14 +14,12 @@ use Illuminate\Http\Response;
 class RecipeService
 {
     /**
-     * Get all recipes
-     *
-     * @param null $user_id
+     * @param $user_id
      * @return \Illuminate\Http\JsonResponse
      */
     public function index($user_id = null): \Illuminate\Http\JsonResponse
     {
-        $recipes = Recipe::with('Cookbook', 'User');
+        $recipes = Recipe::paginate(100);
 
         if ($user_id) {
             return response()->json(
@@ -31,11 +29,7 @@ class RecipeService
             );
         }
 
-        return response()->json(
-            [
-                'data' => $recipes->paginate(100),
-            ], Response::HTTP_OK
-        );
+        return response()->json(['data' => $recipes]);
     }
 
     /**
