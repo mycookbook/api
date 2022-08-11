@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "acb0867086b667f79b3e36974bae888d",
+    "content-hash": "81e32b362f591dcb7df12a1b3e4bac5e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3036,6 +3036,100 @@
                 "source": "https://github.com/paragonie/sodium_compat/tree/v1.17.1"
             },
             "time": "2022-03-23T19:32:04+00:00"
+        },
+        {
+            "name": "php-open-source-saver/jwt-auth",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-Open-Source-Saver/jwt-auth.git",
+                "reference": "5fd8c185453d875835c24d4ce50be7396af6ae14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-Open-Source-Saver/jwt-auth/zipball/5fd8c185453d875835c24d4ce50be7396af6ae14",
+                "reference": "5fd8c185453d875835c24d4ce50be7396af6ae14",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/auth": "^6|^7|^8.67|^9",
+                "illuminate/contracts": "^6|^7|^8.67|^9",
+                "illuminate/http": "^6|^7|^8.67|^9",
+                "illuminate/support": "^6|^7|^8.67|^9",
+                "lcobucci/jwt": "^4.0",
+                "namshi/jose": "^7.0",
+                "nesbot/carbon": "^1.0|^2.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3",
+                "illuminate/console": "^6|^7|^8.67|^9",
+                "illuminate/routing": "^6|^7|^8.67|^9",
+                "mockery/mockery": "^1.4.4",
+                "orchestra/testbench": "^4.18|^5.8|^6.3|^7",
+                "phpstan/phpstan": "^1",
+                "phpunit/phpunit": "^8.5|^9.4",
+                "rector/rector": "^0.12.4",
+                "vlucas/phpdotenv": "^5.2.0",
+                "yoast/phpunit-polyfills": "^1.0.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "1.0-dev"
+                },
+                "laravel": {
+                    "aliases": {
+                        "JWTAuth": "PHPOpenSourceSaver\\JWTAuth\\Facades\\JWTAuth",
+                        "JWTFactory": "PHPOpenSourceSaver\\JWTAuth\\Facades\\JWTFactory"
+                    },
+                    "providers": [
+                        "PHPOpenSourceSaver\\JWTAuth\\Providers\\LaravelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PHPOpenSourceSaver\\JWTAuth\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sean Tymon",
+                    "email": "tymon148@gmail.com",
+                    "homepage": "https://tymon.xyz",
+                    "role": "Forked package creator | Developer"
+                },
+                {
+                    "name": "Eric Schricker",
+                    "email": "eric.schricker@adiutabyte.de",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Fabio William Conceição",
+                    "email": "messhias@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "JSON Web Token Authentication for Laravel and Lumen",
+            "homepage": "https://github.com/PHP-Open-Source-Saver/jwt-auth",
+            "keywords": [
+                "Authentication",
+                "JSON Web Token",
+                "auth",
+                "jwt",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/PHP-Open-Source-Saver/jwt-auth/issues",
+                "source": "https://github.com/PHP-Open-Source-Saver/jwt-auth"
+            },
+            "time": "2022-04-22T06:31:30+00:00"
         },
         {
             "name": "phpoption/phpoption",
