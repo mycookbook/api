@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 class CommentController extends Controller
 {
     /**
-     * @param Request $request
+     * @param  Request  $request
      */
     public function __construct(Request $request)
     {
         $this->middleware('jwt.auth', ['except' => [
             'index',
-            'show'
+            'show',
         ]]);
 
         parent::__construct($request);

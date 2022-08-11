@@ -13,9 +13,9 @@ class AlterTableRecipesChangeIngredientsFieldTypeToLongText extends Migration
      */
     public function up()
     {
-		Schema::table('recipes', function (Blueprint $table) {
-			$table->longText('ingredients')->change();
-		});
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->longText('ingredients')->change();
+        });
     }
 
     /**

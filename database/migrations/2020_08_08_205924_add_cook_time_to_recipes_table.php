@@ -26,7 +26,7 @@ class AddCookTimeToRecipesTable extends Migration
     public function down()
     {
         Schema::table('recipes', function (Blueprint $table) {
-			Schema::dropIfExists('cook_time');
+            Schema::dropIfExists('cook_time');
         });
     }
 }

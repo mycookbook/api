@@ -13,9 +13,9 @@ class AlterTableRecipesChangeSummaryTypeToLongtext extends Migration
      */
     public function up()
     {
-		Schema::table('recipes', function (Blueprint $table) {
-			$table->longText('summary')->change();
-		});
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->longText('summary')->change();
+        });
     }
 
     /**

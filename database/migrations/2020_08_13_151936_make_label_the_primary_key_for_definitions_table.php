@@ -13,13 +13,13 @@ class MakeLabelThePrimaryKeyForDefinitionsTable extends Migration
      */
     public function up()
     {
-		Schema::dropIfExists('definitions');
+        Schema::dropIfExists('definitions');
 
-		Schema::create('definitions', function (Blueprint $table) {
-			$table->string('label')->primary();
-			$table->json('contents');
-			$table->timestamps();
-		});
+        Schema::create('definitions', function (Blueprint $table) {
+            $table->string('label')->primary();
+            $table->json('contents');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -29,6 +29,6 @@ class MakeLabelThePrimaryKeyForDefinitionsTable extends Migration
      */
     public function down()
     {
-		Schema::dropIfExists('definitions');
+        Schema::dropIfExists('definitions');
     }
 }

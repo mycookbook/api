@@ -2,15 +2,12 @@
 
 namespace App\Services;
 
+use App\Exceptions\CookbookModelNotFoundException;
+use App\Interfaces\serviceInterface;
 use App\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Hashing\BcryptHasher;
-use App\Interfaces\serviceInterface;
-use App\Exceptions\CookbookModelNotFoundException;
 
 /**
  * Class UserService
@@ -18,7 +15,7 @@ use App\Exceptions\CookbookModelNotFoundException;
 class UserService implements serviceInterface
 {
     /**
-     * @var array $modelFillables
+     * @var array
      */
     protected $modelFillables;
 
@@ -35,76 +32,75 @@ class UserService implements serviceInterface
         $users = User::with('cookbooks', 'recipes', 'contact')->get();
 
         return response([
-        	'data' => $users
-		], Response::HTTP_OK);
+            'data' => $users,
+        ], Response::HTTP_OK);
     }
 
-	/**
-	 * Create a new user
-	 *
-	 * @param \Illuminate\Http\Request $request
-	 *
-	 * @return \Illuminate\Http\JsonResponse
-	 */
+    /**
+     * Create a new user
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request): \Illuminate\Http\JsonResponse
-	{
+    {
         $user = new User([
-        	'name' => $request->name,
-			'email' => $request->email,
-			'password' => (new BcryptHasher)->make($request->password),
-			'following' => 0,
-			'followers' => 0,
-			'name_slug' => slugify($request->name),
-			'avatar' => 'https://bit.ly/3m3M73g',
-		]);
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => (new BcryptHasher)->make($request->password),
+            'following' => 0,
+            'followers' => 0,
+            'name_slug' => slugify($request->name),
+            'avatar' => 'https://bit.ly/3m3M73g',
+        ]);
 
         $created = $user->save();
         $serialized = $request->merge(['user_id' => $user->id]);
-		$contact = new UserContactDetailsService();
-		$contact->store(new Request($serialized->all()));
+        $contact = new UserContactDetailsService();
+        $contact->store(new Request($serialized->all()));
 
-//		dispatch(new SendEmailNotification($user->id));
+        //		dispatch(new SendEmailNotification($user->id));
 
         return response()->json(
             [
                 'response' => [
                     'created' => $created,
                     'data' => $user,
-                    'status' => "success",
-                ]
+                    'status' => 'success',
+                ],
             ], Response::HTTP_CREATED
         );
     }
 
-	/**
-	 * Get one user
-	 *
-	 * @param mixed $q
-	 *
-	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-	 * @throws CookbookModelNotFoundException
-	 */
+    /**
+     * Get one user
+     *
+     * @param  mixed  $q
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     *
+     * @throws CookbookModelNotFoundException
+     */
     public function show($q)
     {
-		$user = $this->findWhere($q)->get();
+        $user = $this->findWhere($q)->get();
 
         return response(
             [
-                "data" => [
-                	'user' => $user
-				],
+                'data' => [
+                    'user' => $user,
+                ],
             ], Response::HTTP_OK
         );
     }
 
     /**
-     * @param Request $request
-     * @param string $option
+     * @param  Request  $request
+     * @param  string  $option
      * @return Response|\Laravel\Lumen\Http\ResponseFactory
      */
     public function update(Request $request, string $option)
     {
-		try {
+        try {
             $userRecord = User::findWhere($option, ['cookbooks', 'recipes'], ['email', 'name_slug'])->first();
 
             $data = $request->only([
@@ -116,7 +112,7 @@ class UserService implements serviceInterface
                 'contact_email',
                 'about',
                 'expertise_level',
-                'can_take_orders'
+                'can_take_orders',
             ]);
 
             foreach ($this->modelFillables as $fillable) {
@@ -128,38 +124,39 @@ class UserService implements serviceInterface
             if ($updated = $userRecord->save()) {
                 return response(
                     [
-                        "updated" => (bool) $updated,
-                        "status" => "success"
+                        'updated' => (bool) $updated,
+                        'status' => 'success',
                     ], Response::HTTP_OK
                 );
             }
 
-            throw new \Exception("Not saved.");
-		} catch (\Exception $e) {
-			return response([
-				'errors' => $e->getMessage()
-			], Response::HTTP_BAD_REQUEST);
-		}
+            throw new \Exception('Not saved.');
+        } catch (\Exception $e) {
+            return response([
+                'errors' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
     }
 
-	/**
-	 * Find user record
-	 *
-	 * @param $q
-	 * @return mixed
-	 * @throws CookbookModelNotFoundException
-	 */
+    /**
+     * Find user record
+     *
+     * @param $q
+     * @return mixed
+     *
+     * @throws CookbookModelNotFoundException
+     */
     public function findWhere($q)
-	{
-		$r = User::with(['cookbooks', 'recipes'])
+    {
+        $r = User::with(['cookbooks', 'recipes'])
             ->where('id', $q)
-			->orWhere('email', $q)
-			->orWhere('name_slug', $q);
+            ->orWhere('email', $q)
+            ->orWhere('name_slug', $q);
 
-		if (!$r->first()) {
-			throw new CookbookModelNotFoundException();
-		}
+        if (! $r->first()) {
+            throw new CookbookModelNotFoundException();
+        }
 
-		return $r;
-	}
+        return $r;
+    }
 }

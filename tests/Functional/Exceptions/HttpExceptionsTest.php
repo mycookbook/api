@@ -10,8 +10,7 @@ use Laravel\Lumen\Testing\WithoutMiddleware;
  */
 class HttpExceptionsTest extends \TestCase
 {
-
-	use WithoutMiddleware;
+    use WithoutMiddleware;
 
     /**
      * Test testNotFoundHttpException
@@ -26,28 +25,28 @@ class HttpExceptionsTest extends \TestCase
 
         $this->seeJsonStructure(
             [
-                'status', 'message', 'docs'
+                'status', 'message', 'docs',
             ]
         );
     }
 
-	/**
-	 * @test
-	 */
+    /**
+     * @test
+     */
     public function it_responds_with_a_404_when_trying_to_login_with_invalid_credentials()
-	{
-		$response = $this->call('POST', '/api/v1/auth/login', ['email' => 'invalid-email', 'password' => 'invalid-password']);
+    {
+        $response = $this->call('POST', '/api/v1/auth/login', ['email' => 'invalid-email', 'password' => 'invalid-password']);
 
-		$this->assertEquals(Response::HTTP_NOT_FOUND, $response->status());
-	}
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->status());
+    }
 
-	/**
-	 * @test
-	 */
-	public function it_responds_with_a_422_when_trying_to_login_without_credentials()
-	{
-		$response = $this->call('POST', '/api/v1/auth/login', []);
+    /**
+     * @test
+     */
+    public function it_responds_with_a_422_when_trying_to_login_without_credentials()
+    {
+        $response = $this->call('POST', '/api/v1/auth/login', []);
 
-		$this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->status());
-	}
+        $this->assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->status());
+    }
 }

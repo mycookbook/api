@@ -2,91 +2,93 @@
 
 namespace App\Jobs;
 
-use App\User;
 use App\EmailVerification;
+use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class TriggerEmailVerificationProcess implements ShouldQueue
 {
-	use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue, Queueable, SerializesModels;
 
-	protected $user;
-	protected $userId;
+    protected $user;
 
-	/**
-	 * TriggerEmailVerificationProcess constructor.
-	 * @param $userId
-	 */
-	public function __construct($userId)
-	{
-		$this->userId = $userId;
-	}
+    protected $userId;
 
-	/**
-	 * @throws \Exception
-	 */
-	public function handle()
-	{
-		$this->user = User::find($this->userId);
+    /**
+     * TriggerEmailVerificationProcess constructor.
+     *
+     * @param $userId
+     */
+    public function __construct($userId)
+    {
+        $this->userId = $userId;
+    }
 
-		if (!$this->user) {
-			Log::info('This user does not exist', ['user_id' => $this->userId]);
-		} else {
-			$user_email_verification_exist = EmailVerification::where('user_id', $this->userId)->get()->first();
+    /**
+     * @throws \Exception
+     */
+    public function handle()
+    {
+        $this->user = User::find($this->userId);
 
-			if ($user_email_verification_exist) {
-				//update
+        if (! $this->user) {
+            Log::info('This user does not exist', ['user_id' => $this->userId]);
+        } else {
+            $user_email_verification_exist = EmailVerification::where('user_id', $this->userId)->get()->first();
 
-				$new_token = $this->getToken($this->getPayload());
+            if ($user_email_verification_exist) {
+                //update
 
-				$user_email_verification_exist->update([
-					'token' => $new_token,
-					'is_verified' => NULL
-				]);
+                $new_token = $this->getToken($this->getPayload());
 
-				if (!$user_email_verification_exist->save()) {
-					Log::info('Existing email verification failed to update: ', [$user_email_verification_exist]);
-				}
-			} else {
-				//create
+                $user_email_verification_exist->update([
+                    'token' => $new_token,
+                    'is_verified' => null,
+                ]);
 
-				$token = $this->getToken($this->getPayload());
+                if (! $user_email_verification_exist->save()) {
+                    Log::info('Existing email verification failed to update: ', [$user_email_verification_exist]);
+                }
+            } else {
+                //create
 
-				$new_email_verification = new EmailVerification([
-					'user_id' => $this->user->id,
-					'token' => $token
-				]);
+                $token = $this->getToken($this->getPayload());
 
-				if (!$new_email_verification->save()) {
-					Log::info('Failed to save new email verification: ', [$new_email_verification]);
-				}
-			}
-		}
-	}
+                $new_email_verification = new EmailVerification([
+                    'user_id' => $this->user->id,
+                    'token' => $token,
+                ]);
 
-	/**
-	 * @return array
-	 */
-	protected function getPayload()
-	{
-		return [
-			'email' => $this->user->email,
-			'user_id' => $this->user->id,
-			'secret' => env('CRYPT_SECRET')
-		];
-	}
+                if (! $new_email_verification->save()) {
+                    Log::info('Failed to save new email verification: ', [$new_email_verification]);
+                }
+            }
+        }
+    }
 
-	/**
-	 * @param $payload
-	 * @return string
-	 */
-	protected function getToken($payload)
-	{
-		return Crypt::encrypt($payload);
-	}
+    /**
+     * @return array
+     */
+    protected function getPayload()
+    {
+        return [
+            'email' => $this->user->email,
+            'user_id' => $this->user->id,
+            'secret' => env('CRYPT_SECRET'),
+        ];
+    }
+
+    /**
+     * @param $payload
+     * @return string
+     */
+    protected function getToken($payload)
+    {
+        return Crypt::encrypt($payload);
+    }
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     protected $fillable = [
-        'user_id', 'recipe_id', 'comment'
+        'user_id', 'recipe_id', 'comment',
     ];
 
     protected $appends = ['author'];
@@ -20,7 +20,7 @@ class Comment extends Model
     {
         $author_id = $this->user_id;
 
-        return User::where(["id" => $author_id])->first();
+        return User::where(['id' => $author_id])->first();
     }
 
     /**

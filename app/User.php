@@ -2,24 +2,20 @@
 
 namespace App;
 
-use App\Exceptions\CookbookModelNotFoundException;
+use App\Traits\CookbookUserMustVerifyEmail;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Auth\Authorizable;
-use Illuminate\Database\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use App\Traits\CookbookUserMustVerifyEmail;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 /**
  * User Model
  */
-class User extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    JWTSubject
+class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable, Authorizable, CookbookUserMustVerifyEmail;
 
@@ -29,9 +25,8 @@ class User extends Model implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'following', 'followers', 'name_slug', 'email_verified', 'avatar', 'pronouns', 'about'
+        'name', 'email', 'password', 'following', 'followers', 'name_slug', 'email_verified', 'avatar', 'pronouns', 'about',
     ];
-
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -39,7 +34,7 @@ class User extends Model implements
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'id', 'pivot'
+        'password', 'remember_token', 'id', 'pivot',
     ];
 
     /**
@@ -52,21 +47,21 @@ class User extends Model implements
         return $this->hasMany('App\Recipe', 'user_id');
     }
 
-	/**
-	 * User has one contact detail
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
-	 */
+    /**
+     * User has one contact detail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function contact()
-	{
-		return $this->hasOne('App\UserContactDetail');
-	}
+    {
+        return $this->hasOne('App\UserContactDetail');
+    }
 
-	/**
-	 * A user can be subscribed to multiple cookbooks
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
+    /**
+     * A user can be subscribed to multiple cookbooks
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function cookbooks()
     {
         return $this->belongsToMany('App\Cookbook', 'cookbook_user');
@@ -98,89 +93,90 @@ class User extends Model implements
      * @var array
      */
     protected $appends = [
-    	'contributions',
-		'is_verified',
-		'contact_detail',
+        'contributions',
+        'is_verified',
+        'contact_detail',
         'drafts',
-	];
+    ];
 
-	/**
-	 * Compute total nos of contributions made by this user
-	 * cookbooks and recipes
-	 *
-	 * @return array
-	 */
+    /**
+     * Compute total nos of contributions made by this user
+     * cookbooks and recipes
+     *
+     * @return array
+     */
     public function getContributionsAttribute(): array
-	{
-		$cookbooks = $this->cookbooks()->count();
-		$recipes = $this->recipes()->count();
+    {
+        $cookbooks = $this->cookbooks()->count();
+        $recipes = $this->recipes()->count();
 
-		return [
-			'cookbooks' => $cookbooks,
-			'recipes' => $recipes,
-			'total' => $cookbooks + $recipes
-		];
-	}
+        return [
+            'cookbooks' => $cookbooks,
+            'recipes' => $recipes,
+            'total' => $cookbooks + $recipes,
+        ];
+    }
 
-	/**
-	 * Set attribute created at
-	 *
-	 * @return string
-	 */
+    /**
+     * Set attribute created at
+     *
+     * @return string
+     */
     public function getCreatedAtAttribute(): string
-	{
-		$year = Carbon::parse($this->attributes['created_at'])->year;
-		$month = Carbon::parse($this->attributes['created_at'])->month;
+    {
+        $year = Carbon::parse($this->attributes['created_at'])->year;
+        $month = Carbon::parse($this->attributes['created_at'])->month;
 
-		return Carbon::createFromDate($year, $month)->format('F Y');
-	}
+        return Carbon::createFromDate($year, $month)->format('F Y');
+    }
 
-	/**
-	 * Show user email verification status
-	 *
-	 * @return bool
-	 */
-	public function getIsVerifiedAttribute()
-	{
-		$entity = $this->email_verification()->get()->first();
-		if (is_null($entity) || is_null($entity->is_verified)) {
-			return false;
-		}
-		return true;
-	}
+    /**
+     * Show user email verification status
+     *
+     * @return bool
+     */
+    public function getIsVerifiedAttribute()
+    {
+        $entity = $this->email_verification()->get()->first();
+        if (is_null($entity) || is_null($entity->is_verified)) {
+            return false;
+        }
 
-	/**
-	 * Get user contact detail
-	 *
-	 * @return mixed
-	 */
-	public function getContactDetailAttribute()
-	{
-		return $this->contact()->get()->first();
-	}
+        return true;
+    }
 
-	/**
-	 * Get the User name_slug
-	 *
-	 * @return string
-	 */
+    /**
+     * Get user contact detail
+     *
+     * @return mixed
+     */
+    public function getContactDetailAttribute()
+    {
+        return $this->contact()->get()->first();
+    }
+
+    /**
+     * Get the User name_slug
+     *
+     * @return string
+     */
     public function getSlug(): string
-	{
-		return $this->name_slug;
-	}
+    {
+        return $this->name_slug;
+    }
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
-	 */
-	public function email_verification()
-	{
-		return $this->hasOne('App\EmailVerification');
-	}
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function email_verification()
+    {
+        return $this->hasOne('App\EmailVerification');
+    }
 
-	public function isVerified()
-	{
-		return $this->email_verified;
-	}
+    public function isVerified()
+    {
+        return $this->email_verified;
+    }
 
     /**
      * @return string
@@ -204,8 +200,8 @@ class User extends Model implements
 
     /**
      * @param $q
-     * @param array $relationships
-     * @param array $orWhereFields
+     * @param  array  $relationships
+     * @param  array  $orWhereFields
      * @return mixed
      */
     public static function findWhere($q, array $relationships = [], array $orWhereFields = [])
@@ -225,7 +221,7 @@ class User extends Model implements
         $record = $record->get();
 
         if ($record->isEmpty()) {
-            throw new ModelNotFoundException("User record not found.");
+            throw new ModelNotFoundException('User record not found.');
         }
 
         return $record;

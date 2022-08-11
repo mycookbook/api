@@ -7,7 +7,7 @@ $factory->define(
             'description' => $faker->sentence,
             'bookCoverImg' => $faker->imageUrl(),
             'user_id' => 1,
-            'flag_id' => 1
+            'flag_id' => 1,
         ];
     }
 );

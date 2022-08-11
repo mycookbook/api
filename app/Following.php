@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Following extends Model
 {
-    protected $table = "followings";
-
+    protected $table = 'followings';
 }

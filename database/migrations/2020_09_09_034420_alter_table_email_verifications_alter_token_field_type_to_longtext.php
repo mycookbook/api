@@ -14,7 +14,7 @@ class AlterTableEmailVerificationsAlterTokenFieldTypeToLongtext extends Migratio
     public function up()
     {
         Schema::table('email_verifications', function (Blueprint $table) {
-        	$table->longText('token')->change();
+            $table->longText('token')->change();
         });
     }
 

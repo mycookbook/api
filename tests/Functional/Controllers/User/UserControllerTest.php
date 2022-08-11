@@ -2,8 +2,8 @@
 
 namespace Functional\Controllers\User;
 
-use Illuminate\Http\Response;
 use App\Jobs\SendEmailNotification;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\WithoutMiddleware;
@@ -13,34 +13,34 @@ use Laravel\Lumen\Testing\WithoutMiddleware;
  */
 class UserControllerTest extends \TestCase
 {
-	use WithoutMiddleware;
+    use WithoutMiddleware;
     use DatabaseMigrations;
 
-	/**
-	 * @test
-	 */
-	public function it_returns_422_if_the_request_is_empty()
-	{
-		Queue::fake();
+    /**
+     * @test
+     */
+    public function it_returns_422_if_the_request_is_empty()
+    {
+        Queue::fake();
 
-		$this->json(
-			'POST', '/api/v1/auth/register', []
-		)->seeJson(
-			[
-				'name' => [
-					'The name field is required.'
-				],
-				'email' => [
-					'The email field is required.'
-				],
-				'password' => [
-					'The password field is required.'
-				],
-			]
-		)->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->json(
+            'POST', '/api/v1/auth/register', []
+        )->seeJson(
+            [
+                'name' => [
+                    'The name field is required.',
+                ],
+                'email' => [
+                    'The email field is required.',
+                ],
+                'password' => [
+                    'The password field is required.',
+                ],
+            ]
+        )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
-	}
+        Queue::assertNotPushed(SendEmailNotification::class);
+    }
 
     /**
      * Test that the name field is required
@@ -49,23 +49,23 @@ class UserControllerTest extends \TestCase
      */
     public function testThatNameFieldIsRequired()
     {
-    	Queue::fake();
+        Queue::fake();
 
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => '',
                 'email' => 'sally@foo.com',
-                'password' => 'salis'
+                'password' => 'salis',
             ]
         )->seeJson(
             [
                 'name' => [
-                    'The name field is required.'
-                ]
+                    'The name field is required.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
+        Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -75,23 +75,23 @@ class UserControllerTest extends \TestCase
      */
     public function testThatEmailFieldIsRequired()
     {
-    	Queue::fake();
+        Queue::fake();
 
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => '',
-                'password' => 'salis'
+                'password' => 'salis',
             ]
         )->seeJson(
             [
                 'email' => [
-                    'The email field is required.'
-                ]
+                    'The email field is required.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
+        Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -101,23 +101,23 @@ class UserControllerTest extends \TestCase
      */
     public function testThatEmailFieldIsValidEmail()
     {
-    	Queue::fake();
+        Queue::fake();
 
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'invalidemailaddress',
-                'password' => 'salis'
+                'password' => 'salis',
             ]
         )->seeJson(
             [
                 'email' => [
-                    'The email must be a valid email address.'
-                ]
+                    'The email must be a valid email address.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
+        Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -127,23 +127,23 @@ class UserControllerTest extends \TestCase
      */
     public function testThatPasswordFieldIsRequired()
     {
-    	Queue::fake();
+        Queue::fake();
 
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
-                'password' => ''
+                'password' => '',
             ]
         )->seeJson(
             [
                 'password' => [
-                    'The password field is required.'
-                ]
+                    'The password field is required.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
+        Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -153,23 +153,23 @@ class UserControllerTest extends \TestCase
      */
     public function testThatPasswordFieldIsAMinimumOf5Characters()
     {
-    	Queue::fake();
+        Queue::fake();
 
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally',
                 'email' => 'sally@foo.com',
-                'password' => 'sali'
+                'password' => 'sali',
             ]
         )->seeJson(
             [
                 'password' => [
-                    'The password must be at least 5 characters.'
-                ]
+                    'The password must be at least 5 characters.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
+        Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -179,25 +179,25 @@ class UserControllerTest extends \TestCase
      */
     public function testThatNameEmailAndPasswordParamsAreRequired()
     {
-    	Queue::fake();
+        Queue::fake();
 
         $this->json(
             'POST', '/api/v1/auth/register', []
         )->seeJson(
             [
                 'name' => [
-                    'The name field is required.'
+                    'The name field is required.',
                 ],
                 'email' => [
-                    'The email field is required.'
+                    'The email field is required.',
                 ],
                 'password' => [
-                    'The password field is required.'
-                ]
+                    'The password field is required.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-		Queue::assertNotPushed(SendEmailNotification::class);
+        Queue::assertNotPushed(SendEmailNotification::class);
     }
 
     /**
@@ -213,7 +213,7 @@ class UserControllerTest extends \TestCase
             'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         )->seeJsonStructure(
             [
@@ -227,13 +227,13 @@ class UserControllerTest extends \TestCase
                         'following',
                         'name',
                     ],
-                    'status'
-                ]
+                    'status',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_CREATED)->seeInDatabase(
             'users', [
                 'name' => 'Joromi',
-                'email' => 'joromi@foo.com'
+                'email' => 'joromi@foo.com',
             ]
         );
 
@@ -253,16 +253,16 @@ class UserControllerTest extends \TestCase
             'POST', '/api/v1/auth/register', [
                 'name' => 'joromi',
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         );
 
-		$this->json('GET', '/api/v1/users/joromi@foo.com/verify');
+        $this->json('GET', '/api/v1/users/joromi@foo.com/verify');
 
         $res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         );
 
@@ -271,16 +271,16 @@ class UserControllerTest extends \TestCase
         $username = $obj->{'username'};
 
         $this->put(
-            '/api/v1/users/' . $username,
+            '/api/v1/users/'.$username,
             [
                 'name' => 'Joromi 2',
-                'followers' => 1
+                'followers' => 1,
             ], [
-                'HTTP_Authorization' => 'Bearer' . $token
+                'HTTP_Authorization' => 'Bearer'.$token,
             ]
         )->seejson(
             [
-                'status' => 'success'
+                'status' => 'success',
             ]
         );
 
@@ -300,16 +300,16 @@ class UserControllerTest extends \TestCase
             'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         );
 
-		$this->json('GET', '/api/v1/users/joromi@foo.com/verify');
+        $this->json('GET', '/api/v1/users/joromi@foo.com/verify');
 
         $res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         );
 
@@ -320,13 +320,13 @@ class UserControllerTest extends \TestCase
             '/api/v1/users/0',
             [
                 'name' => 'Joromi2',
-                'follower' => 1
+                'follower' => 1,
             ], [
-                'HTTP_Authorization' => 'Bearer' . $token
+                'HTTP_Authorization' => 'Bearer'.$token,
             ]
         )->seeJsonStructure(
             [
-                'error'
+                'error',
             ]
         );
 
@@ -353,16 +353,16 @@ class UserControllerTest extends \TestCase
             'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         );
 
-		$this->json('GET', '/api/v1/users/joromi@foo.com/verify');
+        $this->json('GET', '/api/v1/users/joromi@foo.com/verify');
 
-		$res = $this->json(
+        $res = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => 'joromi@foo.com',
-                'password' => 'joromo1236'
+                'password' => 'joromo1236',
             ]
         );
 
@@ -373,13 +373,13 @@ class UserControllerTest extends \TestCase
             '/api/v1/users/0',
             [
                 'name' => 'Joromi2',
-                'followers' => 1
+                'followers' => 1,
             ], [
-                'HTTP_Authorization' => 'Bearer' . $token
+                'HTTP_Authorization' => 'Bearer'.$token,
             ]
         )->seeJsonStructure(
             [
-                'error'
+                'error',
             ]
         );
 
@@ -395,13 +395,13 @@ class UserControllerTest extends \TestCase
     {
         $this->json(
             'POST', '/api/v1/auth/login', [
-                'password' => 'mypassword'
+                'password' => 'mypassword',
             ]
         )->seeJson(
             [
                 'email' => [
-                    'The email field is required.'
-                ]
+                    'The email field is required.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
@@ -415,13 +415,13 @@ class UserControllerTest extends \TestCase
     {
         $this->json(
             'POST', '/api/v1/auth/login', [
-                'email' => 'sally@foo.com'
+                'email' => 'sally@foo.com',
             ]
         )->seeJson(
             [
                 'password' => [
-                    'The password field is required.'
-                ]
+                    'The password field is required.',
+                ],
             ]
         )->seeStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
@@ -437,11 +437,11 @@ class UserControllerTest extends \TestCase
             'POST', '/api/v1/auth/register', [
                 'name' => 'sally',
                 'email' => 'sallytu@foo.com',
-                'password' => 'salis'
+                'password' => 'salis',
             ]
         );
 
-		$this->json('GET', '/api/v1/users/sallytu@foo.com/verify');
+        $this->json('GET', '/api/v1/users/sallytu@foo.com/verify');
 
         $response = $this->call('GET', '/api/v1/users/sally');
 
@@ -463,7 +463,7 @@ class UserControllerTest extends \TestCase
 
         $this->seeJsonStructure(
             [
-                'error'
+                'error',
             ]
         );
     }

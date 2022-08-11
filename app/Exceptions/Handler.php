@@ -2,13 +2,13 @@
 
 namespace App\Exceptions;
 
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 /**
  * Class Handler
@@ -33,6 +33,7 @@ class Handler extends ExceptionHandler
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
      * @return void
+     *
      * @throws Exception
      */
     public function report(\Throwable $e)
@@ -46,7 +47,6 @@ class Handler extends ExceptionHandler
 
     /**
      * Render an exception into an HTTP response.
-     *
      */
     public function render($request, \Throwable $e)
     {
@@ -55,12 +55,11 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof UnauthorizedHttpException) {
-
             if (is_null($e->getPrevious())) {
                 return response()->json(
                     [
                         'status' => 'Unauthorized',
-                        'message' => 'Token is required'
+                        'message' => 'Token is required',
                     ], $e->getStatusCode()
                 );
             }
@@ -72,14 +71,14 @@ class Handler extends ExceptionHandler
                     return response()->json(
                         [
                             'status' => 'error',
-                            'message' => 'Token is invalid'
+                            'message' => 'Token is invalid',
                         ], $e->getStatusCode()
                     );
                 case TokenExpiredException::class:
                     return response()->json(
                         [
                             'status' => 'error',
-                            'message' => 'Token has expired'
+                            'message' => 'Token has expired',
                         ], $e->getStatusCode()
                     );
             }
@@ -88,19 +87,20 @@ class Handler extends ExceptionHandler
         if ($e instanceof MethodNotAllowedHttpException
             || $e instanceof NotFoundHttpException
         ) {
-            $docs = include __DIR__ . '/../../config/docs.php';
+            $docs = include __DIR__.'/../../config/docs.php';
+
             return response()->json(
                 [
                     'status' => 'error',
                     'message' => 'Method Not Allowed or Not Found. Check API Docs',
-                    'docs' => $docs['api']
+                    'docs' => $docs['api'],
                 ], $e->getStatusCode()
             );
         }
 
         if ($e instanceof UnprocessibleEntityException) {
             return response()->json([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], $e->getCode());
         }
 

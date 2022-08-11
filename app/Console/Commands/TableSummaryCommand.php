@@ -9,11 +9,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class TableSummary
- * @package App\Console\Commands
  */
 class TableSummary extends Command
 {
     protected $signature = 'table:summary';
+
     protected $descriptio = 'create sequelize type summary report for unit tests';
 
     public function handle()
@@ -22,9 +22,8 @@ class TableSummary extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
+     * @param  InputInterface  $input
+     * @param  OutputInterface  $output
      * @return int|null|void
      */
     public function execute(
@@ -39,8 +38,7 @@ class TableSummary extends Command
                 ['9971-5-0210-0', 'A Tale of Two Cities', 'Charles Dickens'],
                 ['960-425-059-0', 'The Lord of the Rings', 'J. R. R. Tolkien'],
                 ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie'],
-            ])
-        ;
+            ]);
         $table->render();
     }
 }

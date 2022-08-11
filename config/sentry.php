@@ -1,5 +1,5 @@
 <?php
 
-return array(
-	'dsn' => env('SENTRY_LARAVEL_DSN'),
-);
+return [
+    'dsn' => env('SENTRY_LARAVEL_DSN'),
+];

@@ -3,131 +3,125 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Response;
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Http\Response;
 
 class ThrottleRequests
 {
-	/**
-	 * The rate limiter instance.
-	 *
-	 * @var \Illuminate\Cache\RateLimiter
-	 */
-	protected $limiter;
+    /**
+     * The rate limiter instance.
+     *
+     * @var \Illuminate\Cache\RateLimiter
+     */
+    protected $limiter;
 
-	/**
-	 * Create a new request throttler.
-	 *
-	 * @param  \Illuminate\Cache\RateLimiter $limiter
-	 *
-	 * @return void
-	 */
-	public function __construct(RateLimiter $limiter)
-	{
-		$this->limiter = $limiter;
-	}
+    /**
+     * Create a new request throttler.
+     *
+     * @param  \Illuminate\Cache\RateLimiter  $limiter
+     * @return void
+     */
+    public function __construct(RateLimiter $limiter)
+    {
+        $this->limiter = $limiter;
+    }
 
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request $request
-	 * @param  \Closure                 $next
-	 * @param  int                      $maxAttempts
-	 * @param  int                      $decayMinutes
-	 *
-	 * @return mixed
-	 */
-	public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1)
-	{
-		$key = $this->resolveRequestSignature($request);
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  int  $maxAttempts
+     * @param  int  $decayMinutes
+     * @return mixed
+     */
+    public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1)
+    {
+        $key = $this->resolveRequestSignature($request);
 
-		if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
-			return $this->buildResponse($key, $maxAttempts);
-		}
+        if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
+            return $this->buildResponse($key, $maxAttempts);
+        }
 
-		$this->limiter->hit($key, $decayMinutes);
+        $this->limiter->hit($key, $decayMinutes);
 
-		$response = $next($request);
+        $response = $next($request);
 
-		return $this->addHeaders(
-			new Response($response->content(), $response->status(), $response->headers->all()),
-			$maxAttempts,
-			$this->calculateRemainingAttempts($key, $maxAttempts)
-		);
-	}
+        return $this->addHeaders(
+            new Response($response->content(), $response->status(), $response->headers->all()),
+            $maxAttempts,
+            $this->calculateRemainingAttempts($key, $maxAttempts)
+        );
+    }
 
-	/**
-	 * Resolve request signature.
-	 *
-	 * @param  \Illuminate\Http\Request $request
-	 *
-	 * @return string
-	 */
-	protected function resolveRequestSignature($request)
-	{
-		return sha1(
-			$request->method() .
-			'|' . $request->getHost() .
-			'|' . $request->ip()
-		);
-	}
+    /**
+     * Resolve request signature.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    protected function resolveRequestSignature($request)
+    {
+        return sha1(
+            $request->method().
+            '|'.$request->getHost().
+            '|'.$request->ip()
+        );
+    }
 
-	/**
-	 * Create a 'too many attempts' response.
-	 *
-	 * @param  string $key
-	 * @param  int    $maxAttempts
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	protected function buildResponse($key, $maxAttempts)
-	{
-		$response = new Response('Too Many Attempts.', 429);
+    /**
+     * Create a 'too many attempts' response.
+     *
+     * @param  string  $key
+     * @param  int  $maxAttempts
+     * @return \Illuminate\Http\Response
+     */
+    protected function buildResponse($key, $maxAttempts)
+    {
+        $response = new Response('Too Many Attempts.', 429);
 
-		return $this->addHeaders(
-			$response,
-			$maxAttempts,
-			$this->calculateRemainingAttempts($key, $maxAttempts),
-			$this->limiter->availableIn($key)
-		);
-	}
+        return $this->addHeaders(
+            $response,
+            $maxAttempts,
+            $this->calculateRemainingAttempts($key, $maxAttempts),
+            $this->limiter->availableIn($key)
+        );
+    }
 
-	/**
-	 * Add the limit header information to the given response.
-	 *
-	 * @param  \Illuminate\Http\Response $response
-	 * @param  int                       $maxAttempts
-	 * @param  int                       $remainingAttempts
-	 * @param  int|null                  $retryAfter
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	protected function addHeaders(Response $response, $maxAttempts, $remainingAttempts, $retryAfter = null)
-	{
-		$headers = [
-			'X-RateLimit-Limit'     => $maxAttempts,
-			'X-RateLimit-Remaining' => $remainingAttempts,
-		];
+    /**
+     * Add the limit header information to the given response.
+     *
+     * @param  \Illuminate\Http\Response  $response
+     * @param  int  $maxAttempts
+     * @param  int  $remainingAttempts
+     * @param  int|null  $retryAfter
+     * @return \Illuminate\Http\Response
+     */
+    protected function addHeaders(Response $response, $maxAttempts, $remainingAttempts, $retryAfter = null)
+    {
+        $headers = [
+            'X-RateLimit-Limit' => $maxAttempts,
+            'X-RateLimit-Remaining' => $remainingAttempts,
+        ];
 
-		if (!is_null($retryAfter)) {
-			$headers['Retry-After'] = $retryAfter;
-		}
+        if (! is_null($retryAfter)) {
+            $headers['Retry-After'] = $retryAfter;
+        }
 
-		$response->headers->add($headers);
+        $response->headers->add($headers);
 
-		return $response;
-	}
+        return $response;
+    }
 
-	/**
-	 * Calculate the number of remaining attempts.
-	 *
-	 * @param  string $key
-	 * @param  int    $maxAttempts
-	 *
-	 * @return int
-	 */
-	protected function calculateRemainingAttempts($key, $maxAttempts)
-	{
-		return $maxAttempts - $this->limiter->attempts($key) + 1;
-	}
+    /**
+     * Calculate the number of remaining attempts.
+     *
+     * @param  string  $key
+     * @param  int  $maxAttempts
+     * @return int
+     */
+    protected function calculateRemainingAttempts($key, $maxAttempts)
+    {
+        return $maxAttempts - $this->limiter->attempts($key) + 1;
+    }
 }

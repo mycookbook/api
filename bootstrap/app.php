@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Middleware\MustVerifyEmail;
 use App\Http\Middleware\AuthorizationGuard;
+use App\Http\Middleware\MustVerifyEmail;
 use App\Http\Middleware\ThrottleRequests;
 use Laravel\Tinker\TinkerServiceProvider;
 
@@ -65,7 +65,6 @@ $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 
-
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -78,13 +77,13 @@ $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
 */
 
 $app->middleware([
-	Fruitcake\Cors\HandleCors::class,
+    Fruitcake\Cors\HandleCors::class,
 ]);
 
 $app->routeMiddleware([
-//	'must-verify-email' => MustVerifyEmail::class,
-	'auth-guard' => AuthorizationGuard::class,
-	'throttle' => ThrottleRequests::class
+    //	'must-verify-email' => MustVerifyEmail::class,
+    'auth-guard' => AuthorizationGuard::class,
+    'throttle' => ThrottleRequests::class,
 ]);
 
 /*
@@ -119,9 +118,9 @@ $app->register(TinkerServiceProvider::class);
 */
 
 $app->router->group([
-	'namespace' => 'App\Http\Controllers',
+    'namespace' => 'App\Http\Controllers',
 ], function ($router) {
-	require __DIR__.'/../routes/web.php';
+    require __DIR__.'/../routes/web.php';
 });
 
 $app->alias('cache', 'Illuminate\Cache\CacheManager');

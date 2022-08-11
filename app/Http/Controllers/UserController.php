@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use Carbon\Carbon;
 use App\EmailVerification;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Crypt;
-use App\Jobs\TriggerEmailVerificationProcess;
 use App\Http\Controllers\Requests\User\StoreRequest;
 use App\Http\Controllers\Requests\User\UpdateRequest;
+use App\Jobs\TriggerEmailVerificationProcess;
+use App\Services\UserService;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class UserController
@@ -20,7 +20,7 @@ use App\Http\Controllers\Requests\User\UpdateRequest;
 class UserController extends Controller
 {
     /**
-     * @param \App\Services\UserService $service
+     * @param  \App\Services\UserService  $service
      */
     public function __construct(UserService $service)
     {
@@ -35,25 +35,23 @@ class UserController extends Controller
         return $this->service->index();
     }
 
-	/**
-	 * Create new user
-	 *
-	 * @param \App\Http\Controllers\Requests\User\StoreRequest $request
-	 *
-	 * @return \Illuminate\Http\JsonResponse
-	 */
+    /**
+     * Create new user
+     *
+     * @param  \App\Http\Controllers\Requests\User\StoreRequest  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreRequest $request)
     {
         return $this->service->store($request->getParams());
     }
 
-	/**
-	 * Get one user
-	 *
-	 * @param mixed $username username
-	 *
-	 * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-	 */
+    /**
+     * Get one user
+     *
+     * @param  mixed  $username username
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
     public function show($username)
     {
         return $this->service->show($username);
@@ -63,67 +61,70 @@ class UserController extends Controller
      * Implement a full/partial update
      *
      * @param $username
-     * @param \App\Http\Controllers\Requests\User\UpdateRequest $request
+     * @param  \App\Http\Controllers\Requests\User\UpdateRequest  $request
      * @return Response|\Laravel\Lumen\Http\ResponseFactory
+     *
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
-	public function update($username, UpdateRequest $request)
-	{
-		if ($request->getParams()->all()) {
-			$request->getParams()->merge(["username"]);
-			return $this->service->update($request->getParams(), $username);
-		}
+    public function update($username, UpdateRequest $request)
+    {
+        if ($request->getParams()->all()) {
+            $request->getParams()->merge(['username']);
 
-		return response([
-			'message' => "nothing to update."
-		], Response::HTTP_OK);
-	}
+            return $this->service->update($request->getParams(), $username);
+        }
 
-	/**
-	 * Email Verification
-	 *
-	 * @param Request $request
-	 * @param $token
-	 */
-	public function verifyEmail(Request $request, $token)
-	{
-		$payload = Crypt::decrypt($token);
+        return response([
+            'message' => 'nothing to update.',
+        ], Response::HTTP_OK);
+    }
 
-		try {
-			if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
-				Log::info('Invalid secret provided for verifying this email', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
-				throw new \Exception('There was a problem processing this request. Please try again later.');
-			}
+    /**
+     * Email Verification
+     *
+     * @param  Request  $request
+     * @param $token
+     */
+    public function verifyEmail(Request $request, $token)
+    {
+        $payload = Crypt::decrypt($token);
 
-			$user = User::findOrFail($payload['user_id']);
+        try {
+            if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
+                Log::info('Invalid secret provided for verifying this email', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
+                throw new \Exception('There was a problem processing this request. Please try again later.');
+            }
 
-			if ($user) {
-				$verification = EmailVerification::where('user_id', $payload['user_id']);
-				$verification->update([
-					'is_verified' => Carbon::now()
-				]);
+            $user = User::findOrFail($payload['user_id']);
 
-				return response()->json(null, Response::HTTP_NO_CONTENT);
-			}
-		} catch (\Exception $e) {
-			return response()->json($e->getMessage(), Response::HTTP_CONFLICT);
-		}
-	}
+            if ($user) {
+                $verification = EmailVerification::where('user_id', $payload['user_id']);
+                $verification->update([
+                    'is_verified' => Carbon::now(),
+                ]);
 
-	/**
-	 * @param Request $request
-	 * @param $token
-	 * @throws \Exception
-	 */
-	public function resend(Request $request, $token)
-	{
-		$payload = Crypt::decrypt($token);
+                return response()->json(null, Response::HTTP_NO_CONTENT);
+            }
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), Response::HTTP_CONFLICT);
+        }
+    }
 
-		if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
-			Log::info('Invalid secret provided for resending email verification', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
-			throw new \Exception('There was a problem processing this request. Please try again later.');
-		} else {
-			dispatch(new TriggerEmailVerificationProcess($payload['user_id']));
-		}
-	}
+    /**
+     * @param  Request  $request
+     * @param $token
+     *
+     * @throws \Exception
+     */
+    public function resend(Request $request, $token)
+    {
+        $payload = Crypt::decrypt($token);
+
+        if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
+            Log::info('Invalid secret provided for resending email verification', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
+            throw new \Exception('There was a problem processing this request. Please try again later.');
+        } else {
+            dispatch(new TriggerEmailVerificationProcess($payload['user_id']));
+        }
+    }
 }
