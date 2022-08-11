@@ -16,9 +16,7 @@ class AuthService
      */
     public function login(Request $request): \Illuminate\Http\JsonResponse
     {
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = Auth::attempt($credentials)) {
+        if (!$token = Auth::attempt($request->only('email', 'password'))) {
             return response()->json(
                 [
                     'Not found or Invalid Credentials.',
@@ -26,13 +24,9 @@ class AuthService
             );
         }
 
-        return response()->json(
-            [
-                'success' => true,
-                'token' => $token,
-                'username' => Auth::user()->getSlug()
-            ], Response::HTTP_OK
-        );
+//        'username' => Auth::user()->getSlug()
+
+        return response()->json(['token' => $token], Response::HTTP_OK);
     }
 
     /**
@@ -42,11 +36,12 @@ class AuthService
     {
         try {
             Auth::logout();
+
             return response()->noContent();
         } catch (\Exception $exception) {
             return response()->json(
                 [
-                    'Not found or Invalid Credentials.',
+                    'Not found or Invalid Credentials.'
                 ], Response::HTTP_BAD_REQUEST
             );
         }
