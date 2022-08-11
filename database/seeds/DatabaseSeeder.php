@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
                 $admin = new \App\User([
                     'name' => 'Florence Okosun',
                     'email' => 'okosunuzflorence@gmail.com',
-                    'password' => app('hash')->make('0B10r@.UM3h'),
+                    'password' => Hash::make('0B10r@.UM3h'),
                     'followers' => 0,
                     'following' => 0,
                     'avatar' => '',
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
                 $editor = new \App\User([
                     'name' => 'Tony Udomaye',
                     'email' => 'udomiayetony@gmail.com',
-                    'password' => app('hash')->make('secret'),
+                    'password' => Hash::make('secret'),
                     'followers' => 0,
                     'following' => 0,
                     'avatar' => 'https://ca.slack-edge.com/T5QPN806A-U01A3835GPP-72238718978f-512',
@@ -82,7 +82,7 @@ class DatabaseSeeder extends Seeder
                 $contributor = new \App\User([
                     'name' => 'Test user',
                     'email' => 'test@somemail.com',
-                    'password' => app('hash')->make('secret'),
+                    'password' => Hash::make('secret'),
                     'followers' => 0,
                     'following' => 0,
                     'avatar' => '',
@@ -200,7 +200,7 @@ class DatabaseSeeder extends Seeder
             $user = new \App\User([
                 'name' => $faker->firstName.' '.$faker->lastName,
                 'email' => $faker->email,
-                'password' => app('hash')->make('secret'),
+                'password' => Hash::make('secret'),
                 'followers' => 0,
                 'following' => 0,
                 'avatar' => $avatars[$j],
