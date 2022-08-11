@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-        
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,7 +44,7 @@ Route::get('api/v1/create-auth-client', function () {
     return null;
 });
 
-Route::group(['prefix' => 'api/v1'], function () use ($router) {
+Route::group(['prefix' => 'api/v1'], function () {
     Route::post(
         '/auth/register', 'UserController@store'
     );
@@ -89,7 +88,7 @@ Route::group(['prefix' => 'api/v1'], function () use ($router) {
         'middleware' => [
             'auth-guard',
             'throttle',
-        ], ], function () use ($router) {
+        ], ], function () {
             Route::get('flags', function () {
                 return response()->json([
                     'data' => \App\Flag::all(),
@@ -134,7 +133,7 @@ Route::group(['prefix' => 'api/v1'], function () use ($router) {
                     'middleware' => [
                         'jwt.auth',
                     ],
-                ], function () use ($router) {
+                ], function () {
                     Route::post(
                         '/users/{username}', 'UserController@update'
                     );
