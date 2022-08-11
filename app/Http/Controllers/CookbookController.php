@@ -24,8 +24,6 @@ class CookbookController extends Controller
         ]]);
 
         $this->service = $service;
-
-        parent::__construct($request);
     }
 
     /**

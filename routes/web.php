@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -149,8 +148,8 @@ Route::group(['prefix' => 'api/v1'], function () {
                     */
                     Route::post('/recipes', 'RecipeController@store');
 
-                    Route::put('/recipes/{recipeId}', 'RecipeController@update')
-                    ->patch('/recipes/{recipeId}', 'RecipeController@update');
+                    Route::put('/recipes/{recipeId}', 'RecipeController@update');
+                    Route::patch('/recipes/{recipeId}', 'RecipeController@update');
 
 //            $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
 

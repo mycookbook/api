@@ -22,8 +22,8 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: true
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: test_db
+      MYSQL_PASSWORD:
     volumes:
       - ./docker-compose/mysql:/docker-entrypoint-initdb.d
     networks:
