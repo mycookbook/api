@@ -16,7 +16,7 @@ class RecipeService
     /**
      * Get all recipes
      *
-     * @param  null  $user_id
+     * @param null $user_id
      * @return \Illuminate\Http\JsonResponse
      */
     public function index($user_id = null): \Illuminate\Http\JsonResponse
@@ -50,7 +50,7 @@ class RecipeService
     {
         $recipe = $this->get($id);
 
-        if (! $recipe) {
+        if (!$recipe) {
             throw new CookbookModelNotFoundException();
         }
 
@@ -58,10 +58,8 @@ class RecipeService
     }
 
     /**
-     * Creates a new Recipe
-     *
-     * @param \Illuminate\Http\Request; $request
-     * @return Response|\Laravel\Lumen\Http\ResponseFactory
+     * @param $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      */
     public function store($request)
     {
@@ -98,12 +96,9 @@ class RecipeService
     }
 
     /**
-     * Update recipe
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      * @throws CookbookModelNotFoundException
      */
     public function update(Request $request, $id)
@@ -121,11 +116,8 @@ class RecipeService
     }
 
     /**
-     * Delete recipe
-     *
-     * @param  int  $id recipeId
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      * @throws CookbookModelNotFoundException
      */
     public function delete($id)
@@ -142,11 +134,8 @@ class RecipeService
     }
 
     /**
-     * Increment recipe claps count by 1 each time
-     *
      * @param $recipeId
-     * @return Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      * @throws CookbookModelNotFoundException
      */
     public function addClap($recipeId)
@@ -165,11 +154,8 @@ class RecipeService
     }
 
     /**
-     * Find recipe record
-     *
      * @param $q
-     * @return mixed
-     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      * @throws CookbookModelNotFoundException
      */
     public function get($q)
@@ -179,7 +165,7 @@ class RecipeService
             ->orWhere('slug', $q)
             ->first();
 
-        if (! $record) {
+        if (!$record) {
             throw new CookbookModelNotFoundException();
         }
 

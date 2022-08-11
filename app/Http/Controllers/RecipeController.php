@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Requests\Recipe\StoreRequest;
+use App\Http\Requests\RecipeStoreRequest;
 use App\Services\RecipeService;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\JWTAuth;
 
 /**
  * Class UserController
@@ -15,7 +14,7 @@ class RecipeController extends Controller
     /**
      * Constructor
      *
-     * @param  RecipeService  $service
+     * @param RecipeService $service
      */
     public function __construct(RecipeService $service)
     {
@@ -34,7 +33,7 @@ class RecipeController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function myRecipes(Request $request): \Illuminate\Http\JsonResponse
@@ -43,28 +42,21 @@ class RecipeController extends Controller
     }
 
     /**
-     * Create recipe for user
-     *
-     * @param  \App\Http\Controllers\Requests\Recipe\StoreRequest  $request
-     * @param  JWTAuth  $jwt
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     * @param RecipeStoreRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function store(StoreRequest $request, JWTAuth $jwt)
+    public function store(RecipeStoreRequest $request)
     {
-        $jwt->parseToken()->authenticate();
+//        $jwt->parseToken()->authenticate();
+        //todo use Auth facade to authenticate jwt token
 
-        return $this->service->store($request->getParams());
+        return $this->service->store($request);
     }
 
     /**
-     * Update Recipe
-     *
-     * @param  Request  $request
-     * @param  int  $recipeId
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @param Request $request
+     * @param $recipeId
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     public function update(Request $request, $recipeId)
@@ -73,11 +65,8 @@ class RecipeController extends Controller
     }
 
     /**
-     * Delete recipe
-     *
-     * @param  int  $recipeId recipe
-     * @return string
-     *
+     * @param $recipeId
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     public function delete($recipeId)
@@ -86,11 +75,8 @@ class RecipeController extends Controller
     }
 
     /**
-     * Find resource
-     *
-     * @param  int  $recipeId identifier
-     * @return mixed
-     *
+     * @param $recipeId
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     public function show($recipeId)
@@ -99,11 +85,8 @@ class RecipeController extends Controller
     }
 
     /**
-     * Increment Recipe count
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \App\Exceptions\CookbookModelNotFoundException
      * @throws \Illuminate\Validation\ValidationException
      */
