@@ -12,7 +12,7 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
+    'img_url' => 'The given url is not a valid image url',
     'accepted' => 'The :attribute must be accepted.',
     'active_url' => 'The :attribute is not a valid URL.',
     'after' => 'The :attribute must be a date after :date.',
@@ -129,11 +129,12 @@ return [
     |
     */
 
-    'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
-    ],
+    //	'custom' => [
+    //		'nutritional_detail' => [
+    //			'nutritional_detail_json_structure' => 'The :attribute does not conform with the specification. Check the documentation for guidance.',
+    //		],
+    //		'img_url' => ':attribute is not a valid image url'
+    //	],
 
     /*
     |--------------------------------------------------------------------------
