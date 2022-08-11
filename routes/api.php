@@ -50,7 +50,7 @@ Route::group(['prefix' => 'v1'], function () {
     );
 
     Route::get(
-        '/auth/tiktok', 'AuthController@tikTokHandleCallback'
+        '/tiktok', 'AuthController@tikTokHandleCallback'
     );
 
     Route::get('/definitions', 'DefinitionsController@index');
