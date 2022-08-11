@@ -34,12 +34,11 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function logout(Request $request): \Illuminate\Http\Response
+    public function logout()
     {
-        return $this->service->logout($request);
+        return $this->service->logout();
     }
 
     /**

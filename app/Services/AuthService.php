@@ -36,13 +36,19 @@ class AuthService
     }
 
     /**
-     * @param Request $request
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse|Response
      */
-    public function logout(Request $request): Response
+    public function logout()
     {
-        Auth::logout();
-
-        return response()->noContent();
+        try {
+            Auth::logout();
+            return response()->noContent();
+        } catch (\Exception $exception) {
+            return response()->json(
+                [
+                    'Not found or Invalid Credentials.',
+                ], Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 }
