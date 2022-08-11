@@ -39,12 +39,6 @@ class AuthController extends Controller
     /**
      * TikTok does not give you the user's email due to privacy policy
      *
-     * @param  Request  $request
-     * @param  Client  $client
-     * @param  UserService  $service
-     * @param  JWTAuth  $jwt
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Laravel\Lumen\Http\Redirector|void
-     *
      * @throws GuzzleException
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service, JWTAuth $jwt)
