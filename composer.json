@@ -27,7 +27,11 @@
         "fideloper/proxy": "^4.4",
         "spatie/ignition": "^1.0",
         "php-open-source-saver/jwt-auth": "^1.4",
-        "nunomaduro/collision": "6.2.1"
+        "nunomaduro/collision": "6.2.1",
+        "socialiteproviders/tiktok": "^4.1",
+        "socialiteproviders/twitter": "^4.1",
+        "socialiteproviders/pinterest": "^4.2",
+        "socialiteproviders/instagram": "^4.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.3.1",

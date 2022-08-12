@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * Class AuthController
@@ -39,6 +40,28 @@ class AuthController extends Controller
     public function logout()
     {
         return $this->service->logout();
+    }
+
+    /**
+     * @param $provider
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function socialAuth($provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function socialAuthCallbackHandler(Request $request)
+    {
+        $provider = $request->route()->getAction()["provider"];
+
+        $user = Socialite::driver($provider)->user();
+
+        dd($user->getEmail());
     }
 
     /**

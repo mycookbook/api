@@ -40,17 +40,65 @@ Route::get('v1/create-auth-client', function () {
 });
 
 Route::group(['prefix' => 'v1'], function () {
-    Route::post(
-        '/auth/register', 'UserController@store'
-    );
 
-    Route::post(
-        '/auth/login', 'AuthController@login'
-    );
+    Route::prefix('/auth')->group(function() {
 
-    Route::get(
-        '/auth/logout', 'AuthController@logout'
-    );
+        Route::post(
+            '/register', 'UserController@store'
+        );
+
+        Route::post(
+            '/login', 'AuthController@login'
+        );
+
+        Route::get(
+            '/logout', 'AuthController@logout'
+        );
+
+        //tiktok
+        Route::get('/tiktok', [
+            'uses' => 'AuthController@socialAuth',
+            'provider' => 'tiktok',
+        ]);
+
+        Route::get('/callback/tiktok', [
+            'uses' => 'AuthController@socialAuthCallbackHandler',
+            'provider' => 'tiktok',
+        ]);
+
+        //twitter
+        Route::get('/twitter', [
+            'uses' => 'AuthController@socialAuth',
+            'provider' => 'twitter',
+        ]);
+
+        Route::get('/callback/twitter', [
+            'uses' => 'AuthController@socialAuthCallbackHandler',
+            'provider' => 'twitter',
+        ]);
+
+        //pinterest
+        Route::get('/pinterest', [
+            'uses' => 'AuthController@socialAuth',
+            'provider' => 'pinterest',
+        ]);
+
+        Route::get('/callback/pinterest', [
+            'uses' => 'AuthController@socialAuthCallbackHandler',
+            'provider' => 'pinterest',
+        ]);
+
+        //instagram
+        Route::get('/instagram', [
+            'uses' => 'AuthController@socialAuth',
+            'provider' => 'instagram',
+        ]);
+
+        Route::get('/callback/instagram', [
+            'uses' => 'AuthController@socialAuthCallbackHandler',
+            'provider' => 'instagram',
+        ]);
+    });
 
     Route::get(
         '/tiktok', 'AuthController@tikTokHandleCallback'
