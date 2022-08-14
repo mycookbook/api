@@ -2,10 +2,9 @@
 
 namespace Functional;
 
-use App\Models\User;
 use Illuminate\Http\Response;
 
-class ExceptionsTest extends \TestCase
+class HttpExceptionsTest extends \TestCase
 {
     /**
      * @test
@@ -15,18 +14,6 @@ class ExceptionsTest extends \TestCase
         $response = $this->call('GET', '/api/v1/users/0');
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->status());
-    }
-
-    /**
-     * @test
-     */
-    public function it_responds_with_a_200_if_the_user_exists()
-    {
-        $user = User::factory()->make();
-
-        $response = $this->call('GET', '/api/v1/users/' . $user->id);
-
-        $this->assertEquals(Response::HTTP_OK, $response->status());
     }
 
     /**
