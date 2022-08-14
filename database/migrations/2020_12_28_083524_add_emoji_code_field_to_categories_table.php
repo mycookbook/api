@@ -14,7 +14,7 @@ class AddEmojiCodeFieldToCategoriesTable extends Migration
     public function up()
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->text('emoji');
+            $table->text('emoji')->nullable();
         });
     }
 
