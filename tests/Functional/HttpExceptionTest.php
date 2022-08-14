@@ -1,14 +1,14 @@
 <?php
 
-namespace Functional\Exceptions;
+namespace Functional;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 
 /**
- * Class HttpExceptionsTest
+ * Class HttpExceptionTest
  */
-class HttpExceptionsTest extends \TestCase
+class HttpExceptionTest extends \TestCase
 {
     use WithoutMiddleware;
 

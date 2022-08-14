@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Controllers;
+namespace Functional;
 
 use App\Jobs\SendEmailNotification;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -8,9 +8,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
 
 /**
- * Class UserControllerTest
+ * Class UserTest
  */
-class UserControllerTest extends \TestCase
+class UserTest extends \TestCase
 {
     use WithoutMiddleware;
 

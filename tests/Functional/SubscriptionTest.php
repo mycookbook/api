@@ -1,12 +1,12 @@
 <?php
 
-namespace Functional\Controllers;
+namespace Functional;
 
 use App\Subscriber;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 
-class SubscriptionController extends \TestCase
+class SubscriptionTest extends \TestCase
 {
     use WithoutMiddleware;
 

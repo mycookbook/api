@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Controllers;
+namespace Functional;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
