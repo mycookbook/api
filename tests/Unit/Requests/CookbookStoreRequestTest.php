@@ -1,12 +1,11 @@
 <?php
 
-namespace Integration\Requests;
+namespace Unit\Requests;
 
 use App\Http\Controllers\Requests\Cookbook\StoreRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Traits\CreatesObjects;
 
 class CookbookStoreRequestTest extends \TestCase
 {

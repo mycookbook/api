@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Requests;
+namespace Unit\Requests;
 
 use App\Http\Controllers\Requests\FormRequest;
 use App\Http\Controllers\Requests\Recipe\StoreRequest;
