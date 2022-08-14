@@ -14,7 +14,7 @@ class AddAltTextFieldToCookbooksTable extends Migration
     public function up()
     {
         Schema::table('cookbooks', function (Blueprint $table) {
-            $table->text('alt_text');
+            $table->text('alt_text')->nullable();
         });
     }
 
