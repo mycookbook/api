@@ -11,6 +11,6 @@ class AddFulltextIndexToCookbooksTable extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE cookbooks ADD FULLTEXT full(name, description)');
+//        DB::statement('ALTER TABLE cookbooks ADD FULLTEXT full(name, description)');
     }
 }

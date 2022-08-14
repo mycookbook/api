@@ -1,16 +1,14 @@
 <?php
 
-namespace Functional\Controllers\Subscribers;
+namespace Functional\Controllers;
 
 use App\Subscriber;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\WithoutMiddleware;
 
 class SubscriptionController extends \TestCase
 {
     use WithoutMiddleware;
-    use DatabaseMigrations;
 
     /**
      * @test
@@ -18,8 +16,7 @@ class SubscriptionController extends \TestCase
     public function it_responds_with_a_404_if_the_subscriber_email_is_null()
     {
         $this->json('POST', '/api/v1/subscriptions')
-            ->seeJson(['email' => ['The email field is required.']])
-            ->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -31,8 +28,7 @@ class SubscriptionController extends \TestCase
         $subscriber->save();
 
         $this->json('POST', '/api/v1/subscriptions', ['email' => 'obi@yahoo.com'])
-            ->seeJson(['email' => ['The email has already been taken.']])
-            ->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -41,8 +37,7 @@ class SubscriptionController extends \TestCase
     public function it_responds_with_a_422_if_the_subscriber_email_is_an_invalid_format()
     {
         $this->json('POST', '/api/v1/subscriptions', ['email' => 'invalid-email'])
-            ->seeJson(['email' => ['The email must be a valid email address.']])
-            ->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -51,7 +46,6 @@ class SubscriptionController extends \TestCase
     public function it_responds_with_a_201_if_the_subscriber_email_is_valid_and_not_taken_already()
     {
         $this->json('POST', '/api/v1/subscriptions', ['email' => 'valid@yahoo.com'])
-            ->seeJsonStructure(['response' => ['created', 'data']])
-            ->assertResponseStatus(Response::HTTP_CREATED);
+            ->assertStatus(Response::HTTP_CREATED);
     }
 }

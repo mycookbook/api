@@ -48,7 +48,9 @@ Route::group(['prefix' => 'v1'], function () {
         );
 
         Route::post(
-            '/login', 'AuthController@login'
+            '/login', [
+                \App\Http\Controllers\AuthController::class, 'login'
+            ]
         );
 
         Route::get(

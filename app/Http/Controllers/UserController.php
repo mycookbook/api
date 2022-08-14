@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\EmailVerification;
-use App\Http\Requests\UpdateRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
 use App\Services\UserService;
@@ -56,10 +56,10 @@ class UserController extends Controller
 
     /**
      * @param $username
-     * @param UpdateRequest $request
+     * @param UserUpdateRequest $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response
      */
-    public function update($username, UpdateRequest $request)
+    public function update($username, UserUpdateRequest $request)
     {
         if ($request->all()) {
             $request->merge(['username']);

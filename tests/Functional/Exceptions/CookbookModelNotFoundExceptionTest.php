@@ -2,8 +2,8 @@
 
 namespace Functional\Exceptions;
 
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
-use Laravel\Lumen\Testing\WithoutMiddleware;
 
 class CookbookModelNotFoundExceptionTest extends \TestCase
 {
