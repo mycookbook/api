@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Models;
+namespace Unit\Models;
 
 use App\Recipe;
 use Monolog\Test\TestCase;

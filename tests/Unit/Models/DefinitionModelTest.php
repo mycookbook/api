@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Models;
+namespace Unit\Models;
 
 use App\Definition;
 

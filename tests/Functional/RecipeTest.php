@@ -1,15 +1,15 @@
 <?php
 
-namespace Functional\Controllers;
+namespace Functional;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
 /**
- * Class UserControllerTest
+ * Class UserTest
  */
-class RecipeControllerTest extends \TestCase
+class RecipeTest extends \TestCase
 {
     use WithoutMiddleware;
 

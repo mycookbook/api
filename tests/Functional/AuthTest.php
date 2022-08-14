@@ -1,20 +1,20 @@
 <?php
 
-namespace Functional\Controllers;
+namespace Functional;
 
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 
 /**
- * Class UserControllerTest
+ * Class UserTest
  */
-class AuthControllerTest extends \TestCase
+class AuthTest extends \TestCase
 {
     /**
      * @test
      */
-    public function it_responds_with_a_422_if_the_user_email_is_empty()
+    public function it_responds_with_an_error_if_the_user_email_is_empty()
     {
         $response = $this->json(
             'POST', '/api/v1/auth/login', [
@@ -35,7 +35,7 @@ class AuthControllerTest extends \TestCase
     /**
      * @test
      */
-    public function it_responds_with_a_422_if_the_user_email_is_null()
+    public function it_responds_with_an_error_if_the_user_email_is_null()
     {
         $response = $this->json(
             'POST', '/api/v1/auth/login', [
@@ -55,7 +55,7 @@ class AuthControllerTest extends \TestCase
     /**
      * @test
      */
-    public function it_responds_with_a_422_if_the_user_password_is_empty()
+    public function it_responds_with_an_error_if_the_user_password_is_empty()
     {
         $response = $this->json(
             'POST', '/api/v1/auth/login', [
@@ -76,7 +76,7 @@ class AuthControllerTest extends \TestCase
     /**
      * @test
      */
-    public function it_responds_with_a_422_if_the_user_password_is_null()
+    public function it_responds_with_an_error_if_the_user_password_is_null()
     {
         $response = $this->json(
             'POST', '/api/v1/auth/login', [
@@ -96,7 +96,7 @@ class AuthControllerTest extends \TestCase
     /**
      * @test
      */
-    public function it_responds_with_a_422_if_the_request_does_not_contain_email_and_password_fields()
+    public function it_responds_with_an_error_if_the_request_does_not_contain_email_and_password_fields()
     {
         $response = $this->json(
             'POST', '/api/v1/auth/login', []

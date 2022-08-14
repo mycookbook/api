@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -8,6 +9,7 @@ use Traits\CreatesObjects;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesObjects;
+    use RefreshDatabase;
     use CreatesApplication;
     use DatabaseMigrations;
 
