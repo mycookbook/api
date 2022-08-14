@@ -12,6 +12,6 @@ class MakePrepTimeNullable extends Migration
      */
     public function up()
     {
-        DB::raw('ALTER TABLE recipes MODIFY prep_time nullable');
+//        DB::raw('ALTER TABLE recipes MODIFY prep_time nullable');
     }
 }

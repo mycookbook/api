@@ -14,7 +14,7 @@ class AddPrepTimeToRecipesTable extends Migration
     public function up()
     {
         Schema::table('recipes', function (Blueprint $table) {
-            $table->dateTime('prep_time');
+            $table->dateTime('prep_time')->nullable();
         });
     }
 
