@@ -1,7 +1,7 @@
 <?php
 
 $factory->define(
-    App\Flag::class, function (Faker\Generator $faker) {
+    \App\Models\Flag::class, function (Faker\Generator $faker) {
         return [
             'flag' => 'ng',
             'nationality' => 'Nigerian',

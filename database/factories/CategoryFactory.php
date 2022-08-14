@@ -1,7 +1,7 @@
 <?php
 
 $factory->define(
-    App\Category::class, function (Faker\Generator $faker) {
+    \App\Models\Category::class, function (Faker\Generator $faker) {
         return [
             'name' => 'Vegan',
             'slug' => 'vegan',

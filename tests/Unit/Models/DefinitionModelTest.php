@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\Definition;
+use App\Models\Definition;
 
 class DefinitionModelTest extends \TestCase
 {

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\User;
-use App\UserContactDetail;
+use App\Models\User;
+use App\Models\UserContactDetail;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;

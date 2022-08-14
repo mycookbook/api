@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\User;
+use App\Models\User;
 
 class UserModelTest extends \TestCase
 {

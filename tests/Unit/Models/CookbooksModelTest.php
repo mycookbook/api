@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\Cookbook;
+use App\Models\Cookbook;
 use Monolog\Test\TestCase;
 
 class CookbooksModelTest extends TestCase

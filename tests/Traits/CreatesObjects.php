@@ -2,11 +2,11 @@
 
 namespace Traits;
 
-use App\Category;
-use App\Cookbook;
-use App\Flag;
-use App\Recipe;
-use App\User;
+use App\Models\Category;
+use App\Models\Cookbook;
+use App\Models\Flag;
+use App\Models\Recipe;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 trait CreatesObjects

@@ -2,8 +2,7 @@
 
 namespace Unit\Models;
 
-use App\RecipeVariation;
-use Illuminate\Http\Response;
+use App\Models\RecipeVariation;
 
 class RecipeVariationModelTest extends \TestCase
 {

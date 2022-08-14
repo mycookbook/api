@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Cookbook;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
+use App\Models\Cookbook;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -49,19 +49,13 @@ class CookbookService implements serviceInterface
     /**
      * Create cookbook resource
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      *
      * @throws \Exception
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        //TODO: CookbookPolicy to ascertain that user is able to create a cookbook
-
-        if (! is_array($request->get('categories'))) {
-            throw new \Exception('There was a problem processing this request. Please try again.');
-        }
-
         $categories = $request->get('categories');
 
         $cookbook = new Cookbook($request->all());
@@ -84,18 +78,23 @@ class CookbookService implements serviceInterface
                 ], Response::HTTP_CREATED
             );
         }
+
+        return response()->json(
+            [
+                'error' => 'There was an error prcessing this request, please try again.'
+            ], Response::HTTP_BAD_REQUEST
+        );
     }
 
     /**
      * Update cookbook resource
      *
      * @param $request
-     * @param  int  $id identifier
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
-     *
+     * @param string $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      * @throws CookbookModelNotFoundException
      */
-    public function update($request, $id)
+    public function update($request, string $id)
     {
         //TODO: Cookbook Policy to ascertain that user is able to update this cookbook
         $cookbook = $this->findWhere($id);
@@ -114,8 +113,7 @@ class CookbookService implements serviceInterface
     /**
      * Delete Cookbook resource
      *
-     * @param  int  $id identofier
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     * @param int $id identofier
      *
      * @throws CookbookModelNotFoundException
      */
@@ -131,7 +129,7 @@ class CookbookService implements serviceInterface
     }
 
     /**
-     * @param  mixed  $option
+     * @param mixed $option
      *
      * @throws CookbookModelNotFoundException
      */
@@ -139,7 +137,7 @@ class CookbookService implements serviceInterface
     {
         $cookbook = $this->findWhere($option);
 
-        if (! $cookbook) {
+        if (!$cookbook) {
             throw new CookbookModelNotFoundException();
         }
 
@@ -165,7 +163,7 @@ class CookbookService implements serviceInterface
             ->orWhere('slug', $q)
             ->first();
 
-        if (! $record) {
+        if (!$record) {
             throw new CookbookModelNotFoundException();
         }
 

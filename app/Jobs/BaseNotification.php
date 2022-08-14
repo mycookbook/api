@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\User;
 use App\Traits\EncryptsPayload;
-use App\User;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\Recipe;
+use App\Models\Recipe;
 use Monolog\Test\TestCase;
 
 class RecipeModelTest extends TestCase

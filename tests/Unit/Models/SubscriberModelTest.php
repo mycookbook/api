@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\Subscriber;
+use App\Models\Subscriber;
 
 class SubscriberModelTest extends \TestCase
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Traits\CookbookUserMustVerifyEmail;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use App\Traits\CookbookUserMustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -39,7 +39,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function recipes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany('App\Recipe', 'user_id');
+        return $this->hasMany('App\Models\Recipe', 'user_id');
     }
 
     /**
@@ -49,7 +49,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function contact(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne('App\UserContactDetail');
+        return $this->hasOne('App\Models\UserContactDetail');
     }
 
     /**
@@ -59,7 +59,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function cookbooks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany('App\Cookbook', 'cookbook_user');
+        return $this->belongsToMany('App\Models\Cookbook', 'cookbook_user');
     }
 
     /**
@@ -166,7 +166,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function email_verification(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne('App\EmailVerification');
+        return $this->hasOne('App\Models\EmailVerification');
     }
 
     public function isVerified()
@@ -221,5 +221,27 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $record;
+    }
+
+    /**
+     * @param $cookbookId
+     * @return bool
+     */
+    public function ownCookbook($cookbookId)
+    {
+        $cookbook = Cookbook::findOrFail($cookbookId)->first();
+
+        return ($this->getKey() == $cookbook->user_id);
+    }
+
+    /**
+     * TODO: for now all users are not super
+     * This is reserved for strictly cookbook admin
+     *
+     * @return false
+     */
+    public function isSuper()
+    {
+        return false;
     }
 }

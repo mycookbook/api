@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Category;
 use App\Interfaces\serviceInterface;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

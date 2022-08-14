@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -75,7 +75,7 @@ class Recipe extends Model
      */
     public function cookbook(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo('App\Cookbook');
+        return $this->belongsTo('App\Models\Cookbook');
     }
 
     /**
@@ -83,7 +83,7 @@ class Recipe extends Model
      */
     public function variations(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany('App\RecipeVariation');
+        return $this->hasMany('App\Models\RecipeVariation');
     }
 
     /**

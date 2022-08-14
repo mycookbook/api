@@ -44,7 +44,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function recipes()
     {
-        return $this->hasMany('App\Recipe', 'user_id');
+        return $this->hasMany('App\Models\Recipe', 'user_id');
     }
 
     /**
@@ -54,7 +54,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function contact()
     {
-        return $this->hasOne('App\UserContactDetail');
+        return $this->hasOne('App\Models\UserContactDetail');
     }
 
     /**
@@ -64,7 +64,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function cookbooks()
     {
-        return $this->belongsToMany('App\Cookbook', 'cookbook_user');
+        return $this->belongsToMany('App\Models\Cookbook', 'cookbook_user');
     }
 
     /**
@@ -170,7 +170,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function email_verification()
     {
-        return $this->hasOne('App\EmailVerification');
+        return $this->hasOne('App\Models\EmailVerification');
     }
 
     public function isVerified()

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Cookbook;
 use App\Exceptions\CookbookModelNotFoundException;
-use App\Recipe;
+use App\Models\Cookbook;
+use App\Models\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

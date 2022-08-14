@@ -1,7 +1,7 @@
 <?php
 
 $factory->define(
-    App\Recipe::class, function (Faker\Generator $faker) {
+    \App\Models\Recipe::class, function (Faker\Generator $faker) {
         return [
             'name' => $faker->streetName,
             'ingredients' => 'simple recipe',

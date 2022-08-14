@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +10,6 @@ class CategoryCookbook extends Model
 
     public function cookbooks()
     {
-        return $this->belongsToMany('App\Cookbook');
+        return $this->belongsToMany('App\Models\Cookbook');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\Flag;
+use App\Models\Flag;
 
 class FlagModelTest extends \TestCase
 {

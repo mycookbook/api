@@ -2,7 +2,7 @@
 
 namespace Functional;
 
-use App\Subscriber;
+use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 
