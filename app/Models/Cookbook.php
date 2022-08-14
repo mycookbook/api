@@ -36,6 +36,7 @@ class Cookbook extends Model
      * Set attributes links
      *
      * @return array
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function getLinksAttribute(): array
     {

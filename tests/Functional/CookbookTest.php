@@ -16,8 +16,6 @@ class CookbookTest extends \TestCase
      */
     public function it_can_retrieve_all_cookbooks_and_respond_with_a_200_status_code()
     {
-        $this->withoutMiddleware();
-
         $this->json('GET', '/api/v1/cookbooks')
             ->assertStatus(Response::HTTP_OK)->assertExactJson([
                 'data' => []
@@ -29,8 +27,6 @@ class CookbookTest extends \TestCase
      */
     public function it_responds_with_a_404_when_retrieving_a_cookbook_that_does_not_exist()
     {
-        $this->withoutMiddleware();
-
         $this->json('GET', '/api/v1/cookbooks/0')
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
@@ -40,11 +36,9 @@ class CookbookTest extends \TestCase
      */
     public function it_responds_with_a_200_when_retrieving_a_cookbook_by_id()
     {
-        $this->withoutMiddleware();
-
         $cookbook = Cookbook::factory()->make();
 
-        $this->json('GET', '/api/v1/cookbooks/'. $cookbook->id)
+        $this->json('GET', '/api/v1/cookbooks/' . $cookbook->id)
             ->assertStatus(Response::HTTP_OK);
     }
 
@@ -53,11 +47,9 @@ class CookbookTest extends \TestCase
      */
     public function it_responds_with_a_200_when_retrieving_a_cookbook_by_slug()
     {
-        $this->withoutMiddleware();
-
         $cookbook = Cookbook::factory()->make();
 
-        $this->json('GET', '/api/v1/cookbooks/'. $cookbook->slug)
+        $this->json('GET', '/api/v1/cookbooks/' . $cookbook->slug)
             ->assertStatus(Response::HTTP_OK);
     }
 
@@ -170,7 +162,7 @@ class CookbookTest extends \TestCase
         ]);
 
         //update the cookbook
-        $this->json('POST', '/api/v1/cookbooks/1/edit'  , [
+        $this->json('POST', '/api/v1/cookbooks/1/edit', [
             'name' => 'updated title',
             "alt_text" => "this is an updated alt text"
         ], [
@@ -219,7 +211,7 @@ class CookbookTest extends \TestCase
         $cookbook = $cookbook->refresh();
 
         //update the cookbook
-        $response = $this->json('POST', '/api/v1/cookbooks/' . $cookbook->id . '/edit'  , [
+        $response = $this->json('POST', '/api/v1/cookbooks/' . $cookbook->id . '/edit', [
             'name' => 'updated title',
             "alt_text" => "this is an updated alt text"
         ], [
@@ -255,7 +247,7 @@ class CookbookTest extends \TestCase
         $decoded = json_decode($res->getContent(), true);
 
         //update the cookbook
-        $response = $this->json('POST', '/api/v1/cookbooks/1/destroy'  , [], [
+        $response = $this->json('POST', '/api/v1/cookbooks/1/destroy', [], [
             'HTTP_Authorization' => 'Bearer ' . $decoded['token']
         ]);
 

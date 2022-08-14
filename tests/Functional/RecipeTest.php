@@ -2,6 +2,9 @@
 
 namespace Functional;
 
+use App\Models\Cookbook;
+use App\Models\Recipe;
+use App\Models\User;
 use Illuminate\Http\Response;
 
 /**
@@ -25,5 +28,57 @@ class RecipeTest extends \TestCase
     {
         $this->json('GET', '/api/v1/recipes/0')
             ->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * @test
+     */
+    public function it_responds_with_a_200_when_retrieving_a_recipe_by_id()
+    {
+        $user = User::factory()->make();
+
+        $user->save();
+        $user = $user->refresh();
+
+        $cookbook = Cookbook::factory()->make([
+            "user_id" => $user->id
+        ]);
+
+        $cookbook->save();
+        $cookbook = $cookbook->refresh();
+
+        $recipe = Recipe::factory()->make([
+            "user_id" => $user->id,
+            "cookbook_id" => $cookbook->id
+        ]);
+
+        $this->json('GET', '/api/v1/recipes/' . $recipe->id)
+            ->assertStatus(Response::HTTP_OK);
+    }
+
+    /**
+     * @test
+     */
+    public function it_responds_with_a_200_when_retrieving_a_recipe_by_slug()
+    {
+        $user = User::factory()->make();
+
+        $user->save();
+        $user = $user->refresh();
+
+        $cookbook = Cookbook::factory()->make([
+            "user_id" => $user->id
+        ]);
+
+        $cookbook->save();
+        $cookbook = $cookbook->refresh();
+
+        $recipe = Recipe::factory()->make([
+            "user_id" => $user->id,
+            "cookbook_id" => $cookbook->id
+        ]);
+
+        $this->json('GET', '/api/v1/recipes/' . $recipe->slug)
+            ->assertStatus(Response::HTTP_OK);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,10 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Recipe extends Model
 {
-    public $attributes = [
-        'servings',
-        'prep_time',
-    ];
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -56,6 +54,8 @@ class Recipe extends Model
         'author',
         'submission_date',
         'comments',
+        'servings',
+        'prep_time',
     ];
 
     /**
@@ -186,5 +186,13 @@ class Recipe extends Model
     public function getCommentsAttribute(): \Illuminate\Database\Eloquent\Collection
     {
         return $this->hasMany(Comment::class)->get();
+    }
+
+    /**
+     * @return string
+     */
+    public function getServingsAttribute()
+    {
+        return "servings";
     }
 }

@@ -1,18 +1,34 @@
 <?php
 
-$factory->define(
-    \App\Models\Recipe::class, function (Faker\Generator $faker) {
+namespace Database\Factories;
+
+use App\Models\Cookbook;
+use App\Models\Recipe;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class RecipeFactory extends Factory
+{
+    protected $model = Recipe::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function definition()
+    {
         return [
-            'name' => $faker->streetName,
-            'ingredients' => 'simple recipe',
-            'description' => $faker->sentence(),
-            'imgUrl' => $faker->imageUrl(800, 600, 'food'),
-            'user_id' => rand(1, 4),
-            'cookbook_id' => rand(1, 4),
-            'summary' => 'Cook pasta per package directions. Reserve 3/4 cup cooking liquid, then drain. Meanwhile,
-            heat oil in a large, deep skillet on medium. Cook shallot,',
+            'name' => fake()->streetName,
+            'ingredients' => [fake()->name, fake()->name, fake()->name],
+            'description' => fake()->sentence(300),
+            'imgUrl' => fake()->imageUrl,
+            'user_id' => User::factory()->make()->id,
+            'cookbook_id' => Cookbook::factory()->make()->id,
+            'summary' => fake()->sentence(180),
             'nutritional_detail' => 'low carbs',
             'calorie_count' => 1300,
         ];
     }
-);
+}

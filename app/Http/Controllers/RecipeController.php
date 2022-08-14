@@ -18,7 +18,8 @@ class RecipeController extends Controller
      */
     public function __construct(RecipeService $service)
     {
-        $this->middleware('jwt.auth', ['except' => ['index', 'show', 'addClap']]);
+        $this->middleware('auth.guard')->except(['index', 'show', 'addClap']);
+
         $this->service = $service;
     }
 
@@ -30,6 +31,33 @@ class RecipeController extends Controller
     public function index(): \Illuminate\Http\JsonResponse
     {
         return $this->service->index();
+    }
+
+    /**
+     * @param $recipeId
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
+     * @throws \App\Exceptions\CookbookModelNotFoundException
+     */
+    public function show($recipeId)
+    {
+        return $this->service->show($recipeId);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \App\Exceptions\CookbookModelNotFoundException
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function addClap(Request $request)
+    {
+        $this->validate(
+            $request, [
+                'recipe_id' => 'required|exists:recipes,id',
+            ]
+        );
+
+        return $this->service->addClap($request->get('recipe_id'));
     }
 
     /**
@@ -72,32 +100,5 @@ class RecipeController extends Controller
     public function delete($recipeId)
     {
         return $this->service->delete($recipeId);
-    }
-
-    /**
-     * @param $recipeId
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     */
-    public function show($recipeId)
-    {
-        return $this->service->show($recipeId);
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function addClap(Request $request)
-    {
-        $this->validate(
-            $request, [
-                'recipe_id' => 'required|exists:recipes,id',
-            ]
-        );
-
-        return $this->service->addClap($request->get('recipe_id'));
     }
 }

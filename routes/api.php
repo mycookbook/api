@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CookbookController;
+use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -112,9 +113,6 @@ Route::group(['prefix' => 'v1'], function () {
         '/policies', 'StaticContentController@get'
     );
 
-    Route::get('/recipes', 'RecipeController@index');
-    Route::get('/recipes/{recipeId}', 'RecipeController@show');
-
     Route::get(
         '/users/', 'UserController@index'
     );
@@ -156,13 +154,6 @@ Route::group(['prefix' => 'v1'], function () {
             '/stats/', 'StatsController@index'
         );
 
-        /*
-        |--------------------------------------------------------------------------
-        | Recipes
-        |--------------------------------------------------------------------------
-        */
-        Route::get('/my/recipes', 'RecipeController@myRecipes');
-
         /**
          * Email verification
          */
@@ -193,12 +184,14 @@ Route::group(['prefix' => 'v1'], function () {
             | Recipes Routes
             |--------------------------------------------------------------------------
             */
-            Route::post('/recipes', 'RecipeController@store');
 
-            Route::put('/recipes/{recipeId}', 'RecipeController@update');
-            Route::patch('/recipes/{recipeId}', 'RecipeController@update');
+            Route::get('/recipes', [RecipeController::class, 'index']);
+            Route::get('/recipes/{id}', [RecipeController::class, 'show']);
+            Route::get('/my/recipes', [RecipeController::class, 'myRecipes']);
 
-//            $router->delete('/recipes/{recipeId}', 'RecipeController@delete');
+            Route::post('/recipes', [RecipeController::class, 'store']);
+            Route::post('/recipes/{id}/edit', [RecipeController::class, 'update']);
+            Route::post('/recipes/{id}/destroy', [RecipeController::class, 'destroy']);
 
             /*
             |--------------------------------------------------------------------------
@@ -210,9 +203,9 @@ Route::group(['prefix' => 'v1'], function () {
             Route::get('/cookbooks/{id}', [CookbookController::class, 'show']);
             Route::get('/my/cookbooks', [CookbookController::class, 'myCookbooks']);
 
-            Route::post('/cookbooks', 'CookbookController@store');
-            Route::post('/cookbooks/{id}/edit', 'CookbookController@update');
-            Route::post('/cookbooks/{id}/destroy', 'CookbookController@destroy');
+            Route::post('/cookbooks', [CookbookController::class, 'store']);
+            Route::post('/cookbooks/{id}/edit', [CookbookController::class, 'update']);
+            Route::post('/cookbooks/{id}/destroy', [CookbookController::class, 'destroy']);
         });
     });
 
