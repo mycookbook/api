@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Requests;
+namespace Unit\Requests;
 
 use App\Http\Requests\SignInRequest;
 use Illuminate\Foundation\Http\FormRequest;
