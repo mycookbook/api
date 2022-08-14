@@ -28,8 +28,13 @@ jobs:
                 run: |
                     mkdir -p database
                     touch database/database.sqlite
-            -   name: Execute tests (Unit and Feature tests) via PHPUnit
+            -   name: Execute tests Functional testSuite via PHPUnit
                 env:
                     DB_CONNECTION: sqlite
                     DB_DATABASE: database/database.sqlite
-                run: php artisan test
+                run: php artisan test testsuite=Functional
+            -   name: Execute tests Unit testSuite via PHPUnit
+                env:
+                    DB_CONNECTION: sqlite
+                    DB_DATABASE: database/database.sqlite
+                run: php artisan test testsuite=Unit
