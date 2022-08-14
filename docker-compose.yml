@@ -1,46 +1,40 @@
 version: "3.7"
 services:
-  app:
-    build:
-      args:
-        user: sammy
-        uid: 1000
-      context: ./
-      dockerfile: Dockerfile
-    image: cookbooks
-    container_name: cookbooks-app
-    restart: unless-stopped
-    working_dir: /var/www/
-    volumes:
-      - ./:/var/www
-    networks:
-      - cookbooks
+    app:
+        build: .
+        container_name: cookbookshq
+        depends_on:
+            - db
+        volumes:
+            - ./:/var/www
+        networks:
+            - cookbooks
+    db:
+        image: mysql:latest
+        container_name: db
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: false
+            MYSQL_DATABASE: test_db
+            MYSQL_PASSWORD: pass
+        volumes:
+            - cookbooks-db:/var/lib/mysql
+        networks:
+            - cookbooks
+    nginx:
+        image: nginx:alpine
+        container_name: web-server
+        restart: unless-stopped
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx:/etc/nginx/conf.d/
+        networks:
+            - cookbooks
 
-  db:
-    image: mysql:8.0
-    container_name: cookbooks-db
-    restart: unless-stopped
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: true
-      MYSQL_DATABASE: test_db
-      MYSQL_PASSWORD:
-    volumes:
-      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
-    networks:
-      - cookbooks
-
-  nginx:
-    image: nginx:alpine
-    container_name: cookbooks-nginx
-    restart: unless-stopped
-    ports:
-      - 8000:80
-    volumes:
-      - ./:/var/www
-      - ./docker-compose/nginx:/etc/nginx/conf.d/
-    networks:
-      - cookbooks
+volumes:
+    cookbooks-db:
 
 networks:
-  cookbooks:
-    driver: bridge
+    cookbooks:
+        driver: bridge

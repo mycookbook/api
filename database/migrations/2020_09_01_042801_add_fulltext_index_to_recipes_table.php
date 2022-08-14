@@ -11,6 +11,6 @@ class AddFulltextIndexToRecipesTable extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE recipes ADD FULLTEXT full(name, description, ingredients, nutritional_detail, summary)');
+//        DB::statement('ALTER TABLE recipes ADD FULLTEXT full(name, description, ingredients, nutritional_detail, summary)');
     }
 }

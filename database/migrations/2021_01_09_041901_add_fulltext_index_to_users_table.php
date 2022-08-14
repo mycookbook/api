@@ -12,6 +12,6 @@ class AddFulltextIndexToUsersTable extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE users ADD FULLTEXT (name)');
+//        DB::statement('ALTER TABLE users ADD FULLTEXT (name)');
     }
 }
