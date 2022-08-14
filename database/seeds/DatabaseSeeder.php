@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             $this->call(StaticContentsSeeder::class);
 
             if (env('APP_ENV') !== 'local') {
-                $admin = new \App\User([
+                $admin = new \App\Models\User([
                     'name' => 'Florence Okosun',
                     'email' => 'okosunuzflorence@gmail.com',
                     'password' => Hash::make('0B10r@.UM3h'),
@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
                 $admin->save();
                 $this->createContactDetail($admin);
 
-                $editor = new \App\User([
+                $editor = new \App\Models\User([
                     'name' => 'Tony Udomaye',
                     'email' => 'udomiayetony@gmail.com',
                     'password' => Hash::make('secret'),
@@ -79,7 +79,7 @@ class DatabaseSeeder extends Seeder
                 $editor->save();
                 $this->createContactDetail($editor);
 
-                $contributor = new \App\User([
+                $contributor = new \App\Models\User([
                     'name' => 'Test user',
                     'email' => 'test@somemail.com',
                     'password' => Hash::make('secret'),
@@ -98,7 +98,7 @@ class DatabaseSeeder extends Seeder
                 $this->createContactDetail($contributor);
 
                 //create cookbooks for canada, us and african countries. dont add recipes to any
-                $cookbook = new \App\Cookbook([
+                $cookbook = new \App\Models\Cookbook([
                     'name' => 'Nigerian Party Food (Owambe)',
                     'description' => 'A collection of common Nigerian Party foods, everything from Jollof rice to swallows and soups to mention a few. This cookbook may contain contributions from multiple contributors and content thereof belongs to cookbookhq. Dive right in to browse different Nigerian party food recipes.',
                     'bookCoverImg' => 'https://cookbookshq.s3.us-east-2.amazonaws.com/cookbooks-cover-photos/nigeria-party-food.jpg',
@@ -117,7 +117,7 @@ class DatabaseSeeder extends Seeder
                 $cookbook->users()->attach($editor->getKey());
                 $cookbook->users()->attach($contributor->getKey());
 
-                $categories = \App\Category::all();
+                $categories = \App\Models\Category::all();
 
                 $categoryIds = $categories->map(function ($item) {
                     return $item->id;
@@ -139,7 +139,7 @@ class DatabaseSeeder extends Seeder
         });
 
         //create one authorized client
-        $authorized_client = new \App\AuthorizedClient([
+        $authorized_client = new \App\Models\AuthorizedClient([
             'api_key' => 'SijjocvGGcgnXVbXzSoVtmN5qPor0jl8PnlRJ25U26JCODpoyi',
             'client_secret' => 'eyJpdiI6Iko2Ujhya1lBN3ZxeHRKV3JMK2I2NWc9PSIsInZhbHVlIjoiKzhaaE9mckY3V0RDN1ljT2lNT1pheFdLKzJcL2pTOTMwS2ZMcmc5aitQenlVV3hqbytZRkpGeXgyS09CSmpFQXZcL1hDSGFtOWhrNWF3bzdqMU9hNFVudjJvSnZLZk5GOVI2T3R5ZjNQeXkrTT0iLCJtYWMiOiIyOGVmYTZkZjMyZDA3M2MzMzdkZDg0ZDI5Zjg0Y2MzYzliMmM0MGZjNTcxMDliMDk2ZjQ5M2VjYzFkZGFmZTEzIn0=',
             'passphrase' => 'kpfSpywUdY',
@@ -197,7 +197,7 @@ class DatabaseSeeder extends Seeder
         for ($j = 0; $j < 20; $j++) {
             $rand_level = array_rand($levels);
 
-            $user = new \App\User([
+            $user = new \App\Models\User([
                 'name' => $faker->firstName.' '.$faker->lastName,
                 'email' => $faker->email,
                 'password' => Hash::make('secret'),
@@ -255,7 +255,7 @@ class DatabaseSeeder extends Seeder
             $lucky_flagId_spin = array_rand($flag_ids);
             $flagId = $flag_ids[$lucky_flagId_spin];
 
-            $cookbook = new \App\Cookbook([
+            $cookbook = new \App\Models\Cookbook([
                 'name' => $sample_titles[$i],
                 'description' => $faker->sentence(150),
                 'bookCoverImg' => $this->images[$i],
@@ -272,7 +272,7 @@ class DatabaseSeeder extends Seeder
             $cookbook->save();
             $random_users = array_rand($this->users, rand(2, 5));
 
-            $categories = \App\Category::all();
+            $categories = \App\Models\Category::all();
 
             $categoryIds = $categories->map(function ($item) {
                 return $item->id;
@@ -340,7 +340,7 @@ class DatabaseSeeder extends Seeder
             $random_cuisine = array_rand($cuisine);
             $random_course = array_rand($course);
 
-            $recipe = new \App\Recipe([
+            $recipe = new \App\Models\Recipe([
                 'name' => $faker->word,
                 'ingredients' => json_encode(['data' => ['2 lbs red potatoes', '4 tablespoons', '1 medium onion chopped']]),
                 'imgUrl' => $this->images[$k],
@@ -372,11 +372,11 @@ class DatabaseSeeder extends Seeder
      * Creates Variation
      *
      * @param  \Faker\Generator  $faker
-     * @param  \App\Recipe  $recipe
+     * @param  \App\Models\Recipe  $recipe
      */
-    private function createVariation(Faker\Generator $faker, App\Recipe $recipe)
+    private function createVariation(Faker\Generator $faker, \App\Models\Recipe $recipe)
     {
-        $variation = new \App\RecipeVariation([
+        $variation = new \App\Models\RecipeVariation([
             'name' => $faker->word,
             'ingredients' => json_encode(['data' => ['2 lbs greek yoghurt']]),
             'imgUrl' => $faker->imageUrl(),
@@ -428,11 +428,11 @@ class DatabaseSeeder extends Seeder
     /**
      * Add user contact detail
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      */
-    private function createContactDetail(App\User $user)
+    private function createContactDetail(\App\Models\User $user)
     {
-        $contact = new \App\UserContactDetail([
+        $contact = new \App\Models\UserContactDetail([
             'user_id' => $user->id,
             'visibility' => 'public',
             'phone' => '(647) 000 0000',
@@ -450,11 +450,11 @@ class DatabaseSeeder extends Seeder
     /**
      * Create Verified user
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      */
-    private function createEmailVerification(App\User $user)
+    private function createEmailVerification(\App\Models\User $user)
     {
-        $verification = new \App\EmailVerification([
+        $verification = new \App\Models\EmailVerification([
             'user_id' => $user->id,
             'token' => \Illuminate\Support\Facades\Crypt::encrypt(['user_id' => $user->id, 'email' => $user->email, 'secret' => env('CRYPT_SECRET')]),
             'is_verified' => \Carbon\Carbon::now(),

@@ -2,7 +2,7 @@
 
 namespace Functional;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Response;
 
 class ExceptionsTest extends \TestCase

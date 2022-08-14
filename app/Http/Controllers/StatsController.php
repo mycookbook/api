@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Cookbook;
-use App\Recipe;
-use App\User;
+use App\Models\Cookbook;
+use App\Models\Recipe;
+use App\Models\User;
 
 /**
  * Class StatsController
@@ -37,7 +37,7 @@ class StatsController extends Controller
     /**
      * Return users count
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return int
      */
     protected static function getUsersStats($user): int
@@ -48,7 +48,7 @@ class StatsController extends Controller
     /**
      * Return recipes count
      *
-     * @param  \App\Recipe  $recipe
+     * @param  \App\Models\Recipe  $recipe
      * @return int
      */
     protected static function getRecipesStats($recipe): int
@@ -59,7 +59,7 @@ class StatsController extends Controller
     /**
      * Return Cookbook count
      *
-     * @param  \App\Cookbook  $cookbook
+     * @param  \App\Models\Cookbook  $cookbook
      * @return int
      */
     protected static function getCookbooksStats($cookbook): int

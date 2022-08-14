@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
-use App\User;
+use App\Models\User;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,7 +21,7 @@ class UserService implements serviceInterface
 
     public function __construct()
     {
-        $this->modelFillables = (new \App\User)->getFillable();
+        $this->modelFillables = (new \App\Models\User)->getFillable();
     }
 
     /**

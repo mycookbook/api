@@ -1,8 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
  */
 class Cookbook extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -93,7 +96,7 @@ class Cookbook extends Model
      */
     public function recipes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany('App\Recipe');
+        return $this->hasMany('App\Models\Recipe');
     }
 
     /**
@@ -109,7 +112,7 @@ class Cookbook extends Model
      */
     public function flag(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo('App\Flag');
+        return $this->belongsTo('App\Models\Flag');
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Unit\Models;
 
-use App\Category;
+use App\Models\Category;
 
 class CategoryModelTest extends \TestCase
 {

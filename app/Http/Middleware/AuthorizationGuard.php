@@ -2,14 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\AuthorizedClient;
 use App\Exceptions\UnauthorizedClientException;
 use Closure;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthorizationGuard
 {

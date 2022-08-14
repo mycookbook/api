@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Definition;
+use App\Models\Definition;
 
 class DefinitionsController extends Controller
 {

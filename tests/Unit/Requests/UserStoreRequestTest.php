@@ -3,8 +3,8 @@
 namespace Unit\Requests;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use App\User;
 use Illuminate\Support\Facades\Validator;
 
 class UserStoreRequestTest extends \TestCase

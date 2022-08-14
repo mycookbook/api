@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,6 +22,6 @@ class RecipeVariation extends Model
      */
     public function recipe()
     {
-        return $this->belongsTo('App\Recipe');
+        return $this->belongsTo('App\Models\Recipe');
     }
 }

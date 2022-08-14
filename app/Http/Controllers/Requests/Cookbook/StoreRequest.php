@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Requests\Cookbook;
 
-use App\Category;
 use App\Exceptions\UnprocessibleEntityException;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Rules\MaxAllowedRule;
 use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Http\Request;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\StaticContent;
+use App\Models\StaticContent;
 
 class StaticContentController extends Controller
 {

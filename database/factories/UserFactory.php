@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Hashing\BcryptHasher;
 
 class UserFactory extends Factory
 {
@@ -20,10 +21,10 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name,
             'email' => fake()->email,
-            'password' => app('hash')->make('secret'),
+            'password' => (new BcryptHasher)->make('saltyL@k3'),
             'following' => rand(1, 100),
             'followers' => rand(1, 100),
-            'name_slug' => fake()->name,
+            'name_slug' => str_replace(" ", "-", strtolower(fake()->name)),
         ];
     }
 }

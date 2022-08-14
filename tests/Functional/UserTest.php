@@ -3,7 +3,6 @@
 namespace Functional;
 
 use App\Jobs\SendEmailNotification;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
 
@@ -12,8 +11,6 @@ use Illuminate\Support\Facades\Queue;
  */
 class UserTest extends \TestCase
 {
-    use WithoutMiddleware;
-
     /**
      * @test
      */
@@ -151,8 +148,6 @@ class UserTest extends \TestCase
      */
     public function testAUserCanBeCreated()
     {
-//    	Queue::fake();
-
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Joromi',
@@ -165,142 +160,6 @@ class UserTest extends \TestCase
             'name' => 'Joromi',
             'email' => 'joromi@foo.com',
         ]);
-
-//        Queue::assertPushed(SendEmail::class);
-    }
-
-    /**
-     * Test that user can be uodated
-     * This test is for PUT and PATCH operations
-     *
-     * @return void
-     */
-    public function testUserCanBeUpdatedIfSignedIn()
-    {
-        $this->markTestIncomplete();
-
-        // create the user and sign them in
-        $this->json(
-            'POST', '/api/v1/auth/register', [
-                'name' => 'joromi',
-                'email' => 'joromi@foo.com',
-                'password' => 'joromo1236',
-            ]
-        );
-
-        $this->json('GET', '/api/v1/users/joromi@foo.com/verify');
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/login', [
-                'email' => 'joromi@foo.com',
-                'password' => 'joromo1236',
-            ]
-        );
-
-        $obj = json_decode($res->getContent());
-        $token = $obj->{'token'};
-        $username = $obj->{'username'};
-
-        $this->put(
-            '/api/v1/users/'.$username,
-            [
-                'name' => 'Joromi 2',
-                'followers' => 1,
-            ], [
-                'HTTP_Authorization' => 'Bearer'.$token,
-            ]
-        );
-
-        $this->assertStatus(Response::HTTP_OK);
-    }
-
-    /**
-     * Test that user can be uodated
-     * This test is for PUT and PATCH operations
-     *
-     * @return void
-     */
-    public function testUserCannotBeUpdatedIfNotFound()
-    {
-        $this->markTestIncomplete();
-        // create the user and sign them in
-        $this->json(
-            'POST', '/api/v1/auth/register', [
-                'name' => 'Joromi',
-                'email' => 'joromi@foo.com',
-                'password' => 'joromo1236',
-            ]
-        );
-
-        $this->json('GET', '/api/v1/users/joromi@foo.com/verify');
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/login', [
-                'email' => 'joromi@foo.com',
-                'password' => 'joromo1236',
-            ]
-        );
-
-        $obj = json_decode($res->getContent());
-        $token = $obj->{'token'};
-
-        $this->put(
-            '/api/v1/users/0',
-            [
-                'name' => 'Joromi2',
-                'follower' => 1,
-            ], [
-                'HTTP_Authorization' => 'Bearer'.$token,
-            ]
-        )->assertStatus(Response::HTTP_NOT_FOUND);
-    }
-
-    /**
-     * Test that a malicious user cannot be forced to update
-     * This test is for PUT and PATCH operations
-     * use case: a signed in user is trying to perform a funny operation
-     * By passing in a user id of another user not signed in
-     * Or a user that does not exist in the database
-     * This test is not exactly comprehensive
-     * It only tests for a user that does not exist
-     * It currently does not test for a user that actually exist
-     * But does not have a token
-     * The test will be reviewed
-     *
-     * @return void
-     */
-    public function testMaliciousUserCannotBeUpdated()
-    {
-        $this->markTestIncomplete();
-        $this->json(
-            'POST', '/api/v1/auth/register', [
-                'name' => 'Joromi',
-                'email' => 'joromi@foo.com',
-                'password' => 'joromo1236',
-            ]
-        );
-
-        $this->json('GET', '/api/v1/users/joromi@foo.com/verify');
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/login', [
-                'email' => 'joromi@foo.com',
-                'password' => 'joromo1236',
-            ]
-        );
-
-        $obj = json_decode($res->getContent());
-        $token = $obj->{'token'};
-
-        $this->put(
-            '/api/v1/users/0',
-            [
-                'name' => 'Joromi2',
-                'followers' => 1,
-            ], [
-                'HTTP_Authorization' => 'Bearer'.$token,
-            ]
-        )->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     /**

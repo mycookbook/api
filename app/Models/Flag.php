@@ -1,13 +1,13 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Recipe
  */
-class Category extends Model
+class Flag extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -15,10 +15,8 @@ class Category extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'color', 'emoji',
+        'flag', 'nationality',
     ];
-
-    protected $hidden = ['pivot'];
 
     /**
      * Append links attribute.
@@ -37,15 +35,15 @@ class Category extends Model
         return [
             'self' => app()
                 ->make('url')
-                ->to("api/v1/categories/{$this->attributes['id']}"),
+                ->to("api/v1/flags/{$this->attributes['id']}"),
         ];
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * A cookbook has many cookbooks
      */
-    public function cookbooks()
+    public function cookbook()
     {
-        return $this->belongsToMany('App\Cookbook', 'category_cookbook');
+        return $this->belongsToMany('App\Models\Cookbook');
     }
 }

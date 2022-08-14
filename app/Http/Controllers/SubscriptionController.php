@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Subscriber;
+use App\Models\Subscriber;
 use Illuminate\Http\Response;
 
 class SubscriptionController extends Controller

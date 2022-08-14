@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CookbookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/v1/users/{id}/verify', function ($id) {
-    $user = \App\User::where(['id' => $id])->orWhere(['email' => $id])->get()->first();
+    $user = \App\Models\User::where(['id' => $id])->orWhere(['email' => $id])->get()->first();
 
     $user->update([
         'email_verified' => \Carbon\Carbon::now(),
@@ -26,7 +27,7 @@ Route::get('/v1/users/{id}/verify', function ($id) {
 Route::get('v1/create-auth-client', function () {
     $api_key = \Illuminate\Support\Facades\Crypt::encryptString('Hello DevDojo');
 
-    $client = new \App\AuthorizedClient([
+    $client = new \App\Models\AuthorizedClient([
         'api_key' => $api_key,
         'client_secret' => 'Hello DevDojo',
         'passphrase' => 'potatoes',
@@ -111,9 +112,6 @@ Route::group(['prefix' => 'v1'], function () {
         '/policies', 'StaticContentController@get'
     );
 
-    Route::get('/cookbooks', 'CookbookController@index');
-    Route::get('/cookbooks/{id}', 'CookbookController@show');
-
     Route::get('/recipes', 'RecipeController@index');
     Route::get('/recipes/{recipeId}', 'RecipeController@show');
 
@@ -135,18 +133,17 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::group([
         'middleware' => [
-            'auth-guard',
             'throttle',
         ], ], function () {
         Route::get('flags', function () {
             return response()->json([
-                'data' => \App\Flag::all(),
+                'data' => \App\Models\Flag::all(),
             ]);
         });
 
         Route::get('categories', function () {
             return response()->json([
-                'data' => \App\Category::all(),
+                'data' => \App\Models\Category::all(),
             ]);
         });
 
@@ -180,7 +177,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::group(
             [
                 'middleware' => [
-                    'jwt.auth',
+                    'throttle',
                 ],
             ], function () {
             Route::post(
@@ -208,11 +205,14 @@ Route::group(['prefix' => 'v1'], function () {
             | Cookbooks Routes
             |--------------------------------------------------------------------------
             */
-            Route::get('/my/cookbooks', 'CookbookController@myCookbooks');
+
+            Route::get('/cookbooks', [CookbookController::class, 'index']);
+            Route::get('/cookbooks/{id}', [CookbookController::class, 'show']);
+            Route::get('/my/cookbooks', [CookbookController::class, 'myCookbooks']);
 
             Route::post('/cookbooks', 'CookbookController@store');
-            Route::put('/cookbooks/{id}', 'CookbookController@update');
-//            $router->delete('/cookbooks/{cookbookId}', 'CookbookController@delete');
+            Route::post('/cookbooks/{id}/edit', 'CookbookController@update');
+            Route::post('/cookbooks/{id}/destroy', 'CookbookController@destroy');
         });
     });
 

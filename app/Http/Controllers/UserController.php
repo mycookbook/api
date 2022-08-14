@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\EmailVerification;
-use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
+use App\Models\EmailVerification;
+use App\Models\User;
 use App\Services\UserService;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Crypt;
