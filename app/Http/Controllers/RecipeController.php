@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RecipeStoreRequest;
 use App\Services\RecipeService;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\JWT;
 
 /**
  * Class UserController
@@ -62,43 +63,77 @@ class RecipeController extends Controller
 
     /**
      * @param Request $request
+     * @param JWT $jwtAuth
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function myRecipes(Request $request): \Illuminate\Http\JsonResponse
+    public function myRecipes(Request $request, JWT $jwtAuth): \Illuminate\Http\JsonResponse
     {
-        return $this->service->index($request->get('user_id'));
+        if ($jwtAuth->parseToken()->check()) {
+            return $this->service->index($request->get('user_id'));
+        }
+
+        return response()->json([
+            'error', 'You are not authorized to access this resource.'
+        ], 401);
     }
 
     /**
      * @param RecipeStoreRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @param JWT $jwtAuth
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function store(RecipeStoreRequest $request)
+    public function store(RecipeStoreRequest $request, JWT $jwtAuth)
     {
-//        $jwt->parseToken()->authenticate();
-        //todo use Auth facade to authenticate jwt token
+        try {
+            $jwtAuth->parseToken()->check();
 
-        return $this->service->store($request);
+            return $this->service->store($request);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => 'You are not authorized to perform this action.',
+            ], 401);
+        }
     }
 
     /**
      * @param Request $request
      * @param $recipeId
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @param JWT $jwtAuth
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws \App\Exceptions\CookbookModelNotFoundException
+     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function update(Request $request, $recipeId)
+    public function update(Request $request, $recipeId, JWT $jwtAuth)
     {
-        return $this->service->update($request, $recipeId);
+        if (
+            $request->user()->ownRecipe($id) &&
+            $jwtAuth->parseToken()->check()
+        ) {
+            return $this->service->update($request, $recipeId);
+        }
+
+        return response()->json([
+            'error' => 'You are not authorized to access this resource.'
+        ], 401);
     }
 
     /**
      * @param $recipeId
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     public function delete($recipeId)
     {
-        return $this->service->delete($recipeId);
+        if (
+            $request->user()->isSuper() &&
+            $jwtAuth->parseToken()->check()
+        ) {
+            return $this->service->delete($recipeId);
+        }
+
+        return response()->json([
+            'error' => 'You are not authorized to perform this action.'
+        ], 401);
     }
 }

@@ -13,7 +13,7 @@ class RecipeStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,13 @@ class RecipeStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'imgUrl' => 'required|url',
+            'ingredients' => 'required',
+            'description' => 'required',
+            'cookbook_id' => 'required|exists:cookbooks,id',
+            'summary' => 'required',
+            'nutritional_detail' => 'required'
         ];
     }
 }
