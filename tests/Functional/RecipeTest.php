@@ -81,4 +81,127 @@ class RecipeTest extends \TestCase
         $this->json('GET', '/api/v1/recipes/' . $recipe->slug)
             ->assertStatus(Response::HTTP_OK);
     }
+
+    /**
+     * @test
+     */
+    public function it_rejects_the_request_without_access_token()
+    {
+        $recipePayload = [];
+
+        $response = $this->json('POST', '/api/v1/recipes/', $recipePayload);
+
+        $decoded = json_decode($response->getContent(), true);
+
+        $this->assertArrayHasKey('error', $decoded);
+        $this->assertSame("Invalid request.", $decoded["error"]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_rejects_a_request_with_invalid_access_token()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/register', [
+                'name' => 'Sally Lee',
+                'email' => 'sally@example.com',
+                'password' => 'saltyL@k3',
+            ]
+        );
+
+        $userResponse = $this->json(
+            'POST', '/api/v1/auth/login', [
+                'email' => 'sally@example.com',
+                'password' => 'saltyL@k3',
+            ]
+        );
+
+        $decoded = json_decode($userResponse->getContent(), true);
+
+        $this->json('POST', '/api/v1/cookbooks', [
+            'name' => 'test cookbook',
+            'description' => fake()->sentence(150),
+            'bookCoverImg' => 'https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480',
+            'user_id' => 1,
+            'category_id' => 1,
+            'categories' => [1],
+            'flag_id' => 1,
+            'slug' => 'test-cookbook',
+            'alt_text' => 'this is a test cookbook'
+        ], [
+            'HTTP_Authorization' => 'Bearer ' . $decoded['token']
+        ]);
+
+        $recipePayload = [
+            'name' => 'Test Recipe',
+            'imgUrl' => 'https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480',
+            'ingredients' => 'rice, meat, water',
+            'description' => 'Some description',
+            'cookbook_id' => 1,
+            'summary' => 'the summary',
+            'nutritional_detail' => 'nut deet'
+        ];
+
+        $response = $this->json('POST', '/api/v1/recipes/', $recipePayload, ['HTTP_Authorization' => 'Bearer InvalidToken']);
+
+        $decoded = json_decode($response->getContent(), true);
+
+        $this->assertArrayHasKey('error', $decoded);
+        $this->assertSame("You are not authorized to perform this action.", $decoded["error"]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_successfully_creates_a_recipe_resource_when_the_request_contains_a_valid_access_token()
+    {
+        $this->json(
+            'POST', '/api/v1/auth/register', [
+                'name' => 'Sally Lee',
+                'email' => 'sally@example.com',
+                'password' => 'saltyL@k3',
+            ]
+        );
+
+        $userResponse = $this->json(
+            'POST', '/api/v1/auth/login', [
+                'email' => 'sally@example.com',
+                'password' => 'saltyL@k3',
+            ]
+        );
+
+        $decoded = json_decode($userResponse->getContent(), true);
+
+        $cb = $this->json('POST', '/api/v1/cookbooks', [
+            'name' => 'test cookbook',
+            'description' => fake()->sentence(150),
+            'bookCoverImg' => 'https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480',
+            'user_id' => 1,
+            'category_id' => 1,
+            'categories' => [1],
+            'flag_id' => 1,
+            'slug' => 'test-cookbook',
+            'alt_text' => 'this is a test cookbook'
+        ], [
+            'HTTP_Authorization' => 'Bearer ' . $decoded['token']
+        ]);
+
+        $recipePayload = [
+            'name' => 'Test Recipe',
+            'imgUrl' => 'https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480',
+            'ingredients' => 'rice, meat, water',
+            'description' => 'Some description',
+            'cookbook_id' => 1,
+            'summary' => 'the summary',
+            'nutritional_detail' => 'nut deet'
+        ];
+
+        $response = $this->json('POST', '/api/v1/recipes/', $recipePayload, ['HTTP_Authorization' => 'Bearer ' . $decoded["token"]]);
+
+        $decoded = json_decode($response->getContent(), true);
+
+        $this->assertArrayHasKey('created', $decoded);
+        $this->assertTrue($decoded["created"]);
+    }
 }

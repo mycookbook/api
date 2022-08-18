@@ -235,6 +235,17 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * @param $recipeId
+     * @return bool
+     */
+    public function ownRecipe($recipeId)
+    {
+        $recipe = Recipe::findOrFail($recipeId)->first();
+
+        return ($this->getKey() == $recipe->user_id);
+    }
+
+    /**
      * TODO: for now all users are not super
      * This is reserved for strictly cookbook admin
      *

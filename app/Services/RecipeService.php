@@ -64,7 +64,7 @@ class RecipeService
             'ingredients',
             'imgUrl',
             'description',
-            'cookbookId',
+            'cookbook_id',
             'summary',
             'calorie_count',
             'cook_time',
@@ -78,7 +78,7 @@ class RecipeService
 
         $recipe = new Recipe($payload);
 
-        $cookbook = Cookbook::findOrfail($request->cookbookId);
+        $cookbook = Cookbook::findOrfail($request->cookbook_id);
         $recipe->cookbook_id = $cookbook->id;
 
         //TODO:

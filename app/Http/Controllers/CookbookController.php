@@ -59,7 +59,7 @@ class CookbookController extends Controller
         }
 
         return response()->json([
-            'error', 'You are unauthorized to access this resource.'
+            'error', 'You are not authorized to access this resource.'
         ], 401);
     }
 
@@ -78,7 +78,7 @@ class CookbookController extends Controller
         }
 
         return response()->json([
-            'error' => 'You are not authorized to access this resource.'
+            'error' => 'You are not authorized to perform this action.'
         ], 401);
     }
 
