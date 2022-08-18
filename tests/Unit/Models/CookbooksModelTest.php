@@ -3,9 +3,8 @@
 namespace Unit\Models;
 
 use App\Models\Cookbook;
-use Monolog\Test\TestCase;
 
-class CookbooksModelTest extends TestCase
+class CookbooksModelTest extends \TestCase
 {
     /**
      * @test
@@ -23,7 +22,7 @@ class CookbooksModelTest extends TestCase
     {
         $cookbook = new Cookbook();
         $this->assertTrue(method_exists($cookbook, 'recipes'));
-        //		$this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\HasMany', $cookbook->recipes());
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\HasMany', $cookbook->recipes());
     }
 
     /**
@@ -33,7 +32,7 @@ class CookbooksModelTest extends TestCase
     {
         $cookbook = new Cookbook();
         $this->assertTrue(method_exists($cookbook, 'users'));
-        //		$this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsToMany', $cookbook->users());
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsToMany', $cookbook->users());
     }
 
     /**
@@ -43,7 +42,7 @@ class CookbooksModelTest extends TestCase
     {
         $cookbook = new Cookbook();
         $this->assertTrue(method_exists($cookbook, 'categories'));
-        //		$this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsToMany', $cookbook->categories());
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsToMany', $cookbook->categories());
     }
 
     /**
@@ -53,6 +52,6 @@ class CookbooksModelTest extends TestCase
     {
         $cookbook = new Cookbook();
         $this->assertTrue(method_exists($cookbook, 'flag'));
-        //		$this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsTo', $cookbook->flag());
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\BelongsTo', $cookbook->flag());
     }
 }
