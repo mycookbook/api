@@ -3,9 +3,8 @@
 namespace Unit\Models;
 
 use App\Models\Recipe;
-use Monolog\Test\TestCase;
 
-class RecipeModelTest extends TestCase
+class RecipeModelTest extends \TestCase
 {
     /**
      * @test
