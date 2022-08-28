@@ -53,15 +53,16 @@ class AuthController extends Controller
 
     /**
      * @param Request $request
-     * @return void
      */
     public function socialAuthCallbackHandler(Request $request)
     {
         $provider = $request->route()->getAction()["provider"];
 
-        $user = Socialite::driver($provider)->user();
+        return response()->json([
+            'res' => $provider
+        ]);
 
-        dd($user->getEmail());
+//        $user = Socialite::driver($provider)->user();
     }
 
     /**
