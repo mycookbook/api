@@ -18,18 +18,6 @@ Route::group(['prefix' => 'v1'], function () {
 
     //    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
 
-    //tiktok
-    Route::get('/tiktok', [
-        'uses' => 'AuthController@socialAuth',
-        'provider' => 'tiktok',
-    ]);
-
-
-    Route::get('/callback/tiktok', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'tiktok',
-    ]);
-
     Route::get('/callback/twitter', [
         'uses' => 'AuthController@socialAuthCallbackHandler',
         'provider' => 'twitter',
