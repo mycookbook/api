@@ -16,6 +16,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function () {
 
+    //    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
+
+    //tiktok
+    Route::get('/tiktok', [
+        'uses' => 'AuthController@socialAuth',
+        'provider' => 'tiktok',
+    ]);
+
+
     Route::post('/callback/tiktok', [
         'uses' => 'AuthController@socialAuthCallbackHandler',
         'provider' => 'tiktok',
@@ -101,8 +110,6 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/{id}/edit', [CookbookController::class, 'update']);
         Route::post('/{id}/destroy', [CookbookController::class, 'destroy']);
     });
-
-//    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
 
     Route::get('/definitions', 'DefinitionsController@index');
 
