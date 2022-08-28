@@ -54,13 +54,18 @@ class AuthController extends Controller
 
     /**
      * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|void
      */
     public function socialAuthCallbackHandler(Request $request)
     {
         try {
             $provider = $request->route()->getAction()["provider"];
 
-            $user = Socialite::driver($provider)->user();
+            return response()->json([
+                'titok' => $provider
+            ]);
+
+//            $user = Socialite::driver($provider)->user();
         } catch (\Exception $e) {
             dd($e);
         }
