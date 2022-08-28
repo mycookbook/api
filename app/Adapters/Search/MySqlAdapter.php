@@ -2,6 +2,7 @@
 
 namespace App\Adapters\Search;
 
+use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,9 +51,13 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
      */
     private function fetchCookbooks($q): \Illuminate\Support\Collection
     {
-        $author_id = $this->userService->findWhere($q)->first()->getKey();
+        $author = $this->userService->findWhere($q)->first();
 
-        return DB::table('cookbooks')
+        if ($author instanceof User) {
+            $author_id = $author->getKey();
+        }
+
+        $query = DB::table('cookbooks')
             ->select([
                 'cookbooks.id AS cookbook_id',
                 'cookbooks.name AS cookbook_name',
@@ -67,9 +72,13 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
             ->leftJoin('users', 'users.id', '=', 'cookbooks.user_id')
             ->whereFullText('cookbooks.name', $q)
             ->orWhereFullText('cookbooks.description', $q)
-            ->orWhereFullText('cookbooks.slug', $q)
-            ->orWhere('cookbooks.user_id', '=', $author_id)
-            ->get();
+            ->orWhereFullText('cookbooks.slug', $q);
+
+        if (!is_null($author)) {
+            return $query->orWhere('cookbooks.user_id', '=', $author_id)->get();
+        }
+
+        return $query->get();
     }
 
     /**
@@ -79,9 +88,13 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
      */
     private function fetchRecipes($q): \Illuminate\Support\Collection
     {
-        $author_id = $this->userService->findWhere($q)->first()->getKey();
+        $author = $this->userService->findWhere($q)->first();
 
-        return DB::table('recipes')
+        if ($author instanceof User) {
+            $author_id = $author->getKey();
+        }
+
+        $query = DB::table('recipes')
             ->select([
                 'recipes.id as recipe_id',
                 'recipes.name AS recipe_name',
@@ -99,9 +112,13 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
             ->whereFullText('recipes.name', $q)
             ->orWhereFullText('recipes.description', $q)
             ->orWhereFullText('recipes.ingredients', $q)
-            ->orWhereFullText('recipes.nutritional_detail', $q)
-            ->orWhere('recipes.user_id', '=', $author_id)
-            ->get();
+            ->orWhereFullText('recipes.nutritional_detail', $q);
+
+        if (!is_null($author)) {
+            return $query->orWhere('recipes.user_id', '=', $author_id)->get();
+        }
+
+        return $query->get();
     }
 
     /**

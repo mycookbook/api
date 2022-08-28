@@ -136,24 +136,14 @@ class UserService implements serviceInterface
     }
 
     /**
-     * Find user record
-     *
      * @param $q
-     * @return mixed
-     *
-     * @throws CookbookModelNotFoundException
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function findWhere($q)
     {
-        $r = User::with(['cookbooks', 'recipes'])
+        return User::with(['cookbooks', 'recipes'])
             ->where('id', $q)
             ->orWhere('email', $q)
             ->orWhere('name_slug', $q);
-
-        if (!$r->first()) {
-            throw new CookbookModelNotFoundException();
-        }
-
-        return $r;
     }
 }
