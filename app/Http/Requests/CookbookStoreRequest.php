@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\MaxAllowedRule;
 use App\Rules\SupportedImageUrlFormatsRule;
 use Illuminate\Foundation\Http\FormRequest;
 

@@ -2,14 +2,26 @@
 
 namespace App\Adapters\Search;
 
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MySqlAdapter implements FulltextSearchAdapterInterface
 {
     /**
-     * @param  string  $q
+     * @var UserService
+     */
+    protected UserService $userService;
+
+    public function __construct()
+    {
+        $this->userService = new UserService();
+    }
+
+    /**
+     * @param string $q
      * @return \Illuminate\Support\Collection
+     * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     public function fetch(string $q): \Illuminate\Support\Collection
     {
@@ -34,9 +46,12 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
     /**
      * @param $q
      * @return \Illuminate\Support\Collection
+     * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     private function fetchCookbooks($q): \Illuminate\Support\Collection
     {
+        $author_id = $this->userService->findWhere($q)->first()->getKey();
+
         return DB::table('cookbooks')
             ->select([
                 'cookbooks.id AS cookbook_id',
@@ -53,15 +68,19 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
             ->whereFullText('cookbooks.name', $q)
             ->orWhereFullText('cookbooks.description', $q)
             ->orWhereFullText('cookbooks.slug', $q)
-        ->get();
+            ->orWhere('cookbooks.user_id', '=', $author_id)
+            ->get();
     }
 
     /**
      * @param $q
      * @return \Illuminate\Support\Collection
+     * @throws \App\Exceptions\CookbookModelNotFoundException
      */
     private function fetchRecipes($q): \Illuminate\Support\Collection
     {
+        $author_id = $this->userService->findWhere($q)->first()->getKey();
+
         return DB::table('recipes')
             ->select([
                 'recipes.id as recipe_id',
@@ -81,15 +100,14 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
             ->orWhereFullText('recipes.description', $q)
             ->orWhereFullText('recipes.ingredients', $q)
             ->orWhereFullText('recipes.nutritional_detail', $q)
-            ->orWhereFullText('recipes.summary', $q)
-            ->orWhereFullText('users.name', $q)
+            ->orWhere('recipes.user_id', '=', $author_id)
             ->get();
     }
 
     /**
      * Get the user meta data and write to a csv file for ML purposes
      *
-     * @param  Request  $request
+     * @param Request $request
      */
     public function writeToCsv(Request $request)
     {
