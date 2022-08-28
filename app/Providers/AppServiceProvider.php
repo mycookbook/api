@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Adapters\Search\FulltextSearchAdapterInterface;
 use App\Adapters\Search\MySqlAdapter;
 use Illuminate\Support\ServiceProvider;
+use App\Adapters\Search\FulltextSearchAdapterInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
