@@ -21,6 +21,27 @@ Route::group(['prefix' => 'v1'], function () {
         'provider' => 'tiktok',
     ]);
 
+    Route::post('/callback/twitter', [
+        'uses' => 'AuthController@socialAuthCallbackHandler',
+        'provider' => 'twitter',
+    ]);
+
+    Route::post('/callback/pinterest', [
+        'uses' => 'AuthController@socialAuthCallbackHandler',
+        'provider' => 'pinterest',
+    ]);
+
+    Route::post('/callback/instagram', [
+        'uses' => 'AuthController@socialAuthCallbackHandler',
+        'provider' => 'instagram',
+    ]);
+
+    Route::post('/webhooks/tiktok', function() {
+        return response()->json([
+            'message' => 'payload recieved with thanks'
+        ]);
+    });
+
     /*
     |--------------------------------------------------------------------------
     | Auth group

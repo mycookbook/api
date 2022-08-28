@@ -23,19 +23,9 @@ Route::get('/tiktok', [
     'provider' => 'tiktok',
 ]);
 
-Route::get('/callback/tiktok', [
-    'uses' => 'AuthController@socialAuthCallbackHandler',
-    'provider' => 'tiktok',
-]);
-
 //twitter
 Route::get('/twitter', [
     'uses' => 'AuthController@socialAuth',
-    'provider' => 'twitter',
-]);
-
-Route::get('/callback/twitter', [
-    'uses' => 'AuthController@socialAuthCallbackHandler',
     'provider' => 'twitter',
 ]);
 
@@ -45,24 +35,8 @@ Route::get('/pinterest', [
     'provider' => 'pinterest',
 ]);
 
-Route::get('/callback/pinterest', [
-    'uses' => 'AuthController@socialAuthCallbackHandler',
-    'provider' => 'pinterest',
-]);
-
 //instagram
 Route::get('/instagram', [
     'uses' => 'AuthController@socialAuth',
     'provider' => 'instagram',
 ]);
-
-Route::get('/callback/instagram', [
-    'uses' => 'AuthController@socialAuthCallbackHandler',
-    'provider' => 'instagram',
-]);
-
-Route::get('/webhooks/tiktok', function() {
-    return response()->json([
-        'message' => 'payload recieved with thanks'
-    ]);
-});
