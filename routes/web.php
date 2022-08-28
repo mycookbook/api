@@ -28,11 +28,6 @@ Route::get('/callback/tiktok', [
     'provider' => 'tiktok',
 ]);
 
-Route::post('/callback/tiktok', [
-    'uses' => 'AuthController@socialAuthCallbackHandler',
-    'provider' => 'tiktok',
-]);
-
 //twitter
 Route::get('/twitter', [
     'uses' => 'AuthController@socialAuth',
