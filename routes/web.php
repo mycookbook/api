@@ -17,12 +17,6 @@ Route::get('/', function () {
     return 'Cookbooks api v1';
 });
 
-//tiktok
-Route::get('/tiktok', [
-    'uses' => 'AuthController@socialAuth',
-    'provider' => 'tiktok',
-]);
-
 //twitter
 Route::get('/twitter', [
     'uses' => 'AuthController@socialAuth',
