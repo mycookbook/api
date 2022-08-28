@@ -57,9 +57,13 @@ class AuthController extends Controller
      */
     public function socialAuthCallbackHandler(Request $request)
     {
-        $provider = $request->route()->getAction()["provider"];
+        try {
+            $provider = $request->route()->getAction()["provider"];
 
-        $user = Socialite::driver($provider)->user();
+            $user = Socialite::driver($provider)->user();
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 
     /**
