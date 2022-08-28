@@ -102,7 +102,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/{id}/destroy', [CookbookController::class, 'destroy']);
     });
 
-    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
+//    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
 
     Route::get('/definitions', 'DefinitionsController@index');
 
