@@ -17,7 +17,7 @@ Route::get('/', function () {
     return 'Cookbooks api v1';
 });
 
-Route::get('/callback/tiktok', [
+Route::match(['POST', 'GET'],'/callback/tiktok', [
     'uses' => 'AuthController@socialAuthCallbackHandler',
     'provider' => 'tiktok',
 ]);
