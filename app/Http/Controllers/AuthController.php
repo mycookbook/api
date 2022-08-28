@@ -58,11 +58,7 @@ class AuthController extends Controller
     {
         $provider = $request->route()->getAction()["provider"];
 
-        return response()->json([
-            'res' => $provider
-        ]);
-
-//        $user = Socialite::driver($provider)->user();
+        $user = Socialite::driver($provider)->user();
     }
 
     /**
