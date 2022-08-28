@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\DB;
+use App\Adapters\Search\FulltextSearchAdapterInterface;
+use App\Adapters\Search\MySqlAdapter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,10 +13,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-//        dd(DB::connection());
-    }
+    public function register(){}
 
     /**
      * Bootstrap any application services.
@@ -24,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind(FulltextSearchAdapterInterface::class, MySqlAdapter::class);
     }
 }

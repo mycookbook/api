@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CookbookController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -81,7 +82,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('/policies', 'StaticContentController@get');
 
-    Route::get('/search', 'SearchController@fetch');
+    Route::get('/search', [SearchController::class, 'getSearchResults']);
 
     Route::post('/keywords', 'SearchController@writeToCsv');
 

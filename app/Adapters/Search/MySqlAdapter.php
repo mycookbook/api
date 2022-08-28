@@ -16,13 +16,13 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
         $by_cookbook = 'cookbooks by';
         $by_recipe = 'recipes by';
 
-        if (strpos($q, $by_cookbook) !== false) {
+        if (str_contains($q, $by_cookbook)) {
             $q = trim(str_replace($by_cookbook, '', $q));
 
             return $this->fetchCookbooks($q);
         }
 
-        if (strpos($q, $by_recipe) !== false) {
+        if (str_contains($q, $by_recipe)) {
             $q = trim(str_replace($by_recipe, '', $q));
 
             return $this->fetchRecipes($q);
