@@ -5,3 +5,4 @@ Homestead.yaml
 .env
 build/
 .DS_Store
+storage/framework/
