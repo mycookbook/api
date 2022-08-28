@@ -37,13 +37,11 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
      */
     private function fetchCookbooks($q): \Illuminate\Support\Collection
     {
-        $query = DB::table('cookbooks')
+        return DB::table('cookbooks')
             ->select([
                 'cookbooks.id AS cookbook_id',
                 'cookbooks.name AS cookbook_name',
                 'cookbooks.slug AS cookbook_slug',
-//                DB::raw('SUBSTR(cookbooks.description,1,250) as description'),
-//                DB::raw('DATE_FORMAT(cookbooks.created_at, "%d %M %Y") as created_at'),
                 'cookbooks.bookCoverImg',
                 'cookbooks.resource_type',
                 'cookbooks.is_locked',
@@ -51,9 +49,11 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
                 'users.name_slug AS username',
                 'users.id AS author_id',
             ])
-            ->leftJoin('users', 'users.id', '=', 'cookbooks.user_id');
-
-        return $query->get();
+            ->leftJoin('users', 'users.id', '=', 'cookbooks.user_id')
+            ->whereFullText('cookbooks.name', $q)
+            ->orWhereFullText('cookbooks.description', $q)
+            ->orWhereFullText('cookbooks.slug', $q)
+        ->get();
     }
 
     /**
@@ -67,20 +67,22 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
                 'recipes.id as recipe_id',
                 'recipes.name AS recipe_name',
                 'recipes.slug AS recipe_slug',
-//                DB::raw('SUBSTR(recipes.summary,1,250) as summary'),
                 'recipes.ingredients',
                 'recipes.resource_type',
                 'recipes.nutritional_detail',
                 'recipes.imgUrl',
                 'recipes.cookbook_id AS cookbook_id',
-//                DB::raw('DATE_FORMAT(recipes.created_at, "%d %M %Y") as created_at'),
                 'users.name AS author_name',
                 'users.name_slug AS username',
                 'users.id AS author_id',
             ])
             ->leftJoin('users', 'users.id', '=', 'recipes.user_id')
-//            ->whereRaw('MATCH(recipes.name,recipes.description,recipes.ingredients,recipes.nutritional_detail,recipes.summary) AGAINST(? IN BOOLEAN MODE)', [$q])
-//            ->orWhereRaw('MATCH(users.name) AGAINST(? IN BOOLEAN MODE)', [$q])
+            ->whereFullText('recipes.name', $q)
+            ->orWhereFullText('recipes.description', $q)
+            ->orWhereFullText('recipes.ingredients', $q)
+            ->orWhereFullText('recipes.nutritional_detail', $q)
+            ->orWhereFullText('recipes.summary', $q)
+            ->orWhereFullText('users.name', $q)
             ->get();
     }
 
