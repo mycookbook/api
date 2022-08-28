@@ -25,27 +25,27 @@ Route::group(['prefix' => 'v1'], function () {
     ]);
 
 
-    Route::post('/callback/tiktok', [
+    Route::get('/callback/tiktok', [
         'uses' => 'AuthController@socialAuthCallbackHandler',
         'provider' => 'tiktok',
     ]);
 
-    Route::post('/callback/twitter', [
+    Route::get('/callback/twitter', [
         'uses' => 'AuthController@socialAuthCallbackHandler',
         'provider' => 'twitter',
     ]);
 
-    Route::post('/callback/pinterest', [
+    Route::get('/callback/pinterest', [
         'uses' => 'AuthController@socialAuthCallbackHandler',
         'provider' => 'pinterest',
     ]);
 
-    Route::post('/callback/instagram', [
+    Route::get('/callback/instagram', [
         'uses' => 'AuthController@socialAuthCallbackHandler',
         'provider' => 'instagram',
     ]);
 
-    Route::post('/webhooks/tiktok', function() {
+    Route::get('/webhooks/tiktok', function() {
         return response()->json([
             'message' => 'payload recieved with thanks'
         ]);
