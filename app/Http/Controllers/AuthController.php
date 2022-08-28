@@ -43,11 +43,12 @@ class AuthController extends Controller
     }
 
     /**
-     * @param $provider
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function socialAuth($provider)
+    public function socialAuth(Request $request)
     {
+        $provider = $request->route()->getAction()["provider"];
+
         return Socialite::driver($provider)->redirect();
     }
 
