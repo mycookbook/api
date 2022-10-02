@@ -50,6 +50,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $throwable)
     {
+        dd($throwable->getMessage());
         return parent::render($request, $throwable);
     }
 }
