@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 
 Route::match(['POST', 'GET'],'/callback/tiktok', [
-    'uses' => 'AuthController@socialAuthCallbackHandler',
+    'uses' => 'AuthController@tikTokHandleCallback',
     'provider' => 'tiktok',
 ]);
 
