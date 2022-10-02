@@ -78,7 +78,6 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
-        dd($request->all());
         $code = $request->get('code');
 
         try {
