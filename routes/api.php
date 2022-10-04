@@ -97,7 +97,7 @@ Route::group(['prefix' => 'v1'], function () {
     */
     Route::group(['prefix' => '/cookbooks'], function () {
         Route::get('/', [CookbookController::class, 'index']);
-        Route::get('//{id}', [CookbookController::class, 'show']);
+        Route::get('/{id}', [CookbookController::class, 'show']);
 
         Route::post('/', [CookbookController::class, 'store']);
         Route::post('/{id}/edit', [CookbookController::class, 'update']);
