@@ -28,7 +28,6 @@ class CookbookStoreRequest extends FormRequest
             'name' => 'required',
             'description' => 'required|min:126',
             'bookCoverImg' => ['required', new SupportedImageUrlFormatsRule()],
-            'category_id' => 'required',
             'categories' => 'required',
             'flag_id' => 'required',
         ];

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
+use App\Models\Category;
 use App\Models\Cookbook;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -56,14 +57,14 @@ class CookbookService implements serviceInterface
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $categories = $request->get('categories');
+        $categories = explode(", ", $request->get('categories'));
+        $categories = Category::whereIn('slug', $categories)->pluck('id')->toArray();
 
         $cookbook = new Cookbook($request->all());
-        $cookbook->user_id = $request->user()->id;
         $cookbook->slug = slugify($request->name);
 
         if ($cookbook->save()) {
-            $cookbook->users()->attach($request->user()->id);
+            $cookbook->users()->attach($cookbook->user_id);
 
             foreach ($categories as $category) {
                 $cookbook->categories()->attach($category);

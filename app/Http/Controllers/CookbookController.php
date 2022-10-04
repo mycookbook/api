@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\CookbookStoreRequest;
+use App\Models\User;
 use App\Services\CookbookService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\JWT;
 
 /**
@@ -67,19 +69,28 @@ class CookbookController extends Controller
      * @param CookbookStoreRequest $request
      * @param JWT $jwtAuth
      * @return JsonResponse
-     *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
-     * @throws Exception
      */
-    public function store(CookbookStoreRequest $request, JWT $jwtAuth): JsonResponse
+    public function store(CookbookStoreRequest $request, JWT $jwtAuth)
     {
-        if ($jwtAuth->parseToken()->check()) {
-            return $this->service->store($request);
-        }
+        try {
+            if ($jwtAuth->parseToken()->check()) {
 
-        return response()->json([
-            'error' => 'You are not authorized to perform this action.'
-        ], 401);
+                $request->merge([
+                    'user_id' => Auth::user()->id,
+                    'alt_text' => 'cookbook cover image'
+                ]);
+
+                return $this->service->store($request);
+            } else {
+                return response()->json([
+                    'error' => 'You are not authorized to perform this action.'
+                ], 401);
+            }
+        } catch(Exception $e){
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**
