@@ -16,11 +16,11 @@ class JWTAuthGuard
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$token = $request->bearerToken()) {
-            return response()->json([
-                'error' => 'Invalid request.'
-            ], 401);
-        }
+//        if (!$token = $request->bearerToken()) {
+//            return response()->json([
+//                'error' => 'Invalid request.'
+//            ], 401);
+//        }
 
         return $next($request);
     }

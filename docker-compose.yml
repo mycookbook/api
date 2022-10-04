@@ -13,7 +13,6 @@ services:
         image: mysql:latest
         container_name: db
         environment:
-            MYSQL_ALLOW_EMPTY_PASSWORD: false
             MYSQL_DATABASE: test_db
             MYSQL_PASSWORD: pass
         volumes:
