@@ -73,7 +73,7 @@ class CookbookController extends Controller
     public function store(CookbookStoreRequest $request, JWT $jwtAuth)
     {
         try {
-            if ($jwtAuth->parseToken()->check()) {
+            if ($jwtAuth->parseToken()->checkOrFail()) {
 
                 $request->merge([
                     'user_id' => Auth::user()->id,
@@ -81,15 +81,11 @@ class CookbookController extends Controller
                 ]);
 
                 return $this->service->store($request);
-            } else {
-                return response()->json([
-                    'error' => 'You are not authorized to perform this action.'
-                ], 401);
             }
         } catch(Exception $e){
             return response()->json([
                 'error' => $e->getMessage()
-            ], 400);
+            ], Response::HTTP_UNAUTHORIZED);
         }
     }
 

@@ -149,7 +149,7 @@ class AuthController extends Controller
                     }
 
                     $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
-                            'code' => $token,
+                            'token' => $token,
                             '_d' => $user->getSlug(),
                         ]);
 
