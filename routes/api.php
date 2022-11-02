@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function () {
 
+    Route::get('/ping', function () {
+        return 'Cookbooks api v1';
+    });
+
     //    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
 
     Route::get('/callback/tiktok', [

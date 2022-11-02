@@ -29,6 +29,12 @@ make install
 This command spins up the containers, install project dependencies, creates a barebone  .env file which you can update as needed, sets the app key etc
 For a full glossary of all the make commands, look in the `Makefile` in the project root.
 
+Now you can access the app via:
+
+```angular2html
+http://localhost:8080/api/v1/ping
+```
+
 # Contributing
 1) Always rebase your branch against the base branch `git rebase -i --autosquash origin/staging`
 2) Strictly adhere to branch naming rules `e.g feature/descriptive-branch-name, bugfix/descriptive-branch-name etc (hotfix, chore)`
