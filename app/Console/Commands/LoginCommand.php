@@ -38,7 +38,7 @@ class LoginCommand extends Command
         $fromCache = Cache::get('testUser');
 
         if (!$fromCache) {
-            $this->line('User not found in cache, creating new User ...');
+            $this->line('User not found in Cache, creating new User ...');
             $this->line('==============================================');
 
             $response = $userService->store(new Request([

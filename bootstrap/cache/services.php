@@ -38,6 +38,7 @@
     34 => 'App\\Providers\\RouteServiceProvider',
     35 => 'Laravel\\Socialite\\SocialiteServiceProvider',
     36 => 'SocialiteProviders\\Manager\\ServiceProvider',
+    37 => 'Thedevsaddam\\LaravelSchema\\LaravelSchemaServiceProvider',
   ),
   'eager' => 
   array (
@@ -63,6 +64,7 @@
     19 => 'App\\Providers\\AuthServiceProvider',
     20 => 'App\\Providers\\EventServiceProvider',
     21 => 'App\\Providers\\RouteServiceProvider',
+    22 => 'Thedevsaddam\\LaravelSchema\\LaravelSchemaServiceProvider',
   ),
   'deferred' => 
   array (

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2194fdf4efd270e12f12ad2bfcf01c8d",
+    "content-hash": "1001a8848dc45d20cb017202d6168cb2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7341,6 +7341,53 @@
                 }
             ],
             "time": "2022-07-20T13:45:53+00:00"
+        },
+        {
+            "name": "thedevsaddam/laravel-schema",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thedevsaddam/laravel-schema.git",
+                "reference": "ce787b3b5d6f558cd5fb615f373beabb1939e724"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thedevsaddam/laravel-schema/zipball/ce787b3b5d6f558cd5fb615f373beabb1939e724",
+                "reference": "ce787b3b5d6f558cd5fb615f373beabb1939e724",
+                "shasum": ""
+            },
+            "type": "package",
+            "autoload": {
+                "psr-4": {
+                    "Thedevsaddam\\LaravelSchema\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Saddam Hossain",
+                    "email": "thedevsaddam@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Display the connected database information in console.",
+            "homepage": "https://github.com/thedevsaddam/laravel-schema",
+            "keywords": [
+                "database",
+                "laravel",
+                "laravel-database viewer",
+                "laravel-schema",
+                "schema",
+                "thedevsaddam"
+            ],
+            "support": {
+                "issues": "https://github.com/thedevsaddam/laravel-schema/issues",
+                "source": "https://github.com/thedevsaddam/laravel-schema/tree/2.0.3"
+            },
+            "time": "2016-10-28T06:25:46+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
