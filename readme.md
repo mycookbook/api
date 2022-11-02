@@ -26,16 +26,27 @@ Use the make command to setup the project like so:
 make install
 ```
 
-This command spins up containers, install project dependencies, creates a barebone  .env file which you can update as needed, sets the app key etc
+This command spins up the containers, install project dependencies, creates a barebone  .env file which you can update as needed, sets the app key etc
 For a full glossary of all the make commands, look in the `Makefile` in the project root.
 
 # Contributing
-- style guide (TBD)
+1) Always rebase your branch against the base branch `git rebase -i --autosquash origin/staging`
+2) Strictly adhere to branch naming rules `e.g feature/descriptive-branch-name, bugfix/descriptive-branch-name etc (hotfix, chore)`
 
-## Testing
-- setup phpunit in phpstorm
+## Testing in dev
+- Follow this guide to learn how to setup phpunit in phpstorm.
+- You can also use any of the following make cmds to run tests
 
-#### Requirements
-- xdebug, php
+```angular2html
+make test
+make test_unit
+make test_api
+```
 
+# Help
+To see a list of all the make commands, type `make` in the project root. It will dispplay the full list of available commands you can use.
+
+Examples:
+
+![Alt text](docs/images/help.png?raw=true "help")
 
