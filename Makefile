@@ -1,13 +1,17 @@
-install:
-	@echo "Hello World"
-build:
-	@echo "Hello World"
-up:
-	@echo "Hello World"
+COMPOSER=composer
+
+install: setup down build up help
+
 down:
-	@echo "Hello World"
+	docker-compose down
+
+build: #build the containers
+	docker-compose build
+up:
+	docker-compose up
+
 help: #topic
-	@echo "Hello World"
+	@echo "Help topics"
 
 provision:
 	@echo "Hello World"
@@ -18,12 +22,14 @@ db-seed:
 migrate:
 	@echo "Hello World"
 
-setup:
-	@echo "Hello World"
+setup: composer .env
 	#install composer dependencies, copy .env.example, generate app key
 
 composer:
 	@echo "Hello World"
+
+.env:
+	cp .env.example .env
 
 login:
 	@echo "Hello World"

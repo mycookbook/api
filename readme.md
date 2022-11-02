@@ -12,4 +12,10 @@ For a full glossary of all the make commands, look in the `Makefile` in the proj
 # Contributing
 - style guide (TBD)
 
+## Testing
+- setup phpunit in phpstorm
+
+#### Requirements
+- xdebug, php
+
 
