@@ -4,6 +4,9 @@ FROM php:8.0-fpm
 ARG user
 ARG uid
 
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \

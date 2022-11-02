@@ -108,10 +108,9 @@ class CookbookTest extends \TestCase
             'bookCoverImg' => 'https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480',
             'user_id' => 1,
             'category_id' => 1,
-            'categories' => [1],
+            'categories' => 'keto,vegan,test',
             'flag_id' => 1,
-            'slug' => 'test-cookbook',
-            'alt_text' => 'this is a test cookbook'
+            'slug' => 'test-cookbook'
         ], [
             'HTTP_Authorization' => 'Bearer ' . $decoded['token']
         ]);
@@ -119,8 +118,7 @@ class CookbookTest extends \TestCase
         $this->assertDatabaseHas('cookbooks', [
             'name' => 'test cookbook',
             'user_id' => 1,
-            'slug' => 'test-cookbook',
-            'alt_text' => 'this is a test cookbook'
+            'slug' => 'test-cookbook'
         ]);
     }
 
@@ -153,7 +151,7 @@ class CookbookTest extends \TestCase
             'bookCoverImg' => 'https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480',
             'user_id' => 1,
             'category_id' => 1,
-            'categories' => [1],
+            'categories' => 'keto,vegan,test',
             'flag_id' => 1,
             'slug' => 'test-cookbook',
             'alt_text' => 'this is a test cookbook'

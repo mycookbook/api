@@ -25,11 +25,8 @@ class AuthTest extends \TestCase
 
         $decoded = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('message', $decoded);
-        $this->assertArrayHasKey('errors', $decoded);
-        $this->assertArrayHasKey('email', $decoded['errors']);
-        $this->assertSame("The email field is required.", $decoded["message"]);
-        $this->assertSame("The email field is required.", $decoded["errors"]["email"][0]);
+        $this->assertArrayHasKey('email', $decoded);
+        $this->assertSame("The email field is required.", $decoded["email"][0]);
     }
 
     /**
@@ -45,11 +42,8 @@ class AuthTest extends \TestCase
 
         $decoded = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('message', $decoded);
-        $this->assertArrayHasKey('errors', $decoded);
-        $this->assertArrayHasKey('email', $decoded['errors']);
-        $this->assertSame("The email field is required.", $decoded["message"]);
-        $this->assertSame("The email field is required.", $decoded["errors"]["email"][0]);
+        $this->assertArrayHasKey('email', $decoded);
+        $this->assertSame("The email field is required.", $decoded["email"][0]);
     }
 
     /**
@@ -66,11 +60,8 @@ class AuthTest extends \TestCase
 
         $decoded = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('message', $decoded);
-        $this->assertArrayHasKey('errors', $decoded);
-        $this->assertArrayHasKey('password', $decoded['errors']);
-        $this->assertSame("The password field is required.", $decoded["message"]);
-        $this->assertSame("The password field is required.", $decoded["errors"]["password"][0]);
+        $this->assertArrayHasKey('password', $decoded);
+        $this->assertSame("The password field is required.", $decoded["password"][0]);
     }
 
     /**
@@ -86,11 +77,8 @@ class AuthTest extends \TestCase
 
         $decoded = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('message', $decoded);
-        $this->assertArrayHasKey('errors', $decoded);
-        $this->assertArrayHasKey('password', $decoded['errors']);
-        $this->assertSame("The password field is required.", $decoded["message"]);
-        $this->assertSame("The password field is required.", $decoded["errors"]["password"][0]);
+        $this->assertArrayHasKey('password', $decoded);
+        $this->assertSame("The password field is required.", $decoded["password"][0]);
     }
 
     /**
@@ -104,15 +92,11 @@ class AuthTest extends \TestCase
 
         $decoded = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('message', $decoded);
-        $this->assertArrayHasKey('errors', $decoded);
-        $this->assertArrayHasKey('email', $decoded['errors']);
-        $this->assertSame("The email field is required.", $decoded["errors"]["email"][0]);
+        $this->assertArrayHasKey('email', $decoded);
+        $this->assertSame("The email field is required.", $decoded["email"][0]);
 
-        $this->assertArrayHasKey('message', $decoded);
-        $this->assertArrayHasKey('errors', $decoded);
-        $this->assertArrayHasKey('password', $decoded['errors']);
-        $this->assertSame("The password field is required.", $decoded["errors"]["password"][0]);
+        $this->assertArrayHasKey('password', $decoded);
+        $this->assertSame("The password field is required.", $decoded["password"][0]);
     }
 
     /**
@@ -160,10 +144,8 @@ class AuthTest extends \TestCase
 
         $decoded = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey("message", $decoded);
-        $this->assertArrayHasKey("errors", $decoded);
-        $this->assertArrayHasKey("email", $decoded['errors']);
-        $this->assertSame("The email has already been taken.", $decoded['errors']['email'][0]);
+        $this->assertArrayHasKey("email", $decoded);
+        $this->assertSame("The email has already been taken.", $decoded['email'][0]);
     }
 
 
