@@ -3,8 +3,16 @@ install: setup down build up help
 down: #destroy the containers
 	docker-compose down
 
-prune:
-	@echo "Prunning containers and volumes"
+force-prune: prune-images prune-containers prune-volumes
+
+prune-images:
+	docker image prune
+
+prune-containers:
+	docker container prune
+
+prune-volumes:
+	docker volume prune
 
 build: #build the containers
 	docker-compose build
@@ -12,7 +20,7 @@ build: #build the containers
 up: #start the containers
 	docker-compose up
 
-clean: down prune
+clean: down force-prune
 
 force-clean:
 	@echo "force cleaning."
@@ -20,7 +28,7 @@ force-clean:
 db-seed: #seed the database
 	php artisan db:seed
 
-migrate: #run db migrations
+db-migrate: #run db migrations
 	php artisan migrate
 
 setup: copy-env composer generate-key
