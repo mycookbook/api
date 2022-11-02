@@ -38,8 +38,9 @@ composer: ## Install project dependencies
 generate_key: ## Generate APP_KEY and set in .env
 	@php artisan key:generate
 
-login: #todo: create an artisan cmd
-	@echo "Hello World"
+login: ## Creates a new user/token or generate new token for given user
+	@php artisan auth:token
+
 
 test_unit: ## Run unit testsuite
 	@php vendor/bin/phpunit --testsuite=Unit
@@ -73,7 +74,7 @@ dump_autoload: ## Composer dumpautoload
 up: ## Restarts and provisions the containers
 	@docker-compose up
 
-docker_prune: prune_images prune_containers prune_volumes
+docker_prune: prune_images prune_volumes prune_containers
 
 prune_images: ## Remove dangling images and free up space
 	@docker image prune
