@@ -5,8 +5,7 @@ help:
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
 	@grep -E '^[-a-zA-Z0-9_\.\/]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[32m%-15s\033[0m %s\n", $$1, $$2}'
 
-install: ## Destroy the containers, restarts them
-	down build up
+install: down build up
 
 down: ## Destroy the containers
 	docker-compose down
@@ -23,7 +22,7 @@ db_migrate: ## run db migrations
 setup: ## Setup the app
 	copy_env composer generate_key
 
-copy_env:
+copy_env: #todo: checks if .env exists already
 	cp .env.example .env
 
 composer: ## Install project dependencies
@@ -68,8 +67,7 @@ dump_autoload: ## Composer dumpautoload
 up: ## Restarts and provisions the containers
 	docker-compose up
 
-force_prune: ## Prunes containers, images and volumes
-	prune_images prune_containers prune_volumes
+docker_prune: prune_images prune_containers prune_volumes
 
 prune_images: ## Remove dangling images and free up space
 	docker image prune
