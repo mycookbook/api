@@ -5,7 +5,7 @@ help:
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
 	@grep -E '^[-a-zA-Z0-9_\.\/]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[32m%-15s\033[0m %s\n", $$1, $$2}'
 
-install: down build up
+install: setup down build up
 
 down: ## Destroy the containers
 	docker-compose down
@@ -19,10 +19,9 @@ db_seed: ## seed the database
 db_migrate: ## run db migrations
 	php artisan migrate
 
-setup: ## Setup the app
-	copy_env composer generate_key
+setup: copy_env composer generate_key
 
-copy_env: #todo: checks if .env exists already
+copy_env: #todo: check if .env exists already
 	cp .env.example .env
 
 composer: ## Install project dependencies
@@ -43,10 +42,10 @@ test_api: ## Run Api tests
 test: ## Run the entire test suites
 	php vendor/bin/phpunit tests/
 
-app_shell: ## ssh into the app container
+shell_app: ## ssh into the app container
 	docker-compose exec app /bin/bash
 
-db_shell: ## ssh into the database container
+shell_db: ## ssh into the database container
 	docker-compose exec db /bin/bash
 
 clear: ## Clears the cache
