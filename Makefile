@@ -1,5 +1,3 @@
-COMPOSER=composer
-
 install: setup down build up help
 
 down:
@@ -22,14 +20,17 @@ db-seed:
 migrate:
 	@echo "Hello World"
 
-setup: composer .env
-	#install composer dependencies, copy .env.example, generate app key
+setup: copy-env composer generate-key
+	#generate app key
+
+copy-env:
+	cp .env.example .env
 
 composer:
-	@echo "Hello World"
+	composer install
 
-.env:
-	cp .env.example .env
+generate-key:
+	php artisan key:generate
 
 login:
 	@echo "Hello World"

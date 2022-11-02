@@ -1,3 +1,14 @@
+# Prerequisites
+- Download and install composer globally https://getcomposer.org/download/
+- Add an alias to your bash or zsh profile
+
+```angular2html
+alias composer='/usr/local/bin/composer'
+```
+**Remember to source the file.**
+
+- Ensure php is correctly installed on your machine. You can use brew, follow the instructions to update your httpd.conf file and restart apache.
+
 # Installation
 
 Use the make command to setup the project like so:
