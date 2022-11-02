@@ -39,7 +39,7 @@ test_unit: ## Run unit testsuite
 	php vendor/bin/phpunit --testsuite=Unit
 
 test_api: ## Run Api tests
-	php vendor/bin/phpunit --testsuite=Functional
+	php vendor/bin/phpunit --testsuite=Api
 
 test: ## Run the entire test suites
 	php vendor/bin/phpunit tests/
