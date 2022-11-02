@@ -62,7 +62,7 @@ class LoginCommand extends Command
         $this->info($token->getContent());
 
         $this->line('====================================');
-        $this->info("Access token successfully generated!");
+        $this->info("Here you go! Use this token to access protected resources.!");
 
         return 0;
     }
