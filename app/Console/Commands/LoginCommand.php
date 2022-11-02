@@ -38,7 +38,7 @@ class LoginCommand extends Command
         $fromCache = Cache::get('testUser');
 
         if (!$fromCache) {
-            $this->line('User not found in cache, creating new User ...');
+            $this->line('User not found in Cache, creating new User ...');
             $this->line('==============================================');
 
             $response = $userService->store(new Request([
@@ -62,7 +62,7 @@ class LoginCommand extends Command
         $this->info($token->getContent());
 
         $this->line('====================================');
-        $this->info("Access token successfully generated!");
+        $this->info("Here you go! Use this token to access protected resources.!");
 
         return 0;
     }

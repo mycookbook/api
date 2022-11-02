@@ -1,5 +1,6 @@
 .RECIPEPREFIX +=
 .DEFAULT_GOAL := help
+.PHONY: *
 
 help:
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
@@ -19,14 +20,13 @@ db_seed: ## seed the database
 db_migrate: ## run db migrations
 	@php artisan migrate
 
-db_schemefy: ## Generate db schema
-	@echo "TBD"
+db_schemefy: ## Display the db schema in table format
+	 @php artisan schema:show
 
 setup: copy_env composer generate_key
 
-copy_env: #todo: check if .env exists already
-	@echo ".env file exists in the project root already, Skipping"
-	#cp .env.example .env
+copy_env: #todo: figure out a way to not override env vars if file_exists already
+	@cp .env.example .env
 
 reset_env: ## resets the env file from .env.example
 	@cp .env.example .env
@@ -40,7 +40,6 @@ generate_key: ## Generate APP_KEY and set in .env
 
 login: ## Creates a new user/token or generate new token for given user
 	@php artisan auth:token
-
 
 test_unit: ## Run unit testsuite
 	@php vendor/bin/phpunit --testsuite=Unit
