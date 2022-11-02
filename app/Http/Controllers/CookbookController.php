@@ -67,29 +67,23 @@ class CookbookController extends Controller
 
     /**
      * @param CookbookStoreRequest $request
-     * @param JWT $jwtAuth
      * @return JsonResponse
+     * @throws Exception
      */
-    public function store(CookbookStoreRequest $request, JWT $jwtAuth)
+    public function store(CookbookStoreRequest $request)
     {
         try {
-            if ($jwtAuth->parseToken()->check()) {
+            $request->merge([
+                'user_id' => Auth::user()->id,
+                'alt_text' => 'cookbook cover image'
+            ]);
 
-                $request->merge([
-                    'user_id' => Auth::user()->id,
-                    'alt_text' => 'cookbook cover image'
-                ]);
+            return $this->service->store($request);
 
-                return $this->service->store($request);
-            } else {
-                return response()->json([
-                    'error' => 'You are not authorized to perform this action.'
-                ], 401);
-            }
-        } catch(Exception $e){
+        } catch (Exception $exception) {
             return response()->json([
-                'error' => $e->getMessage()
-            ], 400);
+                'error' => $exception->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 

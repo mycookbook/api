@@ -4,23 +4,19 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 
 class JWTAuthGuard
 {
     /**
      * Handle an incoming request.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function handle(Request $request, Closure $next)
     {
-//        if (!$token = $request->bearerToken()) {
-//            return response()->json([
-//                'error' => 'Invalid request.'
-//            ], 401);
-//        }
+        if (!Auth::check()) {
+            throw new UnauthorizedException('Your session has expired. Please login and try again.');
+        }
 
         return $next($request);
     }

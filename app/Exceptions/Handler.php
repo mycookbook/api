@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
+use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -54,6 +55,12 @@ class Handler extends ExceptionHandler
     {
         if ($throwable instanceof ValidationException) {
             return response()->json($throwable->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($throwable instanceof UnauthorizedException) {
+            return response()->json([
+                'error' => $throwable->getMessage()
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         return parent::render($request, $throwable);
