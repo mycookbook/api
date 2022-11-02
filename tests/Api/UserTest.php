@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional;
+namespace Api;
 
 use App\Jobs\SendEmailNotification;
 use Illuminate\Http\Response;

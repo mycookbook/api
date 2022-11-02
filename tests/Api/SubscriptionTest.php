@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional;
+namespace Api;
 
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\WithoutMiddleware;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional;
+namespace Api;
 
 use App\Models\Cookbook;
 use App\Models\User;

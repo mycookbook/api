@@ -3,11 +3,20 @@
 - Add an alias to your bash or zsh profile
 
 ```angular2html
+open ~/.bashrc OR
+open ~/.zshrc
+
+# add this line
 alias composer='/usr/local/bin/composer'
+
+# remember to source the file.
+e.g
+source ~/.bashrc OR
+source ~/.zshrc
 ```
-**Remember to source the file.**
 
 - Ensure php is correctly installed on your machine. You can use brew, follow the instructions to update your httpd.conf file and restart apache.
+- install the docker desktop app suitable for your hardware https://www.docker.com/products/docker-desktop/
 
 # Installation
 

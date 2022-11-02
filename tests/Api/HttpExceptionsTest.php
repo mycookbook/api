@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional;
+namespace Api;
 
 use Illuminate\Http\Response;
 
