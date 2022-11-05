@@ -33,6 +33,19 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
+     * Append links attribute.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'contributions',
+        'is_verified',
+        'contact_detail',
+        'drafts',
+        'resource_type'
+    ];
+
+    /**
      * A user has many recipes
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -83,18 +96,6 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Append links attribute.
-     *
-     * @var array
-     */
-    protected $appends = [
-        'contributions',
-        'is_verified',
-        'contact_detail',
-        'drafts',
-    ];
-
-    /**
      * Compute total nos of contributions made by this user
      * cookbooks and recipes
      *
@@ -139,6 +140,14 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResourceTypeAttribute(): string
+    {
+        return 'user';
     }
 
     /**

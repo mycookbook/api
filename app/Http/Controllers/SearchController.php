@@ -54,7 +54,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo
         if (str_starts_with($searchQuery, ":cookbooks|categories ")) {
             return $this->jsonResponse(
                 $this->service->getAllCookbooksByCategoryName(end($tags))
@@ -68,7 +67,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo
         if (str_starts_with($searchQuery, ":cookbooks|author ")) {
             return $this->jsonResponse(
                 $this->service->getAllCookbooksByThisAuthor(end($tags))
@@ -93,13 +91,6 @@ class SearchController extends Controller
         if (str_starts_with($searchQuery, ":recipes|ingredients ")) {
             return $this->jsonResponse(
                 $this->service->getAllRecipesByIngredientName(end($tags))
-            );
-        }
-
-        //todo same as :cookbooks|author
-        if (str_starts_with($searchQuery, ":author|cookbooks ")) {
-            return $this->jsonResponse(
-                $this->service->getAllCookbooksByThisAuthor(end($tags))
             );
         }
 
