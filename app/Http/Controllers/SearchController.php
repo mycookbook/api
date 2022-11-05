@@ -2,28 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Adapters\Search\FulltextSearchAdapterInterface;
 use App\Http\Requests\SearchRequest;
+use App\Services\SearchService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
 class SearchController extends Controller
 {
-    /**
-     * @var FulltextSearchAdapterInterface
-     */
-    protected FulltextSearchAdapterInterface $adapter;
+    protected const SUPPORTED_QUERY_SYNTAX = [
+        ":tags|cookbooks " => "getAllCookbooksByTag",
+        ":tags|recipes " => "getAllRecipesByTag"
+    ];
 
     /**
-     * @param  FulltextSearchAdapterInterface  $adapter
+     * @var SearchService $service
      */
-    public function __construct(FulltextSearchAdapterInterface $adapter)
+    protected SearchService $service;
+
+    /**
+     * Init
+     */
+    public function __construct()
     {
-        $this->adapter = $adapter;
+        $this->service = new SearchService();
     }
 
     /**
-     * @param  SearchRequest  $request
+     * @param SearchRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getSearchResults(Request $request): \Illuminate\Http\JsonResponse
@@ -35,11 +41,35 @@ class SearchController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors(),
-            ], 411);
+            ], 422);
         }
 
+        $searchQuery = $request->get("query");
+        $tags = explode(" ", $searchQuery);
+
+        if (str_starts_with($searchQuery, ":tags|cookbooks ")) {
+            return $this->jsonResponse(
+                $this->service->getAllCookbooksByTag(end($tags))
+            );
+        }
+
+        if (str_starts_with($searchQuery, ":tags|recipes ")) {
+            return $this->jsonResponse(
+                $this->service->getAllRecipesByTag(end($tags))
+            );
+        }
+
+        return $this->jsonResponse($this->service->searchEveryWhere($searchQuery));
+    }
+
+    /**
+     * @param Collection $collection
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function jsonResponse(Collection $collection)
+    {
         return response()->json([
-            'response' => $this->adapter->fetch($request->get('query')),
+            'response' => $collection,
         ]);
     }
 }

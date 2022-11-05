@@ -40,6 +40,7 @@ class Recipe extends Model
         'cook_time' => 'datetime:H:i:s',
         'prep_time' => 'datetime:H:i:s',
         'ingredients' => 'json',
+        'tags' => 'array'
     ];
 
     /**
