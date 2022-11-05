@@ -16,6 +16,9 @@ class JWTAuthGuard
     {
         try {
             if (JWTAuth::parseToken()->authenticate()) {
+
+                $request->merge(["user_id" => JWTAuth::parseToken()->user()->getKey()]);
+
                 return $next($request);
             }
         } catch (\Exception $exception) {

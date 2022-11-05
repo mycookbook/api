@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\CookbookStoreRequest;
 use App\Models\Flag;
-use App\Models\User;
 use App\Services\CookbookService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -51,19 +50,11 @@ class CookbookController extends Controller
 
     /**
      * @param Request $request
-     * @param JWT $jwtAuth
      * @return JsonResponse
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function myCookbooks(Request $request, JWT $jwtAuth): JsonResponse
+    public function myCookbooks(Request $request): JsonResponse
     {
-        if ($jwtAuth->parseToken()->check()) {
-            return $this->service->index($request->get('user_id'));
-        }
-
-        return response()->json([
-            'error', 'You are not authorized to access this resource.'
-        ], 401);
+        return $this->service->index($request->get('user_id'));
     }
 
     /**
@@ -110,18 +101,12 @@ class CookbookController extends Controller
 
     /**
      * @param $cookbookId
-     * @param Request $request
-     * @param JWT $jwtAuth
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|JsonResponse|Response
      * @throws CookbookModelNotFoundException
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function destroy($cookbookId, Request $request, JWT $jwtAuth)
+    public function destroy($cookbookId)
     {
-        if (
-            $request->user()->isSuper() &&
-            $jwtAuth->parseToken()->check()
-        ) {
+        if (Auth::user()->ownCookbook($cookbookId)) {
             return $this->service->delete($cookbookId);
         }
 

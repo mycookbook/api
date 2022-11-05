@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\User;
+use App\Models\UserContactDetail;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,16 +13,11 @@ use Illuminate\Http\Response;
 /**
  * Class UserService
  */
-class UserService implements serviceInterface
+class UserService extends BaseService implements serviceInterface
 {
-    /**
-     * @var array
-     */
-    protected $modelFillables;
-
     public function __construct()
     {
-        $this->modelFillables = (new \App\Models\User)->getFillable();
+        $this->serviceModel = new UserContactDetail();
     }
 
     /**
@@ -112,7 +108,7 @@ class UserService implements serviceInterface
                 'can_take_orders',
             ]);
 
-            foreach ($this->modelFillables as $fillable) {
+            foreach ($this->getFillables() as $fillable) {
                 if (isset($data[$fillable])) {
                     $userRecord->$fillable = $data[$fillable];
                 }
