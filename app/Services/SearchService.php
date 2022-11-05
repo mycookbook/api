@@ -49,4 +49,20 @@ class SearchService
     {
         return Recipe::where('tags', 'LIKE', '%'.$tag.'%')->get();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getMostRecentCookbooks()
+    {
+        return array_values(Cookbook::all()->sortByDesc('updated_at')->take(1000)->toArray());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMostRecentRecipes()
+    {
+        return array_values(Recipe::all()->sortByDesc('updated_at')->take(1000)->toArray());
+    }
 }
