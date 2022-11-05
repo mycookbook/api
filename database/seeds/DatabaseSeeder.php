@@ -117,16 +117,10 @@ class DatabaseSeeder extends Seeder
                 $cookbook->users()->attach($editor->getKey());
                 $cookbook->users()->attach($contributor->getKey());
 
-                $categories = \App\Models\Category::all();
+                $categoryIds = \App\Models\Category::all()->pluck("id")->toArray();
 
-                $categoryIds = $categories->map(function ($item) {
-                    return $item->id;
-                });
-
-                $categoryIds = $categoryIds->toArray();
-
-                foreach ($categoryIds as $key => $val) {
-                    $cookbook->categories()->attach($val);
+                foreach ($categoryIds as $cat_id) {
+                    $cookbook->categories()->attach($cat_id);
                 }
             }
 
