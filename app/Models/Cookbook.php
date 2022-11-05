@@ -32,6 +32,10 @@ class Cookbook extends Model
      */
     protected $appends = ['_links', 'recipes_count', 'categories', 'author', 'contributors'];
 
+    protected $casts = [
+        'tags' => 'array'
+    ];
+
     /**
      * Set attributes links
      *

@@ -45,9 +45,9 @@ class CookbookService extends BaseService implements serviceInterface
 
         return response()->json(
             [
-                'data' => $cookbooks->take(15)->get()
-//                    ->orderByDesc('created_at')
-//                    ->get(),
+                'data' => $cookbooks->take(15)
+                    ->orderByDesc('created_at')
+                    ->get(),
             ], Response::HTTP_OK
         );
     }
@@ -62,7 +62,7 @@ class CookbookService extends BaseService implements serviceInterface
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $categories = explode(", ", $request->get('categories'));
+        $categories = explode(",", $request->get('categories'));
         $categories = Category::whereIn('slug', $categories)->pluck('id')->toArray();
 
         $cookbook = $this->serviceModel;
@@ -111,12 +111,34 @@ class CookbookService extends BaseService implements serviceInterface
      */
     public function update($request, string $id)
     {
-        //TODO: Cookbook Policy to ascertain that user is able to update this cookbook
         $cookbook = $this->findWhere($id);
 
         $data = $request->only([
-            'name', 'description', 'bookCoverImg', 'category_id', 'flag_id', 'categories', 'alt_text',
+            'name', 'description', 'bookCoverImg', 'categories', 'alt_text', 'tags'
         ]);
+
+        if (isset($data['tags'])) {
+            $exisintgTags = $cookbook->tags;
+
+            if ($exisintgTags) {
+                $exisintgTags = array_merge($exisintgTags, explode(",", $data["tags"]));
+                $data["tags"] = array_unique($exisintgTags);
+            }
+        }
+
+        if (isset($data['categories'])) {
+            $existingCategories = $cookbook->categories()->get()->pluck("id")->toArray();
+
+            if ($existingCategories) {
+                $categories = explode(",", $data['categories']);
+                $categories = Category::whereIn('slug', $categories)->pluck('id')->toArray();
+                $data['categories'] = array_unique(array_merge($existingCategories, $categories));
+
+                foreach ($data['categories'] as $category_id) {
+                    $cookbook->categories()->attach($category_id);
+                }
+            }
+        }
 
         return response(
             [
