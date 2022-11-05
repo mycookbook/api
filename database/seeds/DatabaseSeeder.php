@@ -1,6 +1,6 @@
 <?php
 
-use Faker\Factory as Faker;
+use Faker\Generator as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -131,7 +131,7 @@ class DatabaseSeeder extends Seeder
             }
 
             //fakes
-            $faker = Faker::create();
+            $faker = app(\Faker\Generator::class);
 
             $this->createUsers($faker);
             $this->createCookbooks($faker);
@@ -150,10 +150,8 @@ class DatabaseSeeder extends Seeder
 
     /**
      * creates users
-     *
-     * @param  \Faker\Generator  $faker
      */
-    private function createUsers(Faker\Generator $faker)
+    private function createUsers($faker)
     {
         $avatars = [
             'https://bit.ly/35RTEfA',
@@ -227,10 +225,8 @@ class DatabaseSeeder extends Seeder
 
     /**
      * creates cookbooks
-     *
-     * @param  \Faker\Generator  $faker
      */
-    private function createCookbooks(Faker\Generator $faker)
+    private function createCookbooks($faker)
     {
         $cookbook = null;
         $cookbooks = [];
@@ -309,10 +305,8 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Creates Recipes
-     *
-     * @param  \Faker\Generator  $faker
      */
-    private function createRecipes(Faker\Generator $faker)
+    private function createRecipes($faker)
     {
         $cuisine = [
             'chinese',
@@ -370,11 +364,9 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Creates Variation
-     *
-     * @param  \Faker\Generator  $faker
      * @param  \App\Models\Recipe  $recipe
      */
-    private function createVariation(Faker\Generator $faker, \App\Models\Recipe $recipe)
+    private function createVariation($faker, \App\Models\Recipe $recipe)
     {
         $variation = new \App\Models\RecipeVariation([
             'name' => $faker->word,

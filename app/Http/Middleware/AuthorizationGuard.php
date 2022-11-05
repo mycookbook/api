@@ -20,6 +20,7 @@ class AuthorizationGuard
      */
     public function handle(Request $request, Closure $next)
     {
+        dd("auth guard");
         //		if (!$request->header('X-API-KEY')) {
         //			throw new UnauthorizedClientException();
         //		}
