@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\UnauthorizedException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JWTAuthGuard
 {
@@ -14,10 +14,12 @@ class JWTAuthGuard
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check()) {
+        try {
+            if (JWTAuth::parseToken()->authenticate()) {
+                return $next($request);
+            }
+        } catch (\Exception $exception) {
             throw new UnauthorizedException('Your session has expired. Please login and try again.');
         }
-
-        return $next($request);
     }
 }

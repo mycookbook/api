@@ -29,7 +29,7 @@ class CookbookStoreRequest extends FormRequest
             'description' => 'required|min:126',
             'bookCoverImg' => ['required', new SupportedImageUrlFormatsRule()],
             'categories' => 'required',
-            'flag_id' => 'required',
+            'flag_id' => 'required|exists:flags,flag',
         ];
     }
 }

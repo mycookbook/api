@@ -12,8 +12,13 @@ use Illuminate\Http\Response;
 /**
  * Class CookbookService
  */
-class CookbookService implements serviceInterface
+class CookbookService extends BaseService implements serviceInterface
 {
+    public function __construct()
+    {
+        $this->serviceModel = new Cookbook();
+    }
+
     /**
      * Return all cookbooks
      */
@@ -60,7 +65,16 @@ class CookbookService implements serviceInterface
         $categories = explode(", ", $request->get('categories'));
         $categories = Category::whereIn('slug', $categories)->pluck('id')->toArray();
 
-        $cookbook = new Cookbook($request->all());
+        $cookbook = $this->serviceModel;
+
+        $data = $request->all();
+
+        foreach ($this->getFillables() as $fillable) {
+            if ($data[$fillable]) {
+                $cookbook->$fillable = $data[$fillable];
+            }
+        }
+
         $cookbook->slug = slugify($request->name);
 
         if ($cookbook->save()) {

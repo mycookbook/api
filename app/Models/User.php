@@ -229,7 +229,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function ownCookbook($cookbookId)
     {
-        $cookbook = Cookbook::findOrFail($cookbookId)->first();
+        $cookbook = Cookbook::findOrFail($cookbookId);
 
         return ($this->getKey() == $cookbook->user_id);
     }

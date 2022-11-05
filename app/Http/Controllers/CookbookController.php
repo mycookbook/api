@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\CookbookStoreRequest;
+use App\Models\Flag;
 use App\Models\User;
 use App\Services\CookbookService;
 use Exception;
@@ -75,7 +76,9 @@ class CookbookController extends Controller
         try {
             $request->merge([
                 'user_id' => Auth::user()->id,
-                'alt_text' => 'cookbook cover image'
+                'alt_text' => $request->get("alt_text") ?? 'cookbook cover image',
+                'flag_id' => Flag::where(["flag" => $request->get("flag_id")])->first()->getKey(),
+                'tags' => $request->get("tags") ?? ""
             ]);
 
             return $this->service->store($request);
@@ -90,17 +93,13 @@ class CookbookController extends Controller
     /**
      * @param int $id
      * @param Request $request
-     * @param JWT $jwtAuth
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|JsonResponse|Response
      * @throws CookbookModelNotFoundException
      * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function update(int $id, Request $request, JWT $jwtAuth)
+    public function update(int $id, Request $request)
     {
-        if (
-            $request->user()->ownCookbook($id) &&
-            $jwtAuth->parseToken()->check()
-        ) {
+        if (Auth::user()->ownCookbook($id)) {
             return $this->service->update($request, $id);
         }
 
