@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\CookbookModelNotFoundException;
+use App\Interfaces\serviceInterface;
 use App\Models\Cookbook;
 use App\Models\Recipe;
 use Illuminate\Http\Request;
@@ -11,8 +12,13 @@ use Illuminate\Http\Response;
 /**
  * Class RecipeService
  */
-class RecipeService
+class RecipeService extends BaseService implements serviceInterface
 {
+    public function __construct()
+    {
+        $this->serviceModel = new Recipe();
+    }
+
     /**
      * @param $user_id
      * @return \Illuminate\Http\JsonResponse
@@ -164,5 +170,10 @@ class RecipeService
         }
 
         return $record;
+    }
+
+    public function findWhere($q)
+    {
+        // TODO: Implement findWhere() method.
     }
 }

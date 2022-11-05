@@ -2,14 +2,20 @@
 
 namespace App\Services;
 
+use App\Models\Cookbook;
 use App\Models\User;
 use App\Models\UserContactDetail;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-class UserContactDetailsService
+class UserContactDetailsService extends BaseService
 {
+    public function __construct()
+    {
+        $this->serviceModel = new UserContactDetail();
+    }
+
     protected $contact_detail;
 
     /**

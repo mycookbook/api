@@ -7,8 +7,13 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class CategoryService implements serviceInterface
+class CategoryService extends BaseService implements serviceInterface
 {
+    public function __construct()
+    {
+        $this->serviceModel = new Category();
+    }
+
     public function index()
     {
         return response()->json(
