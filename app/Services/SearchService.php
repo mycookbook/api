@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Category;
+use App\Models\CategoryCookbook;
 use App\Models\Cookbook;
 use App\Models\Recipe;
+use App\Models\User;
 use Illuminate\Support\Collection;
 
 class SearchService
@@ -14,22 +17,19 @@ class SearchService
      */
     public function searchEveryWhere($query)
     {
-        return Cookbook::query()
-            ->leftJoin('users', 'users.id', '=', 'cookbooks.user_id')
-            ->leftJoin('recipes', 'recipes.user_id', '=', 'users.id')
-            ->where('cookbooks.name', 'LIKE', '%'.$query.'%')
-            ->orWhere('cookbooks.description', 'LIKE', '%'.$query.'%')
-            ->orWhere('cookbooks.slug', 'LIKE', '%'.$query.'%')
-            ->orWhere('cookbooks.alt_text', 'LIKE', '%'.$query.'%')
-            ->orWhere('users.name', 'LIKE', '%'.$query.'%')
-            ->orWhere('users.name_slug', 'LIKE', '%'.$query.'%')
-            ->orWhere('users.pronouns', 'LIKE', '%'.$query.'%')
-            ->orWhere('users.about', 'LIKE', '%'.$query.'%')
-            ->orWhere('recipes.name', 'LIKE', '%'.$query.'%')
-            ->orWhere('recipes.description', 'LIKE', '%'.$query.'%')
-            ->orWhere('recipes.summary', 'LIKE', '%'.$query.'%')
-            ->orWhere('recipes.slug', 'LIKE', '%'.$query.'%')
-            ->get();
+        $cookbooksQueryBuilder = Cookbook::where('name', 'LIKE', '%'.$query.'%')
+            ->orWhere('slug', 'LIKE', '%'.$query.'%')
+            ->get()->toArray();
+
+        $usersQueryBuilder = User::where('name', 'LIKE', '%'.$query.'%')
+            ->orWhere('name_slug', 'LIKE', '%'.$query.'%')
+            ->get()->toArray();
+
+        $recipesQueryBuilder = Recipe::where('name', 'LIKE', '%'.$query.'%')
+            ->orWhere('slug', 'LIKE', '%'.$query.'%')
+            ->get()->toArray();
+
+        return collect(array_merge($cookbooksQueryBuilder, $usersQueryBuilder, $recipesQueryBuilder));
     }
 
     /**
@@ -64,5 +64,44 @@ class SearchService
     public function getMostRecentRecipes()
     {
         return array_values(Recipe::all()->sortByDesc('updated_at')->take(1000)->toArray());
+    }
+
+    /**
+     * @param $author_name
+     * @return Collection
+     */
+    public function getAllCookbooksByThisAuthor($author_name)
+    {
+        $findMatchingUsers = User::where('name', 'LIKE', '%'.$author_name.'%')
+            ->orWhere('name_slug', 'LIKE', '%'.$author_name.'%')->pluck("id");
+
+        if ($findMatchingUsers->isNotEmpty()) {
+            return Cookbook::whereIn('user_id', $findMatchingUsers->toArray())->get();
+        }
+
+        return collect([]);
+    }
+
+    /**
+     * @param $category_names
+     * @return Collection
+     */
+    public function getAllCookbooksByCategoryName($category_names)
+    {
+        $cat_names = explode(",", $category_names);
+
+        $categories = Category::whereIn("name", $cat_names)->pluck("id");
+
+        if ($categories->isNotEmpty()) {
+            $cookbooks = CategoryCookbook::whereIn("category_id", $categories)->pluck("cookbook_id");
+
+            if ($cookbooks->isEmpty()) {
+                return collect([]);
+            }
+
+            return Cookbook::whereIn("id", $cookbooks->toArray())->get();
+        }
+
+        return collect([]);
     }
 }
