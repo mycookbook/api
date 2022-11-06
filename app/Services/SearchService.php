@@ -43,11 +43,12 @@ class SearchService
 
     /**
      * @param $tag
+     * @param string $column
      * @return mixed
      */
-    public function getAllRecipesByTag($tag)
+    public function getAllRecipesByTag($tag, $column = "tags")
     {
-        return Recipe::where('tags', 'LIKE', '%'.$tag.'%')->get();
+        return Recipe::where($column, 'LIKE', '%'.$tag.'%')->get();
     }
 
     /**
@@ -83,6 +84,22 @@ class SearchService
     }
 
     /**
+     * @param $author_name
+     * @return Collection
+     */
+    public function getAllRecipesByThisAuthor($author_name)
+    {
+        $findMatchingUsers = User::where('name', 'LIKE', '%'.$author_name.'%')
+            ->orWhere('name_slug', 'LIKE', '%'.$author_name.'%')->pluck("id");
+
+        if ($findMatchingUsers->isNotEmpty()) {
+            return Recipe::whereIn('user_id', $findMatchingUsers->toArray())->get();
+        }
+
+        return collect([]);
+    }
+
+    /**
      * @param $category_names
      * @return Collection
      */
@@ -103,5 +120,16 @@ class SearchService
         }
 
         return collect([]);
+    }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function getAllCookbooksHavingThisRecipe($query)
+    {
+        $cookbook_ids = $this->getAllRecipesByTag($query, "name")->pluck("cookbook_id");
+
+        return Cookbook::whereIn("id", $cookbook_ids->toArray())->get();
     }
 }
