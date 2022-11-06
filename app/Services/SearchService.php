@@ -17,16 +17,16 @@ class SearchService
      */
     public function searchEveryWhere($query)
     {
-        $cookbooksQueryBuilder = Cookbook::where('name', 'LIKE', '%'.$query.'%')
-            ->orWhere('slug', 'LIKE', '%'.$query.'%')
+        $cookbooksQueryBuilder = Cookbook::where('name', 'LIKE', '%' . $query . '%')
+            ->orWhere('slug', 'LIKE', '%' . $query . '%')
             ->get()->toArray();
 
-        $usersQueryBuilder = User::where('name', 'LIKE', '%'.$query.'%')
-            ->orWhere('name_slug', 'LIKE', '%'.$query.'%')
+        $usersQueryBuilder = User::where('name', 'LIKE', '%' . $query . '%')
+            ->orWhere('name_slug', 'LIKE', '%' . $query . '%')
             ->get()->toArray();
 
-        $recipesQueryBuilder = Recipe::where('name', 'LIKE', '%'.$query.'%')
-            ->orWhere('slug', 'LIKE', '%'.$query.'%')
+        $recipesQueryBuilder = Recipe::where('name', 'LIKE', '%' . $query . '%')
+            ->orWhere('slug', 'LIKE', '%' . $query . '%')
             ->get()->toArray();
 
         return collect(array_merge($cookbooksQueryBuilder, $usersQueryBuilder, $recipesQueryBuilder));
@@ -38,7 +38,7 @@ class SearchService
      */
     public function getAllCookbooksByTag(string $tag): Collection
     {
-        return Cookbook::where('tags', 'LIKE', '%'.$tag.'%')->get();
+        return Cookbook::where('tags', 'LIKE', '%' . $tag . '%')->get();
     }
 
     /**
@@ -48,7 +48,7 @@ class SearchService
      */
     public function getAllRecipesByTag($tag, $column = "tags")
     {
-        return Recipe::where($column, 'LIKE', '%'.$tag.'%')->get();
+        return Recipe::where($column, 'LIKE', '%' . $tag . '%')->get();
     }
 
     /**
@@ -73,8 +73,8 @@ class SearchService
      */
     public function getAllCookbooksByThisAuthor($author_name)
     {
-        $findMatchingUsers = User::where('name', 'LIKE', '%'.$author_name.'%')
-            ->orWhere('name_slug', 'LIKE', '%'.$author_name.'%')->pluck("id");
+        $findMatchingUsers = User::where('name', 'LIKE', '%' . $author_name . '%')
+            ->orWhere('name_slug', 'LIKE', '%' . $author_name . '%')->pluck("id");
 
         if ($findMatchingUsers->isNotEmpty()) {
             return Cookbook::whereIn('user_id', $findMatchingUsers->toArray())->get();
@@ -89,8 +89,8 @@ class SearchService
      */
     public function getAllRecipesByThisAuthor($author_name)
     {
-        $findMatchingUsers = User::where('name', 'LIKE', '%'.$author_name.'%')
-            ->orWhere('name_slug', 'LIKE', '%'.$author_name.'%')->pluck("id");
+        $findMatchingUsers = User::where('name', 'LIKE', '%' . $author_name . '%')
+            ->orWhere('name_slug', 'LIKE', '%' . $author_name . '%')->pluck("id");
 
         if ($findMatchingUsers->isNotEmpty()) {
             return Recipe::whereIn('user_id', $findMatchingUsers->toArray())->get();
@@ -131,5 +131,54 @@ class SearchService
         $cookbook_ids = $this->getAllRecipesByTag($query, "name")->pluck("cookbook_id");
 
         return Cookbook::whereIn("id", $cookbook_ids->toArray())->get();
+    }
+
+    /**
+     * @param $expression
+     * @return mixed
+     */
+    public function getAllRecipesWithThisNumberofLikes($expression)
+    {
+        if (
+            str_starts_with($expression, "gt|") ||
+            str_starts_with($expression, "lt|")
+        ) {
+            $than = explode("|", $expression);
+            $than = $than[1];
+
+            if (str_starts_with($expression, "gt|")) {
+                return Recipe::where("claps", ">", $than)->get();
+            }
+
+            if (str_starts_with($expression, "lt|")) {
+                return Recipe::where("claps", "<", $than)->get();
+            }
+        }
+
+        if (str_starts_with($expression, "between:")) {
+            $expression = explode(":", $expression);
+            $between = explode("|", $expression[1]);
+
+            return Recipe::wherebetween("claps", $between)->get();
+        }
+
+        return Recipe::where(["claps" => $expression])->get();
+    }
+
+    /**
+     * @param $ingredients
+     * @return Collection
+     */
+    public function getAllRecipesByIngredientName($ingredients)
+    {
+        $ingredientsArray = explode(",", $ingredients);
+
+        $recipes = [];
+
+        foreach($ingredientsArray as $ingr) {
+            $recipes[] = array_values(Recipe::where("ingredients", 'LIKE', '%'.$ingr.'%')->get()->toArray());
+        }
+
+        return collect($recipes[0]);
     }
 }
