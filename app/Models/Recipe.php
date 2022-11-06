@@ -32,6 +32,7 @@ class Recipe extends Model
         'cook_time',
         'prep_time',
         'tags',
+        'claps'
     ];
 
     protected $hidden = ['user_id'];

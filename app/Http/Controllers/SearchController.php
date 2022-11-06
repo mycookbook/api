@@ -78,7 +78,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo likes e.g 0, >10 <100 =1000 exactly 5 etc
         if (str_starts_with($searchQuery, ":recipes|likes ")) {
             return $this->jsonResponse(
                 $this->service->getAllRecipesWithThisNumberofLikes(end($tags))
