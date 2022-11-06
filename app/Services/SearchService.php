@@ -164,4 +164,21 @@ class SearchService
 
         return Recipe::where(["claps" => $expression])->get();
     }
+
+    /**
+     * @param $ingredients
+     * @return Collection
+     */
+    public function getAllRecipesByIngredientName($ingredients)
+    {
+        $ingredientsArray = explode(",", $ingredients);
+
+        $recipes = [];
+
+        foreach($ingredientsArray as $ingr) {
+            $recipes[] = array_values(Recipe::where("ingredients", 'LIKE', '%'.$ingr.'%')->get()->toArray());
+        }
+
+        return collect($recipes[0]);
+    }
 }

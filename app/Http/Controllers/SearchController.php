@@ -84,7 +84,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo: containinig one or more of the listed ingredients
         if (str_starts_with($searchQuery, ":recipes|ingredients ")) {
             return $this->jsonResponse(
                 $this->service->getAllRecipesByIngredientName(end($tags))
