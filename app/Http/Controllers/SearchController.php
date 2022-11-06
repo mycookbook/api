@@ -60,7 +60,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo
         if (str_starts_with($searchQuery, ":cookbooks|recipes ")) {
             return $this->jsonResponse(
                 $this->service->getAllCookbooksHavingThisRecipe(end($tags))
@@ -73,7 +72,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo
         if (str_starts_with($searchQuery, ":recipes|author ")) {
             return $this->jsonResponse(
                 $this->service->getAllRecipesByThisAuthor(end($tags))
@@ -94,13 +92,6 @@ class SearchController extends Controller
             );
         }
 
-        //todo same as :recipes|autho
-        if (str_starts_with($searchQuery, ":author|recipes ")) {
-            return $this->jsonResponse(
-                $this->service->getAllRecipesByThisAuthor(end($tags))
-            );
-        }
-
         if ($searchQuery === "cookbooks") {
             return response()->json([
                 'response' => $this->service->getMostrecentCookbooks(),
@@ -112,6 +103,8 @@ class SearchController extends Controller
                 'response' => $this->service->getMostRecentRecipes(),
             ]);
         }
+
+        //todo: :me syntax
 
         return $this->jsonResponse($this->service->searchEveryWhere($searchQuery));
     }
