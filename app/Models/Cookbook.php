@@ -30,7 +30,13 @@ class Cookbook extends Model
      *
      * @var array
      */
-    protected $appends = ['_links', 'recipes_count', 'categories', 'author', 'contributors'];
+    protected $appends = [
+        '_links',
+        'recipes_count',
+        'categories',
+        'author',
+        'contributors'
+    ];
 
     protected $casts = [
         'tags' => 'array'
@@ -154,5 +160,21 @@ class Cookbook extends Model
         $contributor_ids = $this->recipes()->get()->pluck('user_id')->toArray();
 
         return array_values(array_unique($contributor_ids));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublic(): bool
+    {
+        return !isset($this->is_locked);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrivate(): bool
+    {
+        return isset($this->is_locked);
     }
 }

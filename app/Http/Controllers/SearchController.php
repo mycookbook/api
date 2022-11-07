@@ -90,9 +90,21 @@ class SearchController extends Controller
             );
         }
 
+        if (str_starts_with($searchQuery, ":me|cookbooks ")) {
+            return $this->jsonResponse(
+                $this->service->getAllCookbooksByMe(end($tags))
+            );
+        }
+
+        if (str_starts_with($searchQuery, ":me|recipes ")) {
+            return $this->jsonResponse(
+                $this->service->getAllRecipesByMe(end($tags))
+            );
+        }
+
         if ($searchQuery === "cookbooks") {
             return response()->json([
-                'response' => $this->service->getMostrecentCookbooks(),
+                'response' => $this->service->getMostRecentCookbooks(),
             ]);
         }
 
@@ -101,8 +113,6 @@ class SearchController extends Controller
                 'response' => $this->service->getMostRecentRecipes(),
             ]);
         }
-
-        //todo: :me syntax
 
         return $this->jsonResponse($this->service->searchEveryWhere($searchQuery));
     }
