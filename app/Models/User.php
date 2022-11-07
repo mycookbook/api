@@ -258,10 +258,23 @@ class User extends Authenticatable implements JWTSubject
      * TODO: for now all users are not super
      * This is reserved for strictly cookbook admin
      *
-     * @return false
+     * @return bool
      */
-    public function isSuper()
+    public function isSuper(): bool
     {
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEarlyBird(): bool
+    {
+        $earlyBirds = [
+            'a93c026e-dd03-4e99-98d9-a9d68a61b42c@tiktok.com',
+            'test.user@cookbookshq.com'
+        ];
+
+        return in_array($this->email, $earlyBirds);
     }
 }

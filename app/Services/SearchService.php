@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Models\Category;
 use App\Models\CategoryCookbook;
 use App\Models\Cookbook;
+use App\Models\CookbookUser;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SearchService
 {
@@ -180,5 +182,47 @@ class SearchService
         }
 
         return collect($recipes[0]);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAllCookbooksByMe($cookbookName = "")
+    {
+        if ($user = JWTAuth::parseToken()->user()) {
+            $me = $user->getKey();
+
+            $myOtherContributions = CookbookUser::whereIn("user_id", [$me])->get()->pluck("cookbook_id")->toArray();
+
+            if ($cookbookName == "") {
+                $originallyAuthoredByMe = Cookbook::where(["user" => $me])->get()->toArray();
+                $myOtherContributions = Cookbook::whereIn("id", $myOtherContributions);
+            } else {
+                $originallyAuthoredByMe = Cookbook::where("name", "like", "%".$cookbookName."%")->get()->toArray();
+                $myOtherContributions = [];
+            }
+
+            return collect(array_merge($originallyAuthoredByMe, $myOtherContributions));
+        }
+
+        return collect([]);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAllRecipesByMe($recipeName = "")
+    {
+        if ($user = JWTAuth::parseToken()->user()) {
+            $me = $user->getKey();
+
+            if ($recipeName == "") {
+                return Recipe::where(["user_id" => $me])->get();
+            }
+
+            return Recipe::where("name", "like", "%".$recipeName."%")->get();
+        }
+
+        return collect([]);
     }
 }

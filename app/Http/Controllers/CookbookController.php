@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 use Tymon\JWTAuth\JWT;
 
 /**
@@ -65,6 +66,11 @@ class CookbookController extends Controller
     public function store(CookbookStoreRequest $request)
     {
         try {
+            //todo: creation of cookbooks will not be publicly accessible until later releases
+//            if (!Auth::user()->isEarlyBird()) {
+//                throw new UnauthorizedException("You are not authorized to perform this action.");
+//            }
+
             $request->merge([
                 'user_id' => Auth::user()->id,
                 'alt_text' => $request->get("alt_text") ?? 'cookbook cover image',
