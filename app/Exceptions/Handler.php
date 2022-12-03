@@ -63,6 +63,12 @@ class Handler extends ExceptionHandler
             ], Response::HTTP_UNAUTHORIZED);
         }
 
+        if ($throwable instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+            return response()->json([
+                'error' => $throwable->getMessage()
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         return parent::render($request, $throwable);
     }
 }

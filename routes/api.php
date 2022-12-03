@@ -61,6 +61,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/login', [AuthController::class, 'login']);
 
         Route::get('/logout', [AuthController::class, 'logout']);
+
+        Route::post('/validate', [AuthController::class, 'validateToken']);
     });
 
     /*

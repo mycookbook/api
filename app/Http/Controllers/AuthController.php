@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Class AuthController
@@ -165,5 +166,23 @@ class AuthController extends Controller
                 ], 400
             );
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     */
+    public function validateToken(Request $request)
+    {
+        if (!$request->bearerToken() || !Auth::check()) {
+            throw new \Tymon\JWTAuth\Exceptions\JWTException('Expired or Tnvalid token.');
+        }
+
+        return response()->json(
+            [
+                'validated' => true,
+            ]
+        );
     }
 }
