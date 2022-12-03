@@ -197,4 +197,17 @@ class Recipe extends Model
     {
         return "servings";
     }
+
+    /**
+     * Set attribute created at
+     *
+     * @return string
+     */
+    public function getCreatedAtAttribute(): string
+    {
+        $year = Carbon::parse($this->attributes['created_at'])->year;
+        $month = Carbon::parse($this->attributes['created_at'])->month;
+
+        return Carbon::createFromDate($year, $month)->format('F Y');
+    }
 }
