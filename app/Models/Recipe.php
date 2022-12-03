@@ -205,9 +205,10 @@ class Recipe extends Model
      */
     public function getCreatedAtAttribute(): string
     {
+        $day = Carbon::parse($this->attributes['created_at'])->day;
         $year = Carbon::parse($this->attributes['created_at'])->year;
         $month = Carbon::parse($this->attributes['created_at'])->month;
 
-        return Carbon::createFromDate($year, $month)->format('F Y');
+        return Carbon::createFromDate($year, $month, $day)->format('F m Y');
     }
 }
