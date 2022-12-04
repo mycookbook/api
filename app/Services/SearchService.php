@@ -107,9 +107,7 @@ class SearchService
      */
     public function getAllCookbooksByCategoryName($category_names)
     {
-        $cat_names = explode(",", $category_names);
-
-        $categories = Category::whereIn("name", $cat_names)->pluck("id");
+        $categories = Category::whereIn("name", $category_names)->pluck("id");
 
         if ($categories->isNotEmpty()) {
             $cookbooks = CategoryCookbook::whereIn("category_id", $categories)->pluck("cookbook_id");
