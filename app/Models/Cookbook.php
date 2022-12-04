@@ -39,10 +39,6 @@ class Cookbook extends Model
         'contributors'
     ];
 
-    protected $casts = [
-        'tags' => 'array'
-    ];
-
     /**
      * Set attributes links
      *
