@@ -43,9 +43,6 @@ class Cookbook extends Model
         'tags' => 'array'
     ];
 
-    protected array $contains = [];
-    protected array $missing = [];
-
     /**
      * Set attributes links
      *
