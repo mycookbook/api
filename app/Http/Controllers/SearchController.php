@@ -58,9 +58,14 @@ class SearchController extends Controller
             $searchQuery = str_replace(",", "|", $searchQuery);
             $searchQuery = str_replace(":cookbooks|categories ", "", $searchQuery);
             $tags = explode("|", $searchQuery);
+            $searchCats = [];
+
+            foreach ($tags as $tag) {
+                $searchCats[] = trim($tag);
+            }
 
             return $this->jsonResponse(
-                $this->service->getAllCookbooksByCategoryName($tags)
+                $this->service->getAllCookbooksByCategoryName($searchCats)
             );
         }
 
