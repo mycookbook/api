@@ -29,7 +29,7 @@ class SearchControllerTest extends \TestCase
         $cookbook = Cookbook::factory()->make([
             'name' => 'test',
             'user_id' => $user_id,
-            'tags' => ['seasonal', 'fresh', 'nasty']
+            'tags' => 'seasonal,fresh,nasty'
         ]);
 
         $cookbook->save();
