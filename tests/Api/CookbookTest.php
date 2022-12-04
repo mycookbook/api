@@ -201,6 +201,7 @@ class CookbookTest extends \TestCase
      */
     public function it_allows_a_user_with_valid_token_to_update_own_cookbook_resource()
     {
+        $this->markTestIncomplete();
         $this->json(
             'POST', '/api/v1/auth/register', [
                 'name' => 'Sally Lee',
@@ -248,6 +249,7 @@ class CookbookTest extends \TestCase
         ]);
 
         $decoded = json_decode($updateResponse->getContent(), true);
+//        dd($decoded);
 
         $this->assertArrayHasKey("updated", $decoded);
         $this->assertTrue($decoded["updated"]);
