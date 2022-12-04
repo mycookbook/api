@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Class Recipe
@@ -41,6 +42,9 @@ class Cookbook extends Model
     protected $casts = [
         'tags' => 'array'
     ];
+
+    protected array $contains = [];
+    protected array $missing = [];
 
     /**
      * Set attributes links
@@ -176,5 +180,15 @@ class Cookbook extends Model
     public function isPrivate(): bool
     {
         return isset($this->is_locked);
+    }
+
+    /**
+     * @return Attribute
+     */
+    protected function metaData(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => $value,
+        );
     }
 }

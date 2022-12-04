@@ -116,7 +116,30 @@ class SearchService
                 return collect([]);
             }
 
-            return Cookbook::whereIn("id", $cookbooks->toArray())->get();
+            $results = Cookbook::whereIn("id", $cookbooks->toArray())->get();
+
+            foreach($results as $result) {
+                $contains = [];
+                $missing = [];
+                $result_catnames = $result->categories->pluck("name")->toArray();
+
+                foreach ($category_names as $cat_name) {
+                    $cat_name = trim($cat_name);
+
+                    if (in_array($cat_name, $result_catnames)) {
+                        $contains[] = $cat_name;
+                    } else {
+                        $missing[] = $cat_name;
+                    }
+                }
+
+                $result->metaData = [
+                    'contains' => $contains,
+                    'missing' => $missing
+                ];
+            }
+
+            return $results;
         }
 
         return collect([]);
