@@ -40,7 +40,6 @@ class Recipe extends Model
     protected $casts = [
         'cook_time' => 'datetime:H:i:s',
         'prep_time' => 'datetime:H:i:s',
-        'ingredients' => 'json',
         'tags' => 'array'
     ];
 
