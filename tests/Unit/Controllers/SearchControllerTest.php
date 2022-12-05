@@ -84,7 +84,8 @@ class SearchControllerTest extends \TestCase
         $recipe = Recipe::factory()->make([
             'cookbook_id' => $cookbook->refresh()->getKey(),
             'user_id' => $user->getKey(),
-            'tags' => ['seasonal', 'fresh', 'breakfast']
+            'tags' => ['seasonal', 'fresh', 'breakfast'],
+            'ingredients' => json_encode([])
         ]);
 
         $recipe->save();
@@ -147,6 +148,7 @@ class SearchControllerTest extends \TestCase
             'name' => 'breakfast delights',
             'cookbook_id' => $cookbook->refresh()->getKey(),
             'user_id' => $user->getKey(),
+            'ingredients' => json_encode([])
         ]);
 
         $recipe->save();
