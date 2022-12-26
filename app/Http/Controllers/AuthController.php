@@ -82,7 +82,7 @@ class AuthController extends Controller
     {
         $code = $request->get('code');
 
-        if ($code == TikTok::USER_CANCELLED_CODE) {
+        if ($request->get('errCode') == TikTok::USER_CANCELLED_CODE) {
             return redirect(config('services.web.base_url'));
         }
 
