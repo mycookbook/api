@@ -41,7 +41,6 @@ RUN mkdir -p /home/dev/.composer && \
 WORKDIR /var/www
 
 USER $user
-RUN composer install --no-interaction
 
 RUN echo "memory_limit=1024M" >> /usr/local/etc/php/conf.d/php.ini
 RUN echo "allow_url_fopen=on" >> /usr/local/etc/php/conf.d/php.ini

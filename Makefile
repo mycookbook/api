@@ -6,7 +6,7 @@ help:
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
 	@grep -E '^[-a-zA-Z0-9_\.\/]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[32m%-15s\033[0m %s\n", $$1, $$2}'
 
-install: setup down build up
+install:  copy_env down build up setup
 
 down: ## Destroy the containers
 	@docker-compose down
@@ -23,7 +23,7 @@ db_migrate: ## run db migrations
 db_schemefy: ## Display the db schema in table format
 	 @php artisan schema:show
 
-setup: copy_env composer generate_key
+setup: composer generate_key
 
 copy_env: #todo: figure out a way to not override env vars if file_exists already
 	@cp .env.example .env
@@ -33,10 +33,10 @@ reset_env: ## resets the env file from .env.example
 	@echo ".env reset!"
 
 composer: ## Install project dependencies
-	@composer install
+	@docker-compose exec app composer install
 
 generate_key: ## Generate APP_KEY and set in .env
-	@php artisan key:generate
+	@docker-compose exec app php artisan key:generate
 
 login: ## Creates a new user/token or generate new token for given user
 	@php artisan auth:token
@@ -70,8 +70,8 @@ clear_routes:
 dump_autoload: ## Composer dumpautoload
 	@composer dumpautoload
 
-up: ## Restarts and provisions the containers
-	@docker-compose up
+up: ## Restarts and provisions the containers in the background
+	@docker-compose up -d
 
 docker_prune: prune_images prune_volumes prune_containers
 
