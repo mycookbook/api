@@ -10,9 +10,9 @@ use App\Services\UserService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Ip2location\IP2LocationLaravel\Facade\IP2LocationLaravel;
 
 /**
  * Class AuthController
@@ -45,32 +45,33 @@ class AuthController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function socialAuth(Request $request)
-    {
-        $provider = $request->route()->getAction()["provider"];
-
-        return Socialite::driver($provider)->redirect();
-    }
-
-    /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|void
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function socialAuthCallbackHandler(Request $request)
+    public function loginViaMagicLink(Request $request)
     {
-        try {
-            $provider = $request->route()->getAction()["provider"];
+        return response()->json([
+            'error' => [
+                'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead'
+            ]
+        ], Response::HTTP_UNAUTHORIZED);
 
-            return response()->json([
-                'titok' => $provider
-            ]);
 
-//            $user = Socialite::driver($provider)->user();
-        } catch (\Exception $e) {
-            dd($e);
-        }
+//        $records = IP2LocationLaravel::get($request->getClientIp(), 'bin');
+//
+//        dd($records);
+        //inspect the request
+        //check location details
+        //if not found, respond with request: user_email
+        //if user_email in request,
+        //validate email against location
+        //if validation fails, respond with 401 and message
+        //if validation suceeds, login and respond with token
+        //consoder invalidating user's old tokens
+        //if location details found, dont ask for user email
+        //continue to log user in and respond with new token
+        //the new token responses are actually redirects
+        //also consider when email is in allowed list but the location is not recognized
     }
 
     /**
@@ -81,8 +82,9 @@ class AuthController extends Controller
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
         $code = $request->get('code');
+        $errCode = $request->get('errCode');
 
-        if ($request->get('errCode') == TikTok::USER_CANCELLED_CODE) {
+        if ($errCode == TikTok::USER_CANCELLED_CODE) {
             return redirect(config('services.web.base_url'));
         }
 
