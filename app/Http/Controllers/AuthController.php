@@ -157,18 +157,18 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
-            dd($e->getTraceAsString());
-            $message = $e->getMessage();
-
-            if ($this->isJson($message)) {
-                $message = json_decode($message, true);
-            }
-
-            return response()->json(
-                [
-                    'auth_error' => $message,
-                ], 400
-            );
+            return redirect('https://web.cookbookshq.com/#/errors/?m=Tiktok is having a hard time processing this request, please try again.');
+//            $message = $e->getMessage();
+//
+//            if ($this->isJson($message)) {
+//                $message = json_decode($message, true);
+//            }
+//
+//            return response()->json(
+//                [
+//                    'auth_error' => $message,
+//                ], 400
+//            );
         }
     }
 
