@@ -84,9 +84,9 @@ class AuthController extends Controller
         $code = $request->get('code');
         $errCode = $request->get('errCode');
 
-//        if ($errCode == TikTok::USER_CANCELLED_CODE) {
-//            return redirect(config('services.web.base_url'));
-//        }
+        if ($errCode == TikTok::USER_CANCELLED_CODE) {
+            return redirect(config('services.web.base_url'));
+        }
 
         try {
             $response = $client->request('POST',
@@ -104,75 +104,91 @@ class AuthController extends Controller
             $decoded = json_decode($response->getBody()->getContents(), true);
 
             if ($decoded['message'] === 'error') {
-                $decoded['code'] = $code;
+                throw new \Exception(json_encode($decoded));
+            }
 
-                return response()->json(
-                    [
-                        'error_' => $decoded,
-                    ], 400
-                );
-            } else {
-                $userInfoResponse = $client->request('POST',
-                    config('services.tiktok.open_api.user_info_uri'),
-                    [
-                        'json' => [
-                            'open_id' => $decoded['data']['open_id'],
-                            'access_token' => $decoded['data']['access_token'],
-                            'fields' => ['open_id', 'avatar_url', 'display_name', 'avatar_url_100'],
-                        ],
-                    ]
-                );
+            $userInfoResponse = $client->request('POST',
+                config('services.tiktok.open_api.user_info_uri'),
+                [
+                    'json' => [
+                        'open_id' => $decoded['data']['open_id'],
+                        'access_token' => $decoded['data']['access_token'],
+                        'fields' => ['open_id', 'avatar_url', 'display_name', 'avatar_url_100'],
+                    ],
+                ]
+            );
 
-                $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
+            $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
-                if (!empty($userInfo['data']['user'])) {
-                    $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
+            if (!empty($userInfo['data']['user'])) {
+                $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
 
-                    $user = User::where(['email' => $tiktokEmail])->first();
+                $user = User::where(['email' => $tiktokEmail])->first();
 
-                    if (!$user instanceof User) {
-                        $response = $service->store(new Request([
-                            'name' => $userInfo['data']['user']['display_name'],
-                            'email' => $tiktokEmail,
-                            'password' => config('services.tiktok.user_password'),
-                        ]));
+                if (!$user instanceof User) {
+                    $response = $service->store(new Request([
+                        'name' => $userInfo['data']['user']['display_name'],
+                        'email' => $tiktokEmail,
+                        'password' => config('services.tiktok.user_password'),
+                    ]));
 
-                        $decoded = json_decode($response->getContent(), true);
-                        $data = $decoded['response']['data'];
-                        $user = User::where(['email' => $data['email']])->first();
-                    }
+                    $decoded = json_decode($response->getContent(), true);
+                    $data = $decoded['response']['data'];
+                    $user = User::where(['email' => $data['email']])->first();
+                }
 
-                    $user->update([
-                        'avatar' => $userInfo['data']['user']['avatar_url'],
-                        'pronouns' => 'They/Them',
-                    ]);
+                $user->update([
+                    'avatar' => $userInfo['data']['user']['avatar_url'],
+                    'pronouns' => 'They/Them',
+                ]);
 
-                    $credentials = [
-                        'email' => $user->email,
-                        'password' => 'fakePass',
-                    ];
+                $credentials = [
+                    'email' => $user->email,
+                    'password' => 'fakePass',
+                ];
 
-                    if (!$token = Auth::attempt($credentials)) {
-                        return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
-                    }
+                if (!$token = Auth::attempt($credentials)) {
+                    return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
+                }
 
-                    $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
+                $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
                         'token' => $token,
                         '_d' => $user->getSlug(),
                     ]);
 
-                    return redirect($to);
-                } else {
-                    return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
-                }
+                return redirect($to);
+            } else {
+                return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
+            dd($e->getTraceAsString());
+            $message = $e->getMessage();
+
+            if ($this->isJson($message)) {
+                $message = json_decode($message, true);
+            }
+
             return response()->json(
                 [
-                    'auth_error' => $e->getMessage(),
+                    'auth_error' => $message,
                 ], 400
             );
         }
+    }
+
+    /**
+     * @param $json
+     * @return bool
+     */
+    private function isJson($json)
+    {
+        $result = json_decode($json);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
