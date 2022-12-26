@@ -12,8 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\UnauthorizedException;
-use Tymon\JWTAuth\JWT;
 
 /**
  * Class UserController

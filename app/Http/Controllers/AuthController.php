@@ -81,15 +81,19 @@ class AuthController extends Controller
     {
         $code = $request->get('code');
 
+        if ($code === -2) {
+            return redirect('https://web.cookbookshq.com');
+        }
+
         try {
             $response = $client->request('POST',
-                'https://open-api.tiktok.com/oauth/access_token/',
+                config('services.tiktok.open_api.access_token_uri'),
                 [
                     'form_params' => [
-                        'client_key' => 'awzqdaho7oawcchp',
-                        'client_secret' => '5376fb91489d66bd64072222b454740a',
+                        'client_key' => config('services.tiktok.client_id'),
+                        'client_secret' => config('services.tiktok.client_secret'),
                         'code' => $code,
-                        'grant_type' => 'authorization_code',
+                        'grant_type' => config('services.tiktok.open_api.grant_type'),
                     ],
                 ]
             );
@@ -106,7 +110,7 @@ class AuthController extends Controller
                 );
             } else {
                 $userInfoResponse = $client->request('POST',
-                    'https://open-api.tiktok.com/user/info/',
+                    config('services.tiktok.open_api.user_info_uri'),
                     [
                         'json' => [
                             'open_id' => $decoded['data']['open_id'],
@@ -127,7 +131,7 @@ class AuthController extends Controller
                         $response = $service->store(new Request([
                             'name' => $userInfo['data']['user']['display_name'],
                             'email' => $tiktokEmail,
-                            'password' => 'fakePass',
+                            'password' => config('services.tiktok.user_password'),
                         ]));
 
                         $decoded = json_decode($response->getContent(), true);
@@ -150,9 +154,9 @@ class AuthController extends Controller
                     }
 
                     $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
-                            'token' => $token,
-                            '_d' => $user->getSlug(),
-                        ]);
+                        'token' => $token,
+                        '_d' => $user->getSlug(),
+                    ]);
 
                     return redirect($to);
                 } else {
