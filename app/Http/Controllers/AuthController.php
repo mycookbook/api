@@ -9,15 +9,18 @@ use App\Services\UserService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
+use Ip2location\IP2LocationLaravel\Facade\IP2LocationLaravel;
 
 /**
  * Class AuthController
  */
 class AuthController extends Controller
 {
+    public const TIKTOK_CANCELLATION_CODE = "-2";
+
     /**
      * @param AuthService $service
      */
@@ -44,32 +47,33 @@ class AuthController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function socialAuth(Request $request)
-    {
-        $provider = $request->route()->getAction()["provider"];
-
-        return Socialite::driver($provider)->redirect();
-    }
-
-    /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|void
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function socialAuthCallbackHandler(Request $request)
+    public function loginViaMagicLink(Request $request)
     {
-        try {
-            $provider = $request->route()->getAction()["provider"];
+        return response()->json([
+            'error' => [
+                'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead'
+            ]
+        ], Response::HTTP_UNAUTHORIZED);
 
-            return response()->json([
-                'titok' => $provider
-            ]);
 
-//            $user = Socialite::driver($provider)->user();
-        } catch (\Exception $e) {
-            dd($e);
-        }
+//        $records = IP2LocationLaravel::get($request->getClientIp(), 'bin');
+//
+//        dd($records);
+        //inspect the request
+        //check location details
+        //if not found, respond with request: user_email
+        //if user_email in request,
+        //validate email against location
+        //if validation fails, respond with 401 and message
+        //if validation suceeds, login and respond with token
+        //consoder invalidating user's old tokens
+        //if location details found, dont ask for user email
+        //continue to log user in and respond with new token
+        //the new token responses are actually redirects
+        //also consider when email is in allowed list but the location is not recognized
     }
 
     /**
@@ -79,15 +83,20 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
-        $code = $request->get('code');
-
         try {
+            $code = $request->get('code');
+            $errCode = $request->get('errCode');
+
+            if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
+                return redirect('https://web.cookbookshq.com');
+            }
+
             $response = $client->request('POST',
                 'https://open-api.tiktok.com/oauth/access_token/',
                 [
                     'form_params' => [
-                        'client_key' => 'awzqdaho7oawcchp',
-                        'client_secret' => '5376fb91489d66bd64072222b454740a',
+                        'client_key' => config('services.tiktok.client_id'),
+                        'client_secret' => config('services.tiktok.client_secret'),
                         'code' => $code,
                         'grant_type' => 'authorization_code',
                     ],
@@ -97,75 +106,84 @@ class AuthController extends Controller
             $decoded = json_decode($response->getBody()->getContents(), true);
 
             if ($decoded['message'] === 'error') {
-                $decoded['code'] = $code;
+                throw new \Exception(json_encode($decoded));
+            }
 
-                return response()->json(
-                    [
-                        'error_' => $decoded,
-                    ], 400
-                );
-            } else {
-                $userInfoResponse = $client->request('POST',
-                    'https://open-api.tiktok.com/user/info/',
-                    [
-                        'json' => [
-                            'open_id' => $decoded['data']['open_id'],
-                            'access_token' => $decoded['data']['access_token'],
-                            'fields' => ['open_id', 'avatar_url', 'display_name', 'avatar_url_100'],
-                        ],
-                    ]
-                );
+            $userInfoResponse = $client->request('POST',
+                'https://open-api.tiktok.com/user/info/',
+                [
+                    'json' => [
+                        'open_id' => $decoded['data']['open_id'],
+                        'access_token' => $decoded['data']['access_token'],
+                        'fields' => ['open_id', 'avatar_url', 'display_name', 'avatar_url_100'],
+                    ],
+                ]
+            );
 
-                $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
+            $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
-                if (!empty($userInfo['data']['user'])) {
-                    $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
+            if (!empty($userInfo['data']['user'])) {
+                $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
 
-                    $user = User::where(['email' => $tiktokEmail])->first();
+                $user = User::where(['email' => $tiktokEmail])->first();
 
-                    if (!$user instanceof User) {
-                        $response = $service->store(new Request([
-                            'name' => $userInfo['data']['user']['display_name'],
-                            'email' => $tiktokEmail,
-                            'password' => 'fakePass',
-                        ]));
-
-                        $decoded = json_decode($response->getContent(), true);
-                        $data = $decoded['response']['data'];
-                        $user = User::where(['email' => $data['email']])->first();
-                    }
-
-                    $user->update([
-                        'avatar' => $userInfo['data']['user']['avatar_url'],
-                        'pronouns' => 'They/Them',
-                    ]);
-
-                    $credentials = [
-                        'email' => $user->email,
+                if (!$user instanceof User) {
+                    $response = $service->store(new Request([
+                        'name' => $userInfo['data']['user']['display_name'],
+                        'email' => $tiktokEmail,
                         'password' => 'fakePass',
-                    ];
+                    ]));
 
-                    if (!$token = Auth::attempt($credentials)) {
-                        return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
-                    }
-
-                    $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
-                            'token' => $token,
-                            '_d' => $user->getSlug(),
-                        ]);
-
-                    return redirect($to);
-                } else {
-                    return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
+                    $decoded = json_decode($response->getContent(), true);
+                    $data = $decoded['response']['data'];
+                    $user = User::where(['email' => $data['email']])->first();
                 }
+
+                $user->update([
+                    'avatar' => $userInfo['data']['user']['avatar_url'],
+                    'pronouns' => 'They/Them',
+                ]);
+
+                $credentials = [
+                    'email' => $user->email,
+                    'password' => 'fakePass',
+                ];
+
+                if (!$token = Auth::attempt($credentials)) {
+                    return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
+                }
+
+                $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
+                    'token' => $token,
+                    '_d' => $user->getSlug(),
+                ]);
+
+                return redirect($to);
+            } else {
+                return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'auth_error' => $e->getMessage(),
-                ], 400
-            );
+            Log::debug('There was an error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect('https://web.cookbookshq.com/#/errors/?m=Tiktok is having a hard time processing this request, please try again.');
         }
+    }
+
+    /**
+     * @param $json
+     * @return bool
+     */
+    private function isJson($json)
+    {
+        $result = json_decode($json);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
