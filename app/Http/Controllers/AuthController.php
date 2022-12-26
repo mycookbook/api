@@ -79,6 +79,8 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
+        return redirect('https://web.cookbookshq.com');
+
         $code = $request->get('code');
 
         if ($code === -2) {
