@@ -84,10 +84,6 @@ class AuthController extends Controller
         $code = $request->get('code');
         $errCode = $request->get('errCode');
 
-        if ($errCode == TikTok::USER_CANCELLED_CODE) {
-            return redirect(config('services.web.base_url'));
-        }
-
         try {
             $response = $client->request('POST',
                 config('services.tiktok.open_api.access_token_uri'),
