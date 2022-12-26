@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\TikTok;
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
 use App\Services\AuthService;
@@ -81,8 +82,8 @@ class AuthController extends Controller
     {
         $code = $request->get('code');
 
-        if ($code == -2) {
-            return redirect('https://web.cookbookshq.com');
+        if ($code == TikTok::USER_CANCELLED_CODE) {
+            return redirect(config('services.web.base_url'));
         }
 
         try {
