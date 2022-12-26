@@ -35,6 +35,11 @@ Now you can access the app via:
 http://localhost:8080/api/v1/ping
 ```
 
+To run a command directly in the "app" container, you could use `docker-compose exec app [command]`, for example
+```
+docker-compose exec app php artisan env
+# which prints the application environment
+```
 # Contributing
 1) Always rebase your branch against the base branch `git rebase -i --autosquash origin/staging`
 2) Strictly adhere to branch naming rules `e.g feature/descriptive-branch-name, bugfix/descriptive-branch-name etc (hotfix, chore)`
