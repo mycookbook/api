@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Dtos\TikTok;
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
 use App\Services\AuthService;
@@ -20,6 +19,8 @@ use Ip2location\IP2LocationLaravel\Facade\IP2LocationLaravel;
  */
 class AuthController extends Controller
 {
+    public const TIKTOK_CANCELLATION_CODE = "-2";
+
     /**
      * @param AuthService $service
      */
@@ -86,7 +87,7 @@ class AuthController extends Controller
             $code = $request->get('code');
             $errCode = $request->get('errCode');
 
-            if ($errCode == '2') {
+            if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
                 return redirect('https://web.cookbookshq.com');
             }
 
