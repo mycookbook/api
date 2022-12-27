@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiException;
 use App\Http\Requests\SignInRequest;
+use App\Models\Location;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\LocationService;
 use App\Services\UserService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Ip2location\IP2LocationLaravel\Facade\IP2LocationLaravel;
 
 /**
  * Class AuthController
@@ -48,32 +49,51 @@ class AuthController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param LocationService $locationService
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
-    public function loginViaMagicLink(Request $request)
+    public function loginViaMagicLink(Request $request, LocationService $locationService)
     {
-        return response()->json([
-            'error' => [
-                'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead'
-            ]
-        ], Response::HTTP_UNAUTHORIZED);
+        try {
+            $location = $locationService->getLocation($request);
 
+            if ($requestUserEmail = $request->get("email")) {
+                $locationUserEmail = $location->getUser()->email;
 
-//        $records = IP2LocationLaravel::get($request->getClientIp(), 'bin');
-//
-//        dd($records);
-        //inspect the request
-        //check location details
-        //if not found, respond with request: user_email
-        //if user_email in request,
-        //validate email against location
-        //if validation fails, respond with 401 and message
-        //if validation suceeds, login and respond with token
-        //consoder invalidating user's old tokens
-        //if location details found, dont ask for user email
-        //continue to log user in and respond with new token
-        //the new token responses are actually redirects
-        //also consider when email is in allowed list but the location is not recognized
+                if ($locationUserEmail != $requestUserEmail) {
+                    $locationService->setErrorResponse([
+                        'error' => [
+                            'message' => 'You are not authorized.'
+                        ]
+                    ]);
+
+                    throw new ApiException();
+                } else {
+                    $credentials = ['email' => $requestUserEmail, 'password' => 'fakePass'];
+
+                    $token = Auth::attempt($credentials);
+
+                    $to = 'https://web.cookbookshq.com/#/?' . http_build_query([
+                            'token' => $token,
+                            '_d' => $location->getUser()->getSlug(),
+                        ]);
+
+                    return redirect($to);
+                }
+            } else {
+                $locationService->setErrorResponse([
+                    'error' => [
+                        'message' => "Please provide your email."
+                    ]
+                ]);
+
+                $redirectTo = 'https://web.cookbookshq.com/#/errors/?' . http_build_query($locationService->getErrors());
+                return redirect($redirectTo);
+            }
+        } catch (\Throwable $e) {
+            $redirectTo = 'https://web.cookbookshq.com/#/errors/?' . http_build_query($locationService->getErrors());
+            return redirect($redirectTo);
+        }
     }
 
     /**
@@ -154,9 +174,9 @@ class AuthController extends Controller
                 }
 
                 $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
-                    'token' => $token,
-                    '_d' => $user->getSlug(),
-                ]);
+                        'token' => $token,
+                        '_d' => $user->getSlug(),
+                    ]);
 
                 return redirect($to);
             } else {

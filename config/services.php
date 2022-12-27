@@ -34,5 +34,8 @@ return [
         'client_id' => env('TIKTOK_CLIENT_ID'),
         'client_secret' => env('TIKTOK_CLIENT_SECRET'),
         'redirect' => env('TIKTOK_REDIRECT_URI')
-    ]
+    ],
+    'ipinfo' => [
+        'access_token' => env('IPINFO_SECRET', '')
+    ],
 ];
