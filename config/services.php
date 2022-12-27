@@ -42,5 +42,8 @@ return [
         'auth' =>  env('WEB_URL') . '/#/auth?',
         'signin' => env('WEB_URL') . '/#/signin?',
         'errors' => env('WEB_URL') . '/#/errors?',
+    ],
+    'faker' => [
+        'pass' => env('MAGICLINK_PASS')
     ]
 ];

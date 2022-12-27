@@ -7,11 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     /**
-     * @var string $primaryKey
-     */
-    protected $primaryKey = "ip";
-
-    /**
      * @var string $table
      */
     protected $table = "user_locations";
@@ -19,7 +14,7 @@ class Location extends Model
     /**
      * @var string[] $fillable
      */
-    public $fillable = [
+    protected $fillable = [
         'ip', 'user_id', 'country', 'city', 'timezone', 'device'
     ];
 
