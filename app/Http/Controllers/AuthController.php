@@ -83,7 +83,7 @@ class AuthController extends Controller
                         'ip' => $request->ipinfo->ip,
                         'city' => $request->ipinfo->city ?? '',
                         'country' => $request->ipinfo->country ?? '',
-                        'timezone' => $request->ipinfo->timezone ?? 'America/Los_Angeles'
+                        'timezone' => $request->ipinfo->timezone ?? 'America/Toronto'
                     ]);
 
                     return response()->json([
