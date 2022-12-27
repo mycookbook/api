@@ -117,12 +117,13 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
+        return redirect('https://web.cookbookshq.com/#/signin');
+
         try {
             $code = $request->get('code');
             $errCode = $request->get('errCode');
 
             if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
-                dd('so the problem is redirecting, since when?');
                 return redirect('https://web.cookbookshq.com/#/signin');
             }
 
@@ -185,7 +186,6 @@ class AuthController extends Controller
                 ];
 
                 if (!$token = Auth::attempt($credentials)) {
-                    dd('so the problem is redirecting, since when?');
                     return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
                 }
 
@@ -199,7 +199,6 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
-            dd($e->getMessage());
             Log::debug('There was an error', [
                 'error' => $e->getMessage(),
             ]);
