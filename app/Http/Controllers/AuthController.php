@@ -120,6 +120,7 @@ class AuthController extends Controller
         try {
             $code = $request->get('code');
             $errCode = $request->get('errCode');
+            dd('debug');
 
             if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
                 return redirect('https://web.cookbookshq.com/#/signin');
