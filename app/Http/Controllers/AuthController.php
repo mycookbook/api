@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiException;
 use App\Http\Requests\SignInRequest;
-use App\Models\Location;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Services\LocationService;
@@ -12,6 +10,7 @@ use App\Services\UserService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -50,12 +49,21 @@ class AuthController extends Controller
     /**
      * @param Request $request
      * @param LocationService $locationService
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function loginViaMagicLink(Request $request, LocationService $locationService)
     {
         try {
             $location = $locationService->getLocation($request);
+
+            if (!$location) {
+                return response()->json([
+                    'action_required' => true,
+                    'required' => [
+                        'email' => 'Looks like this is your first signing in with magiclink! Kindly provide your registered email for verification.',
+                    ]
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
 
             if ($requestUserEmail = $request->get("email")) {
                 $locationUserEmail = $location->getUser()->email;
@@ -63,22 +71,18 @@ class AuthController extends Controller
                 if ($locationUserEmail != $requestUserEmail) {
                     $locationService->setErrorResponse([
                         'error' => [
-                            'message' => 'You are not authorized.'
+                            'message' => 'This feature is limited to ONLY authorized users. Please login with TikTok instead.'
                         ]
                     ]);
 
-                    throw new ApiException();
+                    return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
                 } else {
-                    $credentials = ['email' => $requestUserEmail, 'password' => 'fakePass'];
+                    $location->update(['ip' => $request->ipinfo->ip]);
 
-                    $token = Auth::attempt($credentials);
-
-                    $to = 'https://web.cookbookshq.com/#/?' . http_build_query([
-                            'token' => $token,
-                            '_d' => $location->getUser()->getSlug(),
-                        ]);
-
-                    return redirect($to);
+                    return response()->json([
+                        'token' => Auth::attempt(['email' => $requestUserEmail, 'password' => 'fakePass']),
+                        '_d' => $location->getUser()->getSlug()
+                    ]);
                 }
             } else {
                 $locationService->setErrorResponse([
@@ -87,12 +91,12 @@ class AuthController extends Controller
                     ]
                 ]);
 
-                $redirectTo = 'https://web.cookbookshq.com/#/errors/?' . http_build_query($locationService->getErrors());
-                return redirect($redirectTo);
+                return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
             }
         } catch (\Throwable $e) {
-            $redirectTo = 'https://web.cookbookshq.com/#/errors/?' . http_build_query($locationService->getErrors());
-            return redirect($redirectTo);
+            $m = ($m == "") ? $locationService->getErrors() : $e->getMessage();
+
+            return response()->json($m, Response::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -108,7 +112,7 @@ class AuthController extends Controller
             $errCode = $request->get('errCode');
 
             if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
-                return redirect('https://web.cookbookshq.com');
+                return redirect('https://web.cookbookshq.com/#/signin');
             }
 
             $response = $client->request('POST',

@@ -14,8 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_locations', function (Blueprint $table) {
-            $table->string('ip')->primary();
+            $table->id();
             $table->integer('user_id')->unique();
+            $table->text('ip');
             $table->text('city')->nullable();
             $table->text('country')->nullable();
             $table->text('timezone')->nullable();
