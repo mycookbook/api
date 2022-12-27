@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Exceptions\ApiException;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,19 +15,18 @@ class LocationService
 
     /**
      * @param Request $request
-     * @return bool|Location
-     * @throws ApiException
+     * @return Location|null
      */
     public function getLocation(Request $request): ?Location
     {
-        if (!$location = Location::find($request->ipinfo->ip)) {
+        $location = Location::where(['ip' => $request->ipinfo->ip])->first();
+
+        if (!$location) {
             $this->errMessage = [
                 'error' => [
                     'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead.'
                 ]
             ];
-
-            throw new ApiException();
         }
 
         return $location;

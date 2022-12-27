@@ -38,4 +38,9 @@ return [
     'ipinfo' => [
         'access_token' => env('IPINFO_SECRET', '')
     ],
+    'web_urls' => [
+        'auth' =>  env('WEB_URL') . '/#/auth?',
+        'signin' => env('WEB_URL') . '/#/signin?',
+        'errors' => env('WEB_URL') . '/#/errors?',
+    ]
 ];
