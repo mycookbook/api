@@ -55,9 +55,9 @@ class AuthController extends Controller
     {
         try {
             $location = $locationService->getLocation($request);
-            $requestUserEmail = $request->get("email");
+            $userEmailFromRequest = $request->get("email");
 
-            if (!$location && !$requestUserEmail) {
+            if (!$location && !$userEmailFromRequest) {
                 return response()->json([
                     'action_required' => true,
                     'required' => [
@@ -66,11 +66,11 @@ class AuthController extends Controller
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            if (!$location && $requestUserEmail) {
-                $location = LocationService::getLocationByUserEmail($requestUserEmail);
+            if (!$location && $userEmailFromRequest) {
+                $location = LocationService::getLocationByUserEmail($userEmailFromRequest);
                 $locationUserEmail = $location->getUser()->email;
 
-                if ($locationUserEmail != $requestUserEmail) {
+                if ($locationUserEmail != $userEmailFromRequest) {
                     $locationService->setErrorResponse([
                         'error' => [
                             'message' => 'This feature is limited to ONLY authorized users. Please login with TikTok instead.'
@@ -88,7 +88,7 @@ class AuthController extends Controller
 
                     return response()->json([
                         'token' => Auth::attempt([
-                            'email' => $requestUserEmail,
+                            'email' => $userEmailFromRequest,
                             'password' => config('services.faker.pass')
                         ]),
                         '_d' => $location->getUser()->getSlug()
@@ -165,7 +165,7 @@ class AuthController extends Controller
                     $response = $service->store(new Request([
                         'name' => $userInfo['data']['user']['display_name'],
                         'email' => $tiktokEmail,
-                        'password' => config('services.faker.pass'),
+                        'password' => 'fakePass',
                     ]));
 
                     $decoded = json_decode($response->getContent(), true);
@@ -180,7 +180,7 @@ class AuthController extends Controller
 
                 $credentials = [
                     'email' => $user->email,
-                    'password' => config('services.faker.pass'),
+                    'password' => 'fakePass',
                 ];
 
                 if (!$token = Auth::attempt($credentials)) {
@@ -203,21 +203,6 @@ class AuthController extends Controller
 
             return redirect('https://web.cookbookshq.com/#/errors/?m=Tiktok is having a hard time processing this request, please try again.');
         }
-    }
-
-    /**
-     * @param $json
-     * @return bool
-     */
-    private function isJson($json)
-    {
-        $result = json_decode($json);
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
