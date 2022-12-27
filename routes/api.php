@@ -63,6 +63,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/logout', [AuthController::class, 'logout']);
 
         Route::post('/validate', [AuthController::class, 'validateToken']);
+
+        Route::post('/magiclink', [AuthController::class, 'loginViaMagicLink']);
     });
 
     /*
