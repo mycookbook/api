@@ -33,6 +33,23 @@ class LocationService
     }
 
     /**
+     * @param string $email
+     * @return Location|null
+     */
+    public static function getLocationByUserEmail(string $email): ?Location
+    {
+        $location = null;
+
+        $user_emails = User::where(['email' => $email])->pluck('id', 'email')->toArray();
+
+        if (array_key_exists($email, $user_emails)) {
+            $location = Location::where(['user_id' => $user_emails[$email]])->first();
+        }
+
+        return $location;
+    }
+
+    /**
      * @return array
      */
     public function getErrors(): array

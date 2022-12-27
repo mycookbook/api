@@ -55,8 +55,9 @@ class AuthController extends Controller
     {
         try {
             $location = $locationService->getLocation($request);
+            $requestUserEmail = $request->get("email");
 
-            if (!$location) {
+            if (!$location && !$requestUserEmail) {
                 return response()->json([
                     'action_required' => true,
                     'required' => [
@@ -65,7 +66,8 @@ class AuthController extends Controller
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            if ($requestUserEmail = $request->get("email")) {
+            if (!$location && $requestUserEmail) {
+                $location = LocationService::getLocationByUserEmail($requestUserEmail);
                 $locationUserEmail = $location->getUser()->email;
 
                 if ($locationUserEmail != $requestUserEmail) {
@@ -77,24 +79,32 @@ class AuthController extends Controller
 
                     return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
                 } else {
-                    $location->update(['ip' => $request->ipinfo->ip]);
+                    $location->update([
+                        'ip' => $request->ipinfo->ip,
+                        'city' => $request->ipinfo->city ?? '',
+                        'country' => $request->ipinfo->country ?? '',
+                        'timezone' => $request->ipinfo->timezone ?? 'America/Los_Angeles'
+                    ]);
 
                     return response()->json([
-                        'token' => Auth::attempt(['email' => $requestUserEmail, 'password' => 'fakePass']),
+                        'token' => Auth::attempt([
+                            'email' => $requestUserEmail,
+                            'password' => config('services.faker.pass')
+                        ]),
                         '_d' => $location->getUser()->getSlug()
                     ]);
                 }
-            } else {
-                $locationService->setErrorResponse([
-                    'error' => [
-                        'message' => "Please provide your email."
-                    ]
-                ]);
-
-                return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
             }
+
+            return response()->json([
+                'token' => Auth::attempt([
+                    'email' => $location->getUser()->email,
+                    'password' => config('services.faker.pass')
+                ]),
+                '_d' => $location->getUser()->getSlug()
+            ]);
         } catch (\Throwable $e) {
-            $m = ($m == "") ? $locationService->getErrors() : $e->getMessage();
+            $m = $e->getMessage() ?? $locationService->getErrors();
 
             return response()->json($m, Response::HTTP_UNAUTHORIZED);
         }
@@ -155,7 +165,7 @@ class AuthController extends Controller
                     $response = $service->store(new Request([
                         'name' => $userInfo['data']['user']['display_name'],
                         'email' => $tiktokEmail,
-                        'password' => 'fakePass',
+                        'password' => config('services.faker.pass'),
                     ]));
 
                     $decoded = json_decode($response->getContent(), true);
@@ -170,7 +180,7 @@ class AuthController extends Controller
 
                 $credentials = [
                     'email' => $user->email,
-                    'password' => 'fakePass',
+                    'password' => config('services.faker.pass'),
                 ];
 
                 if (!$token = Auth::attempt($credentials)) {

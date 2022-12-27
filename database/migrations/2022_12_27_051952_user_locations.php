@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('country')->nullable();
             $table->text('timezone')->nullable();
             $table->text('device')->default('web');
+            $table->timestamps();
         });
     }
 
