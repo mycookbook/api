@@ -122,6 +122,7 @@ class AuthController extends Controller
             $errCode = $request->get('errCode');
 
             if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
+                dd('so the problem is redirecting, since when?');
                 return redirect('https://web.cookbookshq.com/#/signin');
             }
 
@@ -136,8 +137,6 @@ class AuthController extends Controller
                     ],
                 ]
             );
-
-            dd($response);
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
@@ -186,6 +185,7 @@ class AuthController extends Controller
                 ];
 
                 if (!$token = Auth::attempt($credentials)) {
+                    dd('so the problem is redirecting, since when?');
                     return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
                 }
 
