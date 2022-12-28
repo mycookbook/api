@@ -176,6 +176,7 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
         \SocialiteProviders\Manager\ServiceProvider::class,
         Thedevsaddam\LaravelSchema\LaravelSchemaServiceProvider::class,
+        Sentry\Laravel\ServiceProvider::class,
     ],
 
     /*
