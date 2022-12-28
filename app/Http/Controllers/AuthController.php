@@ -53,6 +53,7 @@ class AuthController extends Controller
      */
     public function loginViaMagicLink(Request $request, LocationService $locationService)
     {
+        return redirect('http://localhost:5001');
         try {
             $location = $locationService->getLocation($request);
             $userEmailFromRequest = $request->get("email");
@@ -197,7 +198,6 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
-            dd($e->getTraceAsString());
             Log::debug('There was an error', [
                 'error' => $e->getMessage(),
             ]);
