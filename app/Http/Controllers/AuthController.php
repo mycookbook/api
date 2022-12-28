@@ -117,8 +117,6 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
-        return redirect('https://web.cookbookshq.com/#/signin');
-
         try {
             $code = $request->get('code');
             $errCode = $request->get('errCode');
@@ -199,6 +197,7 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
+            dd($e->getTraceAsString());
             Log::debug('There was an error', [
                 'error' => $e->getMessage(),
             ]);
