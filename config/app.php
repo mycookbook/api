@@ -177,6 +177,7 @@ return [
         \SocialiteProviders\Manager\ServiceProvider::class,
         Thedevsaddam\LaravelSchema\LaravelSchemaServiceProvider::class,
         Sentry\Laravel\ServiceProvider::class,
+        Fruitcake\Cors\CorsServiceProvider::class
     ],
 
     /*

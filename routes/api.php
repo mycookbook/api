@@ -54,7 +54,7 @@ Route::group(['prefix' => 'v1'], function () {
     |--------------------------------------------------------------------------
     |
     */
-    Route::prefix('/auth')->group(function() {
+    Route::prefix('/auth')->middleware(['cors'])->group(function() {
 
         Route::post('/register', [UserController::class, 'store']);
 

@@ -40,6 +40,7 @@
     36 => 'SocialiteProviders\\Manager\\ServiceProvider',
     37 => 'Thedevsaddam\\LaravelSchema\\LaravelSchemaServiceProvider',
     38 => 'Sentry\\Laravel\\ServiceProvider',
+    39 => 'Fruitcake\\Cors\\CorsServiceProvider',
   ),
   'eager' => 
   array (
@@ -67,6 +68,7 @@
     21 => 'App\\Providers\\RouteServiceProvider',
     22 => 'Thedevsaddam\\LaravelSchema\\LaravelSchemaServiceProvider',
     23 => 'Sentry\\Laravel\\ServiceProvider',
+    24 => 'Fruitcake\\Cors\\CorsServiceProvider',
   ),
   'deferred' => 
   array (
