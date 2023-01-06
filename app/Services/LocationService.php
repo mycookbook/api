@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 class LocationService
 {
     /**
-     * @var array $errMessage
+     * @var $errMessage
      */
-    protected array $errMessage = [];
+    protected $errMessage;
 
     /**
      * @param Request $request
@@ -19,15 +19,15 @@ class LocationService
      */
     public function getLocation(Request $request): ?Location
     {
-        $location = Location::where(['ip' => "10.1.95.32"])->first();
+        $location = Location::where(['ip' => $request->ipinfo->ip])->first();
 
-//        if (!$location) {
-//            $this->errMessage = [
-//                'error' => [
-//                    'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead.'
-//                ]
-//            ];
-//        }
+        if (!$location) {
+            $this->errMessage = [
+                'error' => [
+                    'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead.'
+                ]
+            ];
+        }
 
         return $location;
     }

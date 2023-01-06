@@ -68,6 +68,17 @@ class AuthController extends Controller
 
             if (!$location && $userEmailFromRequest) {
                 $location = LocationService::getLocationByUserEmail($userEmailFromRequest);
+
+                if (!$location) {
+                    $locationService->setErrorResponse([
+                        'error' => [
+                            'message' => 'This feature is limited to ONLY authorized users. Please login with TikTok instead.'
+                        ]
+                    ]);
+
+                    return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
+                }
+
                 $locationUserEmail = $location->getUser()->email;
 
                 if ($locationUserEmail != $userEmailFromRequest) {
