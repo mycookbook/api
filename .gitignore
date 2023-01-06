@@ -6,3 +6,4 @@ Homestead.yaml
 build/
 .DS_Store
 storage/framework/
+node_modules/

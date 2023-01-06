@@ -107,7 +107,7 @@ class RecipeController extends Controller
     public function update(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
-            $request->user()->ownRecipe($id) &&
+            $request->user()->ownRecipe($recipeId) &&
             $jwtAuth->parseToken()->check()
         ) {
             return $this->service->update($request, $recipeId);
@@ -123,7 +123,7 @@ class RecipeController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
-    public function delete($recipeId)
+    public function destroy($recipeId)
     {
         if (
             $request->user()->isSuper() &&

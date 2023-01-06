@@ -27,21 +27,6 @@ Route::group(['prefix' => 'v1'], function () {
         'provider' => 'twitter',
     ]);
 
-    Route::get('/callback/twitter', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'twitter',
-    ]);
-
-    Route::get('/callback/pinterest', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'pinterest',
-    ]);
-
-    Route::get('/callback/instagram', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'instagram',
-    ]);
-
     Route::get('/webhooks/tiktok', function() {
         return response()->json([
             'message' => 'payload recieved with thanks'

@@ -1,0 +1,658 @@
+{
+	"info": {
+		"_postman_id": "8f26df9d-9b5e-461a-82cb-0657d93b7cc7",
+		"name": "Staging",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15408359"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/auth/register?name=john doe&email=test@example.com&password=fakeP@$$",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "john doe"
+								},
+								{
+									"key": "email",
+									"value": "test@example.com"
+								},
+								{
+									"key": "password",
+									"value": "fakeP@$$"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/auth/login?email=test@example.com&password=fakeP@$$",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "test@example.com"
+								},
+								{
+									"key": "password",
+									"value": "fakeP@$$"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/auth/logout",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/auth/validate",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Magiclink Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/auth/magiclink",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"auth",
+								"magiclink"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Collection",
+			"item": [
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/users",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/users/{{username}}",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/users/{{username}}/edit",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"{{username}}",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recipe Collection",
+			"item": [
+				{
+					"name": "Get Recipes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/recipes",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"recipes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recipe",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/recipes/{{recipe_id}}",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"recipes",
+								"{{recipe_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Recipe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"draft\": \"false\",\n    \"name\":\"Example Title\",\n    \"imgUrl\": \"https://imageurl.com\",\n    \"ingredients\": [\"a loaf of bread\", \"a container of milk\", \"a stick of butter\"],\n    \"description\": \"<div>How to prepare instructions in rich text.</div>\",\n    \"cookbook_id\": \"1\",\n    \"summary\": \"A short summary\",\n    \"nutritional_detail\": \"nutritional details\"\n}\n"
+						},
+						"url": {
+							"raw": "https://{{api}}/recipes",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"recipes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Recipe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"draft\": \"false\",\n    \"name\":\"Example Title\",\n    \"imgUrl\": \"https://imageurl.com\",\n    \"ingredients\": [\"a loaf of bread\", \"a container of milk\", \"a stick of butter\"],\n    \"description\": \"<div>How to prepare instructions in rich text.</div>\",\n    \"cookbook_id\": \"1\",\n    \"summary\": \"A short summary\",\n    \"nutritional_detail\": \"nutritional details\"\n}\n"
+						},
+						"url": {
+							"raw": "https://{{api}}/recipes/{{recipe_id}}/edit",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"recipes",
+								"{{recipe_id}}",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recipe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"draft\": \"false\",\n    \"name\":\"Example Title\",\n    \"imgUrl\": \"https://imageurl.com\",\n    \"ingredients\": [\"a loaf of bread\", \"a container of milk\", \"a stick of butter\"],\n    \"description\": \"<div>How to prepare instructions in rich text.</div>\",\n    \"cookbook_id\": \"1\",\n    \"summary\": \"A short summary\",\n    \"nutritional_detail\": \"nutritional details\"\n}\n"
+						},
+						"url": {
+							"raw": "https://{{api}}/recipes/{{recipe_id}}/destroy",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"recipes",
+								"{{recipe_id}}",
+								"destroy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cookbook Collection",
+			"item": [
+				{
+					"name": "Get Cookbooks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/cookbooks",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cookbooks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cookbook",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/cookbooks/{{cookbook_id}}",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cookbooks",
+								"{{cookbook_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Cookbook",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"draft\": \"false\",\n    \"name\":\"Example Title\",\n    \"bookCoverImg\": \"https://imageurl.com.png\",\n    \"categories\": [\"alpha\", \"beta\"],\n    \"description\": \"<div>How to prepare instructions in rich text.</div>\",\n    \"flag_id\": 1\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{api}}/cookbooks",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cookbooks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cookbook",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"draft\": \"false\",\n    \"name\":\"Example Title\",\n    \"bookCoverImg\": \"https://imageurl.com.png\",\n    \"categories\": [\"alpha\", \"beta\"],\n    \"description\": \"<div>How to prepare instructions in rich text.</div>\",\n    \"flag_id\": 1\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{api}}/cookbooks/{{cookbook_id}}/edit",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cookbooks",
+								"{{cookbook_id}}",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cookbook",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"draft\": \"false\",\n    \"name\":\"Example Title\",\n    \"bookCoverImg\": \"https://imageurl.com.png\",\n    \"categories\": [\"alpha\", \"beta\"],\n    \"description\": \"<div>How to prepare instructions in rich text.</div>\",\n    \"flag_id\": 1\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{api}}/cookbooks/{{cookbook_id}}/destroy",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cookbooks",
+								"{{cookbook_id}}",
+								"destroy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Misc",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/ping",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "definitions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/definitions",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"definitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "policies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/policies",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"policies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/categories",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "recipe claps",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://{{api}}/add-clap?recipe_id=1",
+							"protocol": "https",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"add-clap"
+							],
+							"query": [
+								{
+									"key": "recipe_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "query-syntax",
+					"item": []
+				},
+				{
+					"name": "keywords",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
