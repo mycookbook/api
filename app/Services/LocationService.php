@@ -19,16 +19,15 @@ class LocationService
      */
     public function getLocation(Request $request): ?Location
     {
-        dd($request->ipinfo->ip);
-        $location = Location::where(['ip' => $request->ipinfo->ip])->first();
+        $location = Location::where(['ip' => "10.1.95.32"])->first();
 
-        if (!$location) {
-            $this->errMessage = [
-                'error' => [
-                    'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead.'
-                ]
-            ];
-        }
+//        if (!$location) {
+//            $this->errMessage = [
+//                'error' => [
+//                    'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead.'
+//                ]
+//            ];
+//        }
 
         return $location;
     }
