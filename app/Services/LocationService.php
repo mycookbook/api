@@ -19,6 +19,7 @@ class LocationService
      */
     public function getLocation(Request $request): ?Location
     {
+        dd($request->ipinfo->ip);
         $location = Location::where(['ip' => $request->ipinfo->ip])->first();
 
         if (!$location) {
