@@ -35,22 +35,15 @@ return [
         'client_secret' => env('TIKTOK_CLIENT_SECRET'),
         'redirect' => env('TIKTOK_REDIRECT_URI')
     ],
-
-    'twitter' => [
-        'client_id' => env('TWITTER_CLIENT_ID'),
-        'client_secret' => env('TWITTER_CLIENT_SECRET'),
-        'redirect' => env('TWITTER_REDIRECT_URI')
+    'ipinfo' => [
+        'access_token' => env('IPINFO_SECRET', '')
     ],
-
-    'pinterest' => [
-        'client_id' => env('PINTEREST_CLIENT_ID'),
-        'client_secret' => env('PINTEREST_CLIENT_SECRET'),
-        'redirect' => env('PINTEREST_REDIRECT_URI')
+    'web_urls' => [
+        'auth' =>  env('WEB_URL') . '/#/auth?',
+        'signin' => env('WEB_URL') . '/#/signin?',
+        'errors' => env('WEB_URL') . '/#/errors?',
     ],
-
-    'instagram' => [
-        'client_id' => env('INSTAGRAM_CLIENT_ID'),
-        'client_secret' => env('INSTAGRAM_CLIENT_SECRET'),
-        'redirect' => env('INSTAGRAM_REDIRECT_URI')
-    ],
+    'faker' => [
+        'pass' => env('MAGICLINK_PASS')
+    ]
 ];

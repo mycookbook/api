@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Exceptions\ApiException;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\Cookbook;
+use App\Models\Draft;
 use App\Models\Recipe;
+use App\Utils\IngredientMaker;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -26,6 +30,10 @@ class RecipeService extends BaseService implements serviceInterface
     public function index($user_id = null): \Illuminate\Http\JsonResponse
     {
         $recipes = Recipe::paginate(100);
+
+        $recipes = $recipes->filter(function ($recipe) {
+            return !$recipe->is_draft;
+        });
 
         if ($user_id) {
             return response()->json(
@@ -60,39 +68,65 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @throws ApiException
      */
     public function store($request)
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        $payload = $request->only([
-            'name',
-            'ingredients',
-            'imgUrl',
-            'description',
-            'cookbook_id',
-            'summary',
-            'calorie_count',
-            'cook_time',
-            'nutritional_detail',
-            'servings',
-            'tags',
-        ]);
+            $payload = $request->only([
+                'is_draft',
+                'name',
+                'imgUrl',
+                'description',
+                'cookbook_id',
+                'summary',
+                'ingredients',
+                'nationality',
+                'tags',
+                'cuisine'
+            ]);
 
-        $payload['slug'] = slugify($request->title);
-        $payload['user_id'] = $user->id;
+            $payload['slug'] = slugify($request->name);
+            $payload['user_id'] = $user->id;
+            $payload['nutritional_detail'] = json_encode([]);
+            $payload['prep_time'] = Carbon::now()->toDateTimeString();
+            $payload['cook_time'] = Carbon::now()->toDateTimeString();
+            $payload['course'] = 'main';
+            $payload['ingredients'] = IngredientMaker::format($payload['ingredients']);
 
-        $recipe = new Recipe($payload);
+            if ($payload["tags"]) {
+                $tagsArray = collect(explode(",", trim($payload["tags"])));
+                $tagsArray = $tagsArray->map(function($tag) {
+                    return trim($tag);
+                });
 
-        $cookbook = Cookbook::findOrfail($request->cookbook_id);
-        $recipe->cookbook_id = $cookbook->id;
+                $payload["tags"] = $tagsArray->toArray();
+            }
 
-        //TODO:
-        //if tags present, create tags instances and attach to recipe
+            $recipe = new Recipe($payload);
 
-        return response([
-            'created' => $recipe->save(),
-        ], Response::HTTP_CREATED);
+            $cookbook = Cookbook::findOrfail($request->cookbook_id);
+            $recipe->cookbook_id = $cookbook->id;
+
+            $created = $recipe->save();
+
+            if ($payload['is_draft'] == "true") {
+                $draft = new Draft([
+                    'resource_id' => $recipe->refresh()->getKey(),
+                    'resource_type' => 'recipe'
+                ]);
+
+                $draft->save();
+            }
+
+            return response([
+                'created' => $created,
+            ], Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
     }
 
     /**

@@ -21,21 +21,3 @@ Route::match(['POST', 'GET'],'/callback/tiktok', [
     'uses' => 'AuthController@tikTokHandleCallback',
     'provider' => 'tiktok',
 ]);
-
-//twitter
-Route::get('/twitter', [
-    'uses' => 'AuthController@socialAuth',
-    'provider' => 'twitter',
-]);
-
-//pinterest
-Route::get('/pinterest', [
-    'uses' => 'AuthController@socialAuth',
-    'provider' => 'pinterest',
-]);
-
-//instagram
-Route::get('/instagram', [
-    'uses' => 'AuthController@socialAuth',
-    'provider' => 'instagram',
-]);

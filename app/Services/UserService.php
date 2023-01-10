@@ -75,12 +75,10 @@ class UserService extends BaseService implements serviceInterface
      */
     public function show($q)
     {
-        $user = $this->findWhere($q)->get();
-
         return response(
             [
                 'data' => [
-                    'user' => $user,
+                    'user' => $this->findWhere($q)->get(),
                 ],
             ], Response::HTTP_OK
         );

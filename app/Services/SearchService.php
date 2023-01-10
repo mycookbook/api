@@ -35,12 +35,41 @@ class SearchService
     }
 
     /**
-     * @param string $tag
+     * @param array $tags
      * @return mixed
      */
-    public function getAllCookbooksByTag(string $tag): Collection
+    public function getAllCookbooksByTag(array $tags): Collection
     {
-        return Cookbook::where('tags', 'LIKE', '%' . $tag . '%')->get();
+        $builder = Cookbook::where('tags', 'LIKE', '%' . $tags[0] . '%');
+
+        for ($i=1;$i<count($tags); $i++) {
+            $builder = $builder->orWhere('tags', 'LIKE', '%' . $tags[$i] . '%');
+        }
+
+        $results = $builder->get();
+
+        foreach($results as $result) {
+            $contains = [];
+            $missing = [];
+            $result_tags = explode(",", str_replace(" ", "", $result->tags));
+
+            foreach ($tags as $tag) {
+                $tag_name = trim($tag);
+
+                if (in_array($tag_name, $result_tags)) {
+                    $contains[] = $tag_name;
+                } else {
+                    $missing[] = $tag_name;
+                }
+            }
+
+            $result->metaData = [
+                'contains' => $contains,
+                'missing' => $missing
+            ];
+        }
+
+        return $results;
     }
 
     /**
@@ -116,7 +145,30 @@ class SearchService
                 return collect([]);
             }
 
-            return Cookbook::whereIn("id", $cookbooks->toArray())->get();
+            $results = Cookbook::whereIn("id", $cookbooks->toArray())->get();
+
+            foreach($results as $result) {
+                $contains = [];
+                $missing = [];
+                $result_catnames = $result->categories->pluck("name")->toArray();
+
+                foreach ($category_names as $cat_name) {
+                    $cat_name = trim($cat_name);
+
+                    if (in_array($cat_name, $result_catnames)) {
+                        $contains[] = $cat_name;
+                    } else {
+                        $missing[] = $cat_name;
+                    }
+                }
+
+                $result->metaData = [
+                    'contains' => $contains,
+                    'missing' => $missing
+                ];
+            }
+
+            return $results;
         }
 
         return collect([]);

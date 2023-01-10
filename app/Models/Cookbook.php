@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Class Recipe
@@ -35,11 +36,8 @@ class Cookbook extends Model
         'recipes_count',
         'categories',
         'author',
-        'contributors'
-    ];
-
-    protected $casts = [
-        'tags' => 'array'
+        'contributors',
+        'is_draft'
     ];
 
     /**
@@ -176,5 +174,25 @@ class Cookbook extends Model
     public function isPrivate(): bool
     {
         return isset($this->is_locked);
+    }
+
+    /**
+     * @return Attribute
+     */
+    protected function metaData(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => $value,
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsDraftAttribute(): bool
+    {
+        $draft = Draft::where(["resource_id" => $this->getKey()])->first();
+
+        return $draft instanceof Draft;
     }
 }

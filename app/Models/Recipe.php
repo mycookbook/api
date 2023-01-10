@@ -32,7 +32,9 @@ class Recipe extends Model
         'cook_time',
         'prep_time',
         'tags',
-        'claps'
+        'claps',
+        'course',
+        'cuisine'
     ];
 
     protected $hidden = ['user_id'];
@@ -40,7 +42,6 @@ class Recipe extends Model
     protected $casts = [
         'cook_time' => 'datetime:H:i:s',
         'prep_time' => 'datetime:H:i:s',
-        'ingredients' => 'json',
         'tags' => 'array'
     ];
 
@@ -58,6 +59,7 @@ class Recipe extends Model
         'comments',
         'servings',
         'prep_time',
+        'is_draft'
     ];
 
     /**
@@ -123,7 +125,7 @@ class Recipe extends Model
      */
     public function getVarietiesCountAttribute(): int
     {
-        return $this->variations()->count();
+        return 0;
     }
 
     /**
@@ -210,5 +212,15 @@ class Recipe extends Model
         $month = Carbon::parse($this->attributes['created_at'])->month;
 
         return Carbon::createFromDate($year, $month, $day)->format('F m Y');
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsDraftAttribute(): bool
+    {
+        $draft = Draft::where(["resource_id" => $this->getKey()])->first();
+
+        return $draft instanceof Draft;
     }
 }
