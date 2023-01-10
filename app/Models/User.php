@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'id', 'pivot',
+        'password', 'remember_token', 'id', 'pivot'
     ];
 
     /**
@@ -41,7 +41,6 @@ class User extends Authenticatable implements JWTSubject
         'contributions',
         'is_verified',
         'contact_detail',
-        'drafts',
         'resource_type'
     ];
 
@@ -193,14 +192,6 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return '10K+';
-    }
-
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function getDraftsAttribute(): \Illuminate\Support\Collection
-    {
-        return collect([]);
     }
 
     /**

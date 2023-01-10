@@ -36,7 +36,8 @@ class Cookbook extends Model
         'recipes_count',
         'categories',
         'author',
-        'contributors'
+        'contributors',
+        'is_draft'
     ];
 
     /**
@@ -183,5 +184,15 @@ class Cookbook extends Model
         return Attribute::make(
             set: fn ($value) => $value,
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsDraftAttribute(): bool
+    {
+        $draft = Draft::where(["resource_id" => $this->getKey()])->first();
+
+        return $draft instanceof Draft;
     }
 }

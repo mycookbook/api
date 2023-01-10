@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -24,8 +23,6 @@ class AuthService
                 ], Response::HTTP_NOT_FOUND
             );
         }
-
-//        'username' => Auth::user()->getSlug()
 
         return response()->json(['token' => $token], Response::HTTP_OK);
     }

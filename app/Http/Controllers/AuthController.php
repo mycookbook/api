@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\LocationService;
 use App\Services\UserService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -12,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Ip2location\IP2LocationLaravel\Facade\IP2LocationLaravel;
 
 /**
  * Class AuthController
@@ -48,32 +48,77 @@ class AuthController extends Controller
 
     /**
      * @param Request $request
+     * @param LocationService $locationService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function loginViaMagicLink(Request $request)
+    public function loginViaMagicLink(Request $request, LocationService $locationService)
     {
-        return response()->json([
-            'error' => [
-                'message' => 'This singin method is limited to ONLY authorized users. Please login with TikTok instead'
-            ]
-        ], Response::HTTP_UNAUTHORIZED);
+        try {
+            $location = $locationService->getLocation($request);
+            $userEmailFromRequest = $request->get("email");
 
+            if (!$location && !$userEmailFromRequest) {
+                return response()->json([
+                    'action_required' => true,
+                    'required' => [
+                        'email' => 'Looks like this is your first time signing in with magiclink! Kindly provide your registered email for verification.',
+                    ]
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
 
-//        $records = IP2LocationLaravel::get($request->getClientIp(), 'bin');
-//
-//        dd($records);
-        //inspect the request
-        //check location details
-        //if not found, respond with request: user_email
-        //if user_email in request,
-        //validate email against location
-        //if validation fails, respond with 401 and message
-        //if validation suceeds, login and respond with token
-        //consoder invalidating user's old tokens
-        //if location details found, dont ask for user email
-        //continue to log user in and respond with new token
-        //the new token responses are actually redirects
-        //also consider when email is in allowed list but the location is not recognized
+            if (!$location && $userEmailFromRequest) {
+                $location = LocationService::getLocationByUserEmail($userEmailFromRequest);
+
+                if (!$location) {
+                    $locationService->setErrorResponse([
+                        'error' => [
+                            'message' => 'This feature is limited to ONLY authorized users. Please login with TikTok instead.'
+                        ]
+                    ]);
+
+                    return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
+                }
+
+                $locationUserEmail = $location->getUser()->email;
+
+                if ($locationUserEmail != $userEmailFromRequest) {
+                    $locationService->setErrorResponse([
+                        'error' => [
+                            'message' => 'This feature is limited to ONLY authorized users. Please login with TikTok instead.'
+                        ]
+                    ]);
+
+                    return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
+                } else {
+                    $location->update([
+                        'ip' => $request->ipinfo->ip,
+                        'city' => $request->ipinfo->city ?? '',
+                        'country' => $request->ipinfo->country ?? '',
+                        'timezone' => $request->ipinfo->timezone ?? 'America/Toronto'
+                    ]);
+
+                    return response()->json([
+                        'token' => Auth::attempt([
+                            'email' => $userEmailFromRequest,
+                            'password' => config('services.faker.pass')
+                        ]),
+                        '_d' => $location->getUser()->getSlug()
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'token' => Auth::attempt([
+                    'email' => $location->getUser()->email,
+                    'password' => config('services.faker.pass')
+                ]),
+                '_d' => $location->getUser()->getSlug()
+            ]);
+        } catch (\Throwable $e) {
+            $m = $e->getMessage() ?? $locationService->getErrors();
+
+            return response()->json($m, Response::HTTP_UNAUTHORIZED);
+        }
     }
 
     /**
@@ -88,7 +133,7 @@ class AuthController extends Controller
             $errCode = $request->get('errCode');
 
             if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
-                return redirect('https://web.cookbookshq.com');
+                return redirect('https://web.cookbookshq.com/#/signin');
             }
 
             $response = $client->request('POST',
@@ -154,9 +199,9 @@ class AuthController extends Controller
                 }
 
                 $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
-                    'token' => $token,
-                    '_d' => $user->getSlug(),
-                ]);
+                        'token' => $token,
+                        '_d' => $user->getSlug(),
+                    ]);
 
                 return redirect($to);
             } else {
@@ -169,21 +214,6 @@ class AuthController extends Controller
 
             return redirect('https://web.cookbookshq.com/#/errors/?m=Tiktok is having a hard time processing this request, please try again.');
         }
-    }
-
-    /**
-     * @param $json
-     * @return bool
-     */
-    private function isJson($json)
-    {
-        $result = json_decode($json);
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

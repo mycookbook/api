@@ -20,26 +20,9 @@ Route::group(['prefix' => 'v1'], function () {
         return 'Cookbooks api v1';
     });
 
-    //    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
-
     Route::get('/callback/tiktok', [
         'uses' => 'AuthController@tikTokHandleCallback',
         'provider' => 'twitter',
-    ]);
-
-    Route::get('/callback/twitter', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'twitter',
-    ]);
-
-    Route::get('/callback/pinterest', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'pinterest',
-    ]);
-
-    Route::get('/callback/instagram', [
-        'uses' => 'AuthController@socialAuthCallbackHandler',
-        'provider' => 'instagram',
     ]);
 
     Route::get('/webhooks/tiktok', function() {
@@ -54,7 +37,7 @@ Route::group(['prefix' => 'v1'], function () {
     |--------------------------------------------------------------------------
     |
     */
-    Route::prefix('/auth')->group(function() {
+    Route::prefix('/auth')->middleware(['cors'])->group(function() {
 
         Route::post('/register', [UserController::class, 'store']);
 
@@ -63,6 +46,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/logout', [AuthController::class, 'logout']);
 
         Route::post('/validate', [AuthController::class, 'validateToken']);
+
+        Route::post('/magiclink', [AuthController::class, 'loginViaMagicLink']);
     });
 
     /*

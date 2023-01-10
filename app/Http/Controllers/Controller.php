@@ -9,5 +9,8 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
+    const RECIPE_RESOURCE = 'recipe';
+    const COOKBOOK_RESOURCE = 'cookbook';
+
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }
