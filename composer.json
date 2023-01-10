@@ -34,8 +34,8 @@
         "socialiteproviders/instagram": "^4.1",
         "hammerstone/sidecar": "^0.3.12",
         "thedevsaddam/laravel-schema": "^2.0",
-        "ipinfo/ipinfolaravel": "^2.4",
-        "sentry/sentry-laravel": "^3.1"
+        "sentry/sentry-laravel": "^3.1",
+        "ipinfo/ipinfolaravel": "^2.4"
     },
     "require-dev": {
         "mockery/mockery": "^1.4.2",
