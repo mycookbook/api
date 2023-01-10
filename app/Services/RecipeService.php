@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Exceptions\ApiException;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\Cookbook;
 use App\Models\Draft;
 use App\Models\Recipe;
+use App\Utils\IngredientMaker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -66,60 +68,65 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @throws ApiException
      */
     public function store($request)
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        $payload = $request->only([
-            'draft',
-            'name',
-            'imgUrl',
-            'description',
-            'cookbook_id',
-            'summary',
-            'ingredients',
-            'nationality',
-            'tags',
-            'cuisine'
-        ]);
-
-        $payload['slug'] = slugify($request->name);
-        $payload['user_id'] = $user->id;
-        $payload['nutritional_detail'] = json_encode([]);
-        $payload['prep_time'] = Carbon::now()->toDateTimeString();
-        $payload['cook_time'] = Carbon::now()->toDateTimeString();
-        $payload['course'] = 'main';
-        $payload['ingredients'] = json_encode($payload['ingredients']);
-
-        if ($payload["tags"]) {
-            $tagsArray = collect(explode(",", trim($payload["tags"])));
-            $tagsArray = $tagsArray->map(function($tag) {
-                return trim($tag);
-            });
-
-            $payload["tags"] = $tagsArray->toArray();
-        }
-
-        $recipe = new Recipe($payload);
-
-        $cookbook = Cookbook::findOrfail($request->cookbook_id);
-        $recipe->cookbook_id = $cookbook->id;
-
-        $created = $recipe->save();
-
-        if ($payload['draft']) {
-            $draft = new Draft([
-                'resource_id' => $recipe->refresh()->getKey(),
-                'resource_type' => 'recipe'
+            $payload = $request->only([
+                'is_draft',
+                'name',
+                'imgUrl',
+                'description',
+                'cookbook_id',
+                'summary',
+                'ingredients',
+                'nationality',
+                'tags',
+                'cuisine'
             ]);
 
-            $draft->save();
-        }
+            $payload['slug'] = slugify($request->name);
+            $payload['user_id'] = $user->id;
+            $payload['nutritional_detail'] = json_encode([]);
+            $payload['prep_time'] = Carbon::now()->toDateTimeString();
+            $payload['cook_time'] = Carbon::now()->toDateTimeString();
+            $payload['course'] = 'main';
+            $payload['ingredients'] = IngredientMaker::format($payload['ingredients']);
 
-        return response([
-            'created' => $created,
-        ], Response::HTTP_CREATED);
+            if ($payload["tags"]) {
+                $tagsArray = collect(explode(",", trim($payload["tags"])));
+                $tagsArray = $tagsArray->map(function($tag) {
+                    return trim($tag);
+                });
+
+                $payload["tags"] = $tagsArray->toArray();
+            }
+
+            $recipe = new Recipe($payload);
+
+            $cookbook = Cookbook::findOrfail($request->cookbook_id);
+            $recipe->cookbook_id = $cookbook->id;
+
+            $created = $recipe->save();
+
+            if ($payload['is_draft'] == "true") {
+                $draft = new Draft([
+                    'resource_id' => $recipe->refresh()->getKey(),
+                    'resource_type' => 'recipe'
+                ]);
+
+                $draft->save();
+            }
+
+            return response([
+                'created' => $created,
+            ], Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            throw new ApiException($e->getMessage());
+        }
     }
 
     /**
