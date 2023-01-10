@@ -20,8 +20,6 @@ Route::group(['prefix' => 'v1'], function () {
         return 'Cookbooks api v1';
     });
 
-    //    Route::get('/tiktok', 'AuthController@tikTokHandleCallback');
-
     Route::get('/callback/tiktok', [
         'uses' => 'AuthController@tikTokHandleCallback',
         'provider' => 'twitter',

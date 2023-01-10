@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\Cookbook;
+use App\Models\Draft;
 use App\Models\Recipe;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -26,6 +28,10 @@ class RecipeService extends BaseService implements serviceInterface
     public function index($user_id = null): \Illuminate\Http\JsonResponse
     {
         $recipes = Recipe::paginate(100);
+
+        $recipes = $recipes->filter(function ($recipe) {
+            return !$recipe->is_draft;
+        });
 
         if ($user_id) {
             return response()->json(
@@ -66,32 +72,53 @@ class RecipeService extends BaseService implements serviceInterface
         $user = $request->user();
 
         $payload = $request->only([
+            'draft',
             'name',
-            'ingredients',
             'imgUrl',
             'description',
             'cookbook_id',
             'summary',
-            'calorie_count',
-            'cook_time',
-            'nutritional_detail',
-            'servings',
+            'ingredients',
+            'nationality',
             'tags',
+            'cuisine'
         ]);
 
-        $payload['slug'] = slugify($request->title);
+        $payload['slug'] = slugify($request->name);
         $payload['user_id'] = $user->id;
+        $payload['nutritional_detail'] = json_encode([]);
+        $payload['prep_time'] = Carbon::now()->toDateTimeString();
+        $payload['cook_time'] = Carbon::now()->toDateTimeString();
+        $payload['course'] = 'main';
+        $payload['ingredients'] = json_encode($payload['ingredients']);
+
+        if ($payload["tags"]) {
+            $tagsArray = collect(explode(",", trim($payload["tags"])));
+            $tagsArray = $tagsArray->map(function($tag) {
+                return trim($tag);
+            });
+
+            $payload["tags"] = $tagsArray->toArray();
+        }
 
         $recipe = new Recipe($payload);
 
         $cookbook = Cookbook::findOrfail($request->cookbook_id);
         $recipe->cookbook_id = $cookbook->id;
 
-        //TODO:
-        //if tags present, create tags instances and attach to recipe
+        $created = $recipe->save();
+
+        if ($payload['draft']) {
+            $draft = new Draft([
+                'resource_id' => $recipe->refresh()->getKey(),
+                'resource_type' => 'recipe'
+            ]);
+
+            $draft->save();
+        }
 
         return response([
-            'created' => $recipe->save(),
+            'created' => $created,
         ], Response::HTTP_CREATED);
     }
 

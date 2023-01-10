@@ -24,13 +24,15 @@ class RecipeStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
+            'name' => 'required|unique:recipes',
             'imgUrl' => 'required|url',
-            'ingredients' => 'required',
+            'ingredients.*.name' => 'required',
+            'ingredients.*.unit' => 'required',
             'description' => 'required',
             'cookbook_id' => 'required|exists:cookbooks,id',
             'summary' => 'required',
-            'nutritional_detail' => 'required'
+            'nationality' => 'required|exists:flags,flag',
+            'cuisine' => 'required'
         ];
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RecipeStoreRequest;
 use App\Services\RecipeService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\JWT;
 
 /**
@@ -87,12 +89,16 @@ class RecipeController extends Controller
     {
         try {
             $jwtAuth->parseToken()->check();
-
             return $this->service->store($request);
         } catch (\Exception $exception) {
+            Log::debug('An error occured while creating a recipe', [
+                'resource' => self::RECIPE_RESOURCE,
+                'exception' => $exception
+            ]);
+
             return response()->json([
                 'error' => 'You are not authorized to perform this action.',
-            ], 401);
+            ], Response::HTTP_UNAUTHORIZED);
         }
     }
 
