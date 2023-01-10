@@ -24,6 +24,7 @@ class RecipeStoreRequest extends FormRequest
     public function rules()
     {
         return [
+            'is_draft' => 'required|in:true,false',
             'name' => 'required|unique:recipes',
             'imgUrl' => 'required|url',
             'ingredients.*.name' => 'required',

@@ -96,9 +96,17 @@ class RecipeController extends Controller
                 'exception' => $exception
             ]);
 
+            $message = "There was an error processing this request, please try again later.";
+            $code = Response::HTTP_BAD_REQUEST;
+
+            if ($exception->getCode() == 401) {
+                $code = Response::HTTP_UNAUTHORIZED;
+                $message = "You are not authorized to perform this action.";
+            }
+
             return response()->json([
-                'error' => 'You are not authorized to perform this action.',
-            ], Response::HTTP_UNAUTHORIZED);
+                'error' => $message,
+            ], $code);
         }
     }
 
