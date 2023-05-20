@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Category;
@@ -14,10 +16,10 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class SearchService
 {
     /**
-     * @param $query
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @param string $query
+     * @return Collection
      */
-    public function searchEveryWhere($query)
+    public function searchEveryWhere(string $query)
     {
         $cookbooksQueryBuilder = Cookbook::where('name', 'LIKE', '%' . $query . '%')
             ->orWhere('slug', 'LIKE', '%' . $query . '%')
@@ -36,7 +38,7 @@ class SearchService
 
     /**
      * @param array $tags
-     * @return mixed
+     * @return Collection
      */
     public function getAllCookbooksByTag(array $tags): Collection
     {
@@ -63,6 +65,7 @@ class SearchService
                 }
             }
 
+            /** @phpstan-ignore-next-line */
             $result->metaData = [
                 'contains' => $contains,
                 'missing' => $missing
@@ -162,6 +165,7 @@ class SearchService
                     }
                 }
 
+                /** @phpstan-ignore-next-line */
                 $result->metaData = [
                     'contains' => $contains,
                     'missing' => $missing
@@ -239,6 +243,7 @@ class SearchService
      */
     public function getAllCookbooksByMe($cookbookName = "")
     {
+        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             $me = $user->getKey();
 
@@ -263,6 +268,7 @@ class SearchService
      */
     public function getAllRecipesByMe($recipeName = "")
     {
+        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             $me = $user->getKey();
 

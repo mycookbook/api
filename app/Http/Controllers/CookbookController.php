@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use AllowDynamicProperties;
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\CookbookStoreRequest;
 use App\Models\Flag;
@@ -16,8 +19,10 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Class UserController
  */
-class CookbookController extends Controller
+#[AllowDynamicProperties] class CookbookController extends Controller
 {
+    protected CookbookService $service;
+
     /**
      * @param CookbookService $service
      */
@@ -29,6 +34,7 @@ class CookbookController extends Controller
     }
 
     /**
+     * All cookbooks
      * @return JsonResponse
      */
     public function index(): JsonResponse
@@ -95,7 +101,7 @@ class CookbookController extends Controller
     public function update(int $id, Request $request)
     {
         if (Auth::user()->ownCookbook($id)) {
-            return $this->service->update($request, $id);
+            return $this->service->update($request, (string) $id);
         }
 
         return response()->json([

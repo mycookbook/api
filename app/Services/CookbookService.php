@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Exceptions\CookbookModelNotFoundException;
@@ -75,12 +77,15 @@ class CookbookService extends BaseService implements serviceInterface
             }
         }
 
+        /** @phpstan-ignore-next-line  */
         $cookbook->slug = slugify($request->name);
 
         if ($cookbook->save()) {
+            /** @phpstan-ignore-next-line  */
             $cookbook->users()->attach($cookbook->user_id);
 
             foreach ($categories as $category) {
+                /** @phpstan-ignore-next-line  */
                 $cookbook->categories()->attach($category);
             }
 

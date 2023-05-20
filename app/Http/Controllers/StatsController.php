@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Cookbook;
@@ -14,17 +16,13 @@ class StatsController extends Controller
     /**
      * Return stats meta data
      * Users, Recipes and Cookbooks count
-     *
-     * @param  User  $user user
-     * @param  Recipe  $recipe recipe
-     * @param  Cookbook  $cookbook cookbook
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     * @param User $user
+     * @param Recipe $recipe
+     * @param Cookbook $cookbook
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
      */
-    public function index(
-        User $user,
-        Recipe $recipe,
-        Cookbook $cookbook
-    ) {
+    public function index(User $user, Recipe $recipe, Cookbook $cookbook)
+    {
         $data = [
             'users' => self::getUsersStats($user),
             'recipes' => self::getRecipesStats($recipe),

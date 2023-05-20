@@ -1,14 +1,13 @@
 <?php
 
-namespace Api;
+declare(strict_types=1);
+
+namespace Feature;
 
 use App\Jobs\SendEmailNotification;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
 
-/**
- * Class UserTest
- */
 class UserTest extends \TestCase
 {
     /**
@@ -210,20 +209,5 @@ class UserTest extends \TestCase
         $response = $this->call('GET', '/api/v1/users/sally');
 
         $this->assertEquals(Response::HTTP_OK, $response->status());
-    }
-
-    /**
-     * Test that user cannot be found
-     *
-     * @return void
-     */
-    public function testUserNotFound()
-    {
-        $this->markTestSkipped();
-        $response = $this->call('GET', '/api/v1/users/0');
-
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->status());
-        $content = json_decode($response->getContent());
-        $this->assertSame('Record Not found.', $content->error);
     }
 }

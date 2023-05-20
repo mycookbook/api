@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
-use App\Exceptions\UnauthorizedClientException;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,12 +16,9 @@ class AuthorizationGuard
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return Response
-     *
-     * @throws UnauthorizedClientException
      */
     public function handle(Request $request, Closure $next)
     {
-        dd("auth guard");
         //		if (!$request->header('X-API-KEY')) {
         //			throw new UnauthorizedClientException();
         //		}

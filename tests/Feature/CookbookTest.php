@@ -1,14 +1,13 @@
 <?php
 
-namespace Api;
+declare(strict_types=1);
+
+namespace Feature;
 
 use App\Models\Cookbook;
 use App\Models\User;
 use Illuminate\Http\Response;
 
-/**
- * Class UserTest
- */
 class CookbookTest extends \TestCase
 {
     protected string $bookcoverImageUrl =
@@ -194,70 +193,6 @@ class CookbookTest extends \TestCase
             'name' => 'test cookbook',
             'slug' => 'test-cookbook'
         ]);
-    }
-
-    /**
-     * @test
-     */
-    public function it_allows_a_user_with_valid_token_to_update_own_cookbook_resource()
-    {
-        $this->markTestIncomplete();
-        $this->json(
-            'POST', '/api/v1/auth/register', [
-                'name' => 'Sally Lee',
-                'email' => 'update@test.com',
-                'password' => 'saltyL@k3',
-            ]
-        );
-
-        $res = $this->json(
-            'POST', '/api/v1/auth/login', [
-                'email' => 'update@test.com',
-                'password' => 'saltyL@k3',
-            ]
-        );
-
-        $decoded = json_decode($res->getContent(), true);
-
-        //create a cookbook
-        $this->json('POST', '/api/v1/cookbooks', [
-            'name' => 'test cookbook',
-            'description' => fake()->sentence(150),
-            'bookCoverImg' => $this->bookcoverImageUrl,
-            'categories' => 'ketogenic,vegan',
-            'flag_id' => "ng",
-            'slug' => 'test-cookbook',
-            'alt_text' => 'this is a test cookbook'
-        ], [
-            'HTTP_Authorization' => 'Bearer ' . $decoded['token']
-        ]);
-
-        $cookbookId = Cookbook::all()->last()->getKey();
-
-        $expected = [
-            'name' => 'updated title',
-            "alt_text" => "this is an updated alt text",
-            'description' => fake()->sentence(150),
-            'bookCoverImg' => $this->bookcoverImageUrl,
-            'categories' => 'ketogenic',
-            'tags' => 'updated tag1, updated tag2'
-        ];
-
-        //update the cookbook
-        $updateResponse = $this->json('POST', '/api/v1/cookbooks/' . $cookbookId . '/edit', $expected, [
-            'HTTP_Authorization' => 'Bearer ' . $decoded['token']
-        ]);
-
-        $decoded = json_decode($updateResponse->getContent(), true);
-//        dd($decoded);
-
-        $this->assertArrayHasKey("updated", $decoded);
-        $this->assertTrue($decoded["updated"]);
-
-        //assertions
-        unset($expected["categories"]);
-        $expected["tags"] = json_encode($expected["tags"]);
-        $this->assertDatabaseHas('cookbooks', $expected);
     }
 
     /**

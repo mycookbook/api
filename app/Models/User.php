@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Traits\CookbookUserMustVerifyEmail;
@@ -15,19 +17,12 @@ class User extends Authenticatable implements JWTSubject
     use CookbookUserMustVerifyEmail;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'name', 'email', 'password', 'following', 'followers', 'name_slug', 'email_verified', 'avatar', 'pronouns', 'about',
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token', 'id', 'pivot'
     ];
@@ -132,7 +127,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getIsVerifiedAttribute(): bool
     {
-        $entity = $this->email_verification()->get()->first();
+        $entity = $this->email_verification()->first();
 
         if (is_null($entity) || is_null($entity->is_verified)) {
             return false;
@@ -156,7 +151,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getContactDetailAttribute()
     {
-        return $this->contact()->get()->first();
+        return $this->contact()->first();
     }
 
     /**

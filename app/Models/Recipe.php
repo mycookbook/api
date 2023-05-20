@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -14,9 +16,7 @@ class Recipe extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'name',
@@ -106,12 +106,12 @@ class Recipe extends Model
     }
 
     /**
-     * @return string
+     * @return Carbon
      */
-    public function getTotalTimeAttribute(): string
+    public function getTotalTimeAttribute(): Carbon
     {
-        $cook_time = strtotime(Carbon::parse($this->attributes['cook_time']));
-        $prep_time = strtotime(Carbon::parse($this->attributes['prep_time']));
+        $cook_time = strtotime(Carbon::parse($this->attributes['cook_time'])->toDateTimeString());
+        $prep_time = strtotime(Carbon::parse($this->attributes['prep_time'])->toDateTimeString());
         $total_time = $cook_time + $prep_time;
 
         return Carbon::createFromTimestamp($total_time);
@@ -173,7 +173,7 @@ class Recipe extends Model
      */
     public function getAuthorAttribute()
     {
-        return $this->user()->get()->first();
+        return $this->user()->first();
     }
 
     /**

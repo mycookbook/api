@@ -1,6 +1,8 @@
 <?php
 
-namespace Api;
+declare(strict_types=1);
+
+namespace Feature;
 
 use App\Models\Subscriber;
 use Illuminate\Foundation\Testing\WithoutMiddleware;

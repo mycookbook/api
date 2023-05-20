@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\RecipeStoreRequest;
 use App\Services\RecipeService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWT;
 
 /**
@@ -14,6 +21,8 @@ use Tymon\JWTAuth\JWT;
  */
 class RecipeController extends Controller
 {
+    protected RecipeService $service;
+
     /**
      * Constructor
      *
@@ -133,11 +142,14 @@ class RecipeController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param $recipeId
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     * @throws \App\Exceptions\CookbookModelNotFoundException
+     * @param JWT $jwtAuth
+     * @return Application|ResponseFactory|JsonResponse|Response
+     * @throws CookbookModelNotFoundException
+     * @throws JWTException
      */
-    public function destroy($recipeId)
+    public function destroy(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
             $request->user()->isSuper() &&

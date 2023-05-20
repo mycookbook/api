@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Cookbook;
@@ -42,26 +44,27 @@ class UserContactDetailsService extends BaseService
     }
 
     /**
-     * @param  Request  $request
-     * @return Response|\Laravel\Lumen\Http\ResponseFactory
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|Response
      */
     public function updateUserSettings(Request $request)
     {
-        $user = User::where('email', $request->get('email'))->get()->first();
-        $contact_detail = UserContactDetail::where('user_id', '=', $user->id)->get()->first();
+        $user = User::where('email', $request->get('email'))->first();
+        $contact_detail = UserContactDetail::where('user_id', '=', $user->id)->first();
+        $updated = false;
 
         if ($contact_detail) {
             Log::info('user contact detail found', [$contact_detail->get()->first()]);
             $updated = $contact_detail->update($request->all());
-
-            return response(
-                [
-                    'updated' => $updated,
-                    'status' => 'success',
-                ], Response::HTTP_OK
-            );
         } else {
             Log::info('User contact detail not found.:', ['user_id' => $user->id]);
         }
+
+        return response(
+            [
+                'updated' => $updated,
+                'status' => 'success',
+            ], Response::HTTP_OK
+        );
     }
 }
