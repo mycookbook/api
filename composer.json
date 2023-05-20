@@ -44,11 +44,11 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeds/"
+            "Database\\Seeders\\": "database/seeders/"
         },
         "classmap": [
             "tests/",
-            "database/seeds"
+            "database/seeders"
         ],
         "files": [
             "app/Http/helpers.php"
