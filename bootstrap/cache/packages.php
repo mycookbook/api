@@ -1,23 +1,38 @@
 <?php return array (
-  'barryvdh/laravel-cors' => 
+  'hammerstone/sidecar' => 
   array (
     'providers' => 
     array (
-      0 => 'Fruitcake\\Cors\\CorsServiceProvider',
+      0 => 'Hammerstone\\Sidecar\\Providers\\SidecarServiceProvider',
     ),
   ),
-  'fideloper/proxy' => 
+  'ipinfo/ipinfolaravel' => 
   array (
     'providers' => 
     array (
-      0 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
+      0 => 'ipinfo\\ipinfolaravel\\ipinfolaravelServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'ipinfolaravel' => 'ipinfo\\ipinfolaravel\\Facades\\ipinfolaravel',
     ),
   ),
-  'fruitcake/laravel-cors' => 
+  'laravel/sail' => 
   array (
     'providers' => 
     array (
-      0 => 'Fruitcake\\Cors\\CorsServiceProvider',
+      0 => 'Laravel\\Sail\\SailServiceProvider',
+    ),
+  ),
+  'laravel/socialite' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
     ),
   ),
   'laravel/tinker' => 
@@ -58,6 +73,36 @@
     'providers' => 
     array (
       0 => 'PHPOpenSourceSaver\\JWTAuth\\Providers\\LaravelServiceProvider',
+    ),
+  ),
+  'sentry/sentry-laravel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Sentry\\Laravel\\ServiceProvider',
+      1 => 'Sentry\\Laravel\\Tracing\\ServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Sentry' => 'Sentry\\Laravel\\Facade',
+    ),
+  ),
+  'socialiteproviders/manager' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'SocialiteProviders\\Manager\\ServiceProvider',
+    ),
+  ),
+  'spatie/laravel-ignition' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Flare' => 'Spatie\\LaravelIgnition\\Facades\\Flare',
     ),
   ),
   'tymon/jwt-auth' => 

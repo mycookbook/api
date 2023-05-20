@@ -9,37 +9,33 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^8.1",
-        "barryvdh/laravel-cors": "^3.0",
-        "tymon/jwt-auth": "dev-develop",
+        "php": "^8.2",
+        "tymon/jwt-auth": "2.0.0",
         "league/fractal": "1.0.x-dev",
         "guzzlehttp/guzzle": "7.4.5",
         "symfony/console": "^6.0.3",
-        "doctrine/dbal": "^2.10",
+        "doctrine/dbal": "^3.0",
         "symfony/http-kernel": "^6.0",
         "ext-exif": "*",
         "laravel/tinker": "^2.5",
         "ext-json": "*",
-        "pusher/pusher-php-server": "^4.1",
         "league/flysystem": "^3.0.16",
-        "laravel/framework": "^9.0",
-        "fruitcake/laravel-cors": "^2.0",
-        "fideloper/proxy": "^4.4",
-        "spatie/ignition": "^1.0",
-        "php-open-source-saver/jwt-auth": "^1.4",
-        "nunomaduro/collision": "6.2.1",
+        "laravel/framework": "^10.0",
+        "php-open-source-saver/jwt-auth": "2.1.0",
+        "nunomaduro/collision": "^7.0",
         "socialiteproviders/tiktok": "^4.1",
         "socialiteproviders/twitter": "^4.1",
         "socialiteproviders/pinterest": "^4.2",
         "socialiteproviders/instagram": "^4.1",
-        "hammerstone/sidecar": "^0.3.12",
+        "hammerstone/sidecar": "0.4.1",
         "thedevsaddam/laravel-schema": "^2.0",
         "sentry/sentry-laravel": "^3.1",
-        "ipinfo/ipinfolaravel": "^2.4"
+        "ipinfo/ipinfolaravel": "^2.4",
+        "spatie/laravel-ignition": "^2.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.4.2",
-        "phpunit/phpunit": "^8.5.8|^9.3.3",
+        "phpunit/phpunit": "^10.0",
         "ext-json": "*",
         "fakerphp/faker": "1.19.0",
         "laravel/sail": "^1.15"
@@ -48,7 +44,7 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeds/"
         },
         "classmap": [
             "tests/",
@@ -69,6 +65,11 @@
             "php -r \"copy('.env.example', '.env');\""
         ]
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }
