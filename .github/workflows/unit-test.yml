@@ -1,10 +1,10 @@
-name: CookbooksAPI
+name: Unit test
 
 on:
     push:
-        branches: [ "develop", "staging" ]
+        branches: [ "master", "develop", "staging" ]
     pull_request:
-        branches: [ "develop", "staging" ]
+        branches: [ "master", "develop", "staging" ]
 
 jobs:
     tests:
@@ -28,8 +28,8 @@ jobs:
                 run: |
                     mkdir -p database
                     touch database/database.sqlite
-            -   name: Execute tests (Unit and Feature tests) via PHPUnit
+            -   name: Execute tests
                 env:
                     DB_CONNECTION: sqlite
                     DB_DATABASE: database/database.sqlite
-                run: php artisan test
+                run: php vendor/bin/phpunit --testsuite=Unit

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,9 +11,7 @@ class RecipeVariation extends Model
     protected $table = 'recipe_variations';
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'name', 'imgUrl', 'ingredients', 'description', 'summary', 'nutritional_detail', 'slug', 'calorie_count',

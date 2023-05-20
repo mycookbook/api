@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Utils;
 
 class IngredientMaker
@@ -17,16 +19,12 @@ class IngredientMaker
         ];
     }
 
+    /** @phpstan-ignore-next-line  */
     private function validate()
     {
         //todo:
     }
 
-    /**
-     * @param $items
-     * @param $format
-     * @return false|string|void
-     */
     public static function format($items, $format = 'json')
     {
         $maker = new IngredientMaker($items);
@@ -36,17 +34,12 @@ class IngredientMaker
         }
     }
 
-    /**
-     * @return false|string
-     */
     private function toJson()
     {
         return json_encode($this->ingredients);
     }
 
-    /**
-     * @return array|mixed
-     */
+    /** @phpstan-ignore-next-line  */
     private function toArray()
     {
         if (is_array($this->ingredients)) {
@@ -56,11 +49,13 @@ class IngredientMaker
         return json_decode($this->ingredients);
     }
 
+    /** @phpstan-ignore-next-line  */
     private function toString()
     {
         //todo
     }
 
+    /** @phpstan-ignore-next-line  */
     private function toObject()
     {
         //todo

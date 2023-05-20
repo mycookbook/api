@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\EmailVerification;
@@ -39,7 +41,7 @@ class TriggerEmailVerificationProcess implements ShouldQueue
         if (! $this->user) {
             Log::info('This user does not exist', ['user_id' => $this->userId]);
         } else {
-            $user_email_verification_exist = EmailVerification::where('user_id', $this->userId)->get()->first();
+            $user_email_verification_exist = EmailVerification::where('user_id', $this->userId)->first();
 
             if ($user_email_verification_exist) {
                 //update

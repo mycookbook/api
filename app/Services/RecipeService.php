@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Exceptions\ApiException;
@@ -38,7 +40,7 @@ class RecipeService extends BaseService implements serviceInterface
         if ($user_id) {
             return response()->json(
                 [
-                    'data' => $recipes->where('user_id', '=', $user_id)->paginate(100),
+                    'data' => $recipes->where('user_id', '=', $user_id),
                 ], Response::HTTP_OK
             );
         }

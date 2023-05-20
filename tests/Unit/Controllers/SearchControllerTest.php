@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Unit\Controllers;
 
 use App\Http\Controllers\SearchController;
@@ -13,9 +15,9 @@ class SearchControllerTest extends \TestCase
 {
     public function test_it_is_instantiable()
     {
-        $search = new SearchController();
+        $searchController = new SearchController();
 
-        $this->assertInstanceOf(Controller::class, $search);
+        $this->assertInstanceOf(Controller::class, $searchController);
     }
 
     public function test_it_can_return_search_results_for_the_tag_cookbooks_query_syntax()

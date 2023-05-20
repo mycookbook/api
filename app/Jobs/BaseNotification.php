@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\User;
@@ -49,7 +51,7 @@ abstract class BaseNotification implements ShouldQueue
             $uri = env('NOTIFICATIONS_SERVER_URL').'/notifications';
 
             $client->request('GET', $uri, $this->headerOptions());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::info('error', ['notifications_server' => $e->getMessage()]);
         }
     }

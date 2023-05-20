@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +14,7 @@ class Location extends Model
     protected $table = "user_locations";
 
     /**
-     * @var string[] $fillable
+     * @var array<string>
      */
     protected $fillable = [
         'ip', 'user_id', 'country', 'city', 'timezone', 'device'

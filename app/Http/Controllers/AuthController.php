@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SignInRequest;
@@ -19,6 +21,8 @@ use Illuminate\Support\Facades\Log;
  */
 class AuthController extends Controller
 {
+    protected AuthService $service;
+
     public const TIKTOK_CANCELLATION_CODE = "-2";
 
     /**
@@ -115,7 +119,7 @@ class AuthController extends Controller
                 '_d' => $location->getUser()->getSlug()
             ]);
         } catch (\Throwable $e) {
-            $m = $e->getMessage() ?? $locationService->getErrors();
+            $m = array_merge($locationService->getErrors(), [$e->getMessage()]);
 
             return response()->json($m, Response::HTTP_UNAUTHORIZED);
         }

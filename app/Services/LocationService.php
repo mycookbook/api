@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Location;
@@ -8,10 +10,7 @@ use Illuminate\Http\Request;
 
 class LocationService
 {
-    /**
-     * @var $errMessage
-     */
-    protected $errMessage;
+    protected array $errMessage;
 
     /**
      * @param Request $request
@@ -66,13 +65,5 @@ class LocationService
         $this->errMessage = $error;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return User::findOrFail($this->user_id);
     }
 }

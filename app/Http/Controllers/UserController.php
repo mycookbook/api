@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
@@ -18,6 +20,8 @@ use Illuminate\Support\Facades\Log;
  */
 class UserController extends Controller
 {
+    protected UserService $service;
+
     /**
      * @param \App\Services\UserService $service
      */

@@ -1,21 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+declare(strict_types=1);
 
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
 
 class CommentController extends Controller
 {
-    /**
-     * @param  Request  $request
-     */
-    public function __construct(Request $request)
+    public function __construct()
     {
         $this->middleware('jwt.auth', ['except' => [
             'index',
             'show',
         ]]);
-
-        parent::__construct($request);
     }
 }

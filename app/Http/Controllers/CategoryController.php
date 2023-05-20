@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
+    protected CategoryService $service;
+
     /**
      * @param  \App\Services\CategoryService  $service
      */

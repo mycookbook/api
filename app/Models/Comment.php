@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -7,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    /**
+     * @var array<string>
+     */
     protected $fillable = [
         'user_id', 'recipe_id', 'comment',
     ];

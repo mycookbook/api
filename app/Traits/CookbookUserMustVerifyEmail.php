@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\RoutesNotifications;
 
 trait CookbookUserMustVerifyEmail
 {
+    use RoutesNotifications;
+
     /**
      * Determine if the user has verified their email address.
      *

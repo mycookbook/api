@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\ImplicitRule;
 
 class MaxAllowedRule implements ImplicitRule
 {
-    /**
-     * @var
-     */
-    private $maxAllowed;
+    private int $maxAllowed;
 
     /**
      * MaxAllowedRule constructor.
@@ -21,12 +20,7 @@ class MaxAllowedRule implements ImplicitRule
         $this->maxAllowed = $max;
     }
 
-    /**
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return false
-     */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         $values = explode(',', $value);
 

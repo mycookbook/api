@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Illuminate\Database\Eloquent\Model;
 
 class BaseService
 {
-    /**
-     * @var Model $serviceModel
-     */
     protected Model $serviceModel;
 
     /**

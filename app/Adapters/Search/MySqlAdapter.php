@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Adapters\Search;
 
 use App\Models\User;
@@ -53,10 +55,6 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
     {
         $author = $this->userService->findWhere($q)->first();
 
-        if ($author instanceof User) {
-            $author_id = $author->getKey();
-        }
-
         $query = DB::table('cookbooks')
             ->select([
                 'cookbooks.id AS cookbook_id',
@@ -77,7 +75,7 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
             ->orWhereFullText('cookbooks.slug', $q);
 
         if (!is_null($author)) {
-            return $query->orWhere('cookbooks.user_id', '=', $author_id)->get();
+            return $query->orWhere('cookbooks.user_id', '=', $author->getKey())->get();
         }
 
         return $query->get();
@@ -91,10 +89,6 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
     private function fetchRecipes($q): \Illuminate\Support\Collection
     {
         $author = $this->userService->findWhere($q)->first();
-
-        if ($author instanceof User) {
-            $author_id = $author->getKey();
-        }
 
         $query = DB::table('recipes')
             ->select([
@@ -120,7 +114,7 @@ class MySqlAdapter implements FulltextSearchAdapterInterface
             ->orWhereFullText('recipes.nutritional_detail', $q);
 
         if (!is_null($author)) {
-            return $query->orWhere('recipes.user_id', '=', $author_id)->get();
+            return $query->orWhere('recipes.user_id', '=', $author->getKey())->get();
         }
 
         return $query->get();

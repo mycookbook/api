@@ -44,8 +44,8 @@ login: ## Creates a new user/token or generate new token for given user
 test_unit: ## Run unit testsuite
 	@php vendor/bin/phpunit --testsuite=Unit
 
-test_api: ## Run Api tests
-	@php vendor/bin/phpunit --testsuite=Api
+test_feature: ## Run Feature tests
+	@php vendor/bin/phpunit --testsuite=Feature
 
 test: ## Run the entire test suites
 	@php vendor/bin/phpunit tests/
@@ -84,3 +84,5 @@ prune_containers: ## Remove the containers
 prune_volumes: ## Removes dangling volumes
 	@docker volume prune
 
+static_analysis:
+	@php ./vendor/bin/phpstan analyse --memory-limit=2G

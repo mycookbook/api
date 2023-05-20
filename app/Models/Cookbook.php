@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -18,7 +20,7 @@ class Cookbook extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'name', 'description', 'bookCoverImg', 'user_id', 'flag_id', 'slug', 'alt_text', 'tags'
@@ -155,7 +157,7 @@ class Cookbook extends Model
      */
     public function getContributorsAttribute(): array
     {
-        $contributor_ids = $this->recipes()->get()->pluck('user_id')->toArray();
+        $contributor_ids = $this->recipes()->pluck('user_id')->toArray();
 
         return array_values(array_unique($contributor_ids));
     }
