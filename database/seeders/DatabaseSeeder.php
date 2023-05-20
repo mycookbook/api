@@ -1,8 +1,10 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class DatabaseSeeder
@@ -107,8 +109,8 @@ class DatabaseSeeder extends Seeder
                     'category_id' => 1,
                     'user_id' => $admin->id,
                     'resource_type' => 'cookbook',
-                    'created_at' => new DateTime(),
-                    'updated_at' => new DateTime(),
+                    'created_at' => new \DateTime(),
+                    'updated_at' => new \DateTime(),
                     'alt_text' => '5 trays containing nigerian party food arranged in one line',
                 ]);
 
@@ -252,8 +254,8 @@ class DatabaseSeeder extends Seeder
                 'flag_id' => $flagId,
                 'user_id' => $random_author_id,
                 'resource_type' => 'cookbook',
-                'created_at' => new DateTime(),
-                'updated_at' => new DateTime(),
+                'created_at' => new \DateTime(),
+                'updated_at' => new \DateTime(),
                 'alt_text' => 'sample image',
             ]);
 
