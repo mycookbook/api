@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class SearchController extends Controller
@@ -31,22 +33,28 @@ class SearchController extends Controller
      */
     public function getSearchResults(Request $request): \Illuminate\Http\JsonResponse
     {
+        Log::info('API request started', ['payload' => $request->all()]);
+
         $validator = Validator::make($request->all(), [
             'query' => 'required',
         ]);
 
         if ($validator->fails()) {
+            $errors =  $validator->errors();
+
+            Log::debug('Invalid request', $errors);
+
             return response()->json([
-                'errors' => $validator->errors(),
-            ], 422);
+                'errors' => $errors,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $searchQuery = $request->get("query");
         $tags = explode(" ", $searchQuery);
 
-        if (str_starts_with($searchQuery, ":tags|cookbooks ")) {
+        if (str_starts_with($searchQuery, ":tags|cookbooks")) {
             $searchQuery = str_replace(",", "|", $searchQuery);
-            $searchQuery = str_replace(":tags|cookbooks ", "", $searchQuery);
+            $searchQuery = str_replace(":tags|cookbooks", "", $searchQuery);
             $tags = explode("|", $searchQuery);
             $searchTags = [];
 

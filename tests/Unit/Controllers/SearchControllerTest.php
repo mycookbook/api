@@ -9,7 +9,10 @@ use App\Http\Requests\SearchRequest;
 use App\Models\Cookbook;
 use App\Models\Recipe;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 
 class SearchControllerTest extends \TestCase
 {
@@ -18,6 +21,23 @@ class SearchControllerTest extends \TestCase
         $searchController = new SearchController();
 
         $this->assertInstanceOf(Controller::class, $searchController);
+    }
+
+    public function test_it_responds_with_422_if_request_validation_fails()
+    {
+        $request = $this->mock(Request::class);
+        $request->shouldReceive('all')->andReturn([]);
+
+        $searchController = new SearchController();
+
+        $response = $searchController->getSearchResults($request);
+
+        $decoded = json_decode($response->getContent(), true);
+
+        $this->assertArrayHasKey('errors', $decoded);
+        $this->assertArrayHasKey('query', $decoded["errors"]);
+        $this->assertSame("The query field is required.", $decoded["errors"]["query"][0]);
+        $this->assertSame($response->getStatusCode(), Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function test_it_can_return_search_results_for_the_tag_cookbooks_query_syntax()
@@ -31,16 +51,28 @@ class SearchControllerTest extends \TestCase
         $cookbook = Cookbook::factory()->make([
             'name' => 'test',
             'user_id' => $user_id,
-            'tags' => 'seasonal,fresh,nasty'
+            'tags' => 'seasonal,fresh,nasty',
+            'resource_type' => 'cookbook'
         ]);
 
         $cookbook->save();
 
         $search = new SearchController();
 
-        $response = $search->getSearchResults(new SearchRequest([
-            'query' => ':tags|cookbooks seasonal'
-        ]));
+        $mockRequest = $this->mock(SearchRequest::class);
+
+        $queryString = ':tags|cookbooks seasonal';
+
+        $mockRequest
+            ->shouldReceive('all')
+            ->andReturn(['query' => $queryString]);
+
+        $mockRequest
+            ->shouldReceive('get')
+            ->with('query')
+            ->andReturn($queryString);
+
+        $response = $search->getSearchResults($mockRequest);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -50,20 +82,49 @@ class SearchControllerTest extends \TestCase
 
         foreach ($decoded['response'] as $key => $response) {
             $this->assertArrayHasKey('id', $response);
+            $this->assertSame($response['id'], $cookbook->getKey());
+
             $this->assertArrayHasKey('name', $response);
+            $this->assertSame($response['name'], $cookbook->name);
+
             $this->assertArrayHasKey('description', $response);
+            $this->assertSame($response['description'], $cookbook->description);
+
             $this->assertArrayHasKey('bookCoverImg', $response);
+            $this->assertSame($response['bookCoverImg'], $cookbook->bookCoverImg);
+
             $this->assertArrayHasKey('created_at', $response);
+            $this->assertSame($response['created_at'], $cookbook->created_at);
+
             $this->assertArrayHasKey('updated_at', $response);
+
             $this->assertArrayHasKey('slug', $response);
+            $this->assertSame($response['slug'], $cookbook->slug);
+
             $this->assertArrayHasKey('flag_id', $response);
+            $this->assertSame($response['flag_id'], $cookbook->flag_id);
+
             $this->assertArrayHasKey('resource_type', $response);
+            $this->assertSame($response['resource_type'], $cookbook->resource_type);
+
             $this->assertArrayHasKey('is_locked', $response);
+            $this->assertSame($response['is_locked'], $cookbook->is_locked);
+
             $this->assertArrayHasKey('alt_text', $response);
+            $this->assertSame($response['alt_text'], $cookbook->alt_text);
+
             $this->assertArrayHasKey('tags', $response);
+            $this->assertSame($response['tags'], $cookbook->tags);
+
             $this->assertArrayHasKey('recipes_count', $response);
+            $this->assertSame($response['recipes_count'], $cookbook->recipes_count);
+
             $this->assertArrayHasKey('categories', $response);
+            $this->assertSame(count($response['categories']), $cookbook->categories()->get()->count());
+
             $this->assertArrayHasKey('author', $response);
+            $this->assertSame($response['author']['name'], $cookbook->author()->name);
+
             $this->assertArrayHasKey('_links', $response);
         }
     }
