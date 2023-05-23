@@ -67,7 +67,7 @@ class SearchController extends Controller
             );
         }
 
-        if (str_starts_with($searchQuery, ":tags|recipes ")) {
+        if (str_starts_with($searchQuery, ":tags|recipes")) {
             return $this->jsonResponse(
                 $this->service->getAllRecipesByTag(end($tags))
             );
