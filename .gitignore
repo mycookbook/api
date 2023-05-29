@@ -7,3 +7,4 @@ build/
 .DS_Store
 storage/framework/
 node_modules/
+.phpunit.result.cache

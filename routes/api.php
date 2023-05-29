@@ -9,13 +9,6 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-*/
-
 Route::group(['prefix' => 'v1'], function () {
 
     Route::get('/ping', function () {
@@ -39,7 +32,7 @@ Route::group(['prefix' => 'v1'], function () {
     |--------------------------------------------------------------------------
     |
     */
-    Route::prefix('/auth')->middleware(['cors'])->group(function() {
+    Route::prefix('/auth')->group(function() {
 
         Route::post('/register', [UserController::class, 'store']);
 
@@ -120,4 +113,4 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('/categories', 'CategoryController@index');
 
     Route::post('/add-clap', 'RecipeController@addClap');
-});
+})->middleware(['api']);
