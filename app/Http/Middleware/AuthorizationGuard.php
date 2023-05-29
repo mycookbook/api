@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AuthorizationGuard
 {
     /**
-     * Handle an incoming request. Based on Asm89\Stack\Cors by asm89
+     * Handle an incoming request. Based on Asm89\Stack\HandleCors by asm89
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
