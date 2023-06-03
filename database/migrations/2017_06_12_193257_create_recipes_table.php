@@ -26,6 +26,7 @@ class CreateRecipesTable extends Migration
 
                 $table->integer('user_id')->unsigned();
                 $table->integer('cookbook_id')->unsigned();
+                $table->integer('nationality')->unsigned();
 
                 $table->timestamps();
             }
