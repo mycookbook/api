@@ -192,7 +192,7 @@ class Recipe extends Model
      */
     public function getCommentsAttribute(): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->hasMany(Comment::class)->get();
+        return $this->hasMany(Comment::class)->get()->sortByDesc('updated_at')->values();
     }
 
     /**

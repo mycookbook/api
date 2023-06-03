@@ -13,6 +13,7 @@ use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use function Clue\StreamFilter\fun;
 
 class SearchService
 {
@@ -302,6 +303,7 @@ class SearchService
             return collect($recipes)->sortByDesc('updated_at')->filter(function($recipe) {
                 return $recipe['is_draft'] === false;
             })->values();
+
         }
 
         return new Collection();
