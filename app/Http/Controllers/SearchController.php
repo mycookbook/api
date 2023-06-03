@@ -122,6 +122,12 @@ class SearchController extends Controller
             );
         }
 
+        if (str_starts_with($searchQuery, ":me|following")) {
+            return $this->jsonResponse(
+                $this->service->getFollowing()
+            );
+        }
+
         if ($searchQuery === "cookbooks") {
             return response()->json([
                 'response' => $this->service->getMostRecentCookbooks(),
