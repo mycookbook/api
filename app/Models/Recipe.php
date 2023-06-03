@@ -34,7 +34,8 @@ class Recipe extends Model
         'tags',
         'claps',
         'course',
-        'cuisine'
+        'cuisine',
+        'nationality',
     ];
 
     protected $hidden = ['user_id'];
@@ -59,7 +60,9 @@ class Recipe extends Model
         'comments',
         'servings',
         'prep_time',
-        'is_draft'
+        'is_draft',
+        'cookbook_meta_data',
+        'proudly'
     ];
 
     /**
@@ -189,7 +192,7 @@ class Recipe extends Model
      */
     public function getCommentsAttribute(): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->hasMany(Comment::class)->get();
+        return $this->hasMany(Comment::class)->get()->sortByDesc('updated_at')->values();
     }
 
     /**
@@ -222,5 +225,15 @@ class Recipe extends Model
         $draft = Draft::where(["resource_id" => $this->getKey()])->first();
 
         return $draft instanceof Draft;
+    }
+
+    public function getCookbookMetaDataAttribute()
+    {
+        return $this->cookbook()->get(['name', 'slug']);
+    }
+
+    public function getProudlyAttribute()
+    {
+        return Flag::find($this->attributes['nationality']);
     }
 }

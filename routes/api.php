@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CookbookController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\SearchController;
@@ -113,4 +114,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('/categories', 'CategoryController@index');
 
     Route::post('/add-clap', 'RecipeController@addClap');
+
+    Route::post('/comments', [CommentController::class, 'addComment']);
 })->middleware(['api']);
