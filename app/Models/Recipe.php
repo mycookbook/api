@@ -234,6 +234,6 @@ class Recipe extends Model
 
     public function getProudlyAttribute()
     {
-        return Flag::find($this->nationality);
+        return Flag::find($this->attributes['nationality']);
     }
 }
