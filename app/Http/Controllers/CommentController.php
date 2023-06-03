@@ -15,8 +15,9 @@ class CommentController extends Controller
 {
     public function addComment(Request $request)
     {
+        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
-            
+
             $payload = $request->only([
                 'resource-type', 'resource-id', 'comment'
             ]);
