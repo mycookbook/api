@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\CategoryCookbook;
 use App\Models\Cookbook;
 use App\Models\CookbookUser;
+use App\Models\Following;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -279,6 +280,27 @@ class SearchService
             return Recipe::where("name", "like", "%".$recipeName."%")->get();
         }
 
-        return collect([]);
+        return new Collection();
+    }
+
+    public function getFollowing()
+    {
+        /** @phpstan-ignore-next-line */
+        if ($me = JWTAuth::parseToken()->user()) {
+            $recipes = [];
+            $following = Following::where(['follower_id' => $me->getKey()])->pluck('following')->toArray();
+
+            foreach ($following as $f) {
+                $lastFiveRecipes = Recipe::where(['user_id' => $f])->latest()->take(5)->get()->toArray();
+
+                foreach ($lastFiveRecipes as $v) {
+                    $recipes[] = $v;
+                }
+            }
+
+            return collect($recipes)->shuffle();
+        }
+
+        return new Collection();
     }
 }
