@@ -13,6 +13,7 @@ use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use function Clue\StreamFilter\fun;
 
 class SearchService
 {
@@ -291,14 +292,18 @@ class SearchService
             $following = Following::where(['follower_id' => $me->getKey()])->pluck('following')->toArray();
 
             foreach ($following as $f) {
-                $lastFiveRecipes = Recipe::where(['user_id' => $f])->latest()->take(5)->get()->toArray();
+                $lastFiveRecipes = Recipe::where(['user_id' => $f])
+                    ->latest()->take(5)->get()->toArray();
 
                 foreach ($lastFiveRecipes as $v) {
                     $recipes[] = $v;
                 }
             }
 
-            return collect($recipes)->shuffle();
+            return collect($recipes)->sortByDesc('updated_at')->filter(function($recipe) {
+                return $recipe['is_draft'] === false;
+            })->values();
+
         }
 
         return new Collection();

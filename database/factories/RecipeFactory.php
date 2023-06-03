@@ -31,6 +31,7 @@ class RecipeFactory extends Factory
             'summary' => fake()->sentence(180),
             'nutritional_detail' => 'low carbs',
             'calorie_count' => 1300,
+            'nationality' => 1
         ];
     }
 }
