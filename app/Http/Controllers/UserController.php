@@ -8,12 +8,15 @@ use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
 use App\Models\EmailVerification;
+use App\Models\Following;
 use App\Models\User;
 use App\Services\UserService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Class UserController
@@ -122,5 +125,76 @@ class UserController extends Controller
         } else {
             dispatch(new TriggerEmailVerificationProcess($payload['user_id']));
         }
+    }
+
+    public function followUser(Request $request)
+    {
+        /** @phpstan-ignore-next-line */
+        if ($user = JWTAuth::parseToken()->user()) {
+            if ($toFollow = $request->get('toFollow')) {
+                $userToFollow = $this->service->findWhere($toFollow)->first();
+
+                if ($userToFollow instanceof User) {
+                    /** @var User $user */
+                    $user = User::findOrFail($user->getKey());
+
+                    if (!$user->isAlreadyFollowing($userToFollow)) {
+                        $followingsCount = $user->following;
+                        $followingsCount += 1;
+
+                        $user->update(['following' => $followingsCount]);
+
+                        $following = new Following([
+                            'follower_id' => $user->getKey(),
+                            'following' => $userToFollow->getKey()
+                        ]);
+
+                        $following->save();
+
+                        return response()->json($this->getWhoToFollowData($user), Response::HTTP_OK);
+                    }
+
+                    return response()->noContent(Response::HTTP_OK);
+                }
+            }
+
+            return response()->json(['error', 'Bad request.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json([
+            'error', 'Your login session has expired. Please login.'
+        ], Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * TODO: Implement this
+     * The logic to get who to follow is undecided yet
+     * For now, this just returns the latest five unfollowed users in the database
+     */
+    public function getWhoToFollow()
+    {
+        /** @phpstan-ignore-next-line */
+        if ($user = JWTAuth::parseToken()->user()) {
+           return $this->getWhoToFollowData($user);
+        }
+
+        return response()->json([
+            'error', 'Your login session has expired. Please login.'
+        ], Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function getWhoToFollowData(User $user)
+    {
+        $followings = Following::where(['follower_id' => $user->getKey()])->pluck('following')->toArray();
+        $latest = User::whereNotIn('id', $followings)->latest()->take(5)->get();
+
+        return $latest->map(function($user) {
+            return [
+                'followers' => $user->following,
+                'author' => $user->name,
+                'avatar' => $user->avatar,
+                'handle' => $user->name_slug
+            ];
+        });
     }
 }

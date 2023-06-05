@@ -116,4 +116,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/add-clap', 'RecipeController@addClap');
 
     Route::post('/comments', [CommentController::class, 'addComment']);
+
+    Route::post('/follow', [UserController::class, 'followUser']);
+
+    Route::get('/who-to-follow', [UserController::class, 'getWhoToFollow']);
 })->middleware(['api']);
