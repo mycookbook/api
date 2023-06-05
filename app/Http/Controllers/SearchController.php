@@ -123,9 +123,15 @@ class SearchController extends Controller
         }
 
         if (str_starts_with($searchQuery, ":me|following")) {
-            return $this->jsonResponse(
-                $this->service->getFollowing()
-            );
+            $response = $this->service->getFollowing();
+
+            if ($response->isNotEmpty()) {
+                return $this->jsonResponse($response);
+            }
+
+            return response()->json([
+                'error', 'Your login session has expired. Please login.'
+            ], 401);
         }
 
         if ($searchQuery === "cookbooks") {

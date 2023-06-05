@@ -13,7 +13,6 @@ use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use function Clue\StreamFilter\fun;
 
 class SearchService
 {

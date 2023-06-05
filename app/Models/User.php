@@ -263,4 +263,11 @@ class User extends Authenticatable implements JWTSubject
 
         return in_array($this->email, $earlyBirds);
     }
+
+    public function isAlreadyFollowing(User $user): bool
+    {
+        $followings = Following::where(['follower_id' => $this->getKey()])->pluck('following')->toArray();
+
+        return in_array($user->getKey(), $followings);
+    }
 }
