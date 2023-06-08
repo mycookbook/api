@@ -186,7 +186,9 @@ class UserController extends Controller
     private function getWhoToFollowData(User $user)
     {
         $followings = Following::where(['follower_id' => $user->getKey()])->pluck('following')->toArray();
-        $latest = User::whereNotIn('id', $followings)->latest()->take(5)->get();
+        $followings[] = $user->getKey();
+
+        $latest = User::whereNotIn('id', $followings)->latest()->take(3)->get();
 
         return $latest->map(function($user) {
             return [
