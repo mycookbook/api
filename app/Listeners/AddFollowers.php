@@ -15,7 +15,7 @@ class AddFollowers
      */
     public function handle(UserIsAuthenticated $event): void
     {
-        $user = User::find($event->user);
+        $user = User::find($event->user->getKey());
 
         if ($user->followers == 0) {
             $follow = new Following(
