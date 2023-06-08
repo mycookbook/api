@@ -307,4 +307,9 @@ class SearchService
 
         return new Collection();
     }
+
+    public function getForYou()
+    {
+        return new Collection();
+    }
 }

@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
@@ -131,7 +132,19 @@ class SearchController extends Controller
 
             return response()->json([
                 'error', 'Your login session has expired. Please login.'
-            ], 401);
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (str_starts_with($searchQuery, ":me|for-you")) {
+            $response = $this->service->getForYou();
+
+            if ($response->isNotEmpty()) {
+                return $this->jsonResponse($response);
+            }
+
+            return response()->json([
+                'error', 'Your login session has expired. Please login.'
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         if ($searchQuery === "cookbooks") {

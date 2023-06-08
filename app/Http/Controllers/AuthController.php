@@ -202,6 +202,7 @@ class AuthController extends Controller
                     return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
                 }
 
+                //todo: if user does not have followers, add atleast one follwer, distpahc ane vent to handle this
                 $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
                         'token' => $token,
                         '_d' => $user->getSlug(),
