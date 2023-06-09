@@ -49,6 +49,7 @@ class CommentController extends Controller
 
     public function destroyComment(Request $request)
     {
+        /** @phpstan-ignore-next-line */
         if (JWTAuth::parseToken()->user()) {
 
             $payload = $request->only(['comment-id']);
