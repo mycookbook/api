@@ -117,6 +117,8 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::post('/comments', [CommentController::class, 'addComment']);
 
+    Route::post('/comments/destroy', [CommentController::class, 'destroyComment']);
+
     Route::post('/follow', [UserController::class, 'followUser']);
 
     Route::get('/who-to-follow', [UserController::class, 'getWhoToFollow']);
