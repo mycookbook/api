@@ -46,4 +46,28 @@ class CommentController extends Controller
 
         throw new ApiException('You are not suthorized to perfrom this action.');
     }
+
+    public function destroyComment(Request $request)
+    {
+        if (JWTAuth::parseToken()->user()) {
+
+            $payload = $request->only(['comment-id']);
+
+            try {
+                $comment = Comment::findOrFail($request->only(['comment-id']))->first();
+                return response()->json(['deleted' => $comment->delete()]);
+            } catch (\Exception $exception) {
+                Log::debug(
+                    'comment deletion failed.',
+                    ['error' => $exception, 'payload' => $payload]
+                );
+
+                return response()->json([
+                    'error' => 'There was an error processing this request. Please try again later.'
+                ], 400);
+            }
+        }
+
+        throw new ApiException('You are not suthorized to perfrom this action.');
+    }
 }
