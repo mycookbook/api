@@ -210,7 +210,7 @@ class UserController extends Controller
             try {
                 $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
 
-                if (!$hasRespondedAlready->pluck('response')->first()) {
+                if (!$hasRespondedAlready->pluck('response')->get()->first()) {
                     $userFeedback = new UserFeedback([
                         'user_id' => $user->getKey(),
                         'type' => 'feedback',
