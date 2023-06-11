@@ -202,7 +202,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getOnboardingAttribute(): Collection
     {
-        $feedback = UserFeedback::where(['user_id' => $this->getKey(), 'type' => 'feedback'])->pluck('response')->first();
+        $feedback = collect(UserFeedback::where(['user_id' => $this->getKey(), 'type' => 'feedback'])->pluck('response')->toArray())->first();
 
         return collect(['likelihoodToShare' => $feedback]);
     }
