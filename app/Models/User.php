@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -20,7 +21,16 @@ class User extends Authenticatable implements JWTSubject
      * @var array<string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'following', 'followers', 'name_slug', 'email_verified', 'avatar', 'pronouns', 'about',
+        'name',
+        'email',
+        'password',
+        'following',
+        'followers',
+        'name_slug',
+        'email_verified',
+        'avatar',
+        'pronouns',
+        'about',
     ];
 
     protected $hidden = [
@@ -36,7 +46,8 @@ class User extends Authenticatable implements JWTSubject
         'contributions',
         'is_verified',
         'contact_detail',
-        'resource_type'
+        'resource_type',
+        'onboarding'
     ];
 
     /**
@@ -187,6 +198,13 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return '10K+';
+    }
+
+    public function getOnboardingAttribute(): Collection
+    {
+        $feedback = collect(UserFeedback::where(['user_id' => $this->getKey(), 'type' => 'feedback'])->pluck('response')->toArray())->first();
+
+        return collect(['likelihoodToShare' => $feedback]);
     }
 
     /**

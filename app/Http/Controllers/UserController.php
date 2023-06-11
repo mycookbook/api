@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiException;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
 use App\Models\EmailVerification;
 use App\Models\Following;
 use App\Models\User;
+use App\Models\UserFeedback;
 use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -198,5 +200,39 @@ class UserController extends Controller
                 'handle' => $user->name_slug
             ];
         });
+    }
+
+    public function addFeedback(Request $request)
+    {
+        /** @phpstan-ignore-next-line */
+        if ($user = JWTAuth::parseToken()->user()) {
+
+            try {
+                $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
+
+                if (collect($hasRespondedAlready->pluck('response')->toArray())->isEmpty()) {
+                    $userFeedback = new UserFeedback([
+                        'user_id' => $user->getKey(),
+                        'type' => 'feedback',
+                        'response' =>  $request->get('choice', 'still-thinking')
+                    ]);
+
+                    return response()->json(['success' => $userFeedback->save()]);
+                }
+
+                return response()->json([
+                    'success' => $hasRespondedAlready->first()->update([
+                        'response' =>  $request->get('choice', 'still-thinking')
+                    ])
+                ]);
+            } catch (ApiException $exception){
+                Log::debug('error creating user feedback', ['exception' => $exception]);
+                return response()->json(['error', 'There was an error processing this request. Please try again later.'], $exception->getCode());
+            }
+        }
+
+        return response()->json([
+            'error', 'Your login session has expired. Please login.'
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }
