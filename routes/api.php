@@ -124,4 +124,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('/who-to-follow', [UserController::class, 'getWhoToFollow']);
 
     Route::post('/feedback', [UserController::class, 'addFeedback']);
+
+    Route::post('/report-recipe', [RecipeController::class, 'report']);
 })->middleware(['api']);
