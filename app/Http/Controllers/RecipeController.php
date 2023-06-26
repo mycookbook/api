@@ -152,14 +152,25 @@ class RecipeController extends Controller
     public function destroy(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
-            $request->user()->isSuper() &&
-            $jwtAuth->parseToken()->check()
+            $jwtAuth->parseToken()->check() &&
+            $request->user()->isSuper()
         ) {
             return $this->service->delete($recipeId);
         }
 
         return response()->json([
             'error' => 'You are not authorized to perform this action.'
-        ], 401);
+        ], Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function report(Request $request, $recipeId, JWT $jwtAuth)
+    {
+        if ($jwtAuth->parseToken()->check()) {
+            return response()->json(['message' => 'feedback submitted.']);
+        }
+
+        return response()->json([
+            'error' => 'You are not authorized to perform this action.'
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }
