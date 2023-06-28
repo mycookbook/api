@@ -163,7 +163,7 @@ class RecipeController extends Controller
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function report(Request $request, $recipeId, JWT $jwtAuth)
+    public function report(Request $request, JWT $jwtAuth)
     {
         if ($jwtAuth->parseToken()->check()) {
             return response()->json(['message' => 'feedback submitted.']);
