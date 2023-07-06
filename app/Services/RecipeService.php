@@ -9,6 +9,7 @@ use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\Cookbook;
 use App\Models\Draft;
+use App\Models\Flag;
 use App\Models\Recipe;
 use App\Utils\IngredientMaker;
 use Carbon\Carbon;
@@ -106,6 +107,8 @@ class RecipeService extends BaseService implements serviceInterface
 
                 $payload["tags"] = $tagsArray->toArray();
             }
+
+            $payload["nationality"] = Flag::where(["flag" => $payload["nationality"]])->first()->getKey();
 
             $recipe = new Recipe($payload);
 
