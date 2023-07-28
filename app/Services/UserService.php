@@ -8,6 +8,7 @@ use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\User;
 use App\Models\UserContactDetail;
+use App\Utils\DbHelper;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -48,7 +49,7 @@ class UserService extends BaseService implements serviceInterface
             'password' => (new BcryptHasher)->make($request->password),
             'following' => 0,
             'followers' => 0,
-            'name_slug' => slugify($request->name),
+            'name_slug' => DbHelper::generateUniqueSlug($request->name, 'users', 'name_slug'),
             'avatar' => 'https://bit.ly/3m3M73g',
         ]);
 

@@ -8,6 +8,7 @@ use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\Category;
 use App\Models\Cookbook;
+use App\Utils\DbHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -78,7 +79,7 @@ class CookbookService extends BaseService implements serviceInterface
         }
 
         /** @phpstan-ignore-next-line  */
-        $cookbook->slug = slugify($request->name);
+        $cookbook->slug = DbHelper::generateUniqueSlug($request->name, 'cookbooks', 'slug');
 
         if ($cookbook->save()) {
             /** @phpstan-ignore-next-line  */

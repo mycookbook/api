@@ -253,7 +253,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function ownRecipe($recipeId)
     {
-        $recipe = Recipe::findOrFail($recipeId)->first();
+        $recipe = Recipe::findOrFail($recipeId);
 
         return ($this->getKey() == $recipe->user_id);
     }

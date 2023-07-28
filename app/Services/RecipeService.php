@@ -11,6 +11,7 @@ use App\Models\Cookbook;
 use App\Models\Draft;
 use App\Models\Flag;
 use App\Models\Recipe;
+use App\Utils\DbHelper;
 use App\Utils\IngredientMaker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -91,7 +92,7 @@ class RecipeService extends BaseService implements serviceInterface
                 'cuisine'
             ]);
 
-            $payload['slug'] = slugify($request->name);
+            $payload['slug'] = DbHelper::generateUniqueSlug($request->name, 'recipes', 'slug');
             $payload['user_id'] = $user->id;
             $payload['nutritional_detail'] = json_encode([]);
             $payload['prep_time'] = Carbon::now()->toDateTimeString();
@@ -147,9 +148,12 @@ class RecipeService extends BaseService implements serviceInterface
         $recipe = $this->get($id);
         //		$recipe->prep_time
 
+        $payload = $request->all();
+        $payload['slug'] = DbHelper::generateUniqueSlug($payload['name'], 'recipes', 'slug');
+
         return response(
             [
-                'updated' => $recipe->update($request->all()),
+                'updated' => $recipe->update($payload),
             ], Response::HTTP_OK
         );
     }
