@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Exceptions\ApiException;
 use App\Exceptions\CookbookModelNotFoundException;
+use App\Exceptions\InvalidPayloadException;
 use App\Interfaces\serviceInterface;
 use App\Models\Cookbook;
 use App\Models\Draft;
@@ -14,8 +15,13 @@ use App\Models\Recipe;
 use App\Utils\DbHelper;
 use App\Utils\IngredientMaker;
 use Carbon\Carbon;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Validation\UnauthorizedException;
 
 /**
  * Class RecipeService
@@ -138,24 +144,42 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param Request $request
      * @param $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response
      * @throws CookbookModelNotFoundException
+     * @throws InvalidPayloadException
      */
     public function update(Request $request, $id)
     {
-        //TODO: if user dont own recipe, can update it
+        if ($request->user()->ownRecipe($id)) {
+            $payload = $request->only($this->getFillables());
 
-        $recipe = $this->get($id);
-        //		$recipe->prep_time
+            $this->validatePayload($payload);
 
-        $payload = $request->all();
-        $payload['slug'] = DbHelper::generateUniqueSlug($payload['name'], 'recipes', 'slug');
+            $recipe = $this->get($id);
 
-        return response(
-            [
-                'updated' => $recipe->update($payload),
-            ], Response::HTTP_OK
-        );
+            if ($name = Str::replace('-', " ", Arr::get($payload, 'name'))) {
+                if ($name != $recipe->name) {
+                    $payload['slug'] = DbHelper::generateUniqueSlug($name, 'recipes', 'slug');
+                }
+                $payload['name'] = $name;
+            }
+
+            if ($nationality = Arr::get($payload, "nationality")) {
+                $payload['nationality'] = Flag::where(["id" => $nationality])
+                ->orWhere(["flag" => $nationality])
+                ->orWhere(["nationality" => $nationality])
+                ->first()
+                ->getKey();
+            }
+
+            return response(
+                [
+                    'updated' => $recipe->update($payload),
+                ], Response::HTTP_OK
+            );
+        }
+
+        throw new UnauthorizedException("You are not authorized to perform this action.");
     }
 
     /**
@@ -218,5 +242,95 @@ class RecipeService extends BaseService implements serviceInterface
     public function findWhere($q)
     {
         // TODO: Implement findWhere() method.
+    }
+
+    private function validatePayload(array $payload)
+    {
+        $sources = [];
+
+        //cookbook must exist
+        if (!Cookbook::find($payload['cookbook_id'])) {
+            $sources[] = [
+                'cookbook_id' => $payload['cookbook_id'] . ' does not exist.'
+            ];
+        }
+
+        //nationality must exist
+        $nationality = Arr::get($payload, 'nationality');
+        If (!Flag::where(["id" => $nationality])
+            ->orWhere(["flag" => $nationality])
+            ->orWhere(["nationality" => $nationality])
+            ->first()) {
+            $sources[] = [
+                'nationality' => 'This nationality is unrecognized.'
+            ];
+        }
+
+        //imgUrl
+        If ($imgUrl = Arr::get($payload, 'imgUrl')) {
+            try {
+                exif_imagetype($imgUrl);
+            } catch (\Exception $e) {
+                $sources[] = [
+                    'imgUrl' => $imgUrl . ' is not a valid image url.'
+                ];
+            }
+        }
+
+        //descriptin length
+        If ($description = Arr::get($payload, 'description')) {
+            //todo: ai enabled geberrish detection
+            if (Str::wordCount($description) < 100) {
+                $sources[] = [
+                    'description' =>'Description must not be less than 100 words.'
+                ];
+            }
+        }
+
+        //summary length
+        If ($summary = Arr::get($payload, 'summary')) {
+            //todo: ai enabled geberrish detection
+            if (Str::wordCount($summary) < 50) {
+                $sources[] = [
+                    'summary' => 'Summary must not be less than 50 words.'
+                ];
+            }
+        }
+
+        //ingredients must be a list
+        If ($ingredients = Arr::get($payload, 'ingredients')) {
+            If (!is_array($ingredients)) {
+                $sources[] = [
+                    'ingredients' => 'Ingredients must be a list.'
+                ];
+            }
+
+            foreach($ingredients as $key => $value) {
+                $keys = array_keys($value);
+                if ($keys !== ['name', 'unit']) {
+                    $sources[] = [
+                        'ingredients' => [
+                            'invalid_keys' => [
+                                'position' => $key,
+                                'keys' => $keys
+                            ]
+                        ]
+                    ];
+                }
+            }
+        }
+
+        //tags must be a list
+        If ($tags = Arr::get($payload, 'tags')) {
+            If (!is_array($tags)) {
+                $sources[] = [
+                    'tags' => 'Tags must be a list.'
+                ];
+            }
+        }
+
+        if ($sources) {
+            throw new InvalidPayloadException("The payload is invalid.", ['sources' => $sources]);
+        }
     }
 }

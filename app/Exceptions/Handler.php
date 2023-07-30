@@ -60,6 +60,12 @@ class Handler extends ExceptionHandler
             ], Response::HTTP_UNAUTHORIZED);
         }
 
+        if ($throwable instanceof InvalidPayloadException) {
+            return response()->json(array_merge([
+                'error' => $throwable->getMessage()
+            ], $throwable->getContext()), $throwable->getCode());
+        }
+
         return parent::render($request, $throwable);
     }
 }
