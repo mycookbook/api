@@ -253,21 +253,24 @@ class RecipeService extends BaseService implements serviceInterface
         $sources = [];
 
         //cookbook must exist
-        if (!Cookbook::find($payload['cookbook_id'])) {
-            $sources[] = [
-                'cookbook_id' => $payload['cookbook_id'] . ' does not exist.'
-            ];
+        if ($cookbook_id = Arr::get($payload, 'cookbook_id')) {
+            if (!Cookbook::find($cookbook_id)) {
+                $sources[] = [
+                    'cookbook_id' => $cookbook_id . ' does not exist.'
+                ];
+            }
         }
 
         //nationality must exist
-        $nationality = Arr::get($payload, 'nationality');
-        If (!Flag::where(["id" => $nationality])
-            ->orWhere(["flag" => $nationality])
-            ->orWhere(["nationality" => $nationality])
-            ->first()) {
-            $sources[] = [
-                'nationality' => 'This nationality is unrecognized.'
-            ];
+        if ($nationality = Arr::get($payload, 'nationality')) {
+            If (!Flag::where(["id" => $nationality])
+                ->orWhere(["flag" => $nationality])
+                ->orWhere(["nationality" => $nationality])
+                ->first()) {
+                $sources[] = [
+                    'nationality' => 'This nationality is unrecognized.'
+                ];
+            }
         }
 
         //imgUrl
