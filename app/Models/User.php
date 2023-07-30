@@ -259,14 +259,12 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * TODO: for now all users are not super
      * This is reserved for strictly cookbook admin
-     *
      * @return bool
      */
     public function isSuper(): bool
     {
-        return false;
+        return $this->hasRole('super');
     }
 
     /**
@@ -287,5 +285,10 @@ class User extends Authenticatable implements JWTSubject
         $followings = Following::where(['follower_id' => $this->getKey()])->pluck('following')->toArray();
 
         return in_array($user->getKey(), $followings);
+    }
+
+    private function hasRole(string $role)
+    {
+        return false;
     }
 }

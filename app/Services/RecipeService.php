@@ -12,6 +12,7 @@ use App\Models\Cookbook;
 use App\Models\Draft;
 use App\Models\Flag;
 use App\Models\Recipe;
+use App\Models\User;
 use App\Utils\DbHelper;
 use App\Utils\IngredientMaker;
 use Carbon\Carbon;
@@ -183,21 +184,24 @@ class RecipeService extends BaseService implements serviceInterface
     }
 
     /**
+     * @param User $user
      * @param $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response
      * @throws CookbookModelNotFoundException
      */
-    public function delete($id)
+    public function delete(User $user, $id)
     {
-        //TODO: if user dont own recipe, cannot delete it
+        if ($user->isSuper()) {
+            $recipe = $this->get($id);
 
-        $recipe = $this->get($id);
+            return response(
+                [
+                    'deleted' => $recipe->delete(),
+                ], Response::HTTP_ACCEPTED
+            );
+        }
 
-        return response(
-            [
-                'deleted' => $recipe->delete(),
-            ], Response::HTTP_ACCEPTED
-        );
+        throw new UnauthorizedException("You are not authorized to perform this action.");
     }
 
     /**
@@ -279,7 +283,7 @@ class RecipeService extends BaseService implements serviceInterface
 
         //descriptin length
         If ($description = Arr::get($payload, 'description')) {
-            //todo: ai enabled geberrish detection
+            //todo: ai enabled giberrish detection
             if (Str::wordCount($description) < 100) {
                 $sources[] = [
                     'description' =>'Description must not be less than 100 words.'
@@ -289,7 +293,7 @@ class RecipeService extends BaseService implements serviceInterface
 
         //summary length
         If ($summary = Arr::get($payload, 'summary')) {
-            //todo: ai enabled geberrish detection
+            //todo: ai enabled giberrish detection
             if (Str::wordCount($summary) < 50) {
                 $sources[] = [
                     'summary' => 'Summary must not be less than 50 words.'
@@ -299,6 +303,7 @@ class RecipeService extends BaseService implements serviceInterface
 
         //ingredients must be a list
         If ($ingredients = Arr::get($payload, 'ingredients')) {
+            $invalid_keys = [];
             If (!is_array($ingredients)) {
                 $sources[] = [
                     'ingredients' => 'Ingredients must be a list.'
@@ -308,15 +313,17 @@ class RecipeService extends BaseService implements serviceInterface
             foreach($ingredients as $key => $value) {
                 $keys = array_keys($value);
                 if ($keys !== ['name', 'unit']) {
-                    $sources[] = [
-                        'ingredients' => [
-                            'invalid_keys' => [
-                                'position' => $key,
-                                'keys' => $keys
-                            ]
-                        ]
+                    $invalid_keys[] =  [
+                        'position' => $key,
+                        'keys' => $keys
                     ];
                 }
+            }
+
+            if ($invalid_keys) {
+                $sources[]['ingredients'] = [
+                    "invalid keys", $invalid_keys
+                ];
             }
         }
 
