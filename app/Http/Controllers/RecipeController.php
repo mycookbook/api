@@ -155,7 +155,7 @@ class RecipeController extends Controller
             $jwtAuth->parseToken()->check() &&
             $request->user()->isSuper()
         ) {
-            return $this->service->delete($recipeId);
+            return $this->service->delete($request->user(), $recipeId);
         }
 
         return response()->json([
