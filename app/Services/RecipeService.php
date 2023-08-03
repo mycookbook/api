@@ -315,17 +315,18 @@ class RecipeService extends BaseService implements serviceInterface
 
             foreach($ingredients as $key => $value) {
                 $keys = array_keys($value);
-                if ($keys !== ['name', 'unit']) {
+                if ($keys !== ['name', 'unit', 'thumbnail']) {
                     $invalid_keys[] =  [
-                        'position' => $key,
-                        'keys' => $keys
+                        'item_'. $key => $value
                     ];
                 }
             }
 
             if ($invalid_keys) {
+                $invalid_keys[] = ["expected_keys" => ['name', 'unit', 'thumbnail']];
                 $sources[]['ingredients'] = [
-                    "invalid keys", $invalid_keys
+                    "invalid keys",
+                    $invalid_keys
                 ];
             }
         }
