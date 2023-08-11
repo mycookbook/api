@@ -5,9 +5,12 @@ declare(strict_types=1);
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CookbookController;
+use App\Http\Controllers\DefinitionsController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\StaticContentController;
 use App\Http\Controllers\UserController;
+use App\Models\Flag;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function () {
@@ -91,9 +94,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/{id}/destroy', [CookbookController::class, 'destroy']);
     });
 
-    Route::get('/definitions', 'DefinitionsController@index');
+    Route::get('/definitions', [DefinitionsController::class, 'index']);
 
-    Route::get('/policies', 'StaticContentController@get');
+    Route::get('/policies', [StaticContentController::class, 'get']);
+
+    Route::get('/flags', array(Flag::class, 'getAll'));
 
     Route::get('/search', [SearchController::class, 'getSearchResults']);
 
