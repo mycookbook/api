@@ -46,4 +46,16 @@ class Flag extends Model
     {
         return $this->belongsToMany('App\Models\Cookbook');
     }
+
+    public function getAll()
+    {
+        return collect($this->all())->transform(function ($i) {
+            return [
+                'id' => $i->id,
+                'code' => $i->flag,
+                'country' => $i->nationality,
+                'nationality' => $i->nationality
+            ];
+        });
+    }
 }
