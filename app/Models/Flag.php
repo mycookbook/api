@@ -49,13 +49,13 @@ class Flag extends Model
 
     public function getAll()
     {
-        return collect($this->all())->transform(function ($i) {
-            return [
-                'id' => $i->id,
-                'code' => $i->flag,
-                'country' => $i->nationality,
-                'nationality' => $i->nationality
-            ];
+        return collect($this->all())->transform(function ($y, $z) {
+            return collect([
+                'id' => $y->id,
+                'code' => $y->flag,
+                'country' => $y->nationality,
+                'nationality' => $y->nationality
+            ]);
         });
     }
 }
