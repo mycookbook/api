@@ -49,7 +49,7 @@ class Flag extends Model
 
     public function getAll()
     {
-        return collect($this->all())->transform(function ($y, $z) {
+        return collect($this->all())->map(function ($y) {
             return collect([
                 'id' => $y->id,
                 'code' => $y->flag,
