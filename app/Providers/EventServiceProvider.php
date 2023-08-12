@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Events\UserIsAuthenticated;
 use App\Listeners\AddFollowers;
+use App\Listeners\SaveTikTokCode;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -30,7 +31,8 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         UserIsAuthenticated::class => [
-            AddFollowers::class
+            AddFollowers::class,
+            SaveTikTokCode::class
         ]
     ];
 

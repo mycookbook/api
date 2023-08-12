@@ -203,7 +203,7 @@ class AuthController extends Controller
                     return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
                 }
 
-                UserIsAuthenticated::dispatch($user);
+                UserIsAuthenticated::dispatch($user, $code);
 
                 $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
                         'token' => $token,
