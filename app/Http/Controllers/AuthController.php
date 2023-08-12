@@ -172,6 +172,7 @@ class AuthController extends Controller
             );
 
             $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
+            dd($userInfo);
 
             if (!empty($userInfo['data']['user'])) {
                 $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
