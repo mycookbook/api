@@ -13,7 +13,7 @@ class SaveTikTokCode
 {
     public function handle(UserIsAuthenticated $event): void
     {
-        $code = Crypt::encryptString($event->code);
+//        $code = Crypt::encryptString($event->code);
         $user_id = $event->user->getKey();
         $db =  DB::table('tiktok_users');
         $timestamps = [
@@ -24,9 +24,9 @@ class SaveTikTokCode
         $tiktok_user = DB::table('tiktok_users')->where(["user_id" => $user_id])->first();
 
         if ($tiktok_user === null) {
-            $db->insert(array_merge(['user_id' => $user_id, 'code' => $code], $timestamps));
+            $db->insert(array_merge(['user_id' => $user_id, 'code' => $event->code], $timestamps));
         } else {
-            $db->update(array_merge(['code' => $code], $timestamps));
+            $db->update(array_merge(['code' => $event->code], $timestamps));
         }
     }
 }
