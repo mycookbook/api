@@ -10,14 +10,21 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserIsAuthenticated
+class TikTokUserIsAuthenticated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    protected User $user;
 
     /**
      * Create a new event instance.
      */
     public function __construct(
-        public User $user, public TikTokUserDto $tikTokUserDto
+        public TikTokUserDto $tikTokUserDto
     ) {}
+
+    public function getUser()
+    {
+        return User::findOrFail($this->tikTokUserDto->getUserId());
+    }
 }

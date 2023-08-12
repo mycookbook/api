@@ -4,29 +4,35 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-use App\Events\UserIsAuthenticated;
+use App\Events\TikTokUserIsAuthenticated;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class SaveTikTokCode
+class UpdateOrCreateTikTokUser
 {
-    public function handle(UserIsAuthenticated $event): void
+    public function handle(TikTokUserIsAuthenticated $event): void
     {
-        $code = Crypt::encryptString($event->code);
-        $user_id = $event->user->getKey();
-        $db =  DB::table('tiktok_users');
+        $user_id = $event->tikTokUserDto->getUserId();
+        $db = DB::table('tiktok_users');
+        $attributes = $event->tikTokUserDto->toArray();
         $timestamps = [
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now()
         ];
 
+        $data = array_merge($attributes, $timestamps);
+
         $tiktok_user = DB::table('tiktok_users')->where(["user_id" => $user_id])->first();
 
-        if ($tiktok_user === null) {
-            $db->insert(array_merge(['user_id' => $user_id, 'code' => $code], $timestamps));
-        } else {
-            $db->update(array_merge(['code' => $code], $timestamps));
+        try {
+            if ($tiktok_user === null) {
+                $db->insert($data);
+            } else {
+                $db->update($data);
+            }
+        } catch (\Exception $exception) {
+            Log::debug("Failed to create or update tiktok user", ['exception' => $exception]);
         }
     }
 }
