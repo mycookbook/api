@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events;
 
+use App\Dtos\TikTokUserDto;
 use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -17,6 +18,6 @@ class UserIsAuthenticated
      * Create a new event instance.
      */
     public function __construct(
-        public User $user, public String $code
+        public User $user, public TikTokUserDto $tikTokUserDto
     ) {}
 }
