@@ -166,13 +166,25 @@ class AuthController extends Controller
                     'json' => [
                         'open_id' => $decoded['data']['open_id'],
                         'access_token' => $decoded['data']['access_token'],
-                        'fields' => ['open_id', 'avatar_url', 'display_name', 'avatar_url_100'],
+                        'fields' => [
+                            'open_id',
+                            'avatar_url',
+                            'display_name',
+                            'avatar_url_100',
+                            'is_verified',
+                            'profile_deep_link',
+                            'bio_description',
+                            'display_name',
+                            'avatar_large_url',
+                            'avatar_url_100',
+                            'union_id',
+                            'video_count'
+                        ],
                     ],
                 ]
             );
 
             $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
-            dd($userInfo);
 
             if (!empty($userInfo['data']['user'])) {
                 $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
@@ -212,10 +224,10 @@ class AuthController extends Controller
                     $userInfo['data']['user']['is_verified'],
                     $userInfo['data']['user']['profile_deep_link'],
                     $userInfo['data']['user']['bio_description'],
-                    $userInfo['data']['user']['bio_description'],
                     $userInfo['data']['user']['display_name'],
                     $userInfo['data']['user']['avatar_large_url'],
                     $userInfo['data']['user']['avatar_url_100'],
+                    $userInfo['data']['user']['avatar_url'],
                     $userInfo['data']['user']['union_id'],
                     $userInfo['data']['user']['video_count']
                 ));

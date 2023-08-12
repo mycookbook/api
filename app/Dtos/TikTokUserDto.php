@@ -27,7 +27,7 @@ class TikTokUserDto
         string $display_name,
         string $avatar_large_url,
         string $avatar_url_100,
-        string  $avatar_url,
+        string $avatar_url,
         string $union_id,
         int $video_count
     ) {
