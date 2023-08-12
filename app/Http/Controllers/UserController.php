@@ -12,6 +12,9 @@ use App\Models\EmailVerification;
 use App\Models\Following;
 use App\Models\User;
 use App\Models\UserFeedback;
+use App\Services\TikTok\AccessToken;
+use App\Services\TikTok\HttpRequestRunner;
+use App\Services\TikTok\Videos;
 use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -232,7 +235,56 @@ class UserController extends Controller
         }
 
         return response()->json([
-            'error', 'Your login session has expired. Please login.'
+            'error' => 'Your login session has expired. Please login.'
+        ], Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function listVideos(HttpRequestRunner $requestRunner)
+    {
+        /** @phpstan-ignore-next-line */
+        if ($user = JWTAuth::parseToken()->user()) {
+            $tikTokUser = $user->getTikTokUser();
+            $errors = [
+                'videos_count' => 0,
+                'videos' => []
+            ];
+
+            if ($tikTokUser === null) {
+                return [
+                    'data' => array_merge($errors, ['error' => [
+                        "You don't have any tiktok videos,",
+                        "Or your account is marked private,",
+                        "Or you denied cookbookshq access to your videos."
+                    ]])
+                ];
+            }
+
+            $code = $tikTokUser->code;
+
+            try {
+                $response = $requestRunner(['code' => $code], false, new AccessToken(), new Videos());
+                $videos = $response->getContents();
+
+                return response()->json([
+                    'data' => [
+                        'videos_count' => 0,
+                        'videos' => $videos
+                    ]
+                ]);
+            } catch (\Exception $exception) {
+                Log::debug("Error listing tiktok user videos", ['exception' => $exception]);
+
+                return [
+                    'data' => array_merge(
+                        $errors,
+                        ['server_error' => 'There was a problem listing your videos. Please try again later.']
+                    )
+                ];
+            }
+        }
+
+        return response()->json([
+            'error' => 'Your login session has expired. Please login.'
         ], Response::HTTP_UNAUTHORIZED);
     }
 }
