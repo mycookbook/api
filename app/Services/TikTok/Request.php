@@ -14,6 +14,8 @@ abstract class Request
         $this->httpClient = new Client();
     }
 
+    public abstract function handle();
+
     public function getEndpoint()
     {
         return $this->endpoint;
