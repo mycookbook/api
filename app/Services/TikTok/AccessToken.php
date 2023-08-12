@@ -7,7 +7,7 @@ use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
 class AccessToken extends Request
 {
-    private $endpoint = 'access-token';
+//    private $endpoint = 'access-token';
 
     public function handle()
     {

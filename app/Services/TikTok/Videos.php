@@ -7,7 +7,7 @@ use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
 class Videos extends Request
 {
-    private $endpoint = 'video-links';
+//    private $endpoint = 'video-links';
 
     public function handle()
     {

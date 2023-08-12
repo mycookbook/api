@@ -166,9 +166,7 @@ class UserController extends Controller
             return response()->json(['error', 'Bad request.'], Response::HTTP_BAD_REQUEST);
         }
 
-        return response()->json([
-            'error', 'Your login session has expired. Please login.'
-        ], Response::HTTP_UNAUTHORIZED);
+        return $this->unauthorizedResponse();
     }
 
     /**
@@ -183,9 +181,7 @@ class UserController extends Controller
            return $this->getWhoToFollowData($user);
         }
 
-        return response()->json([
-            'error', 'Your login session has expired. Please login.'
-        ], Response::HTTP_UNAUTHORIZED);
+        return $this->unauthorizedResponse();
     }
 
     private function getWhoToFollowData(User $user)
@@ -234,9 +230,7 @@ class UserController extends Controller
             }
         }
 
-        return response()->json([
-            'error' => 'Your login session has expired. Please login.'
-        ], Response::HTTP_UNAUTHORIZED);
+        return $this->unauthorizedResponse();
     }
 
     public function listVideos(HttpRequestRunner $requestRunner)
@@ -259,16 +253,13 @@ class UserController extends Controller
                 ];
             }
 
-            $code = $tikTokUser->code;
-
             try {
-                $response = $requestRunner(['code' => $code], false, new AccessToken(), new Videos());
-                $videos = $response->getContents();
+                $response = $requestRunner(['code' => $tikTokUser->code], false, new AccessToken(), new Videos());
 
                 return response()->json([
                     'data' => [
                         'videos_count' => 0,
-                        'videos' => $videos
+                        'videos' => $response->getContents()['videos']
                     ]
                 ]);
             } catch (\Exception $exception) {
@@ -283,8 +274,6 @@ class UserController extends Controller
             }
         }
 
-        return response()->json([
-            'error' => 'Your login session has expired. Please login.'
-        ], Response::HTTP_UNAUTHORIZED);
+        return $this->unauthorizedResponse();
     }
 }
