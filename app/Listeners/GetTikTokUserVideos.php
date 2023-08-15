@@ -2,8 +2,12 @@
 
 namespace App\Listeners;
 
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Table;
+use function Symfony\Component\Translation\t;
 
 class GetTikTokUserVideos
 {
@@ -13,6 +17,8 @@ class GetTikTokUserVideos
     public function handle(object $event): void
     {
         try {
+            $client = new Client();
+            $code = DB::table('tiktok_users')->where(['user_id' => $event->getUser()->getkey()])->first();
             $response = $client->request('POST',
                 'https://open.tiktokapis.com/v2/oauth/token/',
                 [
