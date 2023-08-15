@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Events\TikTokUserIsAuthenticated;
 use App\Listeners\AddFollowers;
+use App\Listeners\GetTikTokUserVideos;
 use App\Listeners\UpdateOrCreateTikTokUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -32,7 +33,8 @@ class EventServiceProvider extends ServiceProvider
 
         TikTokUserIsAuthenticated::class => [
             AddFollowers::class,
-            UpdateOrCreateTikTokUser::class
+            UpdateOrCreateTikTokUser::class,
+            GetTikTokUserVideos::class
         ]
     ];
 
