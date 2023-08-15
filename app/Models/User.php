@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -290,5 +291,10 @@ class User extends Authenticatable implements JWTSubject
     private function hasRole(string $role)
     {
         return false;
+    }
+
+    public function getTikTokUser()
+    {
+        return DB::table('tiktok_users')->where(['user_id' => $this->getKey()])->first();
     }
 }
