@@ -12,7 +12,7 @@ class GetTikTokUserVideos
     public function handle(object $event): void
     {
         $client = new Client();
-        $tiktokUser = $event->getUser();
+        $tikTokUser = $event->getUser();
 
         $response = $client->request('POST',
             'https://open.tiktokapis.com/v2/oauth/token/',
@@ -20,7 +20,7 @@ class GetTikTokUserVideos
                 'form_params' => [
                     'client_key' => config('services.tiktok.client_id'),
                     'client_secret' => config('services.tiktok.client_secret'),
-                    'code' => $tiktokUser->getCode(),
+                    'code' => $tikTokUser->getCode(),
                     'grant_type' => 'authorization_code',
                     'redirect_uri' => 'https://web.cookbookshq.com/callback/tiktok'
                 ],
@@ -29,6 +29,6 @@ class GetTikTokUserVideos
 
         $decoded = json_decode($response->getBody()->getContents(), true);
 
-        dd(array_merge(['code' => $tiktokUser->getCode()], $decoded));
+        dd(array_merge(['code' => $tikTokUser->getCode()], $decoded));
     }
 }

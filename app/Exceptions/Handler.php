@@ -44,6 +44,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $throwable)
     {
+        dd([
+            'e' => $throwable,
+            'm' => $throwable->getMessage()
+        ]);
         if ($throwable instanceof ValidationException) {
             return response()->json($throwable->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
