@@ -30,15 +30,11 @@ class GetTikTokUserVideos
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
-            if ($decoded['error']['code'] == 'ok') {
-                $context = $decoded['error'];
-            } else {
-                DB::table('tiktok_users')
-                    ->insert([
-                        'user_id' => '',
-                        'videos' => json_encode($decoded['data']['videos'])
-                    ]);
-            }
+            DB::table('tiktok_users')
+                ->insert([
+                    'user_id' => '',
+                    'videos' => json_encode($decoded['data']['videos'])
+                ]);
         } catch(\Exception $exception) {
             throw new TikTokException($exception->getMessage(), $context);
         }
