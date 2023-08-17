@@ -220,7 +220,7 @@ class AuthController extends Controller
                 TikTokUserIsAuthenticated::dispatch(new TikTokUserDto(
                     $user->getKey(),
                     $userInfo['data']['user']['open_id'],
-                    $code,
+                    $decoded['data']['access_token'],
                     $userInfo['data']['user']['is_verified'],
                     $userInfo['data']['user']['profile_deep_link'],
                     $userInfo['data']['user']['bio_description'],
