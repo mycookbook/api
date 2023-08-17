@@ -34,7 +34,10 @@ class GetTikTokUserVideos
 
             dd(json_decode($response->getBody()->getContents(), true));
         } catch (\Exception $exception) {
-            dd([$exception, $code]);
+            dd([
+                'e' => $exception,
+                'code' => $code
+            ]);
         }
     }
 }
