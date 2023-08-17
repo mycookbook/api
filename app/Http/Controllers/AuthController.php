@@ -246,7 +246,7 @@ class AuthController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect('https://web.cookbookshq.com/#/errors/?m=We are experiencing a technical difficulty logging you in with TikTok, please try again.' . '<br />See <a href="/#/troubleshooting">troubleshooting</a>');
+            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
         }
     }
 
