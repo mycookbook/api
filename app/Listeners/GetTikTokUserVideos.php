@@ -12,7 +12,7 @@ class GetTikTokUserVideos
     public function handle(object $event): void
     {
         $client = new Client();
-        $tikTokUser = $event->getUser();
+        $tikTokUser = $event->tikTokUserDto;
 
         $response = $client->request('POST',
             'https://open.tiktokapis.com/v2/oauth/token/',
