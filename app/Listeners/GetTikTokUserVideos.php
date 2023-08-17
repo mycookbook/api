@@ -20,7 +20,7 @@ class GetTikTokUserVideos
 
         try {
             $response = $client->request('POST',
-                'https://open.tiktokapis.com/v2/video/list/?fields=cover_image_url,id,title.video_description.duration.height.width.title.embed_html.embed_link',
+                'https://open.tiktokapis.com/v2/video/list/?fields=cover_image_url,id,title,video_description,duration,height,width,title,embed_html,embed_link',
                 [
                     'headers' => [
                         'Authorization' => 'Bearer ' . $tikTokUser->getCode(),
