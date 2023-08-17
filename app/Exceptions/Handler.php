@@ -44,11 +44,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $throwable)
     {
-        dd([
-            'trace' => $throwable->getTraceAsString(),
-            'm' => $throwable->getMessage(),
-            'prev' => $throwable->getPrevious()
-        ]);
         if ($throwable instanceof ValidationException) {
             return response()->json($throwable->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -66,6 +61,12 @@ class Handler extends ExceptionHandler
         }
 
         if ($throwable instanceof InvalidPayloadException) {
+            return response()->json(array_merge([
+                'error' => $throwable->getMessage()
+            ], $throwable->getContext()), $throwable->getCode());
+        }
+
+        if ($throwable instanceof TikTokException) {
             return response()->json(array_merge([
                 'error' => $throwable->getMessage()
             ], $throwable->getContext()), $throwable->getCode());

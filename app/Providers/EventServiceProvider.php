@@ -33,8 +33,8 @@ class EventServiceProvider extends ServiceProvider
 
         TikTokUserIsAuthenticated::class => [
             GetTikTokUserVideos::class,
-            UpdateOrCreateTikTokUser::class,
             AddFollowers::class,
+            UpdateOrCreateTikTokUser::class,
         ]
     ];
 
