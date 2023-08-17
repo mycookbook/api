@@ -67,9 +67,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($throwable instanceof TikTokException) {
-            return response()->json(array_merge([
-                'error' => $throwable->getMessage()
-            ], $throwable->getContext()), $throwable->getCode());
+            return response()->json( ['error' => $throwable->getMessage()]);
         }
 
         return parent::render($request, $throwable);
