@@ -21,6 +21,8 @@ class UpdateOrCreateTikTokUser
             "updated_at" => Carbon::now()
         ];
 
+        unset($attributes['code']);
+
         $data = array_merge($attributes, $timestamps);
 
         $tiktok_user = DB::table('tiktok_users')->where(["user_id" => $user_id])->first();
