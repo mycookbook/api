@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Exceptions\TikTokException;
 use GuzzleHttp\Client;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class GetTikTokUserVideos
@@ -32,8 +33,10 @@ class GetTikTokUserVideos
 
             DB::table('tiktok_users')
                 ->insert([
-                    'user_id' => '',
-                    'videos' => json_encode($decoded['data']['videos'])
+                    'user_id' => $event->tikTokUserDto->getUserId(),
+                    'videos' => json_encode($decoded['data']['videos']),
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
                 ]);
         } catch(\Exception $exception) {
             dd($exception->getMessage());
