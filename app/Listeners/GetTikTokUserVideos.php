@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Exceptions\TikTokException;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class GetTikTokUserVideos
 {
@@ -14,10 +15,11 @@ class GetTikTokUserVideos
     {
         $client = new Client();
         $tikTokUser = $event->tikTokUserDto;
+        $context = [];
 
         try {
             $response = $client->request('POST',
-                'https://open.tiktokapis.com/v2/video/list/?fields=cover_image_url,id,title',
+                'https://open.tiktokapis.com/v2/video/list/?fields=cover_image_url,id,title.video_description.duration.height.width.title.embed_html.embed_link',
                 [
                     'headers' => [
                         'Authorization' => 'Bearer ' . $tikTokUser->getCode(),
@@ -28,9 +30,17 @@ class GetTikTokUserVideos
 
             $decoded = json_decode($response->getBody()->getContents(), true);
 
-            dd(array_merge(['code' => $tikTokUser->getCode()], $decoded));
+            if ($decoded['error']['code'] == 'ok') {
+                $context = $decoded['error'];
+            } else {
+                DB::table('tiktok_users')
+                    ->insert([
+                        'user_id' => '',
+                        'videos' => json_encode($decoded['data']['videos'])
+                    ]);
+            }
         } catch(\Exception $exception) {
-            dd($exception->getMessage());
+            throw new TikTokException($exception->getMessage(), $context);
         }
     }
 }
