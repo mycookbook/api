@@ -47,18 +47,17 @@ class GetTikTokUserVideos
             $db = DB::table('tiktok_users');
 
             $tiktok_user = $db->where(['user_id' => $event->tikTokUserDto->getUserId()])->first();
+            $data = [
+                'videos' => json_encode($decoded['data']['videos']),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ];
 
             if ($tiktok_user === null) {
-                $db->insert([
-                    'user_id' => $event->tikTokUserDto->getUserId(),
-                    'videos' => json_encode($decoded['data']['videos']),
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
-                ]);
+                $data['user_id'] = $event->tikTokUserDto->getUserId();
+                $db->insert($data);
             } else {
-                $db->update([
-                    'videos' => json_encode($decoded['data']['videos']),
-                ]);
+                $db->update($data);
             }
 
         } catch(\Exception $exception) {
