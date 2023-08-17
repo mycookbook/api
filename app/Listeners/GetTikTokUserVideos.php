@@ -17,15 +17,12 @@ class GetTikTokUserVideos
 
         try {
             $response = $client->request('POST',
-                'https://open.tiktokapis.com/v2/oauth/token/',
+                'https://open.tiktokapis.com/v2/video/list/',
                 [
-                    'form_params' => [
-                        'client_key' => config('services.tiktok.client_id'),
-                        'client_secret' => config('services.tiktok.client_secret'),
-                        'code' => $tikTokUser->getCode(),
-                        'grant_type' => 'authorization_code',
-                        'redirect_uri' => 'https://web.cookbookshq.com/callback/tiktok'
-                    ],
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $tikTokUser->getCode(),
+                        'Content-Type' => 'application/json'
+                    ]
                 ]
             );
 
