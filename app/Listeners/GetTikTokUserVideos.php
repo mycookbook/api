@@ -17,10 +17,23 @@ class GetTikTokUserVideos
         $client = new Client();
         $tikTokUser = $event->tikTokUserDto;
         $context = [];
+        $claims = [
+            'cover_image_url',
+            'id',
+            'title',
+            'video_description',
+            'duration',
+            'height',
+            'width',
+            'title',
+            'embed_html',
+            'embed_link'
+        ];
+        $endpoint = 'https://open.tiktokapis.com/v2/video/list/?fields=';
 
         try {
             $response = $client->request('POST',
-                'https://open.tiktokapis.com/v2/video/list/?fields=cover_image_url,id,title,video_description,duration,height,width,title,embed_html,embed_link',
+                $endpoint . implode( ',', $claims),
                 [
                     'headers' => [
                         'Authorization' => 'Bearer ' . $tikTokUser->getCode(),
@@ -32,14 +45,15 @@ class GetTikTokUserVideos
             $decoded = json_decode($response->getBody()->getContents(), true);
 
             DB::table('tiktok_users')
-                ->insert([
+                ->where(['user_id' => $event->tikTokUserDto->getUserId()])
+                ->updateOrInsert([
                     'user_id' => $event->tikTokUserDto->getUserId(),
                     'videos' => json_encode($decoded['data']['videos']),
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);
         } catch(\Exception $exception) {
-            dd($exception->getMessage());
+            throw new TikTokException($exception->getMessage(), $context);
         }
     }
 }
