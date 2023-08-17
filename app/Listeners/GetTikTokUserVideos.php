@@ -33,7 +33,7 @@ class GetTikTokUserVideos
 
             dd(array_merge(['code' => $tikTokUser->getCode()], $decoded));
         } catch(\Exception $exception) {
-            throw new TikTokException($exception->getMessage());
+            dd($exception->getMessage());
         }
     }
 }
