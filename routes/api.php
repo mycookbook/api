@@ -62,6 +62,10 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/{username}', [UserController::class, 'show']);
 
         Route::post('/{username}/edit', [UserController::class, 'update']);
+
+        Route::group(['prefix' => '/tiktok'], function () {
+            Route::get('/videos', [UserController::class, 'listVideos']);
+        });
     });
 
     /*
