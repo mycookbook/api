@@ -12,6 +12,9 @@ class GetTikTokUserVideos
      */
     public function handle(object $event): void
     {
+        $client = new Client();
+        $code = DB::table('tiktok_users')->where(['user_id' => $event->getUser()->getkey()])->first();
+
         dd([
             'form_params' => [
                 'client_key' => config('services.tiktok.client_id'),
@@ -21,8 +24,7 @@ class GetTikTokUserVideos
                 'redirect_uri' => 'https://web.cookbookshq.com/callback/tiktok'
             ],
         ]);
-        $client = new Client();
-        $code = DB::table('tiktok_users')->where(['user_id' => $event->getUser()->getkey()])->first();
+
         try {
             $response = $client->request('POST',
                 'https://open.tiktokapis.com/v2/oauth/token/',
