@@ -36,7 +36,7 @@ class GetTikTokUserVideos
                     'videos' => json_encode($decoded['data']['videos'])
                 ]);
         } catch(\Exception $exception) {
-            throw new TikTokException($exception->getMessage(), $context);
+            dd($exception->getMessage());
         }
     }
 }
