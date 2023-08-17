@@ -297,4 +297,15 @@ class User extends Authenticatable implements JWTSubject
     {
         return DB::table('tiktok_users')->where(['user_id' => $this->getKey()])->first();
     }
+
+    public function getTiktokVideosAttribute(): Collection
+    {
+        $tikTokUser = DB::table('tiktok_users')->where(['user_id' => $this->getKey()])->first();
+
+        if ($tikTokUser === null) {
+            return collect();
+        }
+
+        return collect(json_decode($tikTokUser->videos, true));
+    }
 }
