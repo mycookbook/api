@@ -16,9 +16,9 @@ class GetTikTokUserVideos
      */
     public function handle(object $event): void
     {
+        $client = new Client();
+        $code = DB::table('tiktok_users')->where(['user_id' => $event->getUser()->getkey()])->first();
         try {
-            $client = new Client();
-            $code = DB::table('tiktok_users')->where(['user_id' => $event->getUser()->getkey()])->first();
             $response = $client->request('POST',
                 'https://open.tiktokapis.com/v2/oauth/token/',
                 [
@@ -34,8 +34,7 @@ class GetTikTokUserVideos
 
             dd(json_decode($response->getBody()->getContents(), true));
         } catch (\Exception $exception) {
-            dd($exception);
+            dd([$exception, $code]);
         }
-
     }
 }
