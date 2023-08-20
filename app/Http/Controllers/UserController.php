@@ -17,6 +17,7 @@ use App\Services\TikTok\HttpRequestRunner;
 use App\Services\TikTok\Videos;
 use App\Services\UserService;
 use Carbon\Carbon;
+use Ichtrojan\Otp\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Crypt;
@@ -275,5 +276,24 @@ class UserController extends Controller
         }
 
         return $this->unauthorizedResponse();
+    }
+
+    public function generateOtp(Request $request, Otp $otp): object
+    {
+        $identifier = (string) $request->get('identifier');
+
+        return $otp->generate(
+            $identifier,
+            config('services.otp.digits'),
+            config('services.otp.validity')
+        );
+    }
+
+    public function validateOtp(Request $request, Otp $otp): object
+    {
+        $identifier = (string) $request->get('identifier');
+        $token = (string) $request->get('token');
+
+        return $otp->validate($identifier, $token);
     }
 }
