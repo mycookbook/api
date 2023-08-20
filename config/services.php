@@ -47,5 +47,9 @@ return [
     ],
     'faker' => [
         'pass' => env('MAGICLINK_PASS')
+    ],
+    'otp' => [
+        'digits' => 6,
+        'validity' => 15 //mins
     ]
 ];

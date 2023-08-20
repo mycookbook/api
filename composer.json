@@ -31,7 +31,8 @@
         "thedevsaddam/laravel-schema": "^2.0",
         "sentry/sentry-laravel": "^3.1",
         "ipinfo/ipinfolaravel": "^2.4",
-        "spatie/laravel-ignition": "^2.1"
+        "spatie/laravel-ignition": "^2.1",
+        "ichtrojan/laravel-otp": "^1.4"
     },
     "require-dev": {
         "mockery/mockery": "^1.4.2",
