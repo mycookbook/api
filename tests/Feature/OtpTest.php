@@ -38,22 +38,23 @@ class OtpTest extends TestCase
     {
         $randStr = Str::random(10);
 
-        $this
+        Log::shouldReceive('debug')
+            ->once()
+            ->with(
+                'Error sending OTP email',
+                [
+                    'identifier' => $randStr,
+                    'errorMsg' => 'Email "' . $randStr . '" does not comply with addr-spec of RFC 2822.'
+                ]
+            );
+
+        $this->withoutExceptionHandling()
             ->json('POST', '/api/v1/otp/generate', [
                 'identifier' => $randStr
             ])
             ->assertExactJson([
                 "message" => "There was an error processing this request. Please try again."
             ]);
-
-        Log::shouldReceive('debug')
-            ->with(
-                'Error sending OTP email',
-                [
-                    'identifier' => $randStr,
-                    'errorMsg' => 'zazu'
-                ]
-            );
     }
 
     /**
