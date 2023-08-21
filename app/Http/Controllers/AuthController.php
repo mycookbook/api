@@ -183,7 +183,6 @@ class AuthController extends Controller
                     ],
                 ]
             );
-            dd($userInfo);
 
             $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
@@ -243,6 +242,7 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
+            dd($e->getMessage());
             Log::debug('There was an error', [
                 'error' => $e->getMessage(),
             ]);
