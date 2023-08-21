@@ -134,29 +134,29 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
-        dd($code = $request->get('code'));
-//        try {
-//            $code = $request->get('code');
-//            $errCode = $request->get('errCode');
-//
-//            if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
-//                return redirect('https://web.cookbookshq.com/#/signin');
-//            }
-//
-//            $response = $client->request('POST',
-//                'https://open-api.tiktok.com/oauth/access_token/',
-//                [
-//                    'form_params' => [
-//                        'client_key' => config('services.tiktok.client_id'),
-//                        'client_secret' => config('services.tiktok.client_secret'),
-//                        'code' => $code,
-//                        'grant_type' => 'authorization_code',
-//                    ],
-//                ]
-//            );
-//
-//            $decoded = json_decode($response->getBody()->getContents(), true);
-//
+        try {
+            $code = $request->get('code');
+            $errCode = $request->get('errCode');
+
+            if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
+                return redirect('https://web.cookbookshq.com/#/signin');
+            }
+
+            $response = $client->request('POST',
+                'https://open-api.tiktok.com/oauth/access_token/',
+                [
+                    'form_params' => [
+                        'client_key' => config('services.tiktok.client_id'),
+                        'client_secret' => config('services.tiktok.client_secret'),
+                        'code' => $code,
+                        'grant_type' => 'authorization_code',
+                    ],
+                ]
+            );
+
+            $decoded = json_decode($response->getBody()->getContents(), true);
+            dd($decoded);
+
 //            if ($decoded['message'] === 'error') {
 //                throw new \Exception(json_encode($decoded));
 //            }
@@ -242,13 +242,13 @@ class AuthController extends Controller
 //            } else {
 //                return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
 //            }
-//        } catch (\Exception $e) {
-//            Log::debug('There was an error', [
-//                'error' => $e->getMessage(),
-//            ]);
-//
-//            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
-//        }
+        } catch (\Exception $e) {
+            Log::debug('There was an error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
+        }
     }
 
     /**
