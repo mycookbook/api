@@ -304,7 +304,7 @@ class UserController extends Controller
                 'Error sending OTP email',
                 [
                     'identifier' => $identifier,
-                    'errorMsg' => $exception
+                    'errorMsg' => $exception->getMessage()
                 ]
             );
 
