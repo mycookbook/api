@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
-//use GuzzleHttp\Client;
+use App\Exceptions\TikTokException;
+use GuzzleHttp\Client;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class GetTikTokUserVideos
@@ -12,39 +14,55 @@ class GetTikTokUserVideos
      */
     public function handle(object $event): void
     {
-//        $client = new Client();
-        $code = DB::table('tiktok_users')->where(['user_id' => $event->getUser()->getkey()])->first();
+        $client = new Client();
+        $tikTokUser = $event->tikTokUserDto;
+        $context = [];
+        $claims = [
+            'cover_image_url',
+            'id',
+            'title',
+            'video_description',
+            'duration',
+            'height',
+            'width',
+            'title',
+            'embed_html',
+            'embed_link'
+        ];
+        $endpoint = 'https://open.tiktokapis.com/v2/video/list/?fields=';
 
-        dd([
-            'form_params' => [
-                'client_key' => config('services.tiktok.client_id'),
-                'client_secret' => config('services.tiktok.client_secret'),
-                'code' => $code,
-                'grant_type' => 'authorization_code',
-                'redirect_uri' => 'https://web.cookbookshq.com/callback/tiktok'
-            ],
-        ]);
+        try {
+            $response = $client->request('POST',
+                $endpoint . implode( ',', $claims),
+                [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $tikTokUser->getCode(),
+                        'Content-Type' => 'application/json'
+                    ]
+                ]
+            );
 
-//        try {
-//            $response = $client->request('POST',
-//                'https://open.tiktokapis.com/v2/oauth/token/',
-//                [
-//                    'form_params' => [
-//                        'client_key' => config('services.tiktok.client_id'),
-//                        'client_secret' => config('services.tiktok.client_secret'),
-//                        'code' => $code,
-//                        'grant_type' => 'authorization_code',
-//                        'redirect_uri' => 'https://web.cookbookshq.com/callback/tiktok'
-//                    ],
-//                ]
-//            );
-//
-//            dd(json_decode($response->getBody()->getContents(), true));
-//        } catch (\Exception $exception) {
-//            dd([
-//                'e' => $exception,
-//                'code' => $code
-//            ]);
-//        }
+            $decoded = json_decode($response->getBody()->getContents(), true);
+
+            $db = DB::table('tiktok_users');
+
+            $tiktok_user = $db->where(['user_id' => $event->tikTokUserDto->getUserId()])->first();
+            $data = [
+                'videos' => json_encode($decoded['data']['videos']),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ];
+
+            if ($tiktok_user === null) {
+                $data['user_id'] = $event->tikTokUserDto->getUserId();
+                $db->insert($data);
+            } else {
+                $db->update($data);
+            }
+
+        } catch(\Exception $exception) {
+            dd($exception->getMessage());
+//            throw new TikTokException($exception->getMessage(), $context);
+        }
     }
 }

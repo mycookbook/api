@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('tiktok_users', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->text('open_id');
-            $table->text('code');
-            $table->boolean('is_verified');
-            $table->text('profile_deep_link');
-            $table->text('bio_description');
-            $table->text('display_name');
-            $table->text('avatar_large_url');
-            $table->text('avatar_url_100');
-            $table->text('avatar_url');
-            $table->text('union_id');
-            $table->integer('video_count');
+            $table->integer('user_id')->nullable();
+            $table->text('open_id')->nullable();
+            $table->boolean('is_verified')->default(0);
+            $table->text('profile_deep_link')->nullable();
+            $table->text('bio_description')->nullable();
+            $table->text('display_name')->nullable();
+            $table->text('avatar_large_url')->nullable();
+            $table->text('avatar_url_100')->nullable();
+            $table->text('avatar_url')->nullable();
+            $table->text('union_id')->nullable();
+            $table->integer('video_count')->default(0);
+            $table->text('videos')->nullable();
             $table->timestamps();
         });
     }

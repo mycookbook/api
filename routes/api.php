@@ -135,4 +135,9 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/feedback', [UserController::class, 'addFeedback']);
 
     Route::post('/report-recipe', [RecipeController::class, 'report']);
+
+    Route::group(['prefix' => '/otp'], function () {
+        Route::post('/generate', [UserController::class, 'generateOtp']);
+        Route::post('/validate', [UserController::class, 'validateOtp']);
+    });
 })->middleware(['api']);

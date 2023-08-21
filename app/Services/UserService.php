@@ -81,7 +81,7 @@ class UserService extends BaseService implements serviceInterface
         return response(
             [
                 'data' => [
-                    'user' => $this->findWhere($q)->get(),
+                    'user' => $this->findWhere($q)->get()->append(['tiktok_videos']),
                 ],
             ], Response::HTTP_OK
         );

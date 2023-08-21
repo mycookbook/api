@@ -220,7 +220,7 @@ class AuthController extends Controller
                 TikTokUserIsAuthenticated::dispatch(new TikTokUserDto(
                     $user->getKey(),
                     $userInfo['data']['user']['open_id'],
-                    $code,
+                    $decoded['data']['access_token'],
                     $userInfo['data']['user']['is_verified'],
                     $userInfo['data']['user']['profile_deep_link'],
                     $userInfo['data']['user']['bio_description'],
@@ -246,7 +246,7 @@ class AuthController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect('https://web.cookbookshq.com/#/errors/?m=Tiktok is having a hard time processing this request, please try again.');
+            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
         }
     }
 
