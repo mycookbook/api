@@ -292,7 +292,7 @@ class UserController extends Controller
     {
         $identifier = (string) $request->get('identifier');
 
-        $token =  $otp->generate(
+        $token = $otp->generate(
             $identifier,
             config('services.otp.digits'),
             config('services.otp.validity')
