@@ -183,6 +183,7 @@ class AuthController extends Controller
                     ],
                 ]
             );
+            dd($userInfo);
 
             $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
 
