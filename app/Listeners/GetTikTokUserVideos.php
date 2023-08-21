@@ -16,7 +16,7 @@ class GetTikTokUserVideos
     {
         $client = new Client();
         $tikTokUser = $event->tikTokUserDto;
-        $context = [];
+
         $claims = [
             'cover_image_url',
             'id',
@@ -29,6 +29,7 @@ class GetTikTokUserVideos
             'embed_html',
             'embed_link'
         ];
+
         $endpoint = 'https://open.tiktokapis.com/v2/video/list/?fields=';
 
         try {
@@ -59,9 +60,15 @@ class GetTikTokUserVideos
             } else {
                 $db->update($data);
             }
-
         } catch(\Exception $exception) {
-            Log::debug('Error listing TikTok videos', ['e' => $exception]);
+            Log::debug(
+                'Error listing TikTok Videos',
+                [
+                    'errorMsg' => $exception->getMessage(),
+                    'claims' => $claims,
+                    'endpoint' => $endpoint
+                ]
+            );
         }
     }
 }
