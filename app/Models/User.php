@@ -308,4 +308,9 @@ class User extends Authenticatable implements JWTSubject
 
         return collect(json_decode($tikTokUser->videos, true));
     }
+
+    public function ownsComment(int $commentId)
+    {
+        return Comment::findOrFail($commentId)->user_id == $this->getKey();
+    }
 }
