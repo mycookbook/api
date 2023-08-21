@@ -242,11 +242,12 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
-            Log::debug('There was an error', [
-                'error' => $e->getMessage(),
-            ]);
-
-            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
+            dd($e->getMessage());
+//            Log::debug('There was an error', [
+//                'error' => $e->getMessage(),
+//            ]);
+//
+//            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
         }
     }
 
