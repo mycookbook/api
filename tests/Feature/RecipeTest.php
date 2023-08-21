@@ -8,6 +8,7 @@ use App\Models\Cookbook;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class RecipeTest extends \TestCase
 {
@@ -102,5 +103,101 @@ class RecipeTest extends \TestCase
 
         $this->assertArrayHasKey('error', $decoded);
         $this->assertSame("Your session has expired. Please login and try again.", $decoded["error"]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_increment_recipe_claps()
+    {
+        $user = User::factory()->make();
+
+        $user->save();
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $this->assertTrue($recipe->refresh()->claps == 0);
+
+        $this->json(
+            'POST',
+            '/api/v1/add-clap',
+            [
+                'recipe_id' => $recipe->refresh()->getKey()
+            ]
+        )->assertStatus(200)
+            ->assertExactJson([
+                'updated' => true,
+                'claps' => 1
+            ]);
+
+        $this->assertTrue($recipe->refresh()->claps == 1);
+    }
+
+    /**
+     * @test
+     */
+    public function it_cannot_clap_for_a_recipe_that_does_not_exist()
+    {
+        $this->json(
+            'POST',
+            '/api/v1/add-clap',
+            [
+                'recipe_id' => rand(1,10)
+            ]
+        )->assertStatus(422)
+        ->assertExactJson([
+            'recipe_id' => [
+                "The selected recipe id is invalid."
+            ]
+        ]);
+    }
+
+    public function it_can_show_my_recipes()
+    {
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipes = Recipe::factory()->count(3)->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipes->map(function ($recipe) {
+            $recipe->save();
+        });
+
+        $this->json(
+            'GET',
+            '/api/v1/my/recipes',
+            [],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(200);
     }
 }

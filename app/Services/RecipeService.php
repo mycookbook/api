@@ -219,7 +219,7 @@ class RecipeService extends BaseService implements serviceInterface
         return response(
             [
                 'updated' => true,
-                'claps' => $recipe->claps,
+                'claps' => $recipe->refresh()->claps,
             ], Response::HTTP_OK
         );
     }

@@ -122,7 +122,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('/categories', 'CategoryController@index');
 
-    Route::post('/add-clap', 'RecipeController@addClap');
+    Route::post('/add-clap', [RecipeController::class, 'addClap']);
 
     Route::post('/comments', [CommentController::class, 'addComment']);
 
