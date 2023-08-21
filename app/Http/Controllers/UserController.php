@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Ichtrojan\Otp\Models\Otp as OtpModel;
 
 /**
  * Class UserController
@@ -228,7 +229,11 @@ class UserController extends Controller
                     ])
                 ]);
             } catch (ApiException $exception){
-                Log::debug('error creating user feedback', ['exception' => $exception]);
+                Log::debug(
+                    'error creating user feedback',
+                    ['exception' => $exception]
+                );
+
                 return response()->json(['error', 'There was an error processing this request. Please try again later.'], $exception->getCode());
             }
         }
@@ -266,7 +271,10 @@ class UserController extends Controller
                     ]
                 ]);
             } catch (\Exception $exception) {
-                Log::debug("Error listing tiktok user videos", ['exception' => $exception]);
+                Log::debug(
+                    "Error listing tiktok user videos",
+                    ['exception' => $exception]
+                );
 
                 return [
                     'data' => array_merge(
@@ -293,7 +301,14 @@ class UserController extends Controller
         try {
             Mail::to($identifier)->send(new OtpWasGenerated($token->token));
         } catch (\Exception $exception) {
-            Log::debug('Error sending otp email', ['e' => $exception]);
+            Log::debug(
+                'Error sending OTP email',
+                [
+                    'identifier' => $identifier,
+                    'errorMsg' => $exception->getMessage()
+                ]
+            );
+
             return $this->errorResponse(['message' => 'There was an error processing this request. Please try again.']);
         }
     }

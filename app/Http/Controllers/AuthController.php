@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
  * Class AuthController
@@ -134,14 +135,14 @@ class AuthController extends Controller
      */
     public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
     {
+        $code = $request->get('code');
+        $errCode = $request->get('errCode');
+
+        if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
+            return redirect('https://web.cookbookshq.com/#/signin');
+        }
+
         try {
-            $code = $request->get('code');
-            $errCode = $request->get('errCode');
-
-            if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
-                return redirect('https://web.cookbookshq.com/#/signin');
-            }
-
             $response = $client->request('POST',
                 'https://open-api.tiktok.com/oauth/access_token/',
                 [
@@ -242,9 +243,13 @@ class AuthController extends Controller
                 return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
             }
         } catch (\Exception $e) {
-            Log::debug('There was an error', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::debug(
+                'Tiktok Login error',
+                [
+                    'errorCode' => $errCode,
+                    'errorMsg' => $e->getMessage()
+                ]
+            );
 
             return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
         }
@@ -253,12 +258,12 @@ class AuthController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     * @throws JWTException
      */
     public function validateToken(Request $request)
     {
         if (!$request->bearerToken() || !Auth::check()) {
-            throw new \Tymon\JWTAuth\Exceptions\JWTException('Expired or Tnvalid token.');
+            throw new JWTException('Expired or Tnvalid token.');
         }
 
         return response()->json(
