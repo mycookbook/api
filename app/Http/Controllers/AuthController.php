@@ -60,19 +60,19 @@ class AuthController extends Controller
      */
     public function loginViaMagicLink(Request $request, LocationService $locationService)
     {
+        $location = $locationService->getLocation($request);
+        $userEmailFromRequest = $request->get("email");
+
+        if (!$location && !$userEmailFromRequest) {
+            return response()->json([
+                'action_required' => true,
+                'required' => [
+                    'email' => 'Looks like this is your first time signing in with magiclink! Kindly provide your registered email for verification.',
+                ]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         try {
-            $location = $locationService->getLocation($request);
-            $userEmailFromRequest = $request->get("email");
-
-            if (!$location && !$userEmailFromRequest) {
-                return response()->json([
-                    'action_required' => true,
-                    'required' => [
-                        'email' => 'Looks like this is your first time signing in with magiclink! Kindly provide your registered email for verification.',
-                    ]
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
-
             if (!$location && $userEmailFromRequest) {
                 $location = LocationService::getLocationByUserEmail($userEmailFromRequest);
 

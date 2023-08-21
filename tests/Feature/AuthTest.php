@@ -7,6 +7,7 @@ namespace Feature;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class UserTest
@@ -201,5 +202,121 @@ class AuthTest extends \TestCase
         $decoded = json_decode($res->getContent(), true);
         $this->assertArrayHasKey("token", $decoded);
         $this->assertNotEmpty($decoded["token"]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_logout_an_existing_user()
+    {
+        $email = 'sally@example.com';
+        $password = 'saltyL@k3';
+
+        $this->json(
+            'POST', '/api/v1/auth/register', [
+                'name' => 'Sally Lee',
+                'email' => $email,
+                'password' => $password,
+            ]
+        );
+
+        $respose = $this->json(
+            'POST', '/api/v1/auth/login', [
+                'email' => $email,
+                'password' => $password,
+            ]
+        );
+
+        $decoded = json_decode($respose->getContent(), true);
+
+        $this->json(
+            'GET', '/api/v1/auth/logout', [], [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $decoded['token']
+                ]
+            ]
+        )->assertNoContent();
+    }
+
+    /**
+     * @test
+     */
+    public function logout_responds_with_an_error_if_token_is_invalid()
+    {
+        Log::shouldReceive('info')
+            ->once()
+            ->with(
+                'Not found or Invalid Credentials.',
+                [
+                    'errorMsg' => 'Token could not be parsed from the request.'
+                ]
+            );
+
+        $this->withoutExceptionHandling()
+            ->json(
+            'GET', '/api/v1/auth/logout', [], [
+                'headers' => [
+                    'Authorization' => 'Bearer invalid-token'
+                ]
+            ]
+        )
+            ->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertExactJson([
+                'Not found or Invalid Credentials.'
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_validate_access_token_success()
+    {
+        $email = 'sally@example.com';
+        $password = 'saltyL@k3';
+
+        $this->json(
+            'POST', '/api/v1/auth/register', [
+                'name' => 'Sally Lee',
+                'email' => $email,
+                'password' => $password,
+            ]
+        );
+
+        $respose = $this->json(
+            'POST', '/api/v1/auth/login', [
+                'email' => $email,
+                'password' => $password,
+            ]
+        );
+
+        $decoded = json_decode($respose->getContent(), true);
+
+        $this
+            ->json(
+                'POST', '/api/v1/auth/validate', [], [
+                    'Authorization' => 'Bearer ' . $decoded['token']
+                ]
+            )
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson([
+                'validated' => true
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_validate_access_token_fails()
+    {
+        $this
+            ->json(
+                'POST', '/api/v1/auth/validate', [], [
+                    'Authorization' => 'Bearer invalid-token'
+                ]
+            )
+            ->assertStatus(Response::HTTP_UNAUTHORIZED)
+            ->assertExactJson([
+                'error' => 'Expired or Tnvalid token.'
+            ]);
     }
 }

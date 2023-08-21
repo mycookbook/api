@@ -13,6 +13,7 @@ class RecipeTest extends \TestCase
 {
     /**
      * @test
+     * todo: service->validatePayload
      */
     public function it_can_retrieve_all_recipes_and_respond_with_a_200_status_code()
     {
@@ -76,9 +77,16 @@ class RecipeTest extends \TestCase
             "user_id" => $user->id,
             "cookbook_id" => $cookbook->id
         ]);
+        $recipe->save();
 
-        $this->json('GET', '/api/v1/recipes/' . $recipe->slug)
+        $this->json('GET', '/api/v1/recipes/' . $recipe->refresh()->slug)
             ->assertStatus(Response::HTTP_OK);
+
+        $this->assertDatabaseHas('recipes', [
+                "user_id" => $user->id,
+                "cookbook_id" => $cookbook->id
+            ]
+        );
     }
 
     /**
