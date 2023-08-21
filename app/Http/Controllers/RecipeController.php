@@ -72,12 +72,6 @@ class RecipeController extends Controller
         return $this->service->addClap($request->get('recipe_id'));
     }
 
-    /**
-     * @param Request $request
-     * @param JWT $jwtAuth
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
-     */
     public function myRecipes(Request $request, JWT $jwtAuth): \Illuminate\Http\JsonResponse
     {
         if ($jwtAuth->parseToken()->check()) {
