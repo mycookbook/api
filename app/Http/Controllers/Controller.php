@@ -16,9 +16,9 @@ class Controller extends BaseController
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function successResponse(array $options = []): \Illuminate\Http\JsonResponse
+    public function successResponse(array $data = []): \Illuminate\Http\JsonResponse
     {
-        return response()->json();
+        return response()->json($data);
     }
 
     public function noContentResponse(): Response
@@ -26,9 +26,9 @@ class Controller extends BaseController
         return response()->noContent();
     }
 
-    public function errorResponse(array $options = []): \Illuminate\Http\JsonResponse
+    public function errorResponse(array $data = []): \Illuminate\Http\JsonResponse
     {
-        return response()->json();
+        return response()->json($data, Response::HTTP_BAD_REQUEST);
     }
 
     public function unauthorizedResponse(): \Illuminate\Http\JsonResponse
