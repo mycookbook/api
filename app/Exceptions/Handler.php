@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Sentry\Laravel\Integration;
 use Illuminate\Http\Response;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
@@ -13,13 +12,6 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
-    public function register()
-    {
-        $this->reportable(function (Throwable $e) {
-            Integration::captureUnhandledException($e);
-        });
-    }
-
     /**
      * Report or log an exception.
      *
@@ -67,7 +59,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($throwable instanceof TikTokException) {
-            return response()->json( ['error' => $throwable->getMessage()]);
+            return response()->json(['error' => $throwable->getMessage()]);
         }
 
         return parent::render($request, $throwable);
