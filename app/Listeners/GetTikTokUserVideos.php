@@ -61,7 +61,8 @@ class GetTikTokUserVideos
             }
 
         } catch(\Exception $exception) {
-            throw new TikTokException($exception->getMessage(), $context);
+            dd($exception->getMessage());
+//            throw new TikTokException($exception->getMessage(), $context);
         }
     }
 }

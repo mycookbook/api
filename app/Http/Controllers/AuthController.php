@@ -217,20 +217,20 @@ class AuthController extends Controller
                     return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
                 }
 
-//                TikTokUserIsAuthenticated::dispatch(new TikTokUserDto(
-//                    $user->getKey(),
-//                    $userInfo['data']['user']['open_id'],
-//                    $decoded['data']['access_token'],
-//                    $userInfo['data']['user']['is_verified'],
-//                    $userInfo['data']['user']['profile_deep_link'],
-//                    $userInfo['data']['user']['bio_description'],
-//                    $userInfo['data']['user']['display_name'],
-//                    $userInfo['data']['user']['avatar_large_url'],
-//                    $userInfo['data']['user']['avatar_url_100'],
-//                    $userInfo['data']['user']['avatar_url'],
-//                    $userInfo['data']['user']['union_id'],
-//                    $userInfo['data']['user']['video_count']
-//                ));
+                TikTokUserIsAuthenticated::dispatch(new TikTokUserDto(
+                    $user->getKey(),
+                    $userInfo['data']['user']['open_id'],
+                    $decoded['data']['access_token'],
+                    $userInfo['data']['user']['is_verified'],
+                    $userInfo['data']['user']['profile_deep_link'],
+                    $userInfo['data']['user']['bio_description'],
+                    $userInfo['data']['user']['display_name'],
+                    $userInfo['data']['user']['avatar_large_url'],
+                    $userInfo['data']['user']['avatar_url_100'],
+                    $userInfo['data']['user']['avatar_url'],
+                    $userInfo['data']['user']['union_id'],
+                    $userInfo['data']['user']['video_count']
+                ));
 
                 $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
                         'token' => $token,
