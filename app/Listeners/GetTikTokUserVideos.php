@@ -2,10 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Exceptions\TikTokException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GetTikTokUserVideos
 {
@@ -61,8 +61,7 @@ class GetTikTokUserVideos
             }
 
         } catch(\Exception $exception) {
-            dd($exception->getMessage());
-//            throw new TikTokException($exception->getMessage(), $context);
+            Log::debug('Error listing TikTok videos', ['e' => $exception]);
         }
     }
 }
