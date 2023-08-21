@@ -19,7 +19,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'sentry'),
 
     /*
     |--------------------------------------------------------------------------
@@ -100,6 +100,11 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'sentry' => [
+            'driver' => 'sentry',
+            'channels' => ['single', 'sentry'],
         ],
     ],
 

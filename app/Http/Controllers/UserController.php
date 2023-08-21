@@ -8,6 +8,7 @@ use App\Exceptions\ApiException;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Jobs\TriggerEmailVerificationProcess;
+use App\Mail\OtpWasGenerated;
 use App\Models\EmailVerification;
 use App\Models\Following;
 use App\Models\User;
@@ -290,9 +291,9 @@ class UserController extends Controller
         );
 
         try {
-            Mail::to($identifier)->send(new \App\Mail\OtpWasGenerated($token->token));
+            Mail::to($identifier)->send(new OtpWasGenerated($token->token));
         } catch (\Exception $exception) {
-            Log::debug('Error sending email', ['e' => $exception]);
+            Log::debug('Error sending otp email', ['e' => $exception]);
             return $this->errorResponse(['message' => 'There was an error processing this request. Please try again.']);
         }
     }
