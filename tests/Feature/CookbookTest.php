@@ -246,7 +246,7 @@ class CookbookTest extends \TestCase
     /**
      * @test
      */
-    public function it_forids_lesser_beings_from_deleting_a_cookbook_resource()
+    public function it_forbids_lesser_beings_from_deleting_a_cookbook_resource()
     {
         $this->json(
             'POST', '/api/v1/auth/register', [
