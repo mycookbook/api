@@ -96,7 +96,7 @@ class RecipeController extends Controller
             $jwtAuth->parseToken()->check();
             return $this->service->store($request);
         } catch (\Exception $exception) {
-            Log::debug('An error occured while creating a recipe', [
+            Log::debug('An error occured while creating this recipe', [
                 'resource' => self::RECIPE_RESOURCE,
                 'exception' => $exception
             ]);
@@ -159,9 +159,9 @@ class RecipeController extends Controller
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function report(Request $request)
+    public function report(Request $request, JWT $jwtAuth)
     {
-        if (JWTAuth::parseToken()->user()) {
+        if ($jwtAuth->parseToken()->check()) {
             $recipe = Recipe::find($request->get('recipe_id'));
 
             if ($recipe instanceof Recipe) {

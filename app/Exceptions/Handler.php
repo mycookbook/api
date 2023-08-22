@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($throwable instanceof JWTException || $throwable instanceof TokenInvalidException) {
+        if ($throwable instanceof JWTException) {
             return response()->json([
                 'error' => $throwable->getMessage()
             ], Response::HTTP_UNAUTHORIZED);
