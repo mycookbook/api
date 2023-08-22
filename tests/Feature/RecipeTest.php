@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Feature;
 
 use App\Models\Cookbook;
+use App\Models\Flag;
 use App\Models\Recipe;
 use App\Models\Role;
 use App\Models\User;
@@ -157,14 +158,14 @@ class RecipeTest extends \TestCase
             'POST',
             '/api/v1/add-clap',
             [
-                'recipe_id' => rand(1,10)
+                'recipe_id' => rand(1, 10)
             ]
         )->assertStatus(422)
-        ->assertExactJson([
-            'recipe_id' => [
-                "The selected recipe id is invalid."
-            ]
-        ]);
+            ->assertExactJson([
+                'recipe_id' => [
+                    "The selected recipe id is invalid."
+                ]
+            ]);
     }
 
     /**
@@ -241,7 +242,7 @@ class RecipeTest extends \TestCase
 
         $recipe->save();
 
-        $this->assertFalse((bool) $recipe->refresh()->is_reported);
+        $this->assertFalse((bool)$recipe->refresh()->is_reported);
 
         $this->json(
             'POST',
@@ -257,7 +258,7 @@ class RecipeTest extends \TestCase
                 'message' => 'feedback submitted.'
             ]);
 
-        $this->assertTrue((bool) $recipe->refresh()->is_reported);
+        $this->assertTrue((bool)$recipe->refresh()->is_reported);
     }
 
     /**
@@ -548,6 +549,125 @@ class RecipeTest extends \TestCase
                 'Authorization' => 'Bearer ' . $myToken
             ]
         )->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_create_a_new_recipe()
+    {
+        $faker = Factory::create();
+
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $flag = new Flag([
+            'flag' => 'ng',
+            'nationality' => 'nigerien',
+        ]);
+        $flag->save();
+
+        $this->json(
+            'POST',
+            '/api/v1/recipes/',
+            [
+                'is_draft' => 'false',
+                'name' => $faker->jobTitle,
+                'cookbook_id' => $cookbook->refresh()->getKey(),
+                'description' => implode(" ", $faker->words(150)),
+                'summary' => implode(" ", $faker->words(55)),
+                'imgUrl' => $faker->imageUrl(),
+                'ingredients' => [
+                    [
+                        'name' => $faker->jobTitle,
+                        'unit' => '2',
+                        'thumbnail' => $faker->imageUrl(),
+                    ]
+                ],
+                'nationality' => $flag->refresh()->flag,
+                'cuisine' => 'spanich',
+                'tags' => []
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(Response::HTTP_CREATED)
+            ->assertExactJson([
+                "created" => true
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function handles_error_creating_a_new_recipe()
+    {
+        $faker = Factory::create();
+
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $flag = new Flag([
+            'flag' => 'ng',
+            'nationality' => 'nigerien',
+        ]);
+        $flag->save();
+
+        $this->json(
+            'POST',
+            '/api/v1/recipes/',
+            [
+                'is_draft' => 'false',
+                'name' => $faker->jobTitle,
+                'cookbook_id' => $cookbook->refresh()->getKey(),
+                'description' => implode(" ", $faker->words(150)),
+                'summary' => implode(" ", $faker->words(55)),
+                'imgUrl' => $faker->imageUrl(),
+                'ingredients' => [
+                    [
+                        'name' => $faker->jobTitle,
+                        'unit' => '2',
+                        'thumbnail' => $faker->imageUrl(),
+                    ]
+                ],
+                'nationality' => $flag->refresh()->flag,
+                'cuisine' => 'spanich'
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertExactJson([
+                "error" => 'There was an error processing this request, please try again later.'
+            ]);
     }
 
     private function createRoles()
