@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class StaticContentsSeeder extends Seeder
 {
@@ -17,7 +18,7 @@ class StaticContentsSeeder extends Seeder
      */
     public function run()
     {
-        \Illuminate\Support\Facades\DB::table('static_contents')->insert([
+        DB::table('static_contents')->insert([
             [
                 'title' => 'cookie-policy',
                 'content' => file_get_contents(__DIR__.'/policies/cookie-policy.php'),
@@ -31,6 +32,14 @@ class StaticContentsSeeder extends Seeder
                 'title' => 'terms-and-conditions',
                 'content' => file_get_contents(__DIR__.'/policies/terms-and-conditions.php'),
             ],
+        ]);
+
+        DB::table('roles')->insert([
+            [
+                'role_id' => 'super',
+            ], [
+                'role_id' => 'contributor',
+            ]
         ]);
     }
 }
