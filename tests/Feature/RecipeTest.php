@@ -6,10 +6,13 @@ namespace Feature;
 
 use App\Models\Cookbook;
 use App\Models\Recipe;
+use App\Models\Role;
 use App\Models\User;
+use Faker\Factory;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class RecipeTest extends \TestCase
@@ -316,5 +319,255 @@ class RecipeTest extends \TestCase
             ->assertExactJson([
                 'error' => 'Your session has expired. Please login and try again.'
             ]);
+    }
+
+    /**
+     * @test
+     */
+    public function only_supers_can_destroy_a_recipe()
+    {
+        $this->createRoles();
+
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $this->createUserRole($user->refresh()->getKey(), 'super');
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $this->assertDatabaseHas('recipes', [
+            'id' => $recipe->refresh()->getKey()
+        ]);
+
+        $this->json(
+            'POST',
+            '/api/v1/recipes/' . $recipe->refresh()->getKey() . '/destroy',
+            [
+                'recipe_id' => $recipe->refresh()->getKey()
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(Response::HTTP_ACCEPTED)
+            ->assertExactJson([
+                "deleted" => true
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function if_you_are_not_a_super_you_cannot_destroy_a_recipe()
+    {
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $this->assertDatabaseHas('recipes', [
+            'id' => $recipe->refresh()->getKey()
+        ]);
+
+        $this->json(
+            'POST',
+            '/api/v1/recipes/' . $recipe->refresh()->getKey() . '/destroy',
+            [
+                'recipe_id' => $recipe->refresh()->getKey()
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(Response::HTTP_UNAUTHORIZED)
+            ->assertExactJson([
+                "error" => 'You are not authorized to perform this action.'
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_an_existing_recipe()
+    {
+        $faker = Factory::create();
+
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $newCookbook = Cookbook::factory()->make([
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $newCookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $oldValues = [
+            'cookbook_id' => $recipe->refresh()->cookbook_id,
+            'description' => $recipe->refresh()->description,
+            'summary' => $recipe->refresh()->summary,
+            'imgUrl' => $recipe->refresh()->imgUrl,
+        ];
+
+        $this->assertDatabaseHas('recipes', [
+            'id' => $recipe->refresh()->getKey()
+        ]);
+
+        $this->json(
+            'POST',
+            '/api/v1/recipes/' . $recipe->refresh()->getKey() . '/edit',
+            [
+                'cookbook_id' => $newCookbook->refresh()->getKey(),
+                'description' => implode(" ", $faker->words(150)),
+                'summary' => implode(" ", $faker->words(55)),
+                'imgUrl' => $faker->imageUrl(),
+                'ingredients' => [
+                    [
+                        'name' => $faker->jobTitle,
+                        'unit' => '2',
+                        'thumbnail' => $faker->imageUrl(),
+                    ]
+                ],
+                'tags' => []
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(Response::HTTP_OK)
+            ->assertExactJson([
+                "updated" => true
+            ]);
+
+        $updatedRecipe = $recipe->refresh();
+        $this->assertNotSame($oldValues['cookbook_id'], $updatedRecipe->cookbook_id);
+        $this->assertNotSame($oldValues['description'], $updatedRecipe->description);
+        $this->assertNotSame($oldValues['summary'], $updatedRecipe->summary);
+        $this->assertNotSame($oldValues['imgUrl'], $updatedRecipe->imgUrl);
+    }
+
+    /**
+     * @test
+     */
+    public function you_cannot_update_a_recipe_you_do_not_own()
+    {
+        $faker = Factory::create();
+
+        $me = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $me->save();
+
+        $theOtherUser = User::factory()->make([
+            'email' => 'evan.reid2@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $theOtherUser->save();
+
+        $myToken = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $me->refresh()->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $salisRecipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $theOtherUser->refresh()->getKey()
+        ]);
+
+        $salisRecipe->save();
+
+        $this->json(
+            'POST',
+            '/api/v1/recipes/' . $salisRecipe->refresh()->getKey() . '/edit',
+            [
+                'description' => implode(" ", $faker->words(150)),
+            ],
+            [
+                'Authorization' => 'Bearer ' . $myToken
+            ]
+        )->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function createRoles()
+    {
+        DB::table('roles')->insert([
+            [
+                'role_id' => 'super',
+            ], [
+                'role_id' => 'contributor',
+            ]
+        ]);
+    }
+
+    private function createUserRole($user_id, $role_id)
+    {
+        $role_id = DB::table('roles')->where(['role_id' => $role_id])->first()->id;
+
+        $role = new Role();
+        $role->user_id = $user_id;
+        $role->role_id = $role_id;
+        $role->save();
     }
 }

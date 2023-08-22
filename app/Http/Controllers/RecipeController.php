@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\RecipeStoreRequest;
 use App\Models\Recipe;
 use App\Services\RecipeService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWT;
 
 /**
@@ -57,12 +52,6 @@ class RecipeController extends Controller
         return $this->service->show($recipeId);
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function addClap(Request $request)
     {
         $this->validate(
@@ -85,11 +74,6 @@ class RecipeController extends Controller
         ], 401);
     }
 
-    /**
-     * @param RecipeStoreRequest $request
-     * @param JWT $jwtAuth
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
     public function store(RecipeStoreRequest $request, JWT $jwtAuth)
     {
         try {
@@ -115,21 +99,16 @@ class RecipeController extends Controller
         }
     }
 
-    /**
-     * @param Request $request
-     * @param $recipeId
-     * @param JWT $jwtAuth
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
-     */
     public function update(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
-            $request->user()->ownRecipe($recipeId) &&
-            $jwtAuth->parseToken()->check()
+            $request->user()->ownRecipe($recipeId)
         ) {
-            return $this->service->update($request, $recipeId);
+            if (
+                $jwtAuth->parseToken()->check()
+            ) {
+                return $this->service->update($request, $recipeId);
+            }
         }
 
         return response()->json([
@@ -137,14 +116,6 @@ class RecipeController extends Controller
         ], 401);
     }
 
-    /**
-     * @param Request $request
-     * @param $recipeId
-     * @param JWT $jwtAuth
-     * @return Application|ResponseFactory|JsonResponse|Response
-     * @throws CookbookModelNotFoundException
-     * @throws JWTException
-     */
     public function destroy(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
@@ -159,7 +130,7 @@ class RecipeController extends Controller
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function report(Request $request, JWT $jwtAuth)
+    public function report(Request $request, JWT $jwtAuth): JsonResponse
     {
         if ($jwtAuth->parseToken()->check()) {
             $recipe = Recipe::find($request->get('recipe_id'));
@@ -181,5 +152,9 @@ class RecipeController extends Controller
                 'message' => 'There was an error processing this request. Please try again later.'
             ]);
         }
+
+        return response()->json([
+            'error' => 'You are not authorized to perform this action.'
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -288,9 +288,17 @@ class User extends Authenticatable implements JWTSubject
         return in_array($user->getKey(), $followings);
     }
 
-    private function hasRole(string $role)
+    private function hasRole(string $role_id)
     {
-        return false;
+        $role_id = DB::table('roles')->where(['role_id' => $role_id])->first()?->id;
+        $roles = $this->roles()->pluck('role_id')->toArray();
+
+        return in_array($role_id, $roles);
+    }
+
+    public function roles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Role::class, 'user_id');
     }
 
     public function getTikTokUser()
