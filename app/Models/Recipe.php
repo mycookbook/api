@@ -36,6 +36,7 @@ class Recipe extends Model
         'course',
         'cuisine',
         'nationality',
+        'is_reported'
     ];
 
     protected $hidden = ['user_id'];

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\RecipeStoreRequest;
+use App\Models\Recipe;
 use App\Services\RecipeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -13,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWT;
 
@@ -157,14 +159,27 @@ class RecipeController extends Controller
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function report(Request $request, JWT $jwtAuth)
+    public function report(Request $request)
     {
-        if ($jwtAuth->parseToken()->check()) {
-            return response()->json(['message' => 'feedback submitted.']);
-        }
+        if (JWTAuth::parseToken()->user()) {
+            $recipe = Recipe::find($request->get('recipe_id'));
 
-        return response()->json([
-            'error' => 'You are not authorized to perform this action.'
-        ], Response::HTTP_UNAUTHORIZED);
+            if ($recipe instanceof Recipe) {
+                $recipe->update(['is_reported' => 1]);
+                return response()->json(['message' => 'feedback submitted.']);
+            }
+
+            Log::debug(
+                'Error reporting recipe',
+                [
+                    'message' => 'Invalid recipe id',
+                    'recipe_id' => $request->get('recipe_id')
+                ]
+            );
+
+            return $this->errorResponse([
+                'message' => 'There was an error processing this request. Please try again later.'
+            ]);
+        }
     }
 }

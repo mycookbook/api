@@ -7,14 +7,15 @@ namespace Feature;
 use App\Models\Cookbook;
 use App\Models\Recipe;
 use App\Models\User;
+use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class RecipeTest extends \TestCase
 {
     /**
      * @test
-     * todo: service->validatePayload
      */
     public function it_can_retrieve_all_recipes_and_respond_with_a_200_status_code()
     {
@@ -163,11 +164,14 @@ class RecipeTest extends \TestCase
         ]);
     }
 
+    /**
+     * @test
+     */
     public function it_can_show_my_recipes()
     {
         $user = User::factory()->make([
             'email' => 'evan.reid@123.com',
-            'password' => 'pass123'
+            'password' => (new BcryptHasher)->make('pass123'),
         ]);
         $user->save();
 
@@ -191,7 +195,7 @@ class RecipeTest extends \TestCase
             $recipe->save();
         });
 
-        $this->json(
+        $response = $this->json(
             'GET',
             '/api/v1/my/recipes',
             [],
@@ -199,5 +203,118 @@ class RecipeTest extends \TestCase
                 'Authorization' => 'Bearer ' . $token
             ]
         )->assertStatus(200);
+
+        $decoded = json_decode($response->getContent(), true);
+
+        $this->assertCount(3, $decoded['data']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_report_a_recipe()
+    {
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $this->assertFalse((bool) $recipe->refresh()->is_reported);
+
+        $this->json(
+            'POST',
+            '/api/v1/report-recipe',
+            [
+                'recipe_id' => $recipe->refresh()->getKey()
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(200)
+            ->assertExactJson([
+                'message' => 'feedback submitted.'
+            ]);
+
+        $this->assertTrue((bool) $recipe->refresh()->is_reported);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_handle_error_reporting_recipe()
+    {
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        Log::shouldReceive('debug')
+            ->once()
+            ->with(
+                'Error reporting recipe',
+                [
+                    'message' => 'Invalid recipe id',
+                    'recipe_id' => 1
+                ]
+            );
+
+        $this->withoutExceptionHandling()->json(
+            'POST',
+            '/api/v1/report-recipe',
+            [
+                'recipe_id' => 1
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertStatus(400)
+            ->assertExactJson([
+                'message' => 'There was an error processing this request. Please try again later.'
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_only_authorized_user_to_report_a_recipe()
+    {
+        $this->json(
+            'POST',
+            '/api/v1/report-recipe',
+            [
+                'recipe_id' => 1
+            ],
+            [
+                'Authorization' => 'Bearer invalid-token'
+            ]
+        )->assertStatus(401)
+            ->assertExactJson([
+                'error' => 'Your session has expired. Please login and try again.'
+            ]);
     }
 }
