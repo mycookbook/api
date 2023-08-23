@@ -13,6 +13,27 @@ use Illuminate\Routing\Controller;
 
 class SearchControllerTest extends \TestCase
 {
+    /**
+     * @test
+     */
+    public function it_validates_search_request_body()
+    {
+        $searchController = new SearchController();
+
+        $response = $searchController->getSearchResults(new SearchRequest([
+            'query' => null
+        ]));
+
+        $decoded = json_decode($response->getContent(), true);
+        $this->assertSame([
+            'errors' => [
+                'query' => [
+                    'The query field is required.'
+                ]
+            ]
+        ], $decoded);
+    }
+
     public function test_it_is_instantiable()
     {
         $searchController = new SearchController();
