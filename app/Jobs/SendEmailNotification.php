@@ -7,6 +7,7 @@ namespace App\Jobs;
 class SendEmailNotification extends BaseNotification
 {
     const TYPE = 'email';
+    protected $tries;
 
     /**
      * SendEmailNotification constructor.

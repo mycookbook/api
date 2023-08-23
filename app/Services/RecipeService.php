@@ -22,7 +22,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Validation\UnauthorizedException;
 
 /**
  * Class RecipeService
@@ -179,8 +178,6 @@ class RecipeService extends BaseService implements serviceInterface
                 ], Response::HTTP_OK
             );
         }
-
-        throw new UnauthorizedException("You are not authorized to perform this action.");
     }
 
     /**
@@ -200,8 +197,6 @@ class RecipeService extends BaseService implements serviceInterface
                 ], Response::HTTP_ACCEPTED
             );
         }
-
-        throw new UnauthorizedException("You are not authorized to perform this action.");
     }
 
     /**
@@ -256,7 +251,7 @@ class RecipeService extends BaseService implements serviceInterface
         if ($cookbook_id = Arr::get($payload, 'cookbook_id')) {
             if (!Cookbook::find($cookbook_id)) {
                 $sources[] = [
-                    'cookbook_id' => $cookbook_id . ' does not exist.'
+                    'cookbook_id' => 'This cookbook does not exist.'
                 ];
             }
         }
