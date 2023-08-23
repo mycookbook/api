@@ -144,7 +144,7 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param Request $request
      * @param $id
-     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response|void
      * @throws CookbookModelNotFoundException
      * @throws InvalidPayloadException
      */
@@ -183,7 +183,7 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param User $user
      * @param $id
-     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response|void
      * @throws CookbookModelNotFoundException
      */
     public function delete(User $user, $id)
