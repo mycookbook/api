@@ -7,7 +7,9 @@ namespace Database\Factories;
 use App\Models\Cookbook;
 use App\Models\Recipe;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class RecipeFactory extends Factory
 {
@@ -22,8 +24,9 @@ class RecipeFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->streetName,
-            'ingredients' => [fake()->name, fake()->name, fake()->name],
+            'name' => $name = fake()->streetName,
+            'slug' => Str::slug($name),
+            'ingredients' => json_encode([]),
             'description' => fake()->sentence(300),
             'imgUrl' => fake()->imageUrl,
             'user_id' => User::factory()->make()->id,
@@ -31,7 +34,13 @@ class RecipeFactory extends Factory
             'summary' => fake()->sentence(180),
             'nutritional_detail' => 'low carbs',
             'calorie_count' => 1300,
-            'nationality' => 1
+            'nationality' => 1,
+            'cuisine' => '',
+            'course' => '',
+            'claps' => 0,
+            'tags' => json_encode([]),
+            'prep_time' => Carbon::now(),
+            'cook_time' => Carbon::now()
         ];
     }
 }

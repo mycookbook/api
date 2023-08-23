@@ -7,6 +7,7 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthService
 {
@@ -29,16 +30,19 @@ class AuthService
         return response()->json(['token' => $token], Response::HTTP_OK);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse|Response
-     */
-    public function logout()
+    public function logout(): \Illuminate\Http\JsonResponse|Response
     {
         try {
             Auth::logout();
-
             return response()->noContent();
         } catch (\Exception $exception) {
+            Log::info(
+                'Not found or Invalid Credentials.',
+                [
+                    'errorMsg' => $exception->getMessage()
+                ]
+            );
+
             return response()->json(
                 [
                     'Not found or Invalid Credentials.'

@@ -18,15 +18,15 @@ class UserFactory extends Factory
      * @return array
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function definition()
+    public function definition($attributes = [])
     {
         return [
-            'name' => fake()->name,
-            'email' => fake()->email,
+            'name' => $name = fake()->name,
+            'email' => fake()->unique()->safeEmail(),
             'password' => (new BcryptHasher)->make('saltyL@k3'),
             'following' => rand(1, 100),
             'followers' => rand(1, 100),
-            'name_slug' => str_replace(" ", "-", strtolower(fake()->name)),
+            'name_slug' => str_replace(" ", "-", strtolower($name)),
         ];
     }
 }

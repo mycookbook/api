@@ -7,9 +7,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\ApiException;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
-use App\Jobs\TriggerEmailVerificationProcess;
 use App\Mail\OtpWasGenerated;
-use App\Models\EmailVerification;
 use App\Models\Following;
 use App\Models\User;
 use App\Models\UserFeedback;
@@ -17,64 +15,37 @@ use App\Services\TikTok\AccessToken;
 use App\Services\TikTok\HttpRequestRunner;
 use App\Services\TikTok\Videos;
 use App\Services\UserService;
-use Carbon\Carbon;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Ichtrojan\Otp\Models\Otp as OtpModel;
 
-/**
- * Class UserController
- */
 class UserController extends Controller
 {
     protected UserService $service;
 
-    /**
-     * @param \App\Services\UserService $service
-     */
     public function __construct(UserService $service)
     {
         $this->service = $service;
     }
 
-    /**
-     * Get all users from the database
-     */
     public function index()
     {
         return $this->service->index();
     }
 
-    /**
-     * @param UserStoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(UserStoreRequest $request): \Illuminate\Http\JsonResponse
     {
         return $this->service->store($request);
     }
 
-    /**
-     * Get one user
-     *
-     * @param mixed $username username
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     */
     public function show($username)
     {
         return $this->service->show($username);
     }
 
-    /**
-     * @param $username
-     * @param UserUpdateRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response
-     */
     public function update($username, UserUpdateRequest $request)
     {
         if ($request->all()) {
@@ -86,54 +57,6 @@ class UserController extends Controller
         return response()->json([
             'message' => 'nothing to update.',
         ]);
-    }
-
-    /**
-     * Email Verification
-     *
-     * @param $token
-     * @return \Illuminate\Http\JsonResponse|void
-     */
-    public function verifyEmail($token)
-    {
-        $payload = Crypt::decrypt($token);
-
-        try {
-            if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
-                Log::info('Invalid secret provided for verifying this email', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
-                throw new \Exception('There was a problem processing this request. Please try again later.');
-            }
-
-            $user = User::findOrFail($payload['user_id']);
-
-            if ($user) {
-                $verification = EmailVerification::where('user_id', $payload['user_id']);
-                $verification->update([
-                    'is_verified' => Carbon::now(),
-                ]);
-
-                return response()->json(null, Response::HTTP_NO_CONTENT);
-            }
-        } catch (\Exception $e) {
-            return response()->json($e->getMessage(), Response::HTTP_CONFLICT);
-        }
-    }
-
-    /**
-     * @param $token
-     *
-     * @throws \Exception
-     */
-    public function resend($token)
-    {
-        $payload = Crypt::decrypt($token);
-
-        if ($payload['secret'] != env('CRYPT_SECRET')) { //one more layer of scrutiny
-            Log::info('Invalid secret provided for resending email verification', ['user_id' => $payload['user_id'], 'email' => $payload['email']]);
-            throw new \Exception('There was a problem processing this request. Please try again later.');
-        } else {
-            dispatch(new TriggerEmailVerificationProcess($payload['user_id']));
-        }
     }
 
     public function followUser(Request $request)
@@ -209,33 +132,23 @@ class UserController extends Controller
     {
         /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
+            $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
 
-            try {
-                $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
-
-                if (collect($hasRespondedAlready->pluck('response')->toArray())->isEmpty()) {
-                    $userFeedback = new UserFeedback([
-                        'user_id' => $user->getKey(),
-                        'type' => 'feedback',
-                        'response' =>  $request->get('choice', 'still-thinking')
-                    ]);
-
-                    return response()->json(['success' => $userFeedback->save()]);
-                }
-
-                return response()->json([
-                    'success' => $hasRespondedAlready->first()->update([
-                        'response' =>  $request->get('choice', 'still-thinking')
-                    ])
+            if (collect($hasRespondedAlready->pluck('response')->toArray())->isEmpty()) {
+                $userFeedback = new UserFeedback([
+                    'user_id' => $user->getKey(),
+                    'type' => 'feedback',
+                    'response' =>  $request->get('choice', 'still-thinking')
                 ]);
-            } catch (ApiException $exception){
-                Log::debug(
-                    'error creating user feedback',
-                    ['exception' => $exception]
-                );
 
-                return response()->json(['error', 'There was an error processing this request. Please try again later.'], $exception->getCode());
+                return response()->json(['success' => $userFeedback->save()]);
             }
+
+            return response()->json([
+                'success' => $hasRespondedAlready->first()->update([
+                    'response' =>  $request->get('choice', 'still-thinking')
+                ])
+            ]);
         }
 
         return $this->unauthorizedResponse();

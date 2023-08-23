@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,7 +47,7 @@ class Handler extends ExceptionHandler
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($throwable instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+        if ($throwable instanceof JWTException) {
             return response()->json([
                 'error' => $throwable->getMessage()
             ], Response::HTTP_UNAUTHORIZED);
@@ -60,6 +61,10 @@ class Handler extends ExceptionHandler
 
         if ($throwable instanceof TikTokException) {
             return response()->json(['error' => $throwable->getMessage()]);
+        }
+
+        if ($throwable instanceof ApiException) {
+            return response()->json(['error' => $throwable->getMessage()], Response::HTTP_UNAUTHORIZED);
         }
 
         return parent::render($request, $throwable);

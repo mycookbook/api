@@ -49,9 +49,7 @@ class OtpTest extends TestCase
             );
 
         $this->withoutExceptionHandling()
-            ->json('POST', '/api/v1/otp/generate', [
-                'identifier' => $randStr
-            ])
+            ->json('POST', '/api/v1/otp/generate', ['identifier' => $randStr])
             ->assertExactJson([
                 "message" => "There was an error processing this request. Please try again."
             ]);

@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Feature;
 
 use App\Jobs\SendEmailNotification;
+use App\Models\User;
+use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Queue;
 
 class UserTest extends \TestCase
@@ -209,5 +212,202 @@ class UserTest extends \TestCase
         $response = $this->call('GET', '/api/v1/users/sally');
 
         $this->assertEquals(Response::HTTP_OK, $response->status());
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_retrieve_all_users()
+    {
+        $users = User::factory()->count(5)->make();
+
+        $users->map(function ($user) {
+            $user->save();
+        });
+
+        $this
+            ->json('GET', '/api/v1/users')
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    [
+                        'name',
+                        'cookbooks',
+                        'recipes',
+                        'contact',
+                        'contributions',
+                        'email',
+                        'following',
+                        'followers',
+                        'created_at',
+                        'updated_at',
+                        'name_slug',
+                        'pronouns',
+                        'avatar',
+                        'expertise_level',
+                        'about',
+                        'can_take_orders',
+                        'email_verified'
+                    ]
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_user_detail()
+    {
+        $user = User::factory()->make();
+        $user->save();
+        $username = $user->refresh()->name_slug;
+
+        $this
+            ->json(
+                'POST',
+                '/api/v1/users/' . $username . '/edit',
+                [
+                    'pronouns' => 'They/Them/ze'
+                ]
+            )
+            ->assertStatus(200)
+            ->assertExactJson([
+                'updated' => true,
+                'status' => 'success'
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function when_nothing_to_update()
+    {
+        $user = User::factory()->make();
+        $user->save();
+        $username = $user->refresh()->name_slug;
+
+        $this
+            ->json(
+                'POST',
+                '/api/v1/users/' . $username . '/edit'
+            )
+            ->assertStatus(200)
+            ->assertExactJson([
+                'message' => 'nothing to update.'
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_handle_follow_user()
+    {
+        $user = User::factory()->make([
+            'email' => 'me@test.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $userToFollow = User::factory()->make([
+            'email' => 'them@test.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $userToFollow->save();
+
+        $otherUsers = User::factory()->count(5)->make([
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+
+        $otherUsers->map(function ($user) {
+            $user->save();
+        });
+
+        $myBearertoken = Auth::attempt([
+            'email' => 'me@test.com',
+            'password' => 'pass123'
+        ]);
+
+        $this->json(
+            'POST',
+            '/api/v1/follow',
+            [
+                'toFollow' => $userToFollow->refresh()->getKey()
+            ],
+            [
+                'Authorization' => 'Bearer ' . $myBearertoken
+            ]
+        )->assertStatus(200)
+            ->assertJsonStructure([
+                [
+                    'followers', 'author', 'avatar', 'handle'
+                ]
+            ]);
+    }
+
+    public function test_who_to_folow()
+    {
+        $user = User::factory()->make([
+            'email' => 'me@test.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $myBearertoken = Auth::attempt([
+            'email' => 'me@test.com',
+            'password' => 'pass123'
+        ]);
+
+        $usersToFollow = User::factory()->count(30)->make([
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+
+        $usersToFollow->map(function ($user) {
+            $user->save();
+        });
+
+        $this->json(
+            'GET',
+            '/api/v1/who-to-follow',
+            [],
+            [
+                'Authorization' => 'Bearer ' . $myBearertoken
+            ]
+        )->assertStatus(200)
+            ->assertJsonStructure([
+                [
+                    'followers', 'author', 'avatar', 'handle'
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_authorized_users_to_use_the_add_feedback_feature(): void
+    {
+        $choices = ['still-thinking', 'probably', 'very-likely'];
+        $choice = $choices[array_rand($choices)];
+
+        $user = User::factory()->make([
+            'email' => 'me@test.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $bearerToken = Auth::attempt([
+            'email' => 'me@test.com',
+            'password' => 'pass123'
+        ]);
+
+        $this->json(
+            'POST',
+            '/api/v1/feedback',
+            [
+                'choice' => $choice
+            ],
+            [
+                'Authorization' => 'Bearer ' . $bearerToken
+            ]
+        )->assertStatus(200);
     }
 }

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\CookbookModelNotFoundException;
 use App\Http\Requests\RecipeStoreRequest;
+use App\Models\Recipe;
 use App\Services\RecipeService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWT;
 
 /**
@@ -55,12 +52,6 @@ class RecipeController extends Controller
         return $this->service->show($recipeId);
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function addClap(Request $request)
     {
         $this->validate(
@@ -72,12 +63,6 @@ class RecipeController extends Controller
         return $this->service->addClap($request->get('recipe_id'));
     }
 
-    /**
-     * @param Request $request
-     * @param JWT $jwtAuth
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
-     */
     public function myRecipes(Request $request, JWT $jwtAuth): \Illuminate\Http\JsonResponse
     {
         if ($jwtAuth->parseToken()->check()) {
@@ -89,18 +74,13 @@ class RecipeController extends Controller
         ], 401);
     }
 
-    /**
-     * @param RecipeStoreRequest $request
-     * @param JWT $jwtAuth
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
     public function store(RecipeStoreRequest $request, JWT $jwtAuth)
     {
         try {
             $jwtAuth->parseToken()->check();
             return $this->service->store($request);
         } catch (\Exception $exception) {
-            Log::debug('An error occured while creating a recipe', [
+            Log::debug('An error occured while creating this recipe', [
                 'resource' => self::RECIPE_RESOURCE,
                 'exception' => $exception
             ]);
@@ -119,21 +99,16 @@ class RecipeController extends Controller
         }
     }
 
-    /**
-     * @param Request $request
-     * @param $recipeId
-     * @param JWT $jwtAuth
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     * @throws \App\Exceptions\CookbookModelNotFoundException
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
-     */
     public function update(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
-            $request->user()->ownRecipe($recipeId) &&
-            $jwtAuth->parseToken()->check()
+            $request->user()->ownRecipe($recipeId)
         ) {
-            return $this->service->update($request, $recipeId);
+            if (
+                $jwtAuth->parseToken()->check()
+            ) {
+                return $this->service->update($request, $recipeId);
+            }
         }
 
         return response()->json([
@@ -141,14 +116,6 @@ class RecipeController extends Controller
         ], 401);
     }
 
-    /**
-     * @param Request $request
-     * @param $recipeId
-     * @param JWT $jwtAuth
-     * @return Application|ResponseFactory|JsonResponse|Response
-     * @throws CookbookModelNotFoundException
-     * @throws JWTException
-     */
     public function destroy(Request $request, $recipeId, JWT $jwtAuth)
     {
         if (
@@ -163,10 +130,27 @@ class RecipeController extends Controller
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function report(Request $request, JWT $jwtAuth)
+    public function report(Request $request, JWT $jwtAuth): JsonResponse
     {
         if ($jwtAuth->parseToken()->check()) {
-            return response()->json(['message' => 'feedback submitted.']);
+            $recipe = Recipe::find($request->get('recipe_id'));
+
+            if ($recipe instanceof Recipe) {
+                $recipe->update(['is_reported' => 1]);
+                return response()->json(['message' => 'feedback submitted.']);
+            }
+
+            Log::debug(
+                'Error reporting recipe',
+                [
+                    'message' => 'Invalid recipe id',
+                    'recipe_id' => $request->get('recipe_id')
+                ]
+            );
+
+            return $this->errorResponse([
+                'message' => 'There was an error processing this request. Please try again later.'
+            ]);
         }
 
         return response()->json([

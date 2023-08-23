@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos;
 
 class TikTokUserDto
@@ -58,11 +60,6 @@ class TikTokUserDto
     public function getOpenId(): string
     {
         return $this->open_id;
-    }
-
-    public function isIsVerified(): bool
-    {
-        return $this->is_verified;
     }
 
     public function getProfileDeepLink(): string

@@ -22,7 +22,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Validation\UnauthorizedException;
 
 /**
  * Class RecipeService
@@ -145,7 +144,7 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param Request $request
      * @param $id
-     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response|void
      * @throws CookbookModelNotFoundException
      * @throws InvalidPayloadException
      */
@@ -179,14 +178,12 @@ class RecipeService extends BaseService implements serviceInterface
                 ], Response::HTTP_OK
             );
         }
-
-        throw new UnauthorizedException("You are not authorized to perform this action.");
     }
 
     /**
      * @param User $user
      * @param $id
-     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response|void
      * @throws CookbookModelNotFoundException
      */
     public function delete(User $user, $id)
@@ -200,8 +197,6 @@ class RecipeService extends BaseService implements serviceInterface
                 ], Response::HTTP_ACCEPTED
             );
         }
-
-        throw new UnauthorizedException("You are not authorized to perform this action.");
     }
 
     /**
@@ -219,7 +214,7 @@ class RecipeService extends BaseService implements serviceInterface
         return response(
             [
                 'updated' => true,
-                'claps' => $recipe->claps,
+                'claps' => $recipe->refresh()->claps,
             ], Response::HTTP_OK
         );
     }
@@ -256,7 +251,7 @@ class RecipeService extends BaseService implements serviceInterface
         if ($cookbook_id = Arr::get($payload, 'cookbook_id')) {
             if (!Cookbook::find($cookbook_id)) {
                 $sources[] = [
-                    'cookbook_id' => $cookbook_id . ' does not exist.'
+                    'cookbook_id' => 'This cookbook does not exist.'
                 ];
             }
         }
