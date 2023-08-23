@@ -7,13 +7,11 @@ namespace Feature;
 use App\Models\Cookbook;
 use App\Models\Flag;
 use App\Models\Recipe;
-use App\Models\Role;
 use App\Models\User;
 use Faker\Factory;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class RecipeTest extends \TestCase
@@ -407,7 +405,7 @@ class RecipeTest extends \TestCase
             'id' => $recipe->refresh()->getKey()
         ]);
 
-        $this->json(
+        $res = $this->json(
             'POST',
             '/api/v1/recipes/' . $recipe->refresh()->getKey() . '/destroy',
             [
@@ -614,10 +612,8 @@ class RecipeTest extends \TestCase
     /**
      * @test
      */
-    public function handles_error_creating_a_new_recipe()
+    public function handles_invalid_payload_when_updating_existing_cookbook()
     {
-        $faker = Factory::create();
-
         $user = User::factory()->make([
             'email' => 'evan.reid@123.com',
             'password' => (new BcryptHasher)->make('pass123'),
@@ -641,53 +637,29 @@ class RecipeTest extends \TestCase
         ]);
         $flag->save();
 
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->refresh()->getKey()
+        ]);
+
+        $recipe->save();
+
         $this->json(
             'POST',
-            '/api/v1/recipes/',
+            '/api/v1/recipes/' . $recipe->refresh()->getKey() . '/edit',
             [
-                'is_draft' => 'false',
-                'name' => $faker->jobTitle,
-                'cookbook_id' => $cookbook->refresh()->getKey(),
-                'description' => implode(" ", $faker->words(150)),
-                'summary' => implode(" ", $faker->words(55)),
-                'imgUrl' => $faker->imageUrl(),
-                'ingredients' => [
-                    [
-                        'name' => $faker->jobTitle,
-                        'unit' => '2',
-                        'thumbnail' => $faker->imageUrl(),
-                    ]
-                ],
-                'nationality' => $flag->refresh()->flag,
-                'cuisine' => 'spanich'
+                'cookbook_id' => rand(100,105),
+                'nationality' => 'fake',
+                'imgUrl' => 'not-a-valid-image-url',
+                'description' => 'less than 100',
+                'summary' => 'less than 50',
+                'ingredients' => [],
+                'cuisine' => 'spanich',
+                'tags' => 'not a list'
             ],
             [
                 'Authorization' => 'Bearer ' . $token
             ]
-        )->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson([
-                "error" => 'There was an error processing this request, please try again later.'
-            ]);
-    }
-
-    private function createRoles()
-    {
-        DB::table('roles')->insert([
-            [
-                'role_id' => 'super',
-            ], [
-                'role_id' => 'contributor',
-            ]
-        ]);
-    }
-
-    private function createUserRole($user_id, $role_id)
-    {
-        $role_id = DB::table('roles')->where(['role_id' => $role_id])->first()->id;
-
-        $role = new Role();
-        $role->user_id = $user_id;
-        $role->role_id = $role_id;
-        $role->save();
+        )->assertStatus(Response::HTTP_BAD_REQUEST);
     }
 }

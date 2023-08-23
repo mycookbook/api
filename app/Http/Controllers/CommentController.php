@@ -11,11 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\JWT;
 
 class CommentController extends Controller
 {
-    public function addComment(Request $request, JWT $jwtAuth)
+    public function addComment(Request $request)
     {
         /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
@@ -45,8 +44,6 @@ class CommentController extends Controller
                 }
             }
         }
-
-        throw new ApiException('You are not suthorized to perfrom this action.');
     }
 
     public function destroyComment(Request $request)
@@ -57,23 +54,10 @@ class CommentController extends Controller
             $comment = Comment::findOrFail($request->only(['comment-id']))->first();
 
             if ($user->isSuper() || $user->ownsComment($payload['comment-id'])) {
-                try {
-                    return response()->json(['deleted' => $comment->delete()]);
-                } catch (\Exception $exception) {
-                    Log::debug(
-                        'comment deletion failed.',
-                        ['error' => $exception, 'payload' => $payload]
-                    );
-
-                    return response()->json([
-                        'error' => 'There was an error processing this request. Please try again later.'
-                    ], 400);
-                }
+                return response()->json(['deleted' => $comment->delete()]);
             } else {
                 throw new ApiException('You are not suthorized to perfrom this action.');
             }
         }
-
-        throw new ApiException('You are not suthorized to perfrom this action.');
     }
 }

@@ -230,6 +230,40 @@ class CommentTest extends \TestCase
     /**
      * @test
      */
+    public function it_cannot_add_comment_for_an_unauthorized_user()
+    {
+        $faker = Factory::create();
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $this->user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $this->user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $this->json(
+            'POST',
+            '/api/v1/comments',
+            [
+                'resource-type' => 'recipe',
+                'resource-id' => $recipe->refresh()->getKey(),
+                'comment' => $faker->sentence
+            ],
+            [
+                'Authorization' => 'Bearer unauthorized-access-token'
+            ]
+        )->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     */
     public function it_cannot_destroy_comment_if_access_token_is_malformed_or_invalid()
     {
         $this->json(
@@ -242,5 +276,106 @@ class CommentTest extends \TestCase
                 'Authorization' => 'Bearer malformed-or-invalid-token'
             ]
         )->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     * scnario: user does not own recipe but isSuper
+     */
+    public function only_supers_can_destroy_a_comment()
+    {
+        $theOtherUser = User::factory()->make();
+        $theOtherUser->save();
+
+        $this->createRoles();
+        $this->createUserRole($this->user->refresh()->getKey(), 'super');
+
+        $token = Auth::attempt([
+            'email' => $this->user->email,
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $this->user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $this->user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $comment = Comment::factory()->make([
+            'user_id' => $theOtherUser->refresh()->getKey(),
+            'recipe_id' => $recipe->refresh()->getKey()
+        ]);
+
+        $comment->save();
+
+        $this->json(
+            'POST',
+            '/api/v1/comments/destroy',
+            [
+                'comment-id' => $comment->refresh()->getKey()
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertExactJson([
+            'deleted' => true
+        ])->assertStatus(Response::HTTP_OK);
+    }
+
+    /**
+     * @test
+     */
+    public function handles_when_not_user_and_not_own_comment()
+    {
+        $theOtherUser = User::factory()->make();
+        $theOtherUser->save();
+
+        $this->createRoles();
+        $this->createUserRole($this->user->refresh()->getKey(), 'contributor');
+
+        $token = Auth::attempt([
+            'email' => $this->user->email,
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $this->user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $this->user->getKey()
+        ]);
+
+        $recipe->save();
+
+        $comment = Comment::factory()->make([
+            'user_id' => $theOtherUser->refresh()->getKey(),
+            'recipe_id' => $recipe->refresh()->getKey()
+        ]);
+
+        $comment->save();
+
+        $this->json(
+            'POST',
+            '/api/v1/comments/destroy',
+            [
+                'comment-id' => $comment->refresh()->getKey()
+            ],
+            [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        )->assertExactJson([
+            'error' => 'You are not suthorized to perfrom this action.'
+        ])->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }
