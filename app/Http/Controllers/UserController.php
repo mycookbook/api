@@ -132,33 +132,23 @@ class UserController extends Controller
     {
         /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
+            $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
 
-            try {
-                $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
-
-                if (collect($hasRespondedAlready->pluck('response')->toArray())->isEmpty()) {
-                    $userFeedback = new UserFeedback([
-                        'user_id' => $user->getKey(),
-                        'type' => 'feedback',
-                        'response' =>  $request->get('choice', 'still-thinking')
-                    ]);
-
-                    return response()->json(['success' => $userFeedback->save()]);
-                }
-
-                return response()->json([
-                    'success' => $hasRespondedAlready->first()->update([
-                        'response' =>  $request->get('choice', 'still-thinking')
-                    ])
+            if (collect($hasRespondedAlready->pluck('response')->toArray())->isEmpty()) {
+                $userFeedback = new UserFeedback([
+                    'user_id' => $user->getKey(),
+                    'type' => 'feedback',
+                    'response' =>  $request->get('choice', 'still-thinking')
                 ]);
-            } catch (ApiException $exception){
-                Log::debug(
-                    'error creating user feedback',
-                    ['exception' => $exception]
-                );
 
-                return response()->json(['error', 'There was an error processing this request. Please try again later.'], $exception->getCode());
+                return response()->json(['success' => $userFeedback->save()]);
             }
+
+            return response()->json([
+                'success' => $hasRespondedAlready->first()->update([
+                    'response' =>  $request->get('choice', 'still-thinking')
+                ])
+            ]);
         }
 
         return $this->unauthorizedResponse();

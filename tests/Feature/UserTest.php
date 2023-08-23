@@ -379,4 +379,35 @@ class UserTest extends \TestCase
                 ]
             ]);
     }
+
+    /**
+     * @test
+     */
+    public function it_allows_authorized_users_to_use_the_add_feedback_feature(): void
+    {
+        $choices = ['still-thinking', 'probably', 'very-likely'];
+        $choice = $choices[array_rand($choices)];
+
+        $user = User::factory()->make([
+            'email' => 'me@test.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $bearerToken = Auth::attempt([
+            'email' => 'me@test.com',
+            'password' => 'pass123'
+        ]);
+
+        $this->json(
+            'POST',
+            '/api/v1/feedback',
+            [
+                'choice' => $choice
+            ],
+            [
+                'Authorization' => 'Bearer ' . $bearerToken
+            ]
+        )->assertStatus(200);
+    }
 }
