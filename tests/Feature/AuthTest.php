@@ -6,8 +6,8 @@ namespace Feature;
 
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 /**
  * Class UserTest
@@ -24,7 +24,7 @@ class AuthTest extends \TestCase
                 'email' => '',
                 'password' => 'mypassword',
             ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        )->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -41,7 +41,7 @@ class AuthTest extends \TestCase
             'POST', '/api/v1/auth/login', [
                 'password' => 'mypassword',
             ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        )->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -59,7 +59,7 @@ class AuthTest extends \TestCase
                 'email' => 'sally@foo.com',
                 'password' => '',
             ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        )->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -76,7 +76,7 @@ class AuthTest extends \TestCase
             'POST', '/api/v1/auth/login', [
                 'email' => 'sally@foo.com',
             ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        )->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -91,7 +91,7 @@ class AuthTest extends \TestCase
     {
         $response = $this->json(
             'POST', '/api/v1/auth/login', []
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        )->assertStatus(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -176,7 +176,7 @@ class AuthTest extends \TestCase
                 'email' => 'sally@foo.com',
                 'password' => 'invalidpassword',
             ]
-        )->assertStatus(Response::HTTP_NOT_FOUND);
+        )->assertStatus(ResponseAlias::HTTP_NOT_FOUND);
     }
 
     /**
@@ -220,14 +220,14 @@ class AuthTest extends \TestCase
             ]
         );
 
-        $respose = $this->json(
+        $response = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => $email,
                 'password' => $password,
             ]
         );
 
-        $decoded = json_decode($respose->getContent(), true);
+        $decoded = json_decode($response->getContent(), true);
 
         $this->json(
             'GET', '/api/v1/auth/logout', [], [
@@ -260,7 +260,7 @@ class AuthTest extends \TestCase
                 ]
             ]
         )
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertStatus(ResponseAlias::HTTP_BAD_REQUEST)
             ->assertExactJson([
                 'Not found or Invalid Credentials.'
             ]);
@@ -282,14 +282,14 @@ class AuthTest extends \TestCase
             ]
         );
 
-        $respose = $this->json(
+        $response = $this->json(
             'POST', '/api/v1/auth/login', [
                 'email' => $email,
                 'password' => $password,
             ]
         );
 
-        $decoded = json_decode($respose->getContent(), true);
+        $decoded = json_decode($response->getContent(), true);
 
         $this
             ->json(
@@ -297,7 +297,7 @@ class AuthTest extends \TestCase
                     'Authorization' => 'Bearer ' . $decoded['token']
                 ]
             )
-            ->assertStatus(Response::HTTP_OK)
+            ->assertStatus(ResponseAlias::HTTP_OK)
             ->assertExactJson([
                 'validated' => true
             ]);
@@ -314,9 +314,9 @@ class AuthTest extends \TestCase
                     'Authorization' => 'Bearer invalid-token'
                 ]
             )
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
+            ->assertStatus(ResponseAlias::HTTP_UNAUTHORIZED)
             ->assertExactJson([
-                'error' => 'Expired or Tnvalid token.'
+                'error' => 'Expired or Invalid token.'
             ]);
     }
 }

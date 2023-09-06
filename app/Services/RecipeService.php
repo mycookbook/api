@@ -16,12 +16,11 @@ use App\Models\User;
 use App\Utils\DbHelper;
 use App\Utils\IngredientMaker;
 use Carbon\Carbon;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 /**
  * Class RecipeService
@@ -33,11 +32,7 @@ class RecipeService extends BaseService implements serviceInterface
         $this->serviceModel = new Recipe();
     }
 
-    /**
-     * @param $user_id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index($user_id = null): \Illuminate\Http\JsonResponse
+    public function index($user_id = null)
     {
         $recipes = Recipe::paginate(100);
 
@@ -45,39 +40,22 @@ class RecipeService extends BaseService implements serviceInterface
             return !$recipe->is_draft;
         });
 
-        if ($user_id) {
-            return response()->json(
-                [
-                    'data' => $recipes->where('user_id', '=', $user_id),
-                ], Response::HTTP_OK
-            );
-        }
-
-        return response()->json(['data' => $recipes]);
+        return $user_id ? $recipes->where('user_id', '=', $user_id) : $recipes;
     }
 
     /**
-     * Retrieve one Recipe
-     *
      * @param $id
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      * @throws CookbookModelNotFoundException
      */
     public function show($id)
     {
-        $recipe = $this->get($id);
-
-        if (!$recipe) {
-            throw new CookbookModelNotFoundException();
-        }
-
-        return $recipe;
+        return $this->get($id) ?: null;
     }
 
     /**
      * @param $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return bool
      * @throws ApiException
      */
     public function store($request)
@@ -130,12 +108,10 @@ class RecipeService extends BaseService implements serviceInterface
                     'resource_type' => 'recipe'
                 ]);
 
-                $draft->save();
+                return $draft->save();
             }
 
-            return response([
-                'created' => $created,
-            ], Response::HTTP_CREATED);
+            return $created;
         } catch (\Exception $e) {
             throw new ApiException($e->getMessage());
         }
@@ -144,7 +120,7 @@ class RecipeService extends BaseService implements serviceInterface
     /**
      * @param Request $request
      * @param $id
-     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response|void
+     * @return bool|int|void
      * @throws CookbookModelNotFoundException
      * @throws InvalidPayloadException
      */
@@ -172,18 +148,14 @@ class RecipeService extends BaseService implements serviceInterface
                 ->getKey();
             }
 
-            return response(
-                [
-                    'updated' => $recipe->update($payload),
-                ], Response::HTTP_OK
-            );
+            return $recipe->update($payload);
         }
     }
 
     /**
      * @param User $user
      * @param $id
-     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|Response|void
+     * @return bool|mixed|void|null
      * @throws CookbookModelNotFoundException
      */
     public function delete(User $user, $id)
@@ -191,17 +163,13 @@ class RecipeService extends BaseService implements serviceInterface
         if ($user->isSuper()) {
             $recipe = $this->get($id);
 
-            return response(
-                [
-                    'deleted' => $recipe->delete(),
-                ], Response::HTTP_ACCEPTED
-            );
+            return $recipe->delete();
         }
     }
 
     /**
      * @param $recipeId
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return false|\Illuminate\Database\Eloquent\Model
      * @throws CookbookModelNotFoundException
      */
     public function addClap($recipeId)
@@ -209,14 +177,12 @@ class RecipeService extends BaseService implements serviceInterface
         $recipe = $this->get($recipeId);
 
         $recipe->claps = $recipe->claps + 1;
-        $recipe->save();
 
-        return response(
-            [
-                'updated' => true,
-                'claps' => $recipe->refresh()->claps,
-            ], Response::HTTP_OK
-        );
+        if ($recipe->save()) {
+            return $recipe->refresh();
+        }
+
+        return false;
     }
 
     /**
@@ -279,9 +245,9 @@ class RecipeService extends BaseService implements serviceInterface
             }
         }
 
-        //descriptin length
+        //description length
         If ($description = Arr::get($payload, 'description')) {
-            //todo: ai enabled giberrish detection
+            //todo: ai enabled gibberish detection
             if (Str::wordCount($description) < 100) {
                 $sources[] = [
                     'description' =>'Description must not be less than 100 words.'
@@ -291,7 +257,7 @@ class RecipeService extends BaseService implements serviceInterface
 
         //summary length
         If ($summary = Arr::get($payload, 'summary')) {
-            //todo: ai enabled giberrish detection
+            //todo: ai enabled gibberish detection
             if (Str::wordCount($summary) < 50) {
                 $sources[] = [
                     'summary' => 'Summary must not be less than 50 words.'
