@@ -23,7 +23,7 @@ db_migrate: ## run db migrations
 db_schemefy: ## Display the db schema in table format
 	 @php artisan schema:show
 
-setup: composer generate_key
+setup: composer generate_key jwt_key db_connection
 
 copy_env: #todo: figure out a way to not override env vars if file_exists already
 	@cp .env.example .env
@@ -37,6 +37,12 @@ composer: ## Install project dependencies
 
 generate_key: ## Generate APP_KEY and set in .env
 	@docker-compose exec app php artisan key:generate
+
+jwt_key: ## Generate JWT_SECRET and set in .env
+	@docker-compose exec app php artisan jwt:secret
+
+db_connection: ## Generate DB Connection details and set in .env
+	@docker-compose exec app php artisan db:connection
 
 login: ## Creates a new user/token or generate new token for given user
 	@php artisan auth:token

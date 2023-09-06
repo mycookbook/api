@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class Controller extends BaseController
 {
@@ -16,9 +17,9 @@ class Controller extends BaseController
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function successResponse(array $data = []): \Illuminate\Http\JsonResponse
+    public function successResponse(array $data = [], $code = ResponseAlias::HTTP_OK): \Illuminate\Http\JsonResponse
     {
-        return response()->json($data);
+        return response()->json($data, $code);
     }
 
     public function noContentResponse(): Response
@@ -28,13 +29,13 @@ class Controller extends BaseController
 
     public function errorResponse(array $data = []): \Illuminate\Http\JsonResponse
     {
-        return response()->json($data, Response::HTTP_BAD_REQUEST);
+        return response()->json($data, ResponseAlias::HTTP_BAD_REQUEST);
     }
 
     public function unauthorizedResponse(): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'error' => 'Your login session has expired. Please login.'
-        ], Response::HTTP_UNAUTHORIZED);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 }

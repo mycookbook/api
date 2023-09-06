@@ -6,11 +6,13 @@ namespace Feature;
 
 use App\Models\Cookbook;
 use App\Models\User;
+use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class CookbookTest extends \TestCase
 {
-    protected string $bookcoverImageUrl =
+    protected string $bookCoverImageUrl =
         "https://www.glamox.com/public/images/image-default.png?scale=canvas&width=640&height=480";
 
     public function setUp(): void
@@ -25,7 +27,7 @@ class CookbookTest extends \TestCase
     public function it_can_retrieve_all_cookbooks_and_respond_with_a_200_status_code()
     {
         $this->json('GET', '/api/v1/cookbooks')
-            ->assertStatus(Response::HTTP_OK)
+            ->assertStatus(ResponseAlias::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
                     [
@@ -41,9 +43,11 @@ class CookbookTest extends \TestCase
                         'is_locked',
                         'alt_text',
                         'tags',
-                        '_links',
+                        'recipes',
                         'recipes_count',
                         'categories',
+                        'users',
+                        'flag',
                         'author'
                     ]
                 ]
@@ -56,7 +60,7 @@ class CookbookTest extends \TestCase
     public function it_responds_with_a_404_when_retrieving_a_cookbook_that_does_not_exist()
     {
         $this->json('GET', '/api/v1/cookbooks/0')
-            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertStatus(ResponseAlias::HTTP_NOT_FOUND)
             ->assertExactJson([
                 "error" => "Record Not found."
             ]);
@@ -86,9 +90,11 @@ class CookbookTest extends \TestCase
                         'is_locked',
                         'alt_text',
                         'tags',
-                        '_links',
+                        'recipes',
                         'recipes_count',
                         'categories',
+                        'users',
+                        'flag',
                         'author'
                     ]
                 ]
@@ -119,9 +125,11 @@ class CookbookTest extends \TestCase
                         'is_locked',
                         'alt_text',
                         'tags',
-                        '_links',
+                        'recipes',
                         'recipes_count',
                         'categories',
+                        'users',
+                        'flag',
                         'author'
                     ]
                 ]
@@ -152,7 +160,7 @@ class CookbookTest extends \TestCase
 
         $this->json('GET', '/api/v1/my/cookbooks', [], [
             'HTTP_Authorization' => 'Bearer ' . $decoded['token']
-        ])->assertStatus(Response::HTTP_OK);
+        ])->assertStatus(ResponseAlias::HTTP_OK);
     }
 
     /**
@@ -180,14 +188,14 @@ class CookbookTest extends \TestCase
         $this->json('POST', '/api/v1/cookbooks', [
             'name' => 'test cookbook',
             'description' => fake()->sentence(150),
-            'bookCoverImg' => $this->bookcoverImageUrl,
+            'bookCoverImg' => $this->bookCoverImageUrl,
             'category_id' => 1,
             'categories' => 'keto,vegan,test',
             'flag_id' => 'ng',
             'slug' => 'test-cookbook'
         ], [
             'HTTP_Authorization' => 'Bearer ' . $decoded['token']
-        ]);
+        ])->assertOk()->assertJsonStructure(['response' => ['created', 'data']]);
 
         $this->assertDatabaseHas('cookbooks', [
             'name' => 'test cookbook',
@@ -223,7 +231,7 @@ class CookbookTest extends \TestCase
 
         $cookbook = Cookbook::factory()->make([
             'user_id' => $otherUser->id,
-            'bookCoverImg' => $this->bookcoverImageUrl,
+            'bookCoverImg' => $this->bookCoverImageUrl,
         ]);
 
         $cookbook->save();
@@ -235,7 +243,7 @@ class CookbookTest extends \TestCase
             "alt_text" => "this is an updated alt text"
         ], [
             'HTTP_Authorization' => 'Bearer ' . $decoded['token']
-        ]);
+        ])->assertStatus(Response::HTTP_UNAUTHORIZED);
 
         $decoded = json_decode($response->getContent(), true);
 
@@ -246,7 +254,49 @@ class CookbookTest extends \TestCase
     /**
      * @test
      */
-    public function it_forbids_lesser_beings_from_deleting_a_cookbook_resource()
+    public function it_allows_a_user_with_valid_token_update_a_cookbook_resource_they_own()
+    {
+        $user = User::factory()
+            ->make([
+                'email' => 'sally@example.com',
+                'password' => (new BcryptHasher)->make('saltyL@k3'),
+            ]);
+        $user->save();
+        $user = $user->refresh();
+
+        $loginResponse = $this->json(
+            'POST', '/api/v1/auth/login', [
+                'email' => 'sally@example.com',
+                'password' => 'saltyL@k3',
+            ]
+        );
+
+        $decoded = json_decode($loginResponse->getContent(), true);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->id,
+            'bookCoverImg' => $this->bookCoverImageUrl,
+            'slug' => 'my-new-cookbook'
+        ]);
+
+        $cookbook->save();
+        $cookbook = $cookbook->refresh();
+
+        //update the cookbook
+        $this->json('POST', '/api/v1/cookbooks/' . $cookbook->id . '/edit', [
+            'slug' => 'updated-slug'
+        ], [
+            'HTTP_Authorization' => 'Bearer ' . $decoded['token']
+        ])->assertOK();
+
+        $this->assertDatabaseHas('cookbooks', ['id' => $cookbook->id, 'slug' => 'updated-slug']);
+    }
+
+    /**
+     * This is intentional and a temporary measure
+     * @test
+     */
+    public function it_forbids_everyone_from_deleting_a_cookbook_resource()
     {
         $this->json(
             'POST', '/api/v1/auth/register', [

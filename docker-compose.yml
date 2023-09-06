@@ -9,6 +9,9 @@ services:
             - ./:/var/www
         networks:
             - cookbooks
+        environment:
+            PHP_IDE_CONFIG: "serverName=localhost"
+            XDEBUG_CONFIG: "idekey=PHPSTORM"
     db:
         image: mysql:latest
         container_name: db

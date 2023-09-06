@@ -16,9 +16,8 @@ class CommentController extends Controller
 {
     public function addComment(Request $request)
     {
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line  */
         if ($user = JWTAuth::parseToken()->user()) {
-
             $payload = $request->only([
                 'resource-type', 'resource-id', 'comment'
             ]);
@@ -44,11 +43,13 @@ class CommentController extends Controller
                 }
             }
         }
+
+        return $this->unauthorizedResponse();
     }
 
     public function destroyComment(Request $request)
     {
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line  */
         if ($user = JWTAuth::parseToken()->user()) {
             $payload = $request->only(['comment-id']);
             $comment = Comment::findOrFail($request->only(['comment-id']))->first();
@@ -56,8 +57,10 @@ class CommentController extends Controller
             if ($user->isSuper() || $user->ownsComment($payload['comment-id'])) {
                 return response()->json(['deleted' => $comment->delete()]);
             } else {
-                throw new ApiException('You are not suthorized to perfrom this action.');
+                throw new ApiException('You are not authorized to perform this action.');
             }
         }
+
+        return $this->unauthorizedResponse();
     }
 }
