@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use AllowDynamicProperties;
 use App\Http\Requests\RecipeStoreRequest;
 use App\Models\Recipe;
 use App\Services\RecipeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWT;
 
 /**
  * Class UserController
  */
-class RecipeController extends Controller
+#[AllowDynamicProperties] class RecipeController extends Controller
 {
     protected RecipeService $service;
 
@@ -33,26 +35,30 @@ class RecipeController extends Controller
     }
 
     /**
-     * Get all recipes belonging to a user
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index()
     {
-        return $this->service->index();
+        return $this->successResponse(['data' => $this->service->index()]);
     }
 
     /**
      * @param $recipeId
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
+     * @return JsonResponse
      * @throws \App\Exceptions\CookbookModelNotFoundException
      */
-    public function show($recipeId)
+    public function show($recipeId): JsonResponse
     {
-        return $this->service->show($recipeId);
+        return $this->successResponse(['data' => $this->service->show($recipeId)]);
     }
 
-    public function addClap(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \App\Exceptions\CookbookModelNotFoundException
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function addClap(Request $request): JsonResponse
     {
         $this->validate(
             $request, [
@@ -60,36 +66,51 @@ class RecipeController extends Controller
             ]
         );
 
-        return $this->service->addClap($request->get('recipe_id'));
+        return ($recipe = $this->service->addClap($request->get('recipe_id'))) ?
+            /** @phpstan-ignore-next-line  */
+            $this->successResponse(['updated' => true, 'claps' => $recipe->claps]) :
+            $this->errorResponse(['error' => 'There was an error processing this request. Please try again.']);
     }
 
-    public function myRecipes(Request $request, JWT $jwtAuth): \Illuminate\Http\JsonResponse
+    /**
+     * @param Request $request
+     * @param JWT $jwtAuth
+     * @return JsonResponse
+     * @throws JWTException
+     */
+    public function myRecipes(Request $request, JWT $jwtAuth): JsonResponse
     {
         if ($jwtAuth->parseToken()->check()) {
-            return $this->service->index($request->get('user_id'));
+            return $this->successResponse([
+                'data' => $this->service->index($request->get('user_id'))
+            ]);
         }
 
         return response()->json([
             'error', 'You are not authorized to access this resource.'
-        ], 401);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 
     public function store(RecipeStoreRequest $request, JWT $jwtAuth)
     {
         try {
             $jwtAuth->parseToken()->check();
-            return $this->service->store($request);
+
+            return $this->service->store($request) ?
+                $this->successResponse(['created' => true],ResponseAlias::HTTP_CREATED) :
+                $this->errorResponse(['created' => false]);
+
         } catch (\Exception $exception) {
-            Log::debug('An error occured while creating this recipe', [
+            Log::debug('An error occurred while creating this recipe', [
                 'resource' => self::RECIPE_RESOURCE,
                 'exception' => $exception
             ]);
 
             $message = "There was an error processing this request, please try again later.";
-            $code = Response::HTTP_BAD_REQUEST;
+            $code = ResponseAlias::HTTP_BAD_REQUEST;
 
             if ($exception->getCode() == 401) {
-                $code = Response::HTTP_UNAUTHORIZED;
+                $code = ResponseAlias::HTTP_UNAUTHORIZED;
                 $message = "You are not authorized to perform this action.";
             }
 
@@ -101,33 +122,32 @@ class RecipeController extends Controller
 
     public function update(Request $request, $recipeId, JWT $jwtAuth)
     {
-        if (
-            $request->user()->ownRecipe($recipeId)
-        ) {
-            if (
-                $jwtAuth->parseToken()->check()
-            ) {
-                return $this->service->update($request, $recipeId);
+        if ($jwtAuth->parseToken()->check() && $request->user()->ownRecipe($recipeId)) {
+            if ($this->service->update($request, $recipeId)) {
+                return $this->successResponse(['updated' => true]);
             }
+
+            return $this->errorResponse(['updated' => false]);
         }
 
         return response()->json([
             'error' => 'You are not authorized to access this resource.'
-        ], 401);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 
     public function destroy(Request $request, $recipeId, JWT $jwtAuth)
     {
-        if (
-            $jwtAuth->parseToken()->check() &&
-            $request->user()->isSuper()
-        ) {
-            return $this->service->delete($request->user(), $recipeId);
+        if ($jwtAuth->parseToken()->check() && $request->user()->isSuper()) {
+            if ($this->service->delete($request->user(), $recipeId)) {
+                return $this->successResponse(['deleted' => true]);
+            }
+
+            return $this->errorResponse(['deleted' => false]);
         }
 
         return response()->json([
             'error' => 'You are not authorized to perform this action.'
-        ], Response::HTTP_UNAUTHORIZED);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 
     public function report(Request $request, JWT $jwtAuth): JsonResponse
@@ -155,6 +175,6 @@ class RecipeController extends Controller
 
         return response()->json([
             'error' => 'You are not authorized to perform this action.'
-        ], Response::HTTP_UNAUTHORIZED);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 }

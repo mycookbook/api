@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Models\User;
 use App\Services\AuthService;
 use App\Services\UserService;
 use Illuminate\Console\Command;
@@ -39,17 +40,19 @@ class LoginCommand extends Command
 
         $fromCache = Cache::get('testUser');
 
+        $email = Str::random(5) . '@console.com';
+
         if (!$fromCache) {
             $this->line('User not found in Cache, creating new User ...');
             $this->line('==============================================');
 
             $response = $userService->store(new Request([
                 'name' => 'test user',
-                'email' => Str::random(5) . '@console.com',
+                'email' => $email,
                 'password' => 'testing123'
             ]));
 
-            $user = json_decode($response->getContent(), true)["response"]["data"];
+            $user = User::where('email', '=', $email)->first();
 
             Cache::put('testUser', $user);
         }
@@ -61,7 +64,7 @@ class LoginCommand extends Command
             'password' => 'testing123'
         ]));
 
-        $this->info($token->getContent());
+        $this->info($token);
 
         $this->line('====================================');
         $this->info("Here you go! Use this token to access protected resources.!");

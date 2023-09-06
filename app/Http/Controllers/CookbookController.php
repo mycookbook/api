@@ -13,8 +13,8 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 /**
  * Class UserController
@@ -34,23 +34,21 @@ use Illuminate\Support\Facades\Auth;
     }
 
     /**
-     * All cookbooks
-     * @return JsonResponse
+     * Get all cookbooks
      */
     public function index(): JsonResponse
     {
-        return $this->service->index();
+        return response()->json(['data' => $this->service->index()]);
     }
 
     /**
      * @param mixed $id
-     * @return Response|ResponseFactory
-     *
+     * @return JsonResponse
      * @throws CookbookModelNotFoundException
      */
-    public function show($id)
+    public function show(mixed $id): JsonResponse
     {
-        return $this->service->show($id);
+        return response()->json(['data' => $this->service->show($id)]);
     }
 
     /**
@@ -59,7 +57,7 @@ use Illuminate\Support\Facades\Auth;
      */
     public function myCookbooks(Request $request): JsonResponse
     {
-        return $this->service->index($request->get('user_id'));
+        return response()->json(['data' => $this->service->index($request->get('user_id'))]);
     }
 
     /**
@@ -67,61 +65,59 @@ use Illuminate\Support\Facades\Auth;
      * @return JsonResponse
      * @throws Exception
      */
-    public function store(CookbookStoreRequest $request)
+    public function store(CookbookStoreRequest $request): JsonResponse
     {
-        try {
-            //todo: creation of cookbooks will not be publicly accessible until later releases
-//            if (!Auth::user()->isEarlyBird()) {
-//                throw new UnauthorizedException("You are not authorized to perform this action.");
-//            }
+        $request->merge([
+            'user_id' => Auth::user()->id,
+            'alt_text' => $request->get("alt_text") ?? 'cookbook cover image',
+            'flag_id' => Flag::where(["flag" => $request->get("flag_id")])->first()->getKey(),
+            'tags' => $request->get("tags") ?? ""
+        ]);
 
-            $request->merge([
-                'user_id' => Auth::user()->id,
-                'alt_text' => $request->get("alt_text") ?? 'cookbook cover image',
-                'flag_id' => Flag::where(["flag" => $request->get("flag_id")])->first()->getKey(),
-                'tags' => $request->get("tags") ?? ""
+        if ($this->service->store($request)) {
+            return $this->successResponse([
+                'response' => [
+                    'created' => true,
+                    'data' => []
+                ]
             ]);
-
-            return $this->service->store($request);
-
-        } catch (Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
         }
+
+        return $this->errorResponse([
+            'error'=> 'There was an error processing this request, please try again.'
+        ]);
     }
 
     /**
      * @param int $id
      * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|JsonResponse|Response
+     * @return JsonResponse
      * @throws CookbookModelNotFoundException
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
-    public function update(int $id, Request $request)
+    public function update(int $id, Request $request): JsonResponse
     {
-        if (Auth::user()->ownCookbook($id)) {
-            return $this->service->update($request, (string) $id);
+        if (Auth::user()->ownCookbook($id) && $this->service->update($request, (string) $id)) {
+            return $this->successResponse(['updated' => true]);
         }
 
         return response()->json([
             'error' => 'You are not authorized to access this resource.'
-        ], 401);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 
     /**
      * @param $cookbookId
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|JsonResponse|Response
+     * @return JsonResponse|Response
      * @throws CookbookModelNotFoundException
      */
-    public function destroy($cookbookId)
+    public function destroy($cookbookId): JsonResponse|Response
     {
-        if (Auth::user()->ownCookbook($cookbookId)) {
-            return $this->service->delete($cookbookId);
+        if (Auth::user()->ownCookbook($cookbookId) && $this->service->delete($cookbookId)) {
+            return $this->noContentResponse();
         }
 
         return response()->json([
             'error' => 'You are not authorized to perform this action.'
-        ], 401);
+        ], ResponseAlias::HTTP_UNAUTHORIZED);
     }
 }
