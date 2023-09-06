@@ -42,5 +42,8 @@ WORKDIR /var/www
 
 USER $user
 
+RUN echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/php.ini
+RUN echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/php.ini
+RUN echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/php.ini
 RUN echo "memory_limit=1024M" >> /usr/local/etc/php/conf.d/php.ini
 RUN echo "allow_url_fopen=on" >> /usr/local/etc/php/conf.d/php.ini

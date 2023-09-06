@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Exceptions\CookbookModelNotFoundException;
 use App\Interfaces\serviceInterface;
 use App\Models\User;
 use App\Models\UserContactDetail;
 use App\Utils\DbHelper;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * Class UserService
@@ -28,20 +26,13 @@ class UserService extends BaseService implements serviceInterface
      */
     public function index()
     {
-        $users = User::with('cookbooks', 'recipes', 'contact')->get();
-
-        return response([
-            'data' => $users,
-        ], Response::HTTP_OK);
+        return User::with('cookbooks', 'recipes', 'contact')->get();
     }
 
     /**
-     * Create a new user
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * Create a new user resource
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request)
     {
         $user = new User([
             'name' => $request->name,
@@ -54,43 +45,31 @@ class UserService extends BaseService implements serviceInterface
         ]);
 
         $created = $user->save();
-        $serialized = $request->merge(['user_id' => $user->id]);
-        $contact = new UserContactDetailsService();
-        $contact->store(new Request($serialized->all()));
 
-        //		dispatch(new SendEmailNotification($user->id));
+        if ($created) {
+            $serialized = $request->merge(['user_id' => $user->id]);
 
-        return response()->json(
-            [
-                'response' => [
-                    'created' => $created,
-                    'data' => $user,
-                    'status' => 'success',
-                ],
-            ], Response::HTTP_CREATED
-        );
+            //TODO: hand this over to a job to handle asynchronously
+            $contact = new UserContactDetailsService();
+            $contact->store(new Request($serialized->all()));
+
+            // dispatch(new SendEmailNotification($user->id));
+            return true;
+        }
+
+        //TODO: log some debugging info here
+        return false;
     }
 
-    /**
-     * @param $q
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
-     * @throws CookbookModelNotFoundException
-     */
     public function show($q)
     {
-        return response(
-            [
-                'data' => [
-                    'user' => $this->findWhere($q)->get()->append(['tiktok_videos']),
-                ],
-            ], Response::HTTP_OK
-        );
+        return $this->findWhere($q)->get()->append(['tiktok_videos']);
     }
 
     /**
      * @param Request $request
      * @param string $option
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return bool
      */
     public function update(Request $request, string $option)
     {
@@ -115,21 +94,12 @@ class UserService extends BaseService implements serviceInterface
                 }
             }
 
-            if ($updated = $userRecord->save()) {
-                return response(
-                    [
-                        'updated' => (bool)$updated,
-                        'status' => 'success',
-                    ], Response::HTTP_OK
-                );
-            }
-
-            throw new \Exception('Not saved.');
+            return $userRecord->save();
         } catch (\Exception $e) {
-            return response([
-                'errors' => $e->getMessage(),
-            ], Response::HTTP_BAD_REQUEST);
+            //TODO: log debugging message here
         }
+
+        return false;
     }
 
     /**

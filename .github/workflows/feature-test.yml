@@ -1,4 +1,4 @@
-name: Feature test
+name: Run Feature tests
 
 on:
     push:

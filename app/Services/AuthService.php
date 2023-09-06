@@ -5,36 +5,27 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class AuthService
 {
-    /**
-     * Authenticate the user
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function login(Request $request): \Illuminate\Http\JsonResponse
+    public function login(Request $request)
     {
         if (!$token = Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(
-                [
-                    'Not found or Invalid Credentials.',
-                ], Response::HTTP_NOT_FOUND
-            );
+            return false;
         }
 
-        return response()->json(['token' => $token], Response::HTTP_OK);
+        return $token;
     }
 
-    public function logout(): \Illuminate\Http\JsonResponse|Response
+    /**
+     * @return bool
+     */
+    public function logout()
     {
         try {
             Auth::logout();
-            return response()->noContent();
         } catch (\Exception $exception) {
             Log::info(
                 'Not found or Invalid Credentials.',
@@ -43,11 +34,9 @@ class AuthService
                 ]
             );
 
-            return response()->json(
-                [
-                    'Not found or Invalid Credentials.'
-                ], Response::HTTP_BAD_REQUEST
-            );
+            return false;
         }
+
+        return true;
     }
 }

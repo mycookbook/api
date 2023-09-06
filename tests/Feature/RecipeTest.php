@@ -13,6 +13,7 @@ use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class RecipeTest extends \TestCase
 {
@@ -164,6 +165,50 @@ class RecipeTest extends \TestCase
                     "The selected recipe id is invalid."
                 ]
             ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_show_a_recipe_by_id_or_slug()
+    {
+        $user = User::factory()->make([
+            'email' => 'evan.reid@123.com',
+            'password' => (new BcryptHasher)->make('pass123'),
+        ]);
+        $user->save();
+
+        $token = Auth::attempt([
+            'email' => 'evan.reid@123.com',
+            'password' => 'pass123'
+        ]);
+
+        $cookbook = Cookbook::factory()->make([
+            'user_id' => $user->getKey()
+        ]);
+
+        $cookbook->save();
+
+        $recipe = Recipe::factory()->make([
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'user_id' => $user->getKey()
+        ]);
+
+        $recipe->save();
+        $recipe = $recipe->refresh();
+
+        $searchBy = ['id', 'slug'];
+
+        foreach ($searchBy as $key) {
+            $this->json(
+                'GET',
+                '/api/v1/recipes/' . $recipe->$key,
+                [],
+                [
+                    'Authorization' => 'Bearer ' . $token
+                ]
+            )->assertStatus(ResponseAlias::HTTP_OK)->assertJsonStructure(['data']);
+        }
     }
 
     /**
@@ -366,7 +411,7 @@ class RecipeTest extends \TestCase
             [
                 'Authorization' => 'Bearer ' . $token
             ]
-        )->assertStatus(Response::HTTP_ACCEPTED)
+        )->assertStatus(ResponseAlias::HTTP_OK)
             ->assertExactJson([
                 "deleted" => true
             ]);
@@ -579,31 +624,33 @@ class RecipeTest extends \TestCase
         ]);
         $flag->save();
 
+        $payload = [
+            'is_draft' => 'false',
+            'name' => $faker->jobTitle,
+            'cookbook_id' => $cookbook->refresh()->getKey(),
+            'description' => implode(" ", $faker->words(150)),
+            'summary' => implode(" ", $faker->words(55)),
+            'imgUrl' => $faker->imageUrl(),
+            'ingredients' => [
+                [
+                    'name' => $faker->jobTitle,
+                    'unit' => '2',
+                    'thumbnail' => $faker->imageUrl(),
+                ]
+            ],
+            'nationality' => $flag->refresh()->flag,
+            'cuisine' => 'spanich',
+            'tags' => []
+        ];
+
         $this->json(
             'POST',
             '/api/v1/recipes/',
-            [
-                'is_draft' => 'false',
-                'name' => $faker->jobTitle,
-                'cookbook_id' => $cookbook->refresh()->getKey(),
-                'description' => implode(" ", $faker->words(150)),
-                'summary' => implode(" ", $faker->words(55)),
-                'imgUrl' => $faker->imageUrl(),
-                'ingredients' => [
-                    [
-                        'name' => $faker->jobTitle,
-                        'unit' => '2',
-                        'thumbnail' => $faker->imageUrl(),
-                    ]
-                ],
-                'nationality' => $flag->refresh()->flag,
-                'cuisine' => 'spanich',
-                'tags' => []
-            ],
+            $payload,
             [
                 'Authorization' => 'Bearer ' . $token
             ]
-        )->assertStatus(Response::HTTP_CREATED)
+        )->assertStatus(ResponseAlias::HTTP_CREATED)
             ->assertExactJson([
                 "created" => true
             ]);

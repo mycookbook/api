@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
@@ -36,21 +37,27 @@ class AuthController extends Controller
         $this->service = $service;
     }
 
-    /**
-     * @param SignInRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(SignInRequest $request): \Illuminate\Http\JsonResponse
     {
-        return $this->service->login($request);
+        if (!$token = $this->service->login($request)) {
+            return response()->json(
+                [
+                    'Not found or Invalid Credentials.',
+                ], ResponseAlias::HTTP_NOT_FOUND
+            );
+        }
+
+        return $this->successResponse(['token' => $token]);
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|Response
      */
     public function logout()
     {
-        return $this->service->logout();
+        return $this->service->logout() ?
+            $this->noContentResponse() :
+            $this->errorResponse(['Not found or Invalid Credentials.']);
     }
 
     /**
@@ -69,7 +76,7 @@ class AuthController extends Controller
                 'required' => [
                     'email' => 'Looks like this is your first time signing in with magiclink! Kindly provide your registered email for verification.',
                 ]
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            ], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         try {
@@ -83,7 +90,7 @@ class AuthController extends Controller
                         ]
                     ]);
 
-                    return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
+                    return response()->json($locationService->getErrors(), ResponseAlias::HTTP_UNAUTHORIZED);
                 }
 
                 $locationUserEmail = $location->getUser()->email;
@@ -95,7 +102,7 @@ class AuthController extends Controller
                         ]
                     ]);
 
-                    return response()->json($locationService->getErrors(), Response::HTTP_UNAUTHORIZED);
+                    return response()->json($locationService->getErrors(), ResponseAlias::HTTP_UNAUTHORIZED);
                 } else {
                     $location->update([
                         'ip' => $request->ipinfo->ip,
@@ -124,7 +131,7 @@ class AuthController extends Controller
         } catch (\Throwable $e) {
             $m = array_merge($locationService->getErrors(), [$e->getMessage()]);
 
-            return response()->json($m, Response::HTTP_UNAUTHORIZED);
+            return response()->json($m, ResponseAlias::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -263,7 +270,7 @@ class AuthController extends Controller
     public function validateToken(Request $request)
     {
         if (!$request->bearerToken() || !Auth::check()) {
-            throw new JWTException('Expired or Tnvalid token.');
+            throw new JWTException('Expired or Invalid token.');
         }
 
         return response()->json(
