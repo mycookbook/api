@@ -122,7 +122,6 @@ class UserController extends Controller
      */
     public function getWhoToFollow(Request $request, JWT $jwtAuth)
     {
-        /** @phpstan-ignore-next-line */
         return ($jwtAuth->parseToken()->check()) ?
             $this->getWhoToFollowData($request->user()) :
             $this->unauthorizedResponse();
