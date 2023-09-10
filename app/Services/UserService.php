@@ -109,8 +109,8 @@ class UserService extends BaseService implements serviceInterface
     public function findWhere($q)
     {
         return User::with(['cookbooks', 'recipes'])
-            ->where('id', $q)
-            ->orWhere('email', $q)
-            ->orWhere('name_slug', $q);
+            ->where('id', '=', $q)
+            ->orWhere('email', '=', $q)
+            ->orWhere('name_slug', '=', $q);
     }
 }
