@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiException;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Mail\OtpWasGenerated;
@@ -16,11 +15,13 @@ use App\Services\TikTok\HttpRequestRunner;
 use App\Services\TikTok\Videos;
 use App\Services\UserService;
 use Ichtrojan\Otp\Otp;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\JWT;
 
 class UserController extends Controller
 {
@@ -31,32 +32,50 @@ class UserController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(): JsonResponse
     {
-        return $this->service->index();
+        return $this->successResponse(['data' => $this->service->index()]);
     }
 
-    public function store(UserStoreRequest $request): \Illuminate\Http\JsonResponse
+    /**
+     * @param UserStoreRequest $request
+     * @return JsonResponse
+     */
+    public function store(UserStoreRequest $request)
     {
-        return $this->service->store($request);
+        return $this->service->store($request) ? $this->successResponse(
+            [
+                'response' => [
+                    'created' => true,
+                    'data' => [],
+                    'status' => 'success'
+                ]
+            ],
+            ResponseAlias::HTTP_CREATED
+        ) : $this->errorResponse(['error' => 'There was an error processing this request. Please try again.']);
     }
 
     public function show($username)
     {
-        return $this->service->show($username);
+        return $this->successResponse(['data' => ['user' => $this->service->show($username)]]);
     }
 
     public function update($username, UserUpdateRequest $request)
     {
         if ($request->all()) {
-            $request->merge(['username']);
+            $request->merge(['username' => $username]);
 
-            return $this->service->update($request, $username);
+            if ($this->service->update($request, $username)) {
+                return $this->successResponse(['updated' => true, 'status' => 'success']);
+            }
+
+            return $this->errorResponse(['updated' => false, 'status' => 'failed']);
         }
 
-        return response()->json([
-            'message' => 'nothing to update.',
-        ]);
+        return response()->json(['message' => 'nothing to update.',]);
     }
 
     public function followUser(Request $request)
@@ -83,14 +102,14 @@ class UserController extends Controller
 
                         $following->save();
 
-                        return response()->json($this->getWhoToFollowData($user), Response::HTTP_OK);
+                        return response()->json($this->getWhoToFollowData($user), ResponseAlias::HTTP_OK);
                     }
 
-                    return response()->noContent(Response::HTTP_OK);
+                    return response()->noContent(ResponseAlias::HTTP_OK);
                 }
             }
 
-            return response()->json(['error', 'Bad request.'], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error', 'Bad request.'], ResponseAlias::HTTP_BAD_REQUEST);
         }
 
         return $this->unauthorizedResponse();
@@ -101,14 +120,11 @@ class UserController extends Controller
      * The logic to get who to follow is undecided yet
      * For now, this just returns the latest five unfollowed users in the database
      */
-    public function getWhoToFollow()
+    public function getWhoToFollow(Request $request, JWT $jwtAuth)
     {
-        /** @phpstan-ignore-next-line */
-        if ($user = JWTAuth::parseToken()->user()) {
-           return $this->getWhoToFollowData($user);
-        }
-
-        return $this->unauthorizedResponse();
+        return ($jwtAuth->parseToken()->check()) ?
+            $this->getWhoToFollowData($request->user()) :
+            $this->unauthorizedResponse();
     }
 
     private function getWhoToFollowData(User $user)

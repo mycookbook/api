@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subscriber;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class SubscriptionController extends Controller
 {
@@ -31,7 +32,7 @@ class SubscriptionController extends Controller
                     'created' => true,
                     'data' => $subscriber,
                 ],
-            ], Response::HTTP_CREATED
+            ], ResponseAlias::HTTP_CREATED
         );
     }
 }

@@ -223,7 +223,7 @@ class CommentTest extends \TestCase
                 'Authorization' => 'Bearer ' . $token
             ]
         )->assertExactJson([
-            'error' => 'You are not suthorized to perfrom this action.'
+            'error' => 'You are not authorized to perform this action.'
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -375,7 +375,7 @@ class CommentTest extends \TestCase
                 'Authorization' => 'Bearer ' . $token
             ]
         )->assertExactJson([
-            'error' => 'You are not suthorized to perfrom this action.'
+            'error' => 'You are not authorized to perform this action.'
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -10,7 +10,7 @@ use App\Models\Category;
 use App\Models\Cookbook;
 use App\Utils\DbHelper;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class CookbookService
@@ -22,48 +22,41 @@ class CookbookService extends BaseService implements serviceInterface
         $this->serviceModel = new Cookbook();
     }
 
-    /**
-     * Return all cookbooks
-     */
     public function index($user_id = null)
     {
-        $cookbooks = Cookbook::with([
-            'categories',
-            'flag',
-            'recipes',
-            'users',
-        ]);
+        $cookbooks = DB::table('cookbooks')->get();
 
-        if ($user_id) {
-            return response()->json(
-                [
-                    'data' => $cookbooks
-                        ->where('user_id', '=', $user_id)
-                        ->take(15)
-                        ->orderByDesc('created_at')
-                        ->get(),
-                ], Response::HTTP_OK
-            );
+        if ($user_id !== null) {
+            return $cookbooks->where('user_id', '=', $user_id);
         }
 
-        return response()->json(
-            [
-                'data' => $cookbooks->take(15)
-                    ->orderByDesc('created_at')
-                    ->get(),
-            ], Response::HTTP_OK
-        );
+        return $cookbooks->map(function($cookbook) {
+            $category_ids = DB::table('category_cookbook')
+                ->where('cookbook_id', '=', $cookbook->id)
+                ->pluck('category_id');
+            $categories = DB::table('categories')->whereIn('id', $category_ids->toArray())->get();
+
+            $flag = DB::table('flags')->where('id', '=', $cookbook->flag_id)->pluck('flag', 'nationality');
+            $recipes = DB::table('recipes')->where('cookbook_id', '=', $cookbook->id)->get();
+            $user_ids = DB::table('cookbook_user')->where('cookbook_id', '=', $cookbook->id)->pluck('user_id');
+            $users = DB::table('users')->whereIn('id', $user_ids->toArray())->get();
+
+            $cookbook->categories = $categories;
+            $cookbook->flag = $flag;
+            $cookbook->recipes = $recipes;
+            $cookbook->recipes_count = $recipes->count();
+            $cookbook->users = $users;
+            $cookbook->author = DB::table('users')->where('id', $cookbook->user_id)->get();
+
+            return $cookbook;
+        });
     }
 
     /**
-     * Create cookbook resource
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * @throws \Exception
+     * @param Request $request
+     * @return bool
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): bool
     {
         $categories = explode(",", $request->get('categories'));
         $categories = Category::whereIn('slug', $categories)->pluck('id')->toArray();
@@ -90,45 +83,32 @@ class CookbookService extends BaseService implements serviceInterface
                 $cookbook->categories()->attach($category);
             }
 
-            return response()->json(
-                [
-                    'response' => [
-                        'created' => true,
-                        'data' => $cookbook,
-                    ],
-                ], Response::HTTP_CREATED
-            );
+            return true;
         }
 
-        return response()->json(
-            [
-                'error' => 'There was an error prcessing this request, please try again.'
-            ], Response::HTTP_BAD_REQUEST
-        );
+        return false;
     }
 
     /**
-     * Update cookbook resource
-     *
      * @param $request
      * @param string $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return bool|int
      * @throws CookbookModelNotFoundException
      */
-    public function update($request, string $id)
+    public function update($request, string $id): bool|int
     {
         $cookbook = $this->findWhere($id);
 
         $data = $request->only([
-            'name', 'description', 'bookCoverImg', 'categories', 'alt_text', 'tags'
+            'name', 'description', 'bookCoverImg', 'categories', 'alt_text', 'tags', 'slug'
         ]);
 
         if (isset($data['tags'])) {
-            $exisintgTags = $cookbook->tags;
+            $existingTags = $cookbook->tags;
 
-            if ($exisintgTags) {
-                $exisintgTags = array_merge($exisintgTags, explode(",", $data["tags"]));
-                $data["tags"] = array_unique($exisintgTags);
+            if ($existingTags) {
+                $existingTags = array_merge($existingTags, explode(",", $data["tags"]));
+                $data["tags"] = array_unique($existingTags);
             }
         }
 
@@ -146,34 +126,23 @@ class CookbookService extends BaseService implements serviceInterface
             }
         }
 
-        return response(
-            [
-                'updated' => $cookbook->update($data),
-            ], Response::HTTP_OK
-        );
+        return $cookbook->update($data);
     }
 
     /**
-     * Delete Cookbook resource
-     *
-     * @param int $id identofier
-     *
+     * @param $id
+     * @return bool|null
      * @throws CookbookModelNotFoundException
      */
-    public function delete($id)
+    public function delete($id): bool|null
     {
         $cookbook = $this->findWhere($id);
 
-        return response(
-            [
-                'deleted' => $cookbook->delete(),
-            ], Response::HTTP_ACCEPTED
-        );
+        return $cookbook->delete();
     }
 
     /**
      * @param mixed $option
-     *
      * @throws CookbookModelNotFoundException
      */
     public function show($option)
@@ -184,16 +153,10 @@ class CookbookService extends BaseService implements serviceInterface
             throw new CookbookModelNotFoundException();
         }
 
-        return response(
-            [
-                'data' => $cookbook,
-            ], Response::HTTP_OK
-        );
+        return $cookbook;
     }
 
     /**
-     * Find cookbook record
-     *
      * @param $q
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      *

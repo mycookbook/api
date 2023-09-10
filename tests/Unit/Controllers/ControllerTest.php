@@ -18,7 +18,7 @@ class ControllerTest extends \TestCase
         $this->assertInstanceOf(Controller::class, $cookbookController);
     }
 
-    public function test_it_can_retrieve_all_cokbooks()
+    public function test_it_can_retrieve_all_cookbooks()
     {
         $service = $this->mock(CookbookService::class);
         $expectedResponse = new JsonResponse([]);
@@ -29,7 +29,7 @@ class ControllerTest extends \TestCase
 
         $controller = new CookbookController($service);
 
-        $this->assertSame($expectedResponse,  $controller->index());
+        $this->assertSame($expectedResponse->getStatusCode(),  $controller->index()->getStatusCode());
     }
 
     public function test_it_will_throw_cookbook_model_not_found_exception_if_cookbook_does_not_exist()
@@ -58,6 +58,6 @@ class ControllerTest extends \TestCase
             ->andReturn($expectedResponse);
 
         $controller = new CookbookController($service);
-        $this->assertSame($expectedResponse,  $controller->show($cookbookId));
+        $this->assertSame($expectedResponse->getStatusCode(),  $controller->show($cookbookId)->getStatusCode());
     }
 }

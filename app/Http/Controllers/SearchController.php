@@ -7,9 +7,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class SearchController extends Controller
 {
@@ -132,7 +132,7 @@ class SearchController extends Controller
 
             return response()->json([
                 'error', 'Your login session has expired. Please login.'
-            ], Response::HTTP_UNAUTHORIZED);
+            ], ResponseAlias::HTTP_UNAUTHORIZED);
         }
 
         if (str_starts_with($searchQuery, ":me|for-you")) {
@@ -144,7 +144,7 @@ class SearchController extends Controller
 
             return response()->json([
                 'error', 'Your login session has expired. Please login.'
-            ], Response::HTTP_UNAUTHORIZED);
+            ], ResponseAlias::HTTP_UNAUTHORIZED);
         }
 
         if ($searchQuery === "cookbooks") {
