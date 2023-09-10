@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\JWT;
 
 class UserController extends Controller
 {
@@ -119,11 +120,11 @@ class UserController extends Controller
      * The logic to get who to follow is undecided yet
      * For now, this just returns the latest five unfollowed users in the database
      */
-    public function getWhoToFollow()
+    public function getWhoToFollow(Request $request, JWT $jwtAuth)
     {
         /** @phpstan-ignore-next-line */
-        return ($user = JWTAuth::parseToken()->user()) ?
-            $this->getWhoToFollowData($user) :
+        return ($jwtAuth->parseToken()->check()) ?
+            $this->getWhoToFollowData($request->user()) :
             $this->unauthorizedResponse();
     }
 
