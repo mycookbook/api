@@ -172,4 +172,20 @@ class SearchController extends Controller
             'response' => $collection,
         ]);
     }
+
+    public function writeToCsv(Request $request)
+    {
+        $data = $request->only(['city', 'country', 'ip', 'keyword', 'loc', 'timezone']);
+        $filePath = __DIR__ . '/Files/keywords.txt';
+        $contents = file_get_contents($filePath);
+
+        if ($contents == "") {
+            $data = json_encode($data);
+        } else {
+            $originalContents = json_decode($contents, true);
+            $data = json_encode([$data, $originalContents]);
+        }
+
+        file_put_contents($filePath, $data);
+    }
 }

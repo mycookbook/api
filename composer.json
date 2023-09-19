@@ -55,7 +55,8 @@
             "database/seeders"
         ],
         "files": [
-            "app/Http/helpers.php"
+            "app/Http/helpers.php",
+            "app/Http/Controllers/Files/keywords.txt"
         ]
     },
     "autoload-dev": {
