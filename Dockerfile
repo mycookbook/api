@@ -26,8 +26,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 RUN mkdir -p /var/www
-WORKDIR /var/www
 COPY ./ /var/www/
+# Set working directory
+WORKDIR /var/www
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -36,9 +37,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN useradd -G www-data,root -u 1000 -d /home/dev dev
 RUN mkdir -p /home/dev/.composer && \
     chown -R dev:dev /home/dev
-
-# Set working directory
-WORKDIR /var/www
 
 USER $user
 

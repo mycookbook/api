@@ -26,7 +26,7 @@ class UserService extends BaseService implements serviceInterface
      */
     public function index()
     {
-        return User::with('cookbooks', 'recipes', 'contact')->get();
+        return User::paginate(15);
     }
 
     /**
