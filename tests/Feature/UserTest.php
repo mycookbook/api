@@ -230,24 +230,36 @@ class UserTest extends \TestCase
             ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    [
-                        'name',
-                        'cookbooks',
-                        'recipes',
-                        'contact',
-                        'contributions',
-                        'email',
-                        'following',
-                        'followers',
-                        'created_at',
-                        'updated_at',
-                        'name_slug',
-                        'pronouns',
-                        'avatar',
-                        'expertise_level',
-                        'about',
-                        'can_take_orders',
-                        'email_verified'
+                    'current_page',
+                    'first_page_url',
+                    'from',
+                    'last_page',
+                    'last_page_url',
+                    'links',
+                    'next_page_url',
+                    'path',
+                    'per_page',
+                    'prev_page_url',
+                    'to',
+                    'total',
+                    'data' => [
+                        [
+                            'name',
+                            'contact_detail',
+                            'contributions',
+                            'email',
+                            'following',
+                            'followers',
+                            'created_at',
+                            'updated_at',
+                            'name_slug',
+                            'pronouns',
+                            'avatar',
+                            'expertise_level',
+                            'about',
+                            'can_take_orders',
+                            'email_verified'
+                        ]
                     ]
                 ]
             ]);
