@@ -179,6 +179,6 @@ class SearchController extends Controller
         $data = $request->only(['city', 'country', 'ip', 'keyword', 'loc', 'timezone']);
         //TODO: if any data is null, fill up, default keyword to ""
 
-        Storage::disk('local')->append('keywords.txt', json_encode($data), "," . PHP_EOL);
+        Storage::disk('public')->append('keywords.txt', json_encode($data), "," . PHP_EOL);
     }
 }
