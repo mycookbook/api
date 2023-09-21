@@ -7,6 +7,7 @@ namespace Unit;
 use App\Http\Controllers\DefinitionsController;
 use App\Http\Controllers\StaticContentController;
 use App\Models\Definition;
+use Illuminate\Http\Request;
 
 class StaticContentsTest extends \TestCase
 {
@@ -34,7 +35,7 @@ class StaticContentsTest extends \TestCase
         $this->seed('Database\Seeders\StaticContentsSeeder');
         $controller = new StaticContentController();
 
-        $staticContents = $controller->get();
+        $staticContents = $controller->get(new Request());
         $decoded = json_decode($staticContents->getContent(), true);
 
         $this->assertArrayHasKey('cookiePolicy', $decoded['response']);

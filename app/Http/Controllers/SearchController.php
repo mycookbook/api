@@ -8,6 +8,7 @@ use App\Http\Requests\SearchRequest;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -176,16 +177,8 @@ class SearchController extends Controller
     public function writeToCsv(Request $request)
     {
         $data = $request->only(['city', 'country', 'ip', 'keyword', 'loc', 'timezone']);
-        $filePath = __DIR__ . '/Files/keywords.txt';
-        $contents = file_get_contents($filePath);
+        //TODO: if any data is null, fill up, default keyword to ""
 
-        if ($contents == "") {
-            $data = json_encode($data);
-        } else {
-            $originalContents = json_decode($contents, true);
-            $data = json_encode([$data, $originalContents]);
-        }
-
-        file_put_contents($filePath, $data);
+        Storage::disk('local')->append('keywords.txt', json_encode($data), "," . PHP_EOL);
     }
 }

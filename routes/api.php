@@ -106,7 +106,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('/search', [SearchController::class, 'getSearchResults']);
 
-    Route::post('/keywords', 'SearchController@writeToCsv');
+    Route::post('/keywords', [SearchController::class, 'writeToCsv']);
 
     Route::get('/my/recipes', [RecipeController::class, 'myRecipes']);
 
@@ -120,7 +120,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::post('subscriptions', 'SubscriptionController@store');
 
-    Route::get('/categories', 'CategoryController@index');
+    Route::get('/categories', [StaticContentController::class, 'get'])->name('getCategories');
 
     Route::post('/add-clap', [RecipeController::class, 'addClap']);
 
