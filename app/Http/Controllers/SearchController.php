@@ -6,10 +6,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
 use App\Services\SearchService;
+use App\Utils\LocationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use League\Flysystem\Visibility;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class SearchController extends Controller
@@ -176,9 +179,42 @@ class SearchController extends Controller
 
     public function writeToCsv(Request $request)
     {
-        $data = $request->only(['city', 'country', 'ip', 'keyword', 'loc', 'timezone']);
-        //TODO: if any data is null, fill up, default keyword to ""
+        $payload = $request->only(['city', 'country', 'ip', 'keyword', 'loc', 'timezone']);
 
-        Storage::disk('public')->append('keywords.txt', json_encode($data), "," . PHP_EOL);
+        if (array_key_exists('keyword', $payload)) {
+
+            if (!array_key_exists('ip', $payload)) {
+                $payload['ip'] = $request->getClientIp();
+            }
+
+            if (!array_key_exists('timezone', $payload)) {
+                $payload['timezone'] = "Unknown";
+            }
+
+            if (!array_key_exists('loc', $payload)) {
+                $payload['loc'] = LocationHelper::getLocFromIpAddress($payload['ip']);
+            }
+
+            if (!array_key_exists('country', $payload)) {
+                $payload['country'] = LocationHelper::getCountryCodeFromIpAddress($payload['ip']);
+            }
+
+            $dataToWrite = [];
+
+            if (Storage::disk('public')->get('keywords.txt')) {
+                $contents = json_decode(Storage::disk('public')->get('keywords.txt'), true);
+
+                if (count($contents) > 0) {
+                    $contents[] = $payload;
+                    $dataToWrite = $contents;
+                }
+
+            } else {
+                $dataToWrite = [$payload];
+            }
+
+            Storage::disk('public')
+                ->put('keywords.txt', json_encode($dataToWrite),['visibility' => Visibility::PUBLIC]);
+        }
     }
 }
