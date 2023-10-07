@@ -11,11 +11,13 @@ use App\Models\User;
 use App\Services\AuthService;
 use App\Services\LocationService;
 use App\Services\UserService;
+use App\Utils\UriHelper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -240,25 +242,26 @@ class AuthController extends Controller
                     $userInfo['data']['user']['video_count']
                 ));
 
-                $to = 'https://web.cookbookshq.com/#/tiktok/?' . http_build_query([
-                        'token' => $token,
-                        '_d' => $user->getSlug(),
-                    ]);
+                $to = UriHelper::buildHttpQuery('tiktok', ['token' => $token, '_d' => $user->getSlug()]);
 
-                return redirect($to);
+                return UriHelper::redirectToUrl($to);
             } else {
-                return redirect('https://web.cookbookshq.com/#/errors/?m=Hey, it looks like your tiktok account is Private. Please login using a public account.');
+                return UriHelper::redirectToUrl(
+                    UriHelper::buildHttpQuery(
+                        'errors',
+                        ['m' => Lang::get('errors.login.tiktok.private_account')]
+                    )
+                );
             }
         } catch (\Exception $e) {
-            Log::debug(
-                'Tiktok Login error',
-                [
-                    'errorCode' => $errCode,
-                    'errorMsg' => $e->getMessage()
-                ]
-            );
+            Log::debug('Tiktok Login error', ['errorCode' => $errCode, 'errorMsg' => $e->getMessage()]);
 
-            return redirect("https://web.cookbookshq.com/#/errors/?m=We are experiencing some technical difficulty logging you in with TikTok, please try again.");
+            return UriHelper::redirectToUrl(
+                UriHelper::buildHttpQuery(
+                    'errors',
+                    ['m' => Lang::get('errors.login.tiktok.generic')]
+                )
+            );
         }
     }
 

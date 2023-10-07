@@ -40,16 +40,15 @@ return [
     'ipinfo' => [
         'access_token' => env('IPINFO_SECRET', '')
     ],
-    'web_urls' => [
-        'auth' =>  env('WEB_URL') . '/#/auth?',
-        'signin' => env('WEB_URL') . '/#/signin?',
-        'errors' => env('WEB_URL') . '/#/errors?',
-    ],
     'faker' => [
         'pass' => env('MAGICLINK_PASS')
     ],
     'otp' => [
         'digits' => 6,
         'validity' => 15 //mins
+    ],
+    'redirects' => [
+        'tiktok' => env('VUE2_APP_URL') . 'tiktok/?',
+        'errors' =>  env('VUE2_APP_URL') . 'errors/?',
     ]
 ];
