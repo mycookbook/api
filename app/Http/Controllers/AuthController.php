@@ -144,7 +144,7 @@ class AuthController extends Controller
      *
      * @throws GuzzleException
      */
-    public function tikTokHandleCallback(Request $request, TikTokHttpClient $client, UserService $service)
+    public function tikTokHandleCallback(Request $request, TikTokHttpClient $httpClient, UserService $service)
     {
         $code = $request->get('code');
         $errCode = $request->get('errCode');
@@ -154,7 +154,7 @@ class AuthController extends Controller
         }
 
         try {
-            $decoded = $client->getAccessToken($code);
+            $decoded = $httpClient->getAccessToken($code);
             $message = Arr::get($decoded, 'message');
             $open_id = Arr::get($decoded, 'data.open_id');
             $access_token = Arr::get($decoded, 'data.access_token');
@@ -163,7 +163,7 @@ class AuthController extends Controller
                 throw new \Exception(json_encode($decoded));
             }
 
-            $userInfo = $client->getUserInfo($open_id, $access_token);
+            $userInfo = $httpClient->getUserInfo($open_id, $access_token);
 
             if (!empty($userInfo['data']['user'])) {
                 $open_id = Arr::get($userInfo, 'data.user.open_id');

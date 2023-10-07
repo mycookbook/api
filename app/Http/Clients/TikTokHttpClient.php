@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 class TikTokHttpClient
 {
     protected array $config;
-    protected Client $client;
 
     public function __construct()
     {
@@ -18,7 +17,7 @@ class TikTokHttpClient
 
     public function getAccessToken(string $code)
     {
-        $response = $this->client->request(
+        $response = $this->getClient()->request(
             'POST',
             $this->getUri() . '/oauth/access_token/',
             [
@@ -42,7 +41,7 @@ class TikTokHttpClient
 
     public function getUserInfo(string $open_id, string $access_token)
     {
-        $userInfoResponse = $this->client->request('POST',
+        $userInfoResponse = $this->getClient()->request('POST',
             $this->getUri() . '/user/info/',
             [
                 'json' => [
@@ -82,5 +81,10 @@ class TikTokHttpClient
     private function getClientSecret(): string
     {
         return $this->config['client_secret'] ?? '';
+    }
+
+    private function getClient()
+    {
+        return new Client();
     }
 }
