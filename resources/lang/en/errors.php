@@ -7,4 +7,5 @@ return [
             'private_account' => 'Hey, it looks like your tiktok account is Private. Please login using a public account.'
         ]
     ],
+    'generic' => 'There was an error processing this request, please try again.'
 ];
