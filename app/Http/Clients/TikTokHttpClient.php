@@ -11,9 +11,10 @@ class TikTokHttpClient
     protected array $config;
     protected Client $client;
 
-    public function __construct()
+    public function __construct(Client $client)
     {
         $this->config = config('services.tiktok');
+        $this->client = $client;
     }
 
     public function getAccessToken(string $code)
