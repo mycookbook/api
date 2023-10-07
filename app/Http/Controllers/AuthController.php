@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Dtos\TikTokUserDto;
 use App\Events\TikTokUserIsAuthenticated;
+use App\Http\Clients\TikTokHttpClient;
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
 use App\Services\AuthService;
@@ -16,6 +17,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
@@ -142,104 +144,77 @@ class AuthController extends Controller
      *
      * @throws GuzzleException
      */
-    public function tikTokHandleCallback(Request $request, Client $client, UserService $service)
+    public function tikTokHandleCallback(Request $request, TikTokHttpClient $client, UserService $service)
     {
         $code = $request->get('code');
         $errCode = $request->get('errCode');
 
         if ($errCode === self::TIKTOK_CANCELLATION_CODE) {
-            return redirect('https://web.cookbookshq.com/#/signin');
+            return redirect('https://stg.cookbookshq.com/#/signin');
         }
 
         try {
-            $response = $client->request('POST',
-                'https://open-api.tiktok.com/oauth/access_token/',
-                [
-                    'form_params' => [
-                        'client_key' => config('services.tiktok.client_id'),
-                        'client_secret' => config('services.tiktok.client_secret'),
-                        'code' => $code,
-                        'grant_type' => 'authorization_code',
-                    ],
-                ]
-            );
+            $decoded = $client->getAccessToken($code);
+            $message = Arr::get($decoded, 'message');
+            $open_id = Arr::get($decoded, 'data.open_id');
+            $access_token = Arr::get($decoded, 'data.access_token');
 
-            $decoded = json_decode($response->getBody()->getContents(), true);
-
-            if ($decoded['message'] === 'error') {
+            if ($message === 'error') {
                 throw new \Exception(json_encode($decoded));
             }
 
-            $userInfoResponse = $client->request('POST',
-                'https://open-api.tiktok.com/user/info/',
-                [
-                    'json' => [
-                        'open_id' => $decoded['data']['open_id'],
-                        'access_token' => $decoded['data']['access_token'],
-                        'fields' => [
-                            'open_id',
-                            'avatar_url',
-                            'display_name',
-                            'avatar_url_100',
-                            'is_verified',
-                            'profile_deep_link',
-                            'bio_description',
-                            'display_name',
-                            'avatar_large_url',
-                            'avatar_url_100',
-                            'union_id',
-                            'video_count'
-                        ],
-                    ],
-                ]
-            );
-
-            $userInfo = json_decode($userInfoResponse->getBody()->getContents(), true);
+            $userInfo = $client->getUserInfo($open_id, $access_token);
 
             if (!empty($userInfo['data']['user'])) {
-                $tiktokEmail = $userInfo['data']['user']['open_id'] . '@tiktok.com';
-
+                $open_id = Arr::get($userInfo, 'data.user.open_id');
+                $displayName = Arr::get($userInfo, 'data.user.display_name');
+                $tiktokEmail = $open_id . '@tiktok.com';
                 $user = User::where(['email' => $tiktokEmail])->first();
 
                 if (!$user instanceof User) {
                     $response = $service->store(new Request([
-                        'name' => $userInfo['data']['user']['display_name'],
+                        'name' => $displayName,
                         'email' => $tiktokEmail,
-                        'password' => 'fakePass',
+                        'password' => config('services.tiktok.users.secret_pass'),
                     ]));
 
                     $decoded = json_decode($response->getContent(), true);
-                    $data = $decoded['response']['data'];
-                    $user = User::where(['email' => $data['email']])->first();
+                    $data = Arr::get($decoded, 'response.data');
+                    $user = User::where(['email' => Arr::get($data, 'email')])->first();
                 }
 
                 $user->update([
-                    'avatar' => $userInfo['data']['user']['avatar_url'],
+                    'avatar' => Arr::get($userInfo, 'data.user.avatar_url'),
                     'pronouns' => 'They/Them',
                 ]);
 
                 $credentials = [
                     'email' => $user->email,
-                    'password' => 'fakePass',
+                    'password' => config('services.tiktok.users.secret_pass')
                 ];
 
                 if (!$token = Auth::attempt($credentials)) {
-                    return redirect('https://web.cookbookshq.com/#/errors/?m=there was an error processing this request, please try again.');
+                    return UriHelper::redirectToUrl(
+                        UriHelper::buildHttpQuery(
+                            'errors',
+                            ['m' => Lang::get('errors.generic')]
+                        )
+                    );
                 }
 
                 TikTokUserIsAuthenticated::dispatch(new TikTokUserDto(
                     $user->getKey(),
-                    $userInfo['data']['user']['open_id'],
-                    $decoded['data']['access_token'],
-                    $userInfo['data']['user']['is_verified'],
-                    $userInfo['data']['user']['profile_deep_link'],
-                    $userInfo['data']['user']['bio_description'],
-                    $userInfo['data']['user']['display_name'],
-                    $userInfo['data']['user']['avatar_large_url'],
-                    $userInfo['data']['user']['avatar_url_100'],
-                    $userInfo['data']['user']['avatar_url'],
-                    $userInfo['data']['user']['union_id'],
-                    $userInfo['data']['user']['video_count']
+                    Arr::get($userInfo, 'data.user.open_id'),
+                    Arr::get($userInfo, 'data.access_token'),
+                    Arr::get($userInfo, 'data.user.is_verified'),
+                    Arr::get($userInfo, 'data.user.profile_deep_link'),
+                    Arr::get($userInfo, 'data.user.bio_description'),
+                    Arr::get($userInfo, 'data.user.display_name'),
+                    Arr::get($userInfo, 'data.user.avatar_large_url'),
+                    Arr::get($userInfo, 'data.user.avatar_url_100'),
+                    Arr::get($userInfo, 'data.user.avatar_url'),
+                    Arr::get($userInfo, 'data.user.union_id'),
+                    Arr::get($userInfo, 'data.user.video_count')
                 ));
 
                 $to = UriHelper::buildHttpQuery('tiktok', ['token' => $token, '_d' => $user->getSlug()]);

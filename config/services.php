@@ -33,9 +33,13 @@ return [
     ],
 
     'tiktok' => [
+        'uri' => env('TIKTOK_URI', 'https://open-api.tiktok.com'),
         'client_id' => env('TIKTOK_CLIENT_ID'),
         'client_secret' => env('TIKTOK_CLIENT_SECRET'),
-        'redirect' => env('TIKTOK_REDIRECT_URI')
+        'redirect' => env('TIKTOK_REDIRECT_URI'),
+        'users' => [
+            'secret_pass' => env('TIKOK_GENERIC_PASS', 'fakePass')
+        ]
     ],
     'ipinfo' => [
         'access_token' => env('IPINFO_SECRET', '')
