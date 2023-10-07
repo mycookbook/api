@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Http\Clients\TikTokHttpClient;
 use GuzzleHttp\Client;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -14,37 +15,10 @@ class GetTikTokUserVideos
      */
     public function handle(object $event): void
     {
-        $client = new Client();
-        $tikTokUser = $event->tikTokUserDto;
-
-        $claims = [
-            'cover_image_url',
-            'id',
-            'title',
-            'video_description',
-            'duration',
-            'height',
-            'width',
-            'title',
-            'embed_html',
-            'embed_link'
-        ];
-
-        $endpoint = 'https://open.tiktokapis.com/v2/video/list/?fields=';
+        $client = new TikTokHttpClient(new Client());
 
         try {
-            $response = $client->request('POST',
-                $endpoint . implode( ',', $claims),
-                [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . $tikTokUser->getCode(),
-                        'Content-Type' => 'application/json'
-                    ]
-                ]
-            );
-
-            $decoded = json_decode($response->getBody()->getContents(), true);
-
+            $decoded = $client->listVideos($event->tikTokUserDto);
             $db = DB::table('tiktok_users');
 
             $tiktok_user = $db->where(['user_id' => $event->tikTokUserDto->getUserId()])->first();
@@ -65,8 +39,8 @@ class GetTikTokUserVideos
                 'Error listing TikTok Videos',
                 [
                     'errorMsg' => $exception->getMessage(),
-                    'claims' => $claims,
-                    'endpoint' => $endpoint
+                    'claims' => TikTokHttpClient::$claims,
+                    'endpoint' => TikTokHttpClient::getVideoListEndpoint()
                 ]
             );
         }

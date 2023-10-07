@@ -4,12 +4,27 @@ declare(strict_types=1);
 
 namespace App\Http\Clients;
 
+use App\Dtos\TikTokUserDto;
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 
 class TikTokHttpClient
 {
     protected array $config;
     protected Client $client;
+
+    public static array $claims = [
+        'cover_image_url',
+        'id',
+        'title',
+        'video_description',
+        'duration',
+        'height',
+        'width',
+        'title',
+        'embed_html',
+        'embed_link'
+    ];
 
     public function __construct(Client $client)
     {
@@ -21,7 +36,7 @@ class TikTokHttpClient
     {
         $response = $this->client->request(
             'POST',
-            $this->getUri() . '/oauth/access_token/',
+            $this->getV1BaseUri() . '/oauth/access_token/',
             [
                 'form_params' => [
                     'client_key' => $this->getClientId(),
@@ -44,7 +59,7 @@ class TikTokHttpClient
     public function getUserInfo(string $open_id, string $access_token)
     {
         $userInfoResponse = $this->client->request('POST',
-            $this->getUri() . '/user/info/',
+            $this->getV1BaseUri() . '/user/info/',
             [
                 'json' => [
                     'open_id' => $open_id,
@@ -70,18 +85,38 @@ class TikTokHttpClient
         return json_decode($userInfoResponse->getBody()->getContents(), true);
     }
 
-    private function getUri(): string
+    public function listVideos(TikTokUserDto $userDto): array
     {
-        return $this->config['uri'] ?? '';
+        $response = $this->client->request('POST',
+            self::getVideoListEndpoint() . implode( ',', self::$claims),
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $userDto->getCode(),
+                    'Content-Type' => 'application/json'
+                ]
+            ]
+        );
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    private function getV1BaseUri(): string
+    {
+        return Arr::get($this->config, 'uri');
     }
 
     private function getClientId(): string
     {
-        return $this->config['client_id'] ?? '';
+        return Arr::get($this->config, 'client_id');
     }
 
     private function getClientSecret(): string
     {
-        return $this->config['client_secret'] ?? '';
+        return Arr::get($this->config, 'client_secret');
+    }
+
+    public static function getVideoListEndpoint(): string
+    {
+        return 'https://open.tiktokapis.com/v2/video/list/?fields=';
     }
 }
