@@ -54,11 +54,11 @@ return [
     'redirects' => [
         'tiktok' => [
             'web-client-vue2' => env('VUE2_APP_URL') . 'tiktok/?',
-            'beta-version-1-staging' => env('NUXT_APP_URL') . 'tiktok/?'
+            'beta-version-1-staging' => env('NUXT_APP_URL') . '/tiktok/?'
         ],
         'errors' => [
             'web-client-vue2' => env('VUE2_APP_URL') . 'errors/?',
-            'beta-version-1-staging' => env('NUXT_APP_URL') . 'errors/?'
+            'beta-version-1-staging' => env('NUXT_APP_URL') . '/errors/?'
         ]
     ]
 ];
