@@ -6,13 +6,10 @@ namespace App\Utils;
 
 class UriHelper
 {
-    public static function buildHttpQuery(string $redirectTo, array $parameters): string
+    public static function buildHttpQuery(string $redirectToPage, array $parameters): string
     {
-        return config('services.redirects.' . $redirectTo) . http_build_query($parameters);
-    }
+        $redirectToPage = $redirectToPage . 'beta-version-1-staging';
 
-    public static function redirectToUrl($to)
-    {
-        return redirect($to);
+        return config('services.redirects.' . $redirectToPage) . http_build_query($parameters);
     }
 }

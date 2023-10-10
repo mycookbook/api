@@ -52,7 +52,13 @@ return [
         'validity' => 15 //mins
     ],
     'redirects' => [
-        'tiktok' => env('VUE2_APP_URL') . 'tiktok/?',
-        'errors' =>  env('VUE2_APP_URL') . 'errors/?',
+        'tiktok' => [
+            'web-client-vue2' => env('VUE2_APP_URL') . 'tiktok/?',
+            'beta-version-1-staging' => env('NUXT_APP_URL') . 'tiktok/?'
+        ],
+        'errors' => [
+            'web-client-vue2' => env('VUE2_APP_URL') . 'errors/?',
+            'beta-version-1-staging' => env('NUXT_APP_URL') . 'errors/?'
+        ]
     ]
 ];
