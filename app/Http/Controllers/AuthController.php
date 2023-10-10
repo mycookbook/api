@@ -13,7 +13,6 @@ use App\Services\AuthService;
 use App\Services\LocationService;
 use App\Services\UserService;
 use App\Utils\UriHelper;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -194,12 +193,10 @@ class AuthController extends Controller
                 ];
 
                 if (!$token = Auth::attempt($credentials)) {
-                    return UriHelper::redirectToUrl(
-                        UriHelper::buildHttpQuery(
-                            'errors',
-                            ['m' => Lang::get('errors.generic')]
-                        )
-                    );
+                    return redirect(UriHelper::buildHttpQuery(
+                        'errors',
+                        ['m' => Lang::get('errors.generic')]
+                    ));
                 }
 
                 TikTokUserIsAuthenticated::dispatch(new TikTokUserDto(
@@ -217,26 +214,24 @@ class AuthController extends Controller
                     Arr::get($userInfo, 'data.user.video_count')
                 ));
 
-                $to = UriHelper::buildHttpQuery('tiktok', ['token' => $token, '_d' => $user->getSlug()]);
-
-                return UriHelper::redirectToUrl($to);
-            } else {
-                return UriHelper::redirectToUrl(
+                return redirect(
                     UriHelper::buildHttpQuery(
-                        'errors',
-                        ['m' => Lang::get('errors.login.tiktok.private_account')]
+                        'tiktok', ['token' => $token, '_d' => $user->getSlug()]
                     )
                 );
+            } else {
+                return redirect(UriHelper::buildHttpQuery(
+                    'errors',
+                    ['m' => Lang::get('errors.login.tiktok.private_account')]
+                ));
             }
         } catch (\Exception $e) {
             Log::debug('Tiktok Login error', ['errorCode' => $errCode, 'errorMsg' => $e->getMessage()]);
 
-            return UriHelper::redirectToUrl(
-                UriHelper::buildHttpQuery(
-                    'errors',
-                    ['m' => Lang::get('errors.login.tiktok.generic')]
-                )
-            );
+            return redirect(UriHelper::buildHttpQuery(
+                'errors',
+                ['m' => Lang::get('errors.login.tiktok.generic')]
+            ));
         }
     }
 
