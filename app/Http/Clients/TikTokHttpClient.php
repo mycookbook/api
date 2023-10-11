@@ -47,7 +47,7 @@ class TikTokHttpClient
         return $decoded;
     }
 
-    public function getUserInfo(string $access_token)
+    public function getUserInfo(string $access_token): array
     {
         return $this->makeHttpRequest(
             AllowedHttpMethod::GET,
@@ -65,11 +65,10 @@ class TikTokHttpClient
         );
     }
 
-    private function makeHttpRequest(AllowedHttpMethod $httpMethod, $fields = [], $headers = [])
+    private function makeHttpRequest(AllowedHttpMethod $httpMethod, $fields = [], $headers = []): array
     {
         $options = ['headers' => ['Content-Type' => 'application/json']];
         $v2DisplayApiEndpoint = $this->getV2DisplayApiEndpoint();
-        $response = [];
 
         if ($bearer = Arr::get($headers, 'Authorization')) {
             $options['headers']['Authorization'] = 'Bearer ' . $bearer;
@@ -81,10 +80,7 @@ class TikTokHttpClient
 
         try {
             $response = $this->client->request($httpMethod->value, $v2DisplayApiEndpoint, $options);
-
-            if ($response->getBody()->getContents() != '') {
-                $response = $response->getBody()->getContents();
-            }
+            return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $exception) {
             Log::debug(
                 'Tiktok: error retrieving user info or listing videos',
@@ -94,10 +90,8 @@ class TikTokHttpClient
                 ]
             );
 
-            $response['_error'] = $exception->getMessage();
+            return [];
         }
-
-        return json_decode($response, true);
     }
 
     private function getV1BaseUri(): string
