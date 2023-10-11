@@ -220,6 +220,11 @@ class AuthController extends Controller
                     )
                 );
             } else {
+                Log::debug(
+                    'Maybe Private Tiktok account',
+                    ['error' => $userInfo]
+                );
+
                 return redirect(UriHelper::buildHttpQuery(
                     'errors',
                     ['m' => Lang::get('errors.login.tiktok.private_account')]
