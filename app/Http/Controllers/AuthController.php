@@ -162,7 +162,7 @@ class AuthController extends Controller
                 throw new \Exception(json_encode($decoded));
             }
 
-            $userInfo = $httpClient->getUserInfo($open_id, $access_token);
+            $userInfo = $httpClient->getUserInfo($access_token);
 
             if (!empty($userInfo['data']['user'])) {
                 $open_id = Arr::get($userInfo, 'data.user.open_id');

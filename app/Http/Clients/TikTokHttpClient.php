@@ -5,26 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Clients;
 
 use App\Dtos\TikTokUserDto;
+use App\Http\Clients\Enums\AllowedHttpMethod;
+use App\Http\Clients\Enums\UserInfoEnum;
+use App\Http\Clients\Enums\VideoListEnum;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class TikTokHttpClient
 {
     protected array $config;
     protected Client $client;
-
-    public static array $claims = [
-        'cover_image_url',
-        'id',
-        'title',
-        'video_description',
-        'duration',
-        'height',
-        'width',
-        'title',
-        'embed_html',
-        'embed_link'
-    ];
 
     public function __construct(Client $client)
     {
@@ -56,48 +47,57 @@ class TikTokHttpClient
         return $decoded;
     }
 
-    public function getUserInfo(string $open_id, string $access_token)
+    public function getUserInfo(string $access_token)
     {
-        $userInfoResponse = $this->client->request('POST',
-            $this->getV1BaseUri() . '/user/info/',
-            [
-                'json' => [
-                    'open_id' => $open_id,
-                    'access_token' => $access_token,
-                    'fields' => [
-                        'open_id',
-                        'avatar_url',
-                        'display_name',
-                        'avatar_url_100',
-                        'is_verified',
-                        'profile_deep_link',
-                        'bio_description',
-                        'display_name',
-                        'avatar_large_url',
-                        'avatar_url_100',
-                        'union_id',
-                        'video_count'
-                    ],
-                ],
-            ]
+        return $this->makeHttpRequest(
+            AllowedHttpMethod::GET,
+            UserInfoEnum::values(),
+            ['Authorization' => $access_token, 'Path' => '/user/info/?fields=']
         );
-
-        return json_decode($userInfoResponse->getBody()->getContents(), true);
     }
 
     public function listVideos(TikTokUserDto $userDto): array
     {
-        $response = $this->client->request('POST',
-            self::getVideoListEndpoint() . implode( ',', self::$claims),
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $userDto->getCode(),
-                    'Content-Type' => 'application/json'
-                ]
-            ]
+        return $this->makeHttpRequest(
+            AllowedHttpMethod::POST,
+            VideoListEnum::values(),
+            ['Authorization' => $userDto->getCode(), 'Path' => '/video/list/?fields=']
         );
+    }
 
-        return json_decode($response->getBody()->getContents(), true);
+    private function makeHttpRequest(AllowedHttpMethod $httpMethod, $fields = [], $headers = [])
+    {
+        $options = ['headers' => ['Content-Type' => 'application/json']];
+        $v2DisplayApiEndpoint = $this->getV2DisplayApiEndpoint();
+        $response = [];
+
+        if ($bearer = Arr::get($headers, 'Authorization')) {
+            $options['headers']['Authorization'] = 'Bearer ' . $bearer;
+        }
+
+        if ($path = Arr::get($headers, 'Path')) {
+            $v2DisplayApiEndpoint = $v2DisplayApiEndpoint . $path . implode( ',', $fields);
+        }
+
+        try {
+            $response = $this->client->request($httpMethod->value, $v2DisplayApiEndpoint, $options);
+
+            if ($response->getBody()->getContents() != '') {
+                $response = $response->getBody()->getContents();
+            }
+        } catch (\Exception $exception) {
+            Log::debug(
+                'Tiktok: error retrieving user info or listing videos',
+                [
+                    'resource' => $path,
+                    'errorMsg' => $exception->getMessage()
+                ]
+            );
+
+            $response['_error'] = $exception->getMessage();
+        }
+
+        return json_decode($response, true);
     }
 
     private function getV1BaseUri(): string
@@ -115,8 +115,8 @@ class TikTokHttpClient
         return Arr::get($this->config, 'client_secret');
     }
 
-    public static function getVideoListEndpoint(): string
+    private function getV2DisplayApiEndpoint(): string
     {
-        return 'https://open.tiktokapis.com/v2/video/list/?fields=';
+        return 'https://open.tiktokapis.com/v2';
     }
 }

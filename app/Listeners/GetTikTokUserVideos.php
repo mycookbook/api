@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Http\Clients\Enums\VideoListEnum;
 use App\Http\Clients\TikTokHttpClient;
 use GuzzleHttp\Client;
 use Illuminate\Support\Carbon;
@@ -39,8 +40,7 @@ class GetTikTokUserVideos
                 'Error listing TikTok Videos',
                 [
                     'errorMsg' => $exception->getMessage(),
-                    'claims' => TikTokHttpClient::$claims,
-                    'endpoint' => TikTokHttpClient::getVideoListEndpoint()
+                    'fields' => VideoListEnum::values()
                 ]
             );
         }
