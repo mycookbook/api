@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Clients;
 
 use App\Dtos\TikTokUserDto;
+use App\Http\Clients\Enums\UserInfoEnum;
+use App\Http\Clients\Enums\VideoListEnum;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 
@@ -12,19 +14,6 @@ class TikTokHttpClient
 {
     protected array $config;
     protected Client $client;
-
-    public static array $claims = [
-        'cover_image_url',
-        'id',
-        'title',
-        'video_description',
-        'duration',
-        'height',
-        'width',
-        'title',
-        'embed_html',
-        'embed_link'
-    ];
 
     public function __construct(Client $client)
     {
@@ -56,29 +45,17 @@ class TikTokHttpClient
         return $decoded;
     }
 
-    public function getUserInfo(string $open_id, string $access_token)
+    public function getUserInfo(string $access_token)
     {
-        $userInfoResponse = $this->client->request('POST',
-            $this->getV1BaseUri() . '/user/info/',
+        $fields =  implode( ',', UserInfoEnum::values());
+
+        $userInfoResponse = $this->client->request('GET',
+            $this->getV2DisplayApiEndpoint() . '/user/info/?fields=' . $fields,
             [
-                'json' => [
-                    'open_id' => $open_id,
-                    'access_token' => $access_token,
-                    'fields' => [
-                        'open_id',
-                        'avatar_url',
-                        'display_name',
-                        'avatar_url_100',
-                        'is_verified',
-                        'profile_deep_link',
-                        'bio_description',
-                        'display_name',
-                        'avatar_large_url',
-                        'avatar_url_100',
-                        'union_id',
-                        'video_count'
-                    ],
-                ],
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $access_token,
+                    'Content-Type' => 'application/json'
+                ]
             ]
         );
 
@@ -87,8 +64,10 @@ class TikTokHttpClient
 
     public function listVideos(TikTokUserDto $userDto): array
     {
+        $fields = implode( ',', VideoListEnum::values());
+
         $response = $this->client->request('POST',
-            self::getVideoListEndpoint() . implode( ',', self::$claims),
+            $this->getV2DisplayApiEndpoint() . '/video/list/?fields=' . $fields,
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $userDto->getCode(),
@@ -115,8 +94,8 @@ class TikTokHttpClient
         return Arr::get($this->config, 'client_secret');
     }
 
-    public static function getVideoListEndpoint(): string
+    private function getV2DisplayApiEndpoint(): string
     {
-        return 'https://open.tiktokapis.com/v2/video/list/?fields=';
+        return 'https://open.tiktokapis.com/v2';
     }
 }
