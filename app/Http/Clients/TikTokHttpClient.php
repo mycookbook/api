@@ -27,7 +27,7 @@ class TikTokHttpClient
     {
         $response = $this->client->request(
             'POST',
-            $this->getV1BaseUri() . '/oauth/access_token/',
+            $this->getV1DisplayApiHostname() . '/oauth/access_token/',
             [
                 'form_params' => [
                     'client_key' => $this->getClientId(),
@@ -52,7 +52,7 @@ class TikTokHttpClient
         return $this->makeHttpRequest(
             AllowedHttpMethod::GET,
             UserInfoEnum::values(),
-            ['Authorization' => $access_token, 'Path' => '/user/info/?fields=']
+            ['access_token' => $access_token, 'uri' => '/user/info/']
         );
     }
 
@@ -61,32 +61,35 @@ class TikTokHttpClient
         return $this->makeHttpRequest(
             AllowedHttpMethod::POST,
             VideoListEnum::values(),
-            ['Authorization' => $userDto->getCode(), 'Path' => '/video/list/?fields=']
+            ['access_token' => $userDto->getCode(), 'uri' => '/video/list/']
         );
     }
 
-    private function makeHttpRequest(AllowedHttpMethod $httpMethod, $fields = [], $headers = []): array
+    private function makeHttpRequest(AllowedHttpMethod $httpMethod, $fields = [], $options = []): array
     {
-        $options = ['headers' => ['Content-Type' => 'application/json']];
-        $v2DisplayApiEndpoint = $this->getV2DisplayApiEndpoint();
+        $headers = ['headers' => ['Content-Type' => 'application/json']];
+        $hostname = $this->getV2DisplayApiHostname();
 
-        if ($bearer = Arr::get($headers, 'Authorization')) {
-            $options['headers']['Authorization'] = 'Bearer ' . $bearer;
+        if ($bearer = Arr::get($options, 'access_token')) {
+            $headers['headers']['Authorization'] = 'Bearer ' . $bearer;
         }
 
-        if ($path = Arr::get($headers, 'Path')) {
-            $v2DisplayApiEndpoint = $v2DisplayApiEndpoint . $path . implode( ',', $fields);
+        if ($uri = Arr::get($options, 'uri')) {
+            $hostname = $hostname . $uri . '?fields=' . implode( ',', $fields);
         }
 
         try {
-            $response = $this->client->request($httpMethod->value, $v2DisplayApiEndpoint, $options);
+            $response = $this->client->request($httpMethod->value, $hostname, $headers);
             return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $exception) {
             Log::debug(
                 'Tiktok: error retrieving user info or listing videos',
                 [
-                    'resource' => $path,
-                    'errorMsg' => $exception->getMessage()
+                    'method' => $httpMethod,
+                    'uri' => $uri,
+                    'exception' => $exception,
+                    'options' => $options,
+                    'fields' => $fields
                 ]
             );
 
@@ -94,9 +97,9 @@ class TikTokHttpClient
         }
     }
 
-    private function getV1BaseUri(): string
+    private function getV1DisplayApiHostname(): string
     {
-        return Arr::get($this->config, 'uri');
+        return Arr::get($this->config, 'v1_host');
     }
 
     private function getClientId(): string
@@ -109,8 +112,8 @@ class TikTokHttpClient
         return Arr::get($this->config, 'client_secret');
     }
 
-    private function getV2DisplayApiEndpoint(): string
+    private function getV2DisplayApiHostname(): string
     {
-        return 'https://open.tiktokapis.com/v2';
+        return Arr::get($this->config, 'v2_host');
     }
 }

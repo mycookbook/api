@@ -31,15 +31,15 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
     'tiktok' => [
-        'uri' => env('TIKTOK_URI', 'https://open-api.tiktok.com'),
         'client_id' => env('TIKTOK_CLIENT_ID'),
         'client_secret' => env('TIKTOK_CLIENT_SECRET'),
         'redirect' => env('TIKTOK_REDIRECT_URI'),
         'users' => [
             'secret_pass' => env('TIKOK_GENERIC_PASS', 'fakePass')
-        ]
+        ],
+        'v1_host' => env('TIKTOK_URI', 'https://open-api.tiktok.com'),
+        'v2_host' => env('TIKTOK_V2_API', 'https://open.tiktokapis.com/v2')
     ],
     'ipinfo' => [
         'access_token' => env('IPINFO_SECRET', '')
@@ -54,11 +54,11 @@ return [
     'redirects' => [
         'tiktok' => [
             'web-client-vue2' => env('VUE2_APP_URL') . 'tiktok/?',
-            'beta-version-1-staging' => env('NUXT_APP_URL') . '/tiktok/?'
+            'beta-version-1-staging' => env('NUXT_APP_URL') . '/tiktok?'
         ],
         'errors' => [
             'web-client-vue2' => env('VUE2_APP_URL') . 'errors/?',
-            'beta-version-1-staging' => env('NUXT_APP_URL') . '/errors/?'
+            'beta-version-1-staging' => env('NUXT_APP_URL') . '/errors?'
         ]
     ]
 ];
