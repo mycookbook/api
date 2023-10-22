@@ -25,6 +25,6 @@ class TikTokUserIsAuthenticated
 
     public function getUser()
     {
-        return User::findOrFail($this->tikTokUserDto->getUserId());
+        return User::findOrFail($this->tikTokUserDto->user_id);
     }
 }

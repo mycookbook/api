@@ -13,7 +13,7 @@ class UpdateOrCreateTikTokUser
 {
     public function handle(TikTokUserIsAuthenticated $event): void
     {
-        $user_id = $event->tikTokUserDto->getUserId();
+        $user_id = $event->tikTokUserDto->user_id;
         $db = DB::table('tiktok_users');
         $attributes = $event->tikTokUserDto->toArray();
         $timestamps = [

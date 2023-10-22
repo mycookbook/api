@@ -61,7 +61,7 @@ class TikTokHttpClient
         return $this->makeHttpRequest(
             AllowedHttpMethod::POST,
             VideoListEnum::values(),
-            ['access_token' => $userDto->getCode(), 'uri' => '/video/list/']
+            ['access_token' => $userDto->code, 'uri' => '/video/list/']
         );
     }
 
