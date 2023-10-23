@@ -17,12 +17,13 @@ class GetTikTokUserVideos
     public function handle(object $event): void
     {
         $client = new TikTokHttpClient(new Client());
+        $videos = [];
 
         try {
-            $decoded = $client->listVideos($event->tikTokUserDto);
+            $decoded = $videos = $client->listVideos($event->tikTokUserDto);
             $db = DB::table('tiktok_users');
 
-            $tiktok_user = $db->where(['user_id' => $event->tikTokUserDto->getUserId()])->first();
+            $tiktok_user = $db->where(['user_id' => $event->tikTokUserDto->user_id])->first();
             $data = [
                 'videos' => json_encode($decoded['data']['videos']),
                 'created_at' => Carbon::now(),
@@ -40,7 +41,8 @@ class GetTikTokUserVideos
                 'Error listing TikTok Videos',
                 [
                     'errorMsg' => $exception->getMessage(),
-                    'fields' => VideoListEnum::values()
+                    'fields' => VideoListEnum::values(),
+                    'videos' => $videos
                 ]
             );
         }

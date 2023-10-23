@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class TikTokUserDtoTest extends TestCase
 {
-    protected $tiktokUserDto;
+    protected TikTokUserDto $tiktokUserDto;
 
     public function setUp(): void
     {
