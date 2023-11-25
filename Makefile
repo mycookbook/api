@@ -6,13 +6,21 @@ help:
 	@printf "\033[33mUsage:\033[0m\n  make [target] [arg=\"val\"...]\n\n\033[33mTargets:\033[0m\n"
 	@grep -E '^[-a-zA-Z0-9_\.\/]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[32m%-15s\033[0m %s\n", $$1, $$2}'
 
-install:  copy_env down build up setup
+install: copy_env down build up setup
 
 down: ## Destroy the containers
 	@docker-compose down
 
 build: ## build the containers
 	@docker-compose build
+
+build_and_push: docker_build_image docker_push_image
+
+docker_build_image:
+	@docker build -t fokosun/cookbookshq-api:v1 .
+
+docker_push_image:
+	@docker push fokosun/cookbookshq-api:v1
 
 db_seed: ## seed the database
 	@php artisan db:seed
