@@ -13,14 +13,16 @@ services:
             PHP_IDE_CONFIG: "serverName=localhost"
             XDEBUG_CONFIG: "idekey=PHPSTORM"
     db:
-        image: mysql:latest
+        image: mariadb:latest
         container_name: db
         environment:
             MYSQL_DATABASE: test_db
             MYSQL_PASSWORD: pass
             MYSQL_ROOT_PASSWORD: pass
         volumes:
-            - cookbooks-db:/var/lib/mysql
+            - mysqldata:/var/lib/mysql
+        ports:
+            - 3306:3306
         networks:
             - cookbooks
     nginx:
@@ -36,7 +38,7 @@ services:
             - cookbooks
 
 volumes:
-    cookbooks-db:
+    mysqldata:
 
 networks:
     cookbooks:
