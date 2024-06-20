@@ -8,10 +8,8 @@ use Spatie\CpuLoadHealthCheck\CpuLoadCheck;
 use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Spatie\Health\Checks\Result;
 use Spatie\Health\Health;
-use Spatie\Health\Checks\Checks\PingCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\EnvironmentCheck;
-use Spatie\Health\Checks\Checks\CacheCheck;
 
 class HealthCheckController extends Controller
 {
@@ -46,7 +44,7 @@ class HealthCheckController extends Controller
      */
     private function registerChecks(): void
     {
-        $this->healthChecker->checks(array_merge(
+        $this->healthChecker->checks(
             [
                 EnvironmentCheck::new()->expectEnvironment(getenv('APP_ENV')),
                 UsedDiskSpaceCheck::new()
@@ -55,46 +53,10 @@ class HealthCheckController extends Controller
                 CpuLoadCheck::new()
                     ->failWhenLoadIsHigherInTheLast5Minutes(2.0)
                     ->failWhenLoadIsHigherInTheLast15Minutes(1.5),
-            ],
-            $this->registerGetPingChecks(),
-            $this->registerPostPingChecks(),
-            [
-                DatabaseCheck::new()->connectionName(getenv('DB_CONNECTION')),
-                CacheCheck::new()->driver('redis'),
+                DatabaseCheck::new()
+                    ->connectionName(getenv('DB_CONNECTION'))
             ]
-        ));
-    }
-
-    private function registerGetPingChecks(): array
-    {
-        $getEndpoints = [
-            '/api/v1/users',
-            '/api/v1/cookbooks',
-            '/api/v1/recipes',
-            '/api/v1/policies',
-            '/api/v1/stats',
-            '/api/v1/categories',
-        ];
-
-        return $this->registerPingCheck($getEndpoints, 'GET');
-    }
-
-    private function registerPostPingChecks(): array
-    {
-        $postEndpoints = [];
-
-        return $this->registerPingCheck($postEndpoints, 'POST');
-    }
-
-    private function registerPingCheck(array $urls, string $method): array
-    {
-        return array_map(function($url) use($method) {
-            $basePath = getenv('APP_URL');
-            return PingCheck::new()
-                ->url($basePath . $url)
-                ->name($url)
-                ->method($method);
-        }, $urls);
+        );
     }
 
     /**

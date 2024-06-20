@@ -6,6 +6,17 @@
       0 => 'Hammerstone\\Sidecar\\Providers\\SidecarServiceProvider',
     ),
   ),
+  'ichtrojan/laravel-otp' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Ichtrojan\\Otp\\OtpServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Otp' => 'Ichtrojan\\Otp\\Otp',
+    ),
+  ),
   'ipinfo/ipinfolaravel' => 
   array (
     'providers' => 
@@ -92,6 +103,17 @@
     'providers' => 
     array (
       0 => 'SocialiteProviders\\Manager\\ServiceProvider',
+    ),
+  ),
+  'spatie/laravel-health' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Health\\HealthServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Health' => 'Spatie\\Health\\Facades\\Health',
     ),
   ),
   'spatie/laravel-ignition' => 

@@ -23,13 +23,13 @@ docker_push_image:
 	@docker push fokosun/cookbookshq-api:v1
 
 db_seed: ## seed the database
-	@php artisan db:seed
+	@docker-compose exec app php artisan db:seed
 
 db_migrate: ## run db migrations
-	@php artisan migrate
+	@docker-compose exec app php artisan migrate
 
 db_schemefy: ## Display the db schema in table format
-	 @php artisan schema:show
+	 @docker-compose exec app php artisan schema:show
 
 setup: composer generate_key jwt_key db_connection
 
@@ -53,16 +53,16 @@ db_connection: ## Generate DB Connection details and set in .env
 	@docker-compose exec app php artisan db:connection
 
 login: ## Creates a new user/token or generate new token for given user
-	@php artisan auth:token
+	@docker-compose exec app php artisan auth:token
 
 test_unit: ## Run unit testsuite
-	@php vendor/bin/phpunit --testsuite=Unit
+	@docker-compose exec app php vendor/bin/phpunit --testsuite=Unit
 
 test_feature: ## Run Feature tests
-	@php vendor/bin/phpunit --testsuite=Feature
+	@docker-compose exec app php vendor/bin/phpunit --testsuite=Feature
 
 test: ## Run the entire test suites
-	@php vendor/bin/phpunit tests/
+	@docker-compose exec app php vendor/bin/phpunit tests/
 
 shell_app: ## ssh into the app container
 	@docker-compose exec app /bin/bash
@@ -73,16 +73,16 @@ shell_db: ## ssh into the database container
 clear: clear_cache clear_views clear_routes dump_autoload
 
 clear_cache:
-	@php artisan cache:clear
+	@docker-compose exec app php artisan cache:clear
 
 clear_views:
-	@php artisan view:clear
+	@docker-compose exec app php artisan view:clear
 
 clear_routes:
-	@php artisan route:clear
+	@docker-compose exec app php artisan route:clear
 
 dump_autoload: ## Composer dumpautoload
-	@composer dumpautoload
+	@docker-compose exec app composer dumpautoload
 
 up: ## Restarts and provisions the containers in the background
 	@docker-compose up -d

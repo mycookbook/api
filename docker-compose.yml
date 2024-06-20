@@ -1,5 +1,16 @@
 version: "3.7"
 services:
+    nginx:
+        image: nginx:alpine
+        container_name: web-server
+        restart: unless-stopped
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx:/etc/nginx/conf.d/
+        networks:
+            - cookbooks
     app:
         build: .
         container_name: cookbookshq
@@ -9,9 +20,6 @@ services:
             - ./:/var/www
         networks:
             - cookbooks
-        environment:
-            PHP_IDE_CONFIG: "serverName=localhost"
-            XDEBUG_CONFIG: "idekey=PHPSTORM"
     db:
         image: mariadb:latest
         container_name: db
@@ -25,20 +33,18 @@ services:
             - 3306:3306
         networks:
             - cookbooks
-    nginx:
-        image: nginx:alpine
-        container_name: web-server
+    cache:
+        image: redis:latest
+        container_name: cache
         restart: unless-stopped
         ports:
-            - "8080:80"
+            - "6379:6379"
         volumes:
-            - ./:/var/www
-            - ./docker-compose/nginx:/etc/nginx/conf.d/
-        networks:
-            - cookbooks
-
+            - cache:/data
 volumes:
     mysqldata:
+    cache:
+        driver: local
 
 networks:
     cookbooks:
