@@ -12,12 +12,11 @@ use App\Http\Controllers\StaticContentController;
 use App\Http\Controllers\UserController;
 use App\Models\Flag;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HealthCheckController;
 
 Route::group(['prefix' => 'v1'], function () {
 
-    Route::get('/ping', function () {
-        return 'Cookbooks api v1';
-    });
+    Route::get('/ping', [HealthCheckController::class, 'check']);
 
     Route::get('/callback/tiktok', [
         'uses' => 'AuthController@tikTokHandleCallback',
@@ -26,7 +25,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::get('/webhooks/tiktok', function() {
         return response()->json([
-            'message' => 'payload recieved with thanks'
+            'message' => 'payload received with thanks'
         ]);
     });
 

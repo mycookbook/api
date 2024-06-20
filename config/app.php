@@ -234,5 +234,4 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Otp' => Ichtrojan\Otp\Otp::class,
     ],
-
 ];
