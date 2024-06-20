@@ -1,7 +1,7 @@
 version: "3.7"
 services:
     nginx:
-        image: nginx:alpine
+        image: nginx:latest
         container_name: web-server
         restart: unless-stopped
         ports:
@@ -24,7 +24,7 @@ services:
         image: mariadb:latest
         container_name: db
         environment:
-            MYSQL_DATABASE: test_db
+            MYSQL_DATABASE: cookbooks
             MYSQL_PASSWORD: pass
             MYSQL_ROOT_PASSWORD: pass
         volumes:

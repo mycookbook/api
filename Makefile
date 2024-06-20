@@ -87,16 +87,13 @@ dump_autoload: ## Composer dumpautoload
 up: ## Restarts and provisions the containers in the background
 	@docker-compose up -d
 
-docker_prune: prune_images prune_volumes prune_containers
+docker_prune: prune_volumes prune_images
 
 prune_images: ## Remove dangling images and free up space
-	@docker image prune
-
-prune_containers: ## Remove the containers
-	@docker container prune
+	@docker image rm api-app mariadb nginx redis
 
 prune_volumes: ## Removes dangling volumes
-	@docker volume prune
+	@docker volume rm api_mysqldata api_cache
 
 static_analysis:
-	@php ./vendor/bin/phpstan analyse --memory-limit=2G
+	@docker-compose exec app php ./vendor/bin/phpstan analyse --memory-limit=2G
