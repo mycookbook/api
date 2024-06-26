@@ -8,8 +8,11 @@ use App\Interfaces\serviceInterface;
 use App\Models\User;
 use App\Models\UserContactDetail;
 use App\Utils\DbHelper;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Class UserService
@@ -24,7 +27,7 @@ class UserService extends BaseService implements serviceInterface
     /**
      * Get all users from the database
      */
-    public function index()
+    public function index(): LengthAwarePaginator
     {
         return User::paginate(15);
     }
@@ -32,7 +35,7 @@ class UserService extends BaseService implements serviceInterface
     /**
      * Create a new user resource
      */
-    public function store(Request $request)
+    public function store(Request $request): bool
     {
         $user = new User([
             'name' => $request->name,
@@ -61,7 +64,7 @@ class UserService extends BaseService implements serviceInterface
         return false;
     }
 
-    public function show($q)
+    public function show(string|int $q): Collection
     {
         return $this->findWhere($q)->get()->append(['tiktok_videos']);
     }
@@ -103,10 +106,10 @@ class UserService extends BaseService implements serviceInterface
     }
 
     /**
-     * @param $q
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param string|int $q
+     * @return Builder
      */
-    public function findWhere($q)
+    public function findWhere(string|int $q): Builder
     {
         return User::with(['cookbooks', 'recipes'])
             ->where('id', '=', $q)

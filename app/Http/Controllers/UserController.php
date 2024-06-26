@@ -80,7 +80,6 @@ class UserController extends Controller
 
     public function followUser(Request $request)
     {
-        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             if ($toFollow = $request->get('toFollow')) {
                 $userToFollow = $this->service->findWhere($toFollow)->first();
@@ -146,7 +145,6 @@ class UserController extends Controller
 
     public function addFeedback(Request $request)
     {
-        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             $hasRespondedAlready = UserFeedback::where(['user_id' => $user->getKey(), 'type' => 'feedback']);
 
@@ -172,7 +170,6 @@ class UserController extends Controller
 
     public function listVideos(HttpRequestRunner $requestRunner)
     {
-        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             $tikTokUser = $user->getTikTokUser();
             $errors = [

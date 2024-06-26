@@ -11,7 +11,7 @@ trait EncryptsPayload
     /**
      * Encrypts the given payload using Crypt
      *
-     * @param  array  $payload
+     * @param array<string> $payload
      * @return string
      */
     public function encryptPayload(array $payload): string

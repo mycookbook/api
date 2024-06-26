@@ -7,9 +7,7 @@ use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
 class Videos extends Request
 {
-//    private $endpoint = 'video-links';
-
-    public function handle()
+    public function handle(): void
     {
         $nextRequest = $this->httpClient->request('POST',
             'https://open.tiktokapis.com/v2/video/list/',
@@ -40,7 +38,9 @@ class Videos extends Request
 
         if ($decoded["error"]) {
             $stage = '/video/list/';
-            throw new InvalidArgumentException(json_encode($decoded));
+            if ($exception = json_encode($decoded)) {
+                throw new InvalidArgumentException($exception);
+            }
         }
     }
 }

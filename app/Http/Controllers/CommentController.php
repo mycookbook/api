@@ -16,7 +16,6 @@ class CommentController extends Controller
 {
     public function addComment(Request $request)
     {
-        /** @phpstan-ignore-next-line  */
         if ($user = JWTAuth::parseToken()->user()) {
             $payload = $request->only([
                 'resource-type', 'resource-id', 'comment'
@@ -49,7 +48,6 @@ class CommentController extends Controller
 
     public function destroyComment(Request $request)
     {
-        /** @phpstan-ignore-next-line  */
         if ($user = JWTAuth::parseToken()->user()) {
             $payload = $request->only(['comment-id']);
             $comment = Comment::findOrFail($request->only(['comment-id']))->first();

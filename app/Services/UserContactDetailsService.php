@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Cookbook;
 use App\Models\User;
 use App\Models\UserContactDetail;
 use Illuminate\Http\Request;
@@ -18,14 +17,13 @@ class UserContactDetailsService extends BaseService
         $this->serviceModel = new UserContactDetail();
     }
 
-    protected $contact_detail;
-
     /**
      * Creates new user contact detail
      *
      * @param  Request  $request
+     * @return void
      */
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         $detail = new UserContactDetail($request->only([
             'user_id',

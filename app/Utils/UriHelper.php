@@ -6,6 +6,9 @@ namespace App\Utils;
 
 class UriHelper
 {
+    /**
+     * @param array<string> $parameters
+     */
     public static function buildHttpQuery(string $redirectToPage, array $parameters): string
     {
         $redirectToPage = $redirectToPage . '.beta-version-1-staging';

@@ -44,7 +44,8 @@
         "ext-json": "*",
         "fakerphp/faker": "1.19.0",
         "laravel/sail": "^1.15",
-        "nunomaduro/larastan": "^2.0"
+        "nunomaduro/larastan": "^2.6",
+        "phpstan/phpstan": "^1.10"
     },
     "autoload": {
         "psr-4": {
