@@ -17,4 +17,4 @@ jobs:
             -   name: Install Dependencies
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
             -   name: Running static analysis
-                run: vendor/bin/phpstan analyse --memory-limit=2G
+                run: vendor/bin/phpstan analyse --level=1 --memory-limit=2G
