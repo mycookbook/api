@@ -67,7 +67,6 @@ use Tymon\JWTAuth\JWT;
         );
 
         return ($recipe = $this->service->addClap($request->get('recipe_id'))) ?
-            /** @phpstan-ignore-next-line  */
             $this->successResponse(['updated' => true, 'claps' => $recipe->claps]) :
             $this->errorResponse(['error' => 'There was an error processing this request. Please try again.']);
     }

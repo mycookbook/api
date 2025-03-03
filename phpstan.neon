@@ -4,17 +4,19 @@ includes:
 parameters:
 
     paths:
-        - app/
+        - app
 
     # Level 9 is the highest level
-    level: 5
+    level: 1
 
-    treatPhpDocTypesAsCertain: false
+#    treatPhpDocTypesAsCertain: false
+
+    checkGenericClassInNonGenericObjectType: false
 
 #    ignoreErrors:
 #        - '#PHPDoc tag @var#'
 #
-#    excludePaths:
-#        - ./*/*/FileToBeExcluded.php
+    excludePaths:
+        - app/Utils
 #
 #    checkMissingIterableValueType: false

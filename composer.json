@@ -34,7 +34,9 @@
         "spatie/laravel-ignition": "^2.1",
         "ichtrojan/laravel-otp": "^1.4",
         "symfony/mailgun-mailer": "^6.3",
-        "symfony/http-client": "^6.3"
+        "symfony/http-client": "^6.3",
+        "spatie/laravel-health": "^1.29",
+        "spatie/cpu-load-health-check": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.4.2",
@@ -42,7 +44,8 @@
         "ext-json": "*",
         "fakerphp/faker": "1.19.0",
         "laravel/sail": "^1.15",
-        "nunomaduro/larastan": "^2.0"
+        "nunomaduro/larastan": "^2.6",
+        "phpstan/phpstan": "^1.10"
     },
     "autoload": {
         "psr-4": {

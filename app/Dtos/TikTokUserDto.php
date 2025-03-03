@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dtos {
 
-    readonly class TikTokUserDto
+    use App\Dtos\Contracts\isReadOnly;
+
+    readonly class TikTokUserDto implements isReadOnly
     {
         public int $user_id;
         public string $open_id;

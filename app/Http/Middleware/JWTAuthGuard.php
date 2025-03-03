@@ -17,10 +17,8 @@ class JWTAuthGuard
     public function handle(Request $request, Closure $next)
     {
         try {
-            /** @phpstan-ignore-next-line  */
             if (JWTAuth::parseToken()->authenticate()) {
 
-                /** @phpstan-ignore-next-line  */
                 $request->merge(["user_id" => JWTAuth::parseToken()->user()->getKey()]);
 
                 return $next($request);

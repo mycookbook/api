@@ -66,7 +66,6 @@ class SearchService
                 }
             }
 
-            /** @phpstan-ignore-next-line */
             $result->metaData = [
                 'contains' => $contains,
                 'missing' => $missing
@@ -166,7 +165,6 @@ class SearchService
                     }
                 }
 
-                /** @phpstan-ignore-next-line */
                 $result->metaData = [
                     'contains' => $contains,
                     'missing' => $missing
@@ -244,7 +242,6 @@ class SearchService
      */
     public function getAllCookbooksByMe($cookbookName = "")
     {
-        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             $me = $user->getKey();
 
@@ -269,7 +266,6 @@ class SearchService
      */
     public function getAllRecipesByMe($recipeName = "")
     {
-        /** @phpstan-ignore-next-line */
         if ($user = JWTAuth::parseToken()->user()) {
             $me = $user->getKey();
 
@@ -285,7 +281,6 @@ class SearchService
 
     public function getFollowing()
     {
-        /** @phpstan-ignore-next-line */
         if ($me = JWTAuth::parseToken()->user()) {
             $recipes = [];
             $following = Following::where(['follower_id' => $me->getKey()])->pluck('following')->toArray();

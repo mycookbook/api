@@ -1,8 +1,6 @@
 FROM php:8.2-fpm
 
 # Arguments defined in docker-compose.yml
-ARG user
-ARG uid
 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug
@@ -37,8 +35,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN useradd -G www-data,root -u 1000 -d /home/dev dev
 RUN mkdir -p /home/dev/.composer && \
     chown -R dev:dev /home/dev
-
-USER $user
 
 RUN echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/php.ini
 RUN echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/php.ini

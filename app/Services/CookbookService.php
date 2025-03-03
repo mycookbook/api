@@ -71,15 +71,12 @@ class CookbookService extends BaseService implements serviceInterface
             }
         }
 
-        /** @phpstan-ignore-next-line  */
         $cookbook->slug = DbHelper::generateUniqueSlug($request->name, 'cookbooks', 'slug');
 
         if ($cookbook->save()) {
-            /** @phpstan-ignore-next-line  */
             $cookbook->users()->attach($cookbook->user_id);
 
             foreach ($categories as $category) {
-                /** @phpstan-ignore-next-line  */
                 $cookbook->categories()->attach($category);
             }
 

@@ -6,17 +6,17 @@ use GuzzleHttp\Client;
 
 abstract class Request
 {
-    protected $httpClient;
-    private $endpoint = '';
+    protected Client $httpClient;
+    private string $endpoint = '';
 
     public function __construct()
     {
         $this->httpClient = new Client();
     }
 
-    public abstract function handle();
+    public abstract function handle(): void;
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->endpoint;
     }

@@ -7,9 +7,7 @@ use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
 class AccessToken extends Request
 {
-//    private $endpoint = 'access-token';
-
-    public function handle()
+    public function handle(): void
     {
         $firstRequest = $this->httpClient->post('https://open.tiktokapis.com/v2/oauth/token/', [
             'headers' => [
@@ -27,7 +25,9 @@ class AccessToken extends Request
         $decoded = json_decode($firstRequest->getBody()->getContents(), true);
 
         if ($decoded["error"]) {
-            throw new InvalidArgumentException(json_encode($decoded));
+            if ($exception = json_encode($decoded)) {
+                throw new InvalidArgumentException($exception);
+            }
         }
 
         Config::set('tiktok', ['access_token' => $decoded['access_token']]);

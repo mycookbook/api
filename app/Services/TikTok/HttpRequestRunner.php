@@ -2,11 +2,19 @@
 
 namespace App\Services\TikTok;
 
+use Exception;
 use Illuminate\Support\Facades\Config;
 
 class HttpRequestRunner
 {
-    public function __invoke(array $config, bool $async = false, Request...$requests)
+    /**
+     * @param array<string> $config
+     * @param bool $async
+     * @param Request ...$requests
+     * @return $this
+     * @throws Exception
+     */
+    public function __invoke(array $config, bool $async = false, Request...$requests): self
     {
         $this->validateConfig($config);
 
@@ -22,23 +30,28 @@ class HttpRequestRunner
     }
 
     //todo
-    public function handleSync() {}
+    public function handleSync(): void {}
 
-    public function getContents()
+    public function getContents(): array
     {
         return Config::get('tiktok');
     }
 
-    private function setCode(string $code)
+    private function setCode(string $code): void
     {
         Config::set('tiktok', ['code' => $code]);
     }
 
-    private function validateConfig(array $options = [])
+    /**
+     * @param array<string> $options
+     * @return void
+     * @throws Exception
+     */
+    private function validateConfig(array $options = []): void
     {
         foreach ($options as $i => $j) {
             if (is_numeric($i)) {
-                throw new \Exception('Invalid type. Must be a key/value pair.');
+                throw new Exception('Invalid type. Must be a key/value pair.');
             }
         }
 
